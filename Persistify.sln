@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{497F1B45-87FA-40C6-BA04-28970B9989E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D60A572A-6F0D-4EC8-A7CB-20861F55DEC1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bench", "bench", "{E4A475DC-E347-455A-9F53-00CE179C9FEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Core", "src\Persistify.Core\Persistify.Core.csproj", "{11346976-4343-4F31-95D3-72FC37D5B103}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Core.Test", "test\Persistify.Core.Test\Persistify.Core.Test.csproj", "{84D7D155-D160-43F0-8CB2-0490AB140E14}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{11346976-4343-4F31-95D3-72FC37D5B103} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{84D7D155-D160-43F0-8CB2-0490AB140E14} = {D60A572A-6F0D-4EC8-A7CB-20861F55DEC1}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{11346976-4343-4F31-95D3-72FC37D5B103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11346976-4343-4F31-95D3-72FC37D5B103}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11346976-4343-4F31-95D3-72FC37D5B103}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11346976-4343-4F31-95D3-72FC37D5B103}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
