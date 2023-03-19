@@ -6,9 +6,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D60A572A-6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bench", "bench", "{E4A475DC-E347-455A-9F53-00CE179C9FEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Core", "src\Persistify.Core\Persistify.Core.csproj", "{11346976-4343-4F31-95D3-72FC37D5B103}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Web", "src\Persistify.Web\Persistify.Web.csproj", "{8CE9308C-EFC0-4375-AAF2-C6CEE11CF6CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Core.Test", "test\Persistify.Core.Test\Persistify.Core.Test.csproj", "{84D7D155-D160-43F0-8CB2-0490AB140E14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Core", "src\Persistify.Core\Persistify.Core.csproj", "{3935ACC9-5613-4F3F-A5D4-BFB2EC7C5896}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Storage.Sqlite", "src\Persistify.Storage.Sqlite\Persistify.Storage.Sqlite.csproj", "{513A4874-D8DC-4DEE-A8C8-A31266F1BCAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,17 +18,22 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{11346976-4343-4F31-95D3-72FC37D5B103} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
-		{84D7D155-D160-43F0-8CB2-0490AB140E14} = {D60A572A-6F0D-4EC8-A7CB-20861F55DEC1}
+		{8CE9308C-EFC0-4375-AAF2-C6CEE11CF6CA} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{3935ACC9-5613-4F3F-A5D4-BFB2EC7C5896} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{513A4874-D8DC-4DEE-A8C8-A31266F1BCAC} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{11346976-4343-4F31-95D3-72FC37D5B103}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11346976-4343-4F31-95D3-72FC37D5B103}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11346976-4343-4F31-95D3-72FC37D5B103}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11346976-4343-4F31-95D3-72FC37D5B103}.Release|Any CPU.Build.0 = Release|Any CPU
-		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{84D7D155-D160-43F0-8CB2-0490AB140E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CE9308C-EFC0-4375-AAF2-C6CEE11CF6CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CE9308C-EFC0-4375-AAF2-C6CEE11CF6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CE9308C-EFC0-4375-AAF2-C6CEE11CF6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CE9308C-EFC0-4375-AAF2-C6CEE11CF6CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3935ACC9-5613-4F3F-A5D4-BFB2EC7C5896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3935ACC9-5613-4F3F-A5D4-BFB2EC7C5896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3935ACC9-5613-4F3F-A5D4-BFB2EC7C5896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3935ACC9-5613-4F3F-A5D4-BFB2EC7C5896}.Release|Any CPU.Build.0 = Release|Any CPU
+		{513A4874-D8DC-4DEE-A8C8-A31266F1BCAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{513A4874-D8DC-4DEE-A8C8-A31266F1BCAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{513A4874-D8DC-4DEE-A8C8-A31266F1BCAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{513A4874-D8DC-4DEE-A8C8-A31266F1BCAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

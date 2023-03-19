@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Web";
+
+service Persistify {
+  rpc Index (IndexRequest) returns (IndexResponse) {}
+  rpc Search (SearchRequest) returns (SearchResponse) {}
+  rpc SearchById (SearchByIdRequest) returns (SearchByIdResponse) {}
+  rpc Delete (DeleteRequest) returns (DeleteResponse) {}
+}
+
+enum ResultCode {
+  OK = 0;
+  NOT_FOUND = 1;
+  INTERNAL_ERROR = 2;
+}
+
+message IndexRequest {
+  string type = 1;
+  string data = 2;
+}
+
+message IndexResponse {
+  ResultCode result_code = 1;
+  int32 id = 2;
+}
+
+message SearchRequest {
+  string type = 1;
+  string query = 2;
+  int32 page_number = 3;
+  int32 page_size = 4;
+}
+
+message SearchResponse {
+  ResultCode result_code = 1;
+  repeated ObjectResult results = 2;
+}
+
+message ObjectResult {
+  int32 id = 1;
+  string value = 2;
+}
+
+message SearchByIdRequest {
+  int32 id = 1;
+}
+
+message SearchByIdResponse {
+  ResultCode result_code = 1;
+  optional ObjectResult result = 2;
+}
+
+message DeleteRequest {
+  int32 id = 1;
+}
+
+message DeleteResponse {
+  ResultCode result_code = 1;
+}
