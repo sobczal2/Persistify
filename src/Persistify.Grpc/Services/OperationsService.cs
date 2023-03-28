@@ -4,7 +4,7 @@ using Persistify.Grpc.Protos;
 
 namespace Persistify.Grpc.Services;
 
-public class OperationsService : Protos.Operations.OperationsBase
+public class OperationsService : Protos.OperationsService.OperationsServiceBase
 {
     public override Task<IndexResponse> Index(IndexRequest request, ServerCallContext context)
     {

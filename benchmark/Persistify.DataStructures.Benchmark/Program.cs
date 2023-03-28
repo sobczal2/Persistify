@@ -1,8 +1,3 @@
-﻿using System;
-using Persistify.DataStructures.SuffixTree;
+﻿using BenchmarkDotNet.Running;
 
-const string text = "ana are mere ana";
-var suffixTree = new SuffixTree(text);
-
-var results = suffixTree.Search("ana");
-Console.WriteLine("Positions of 'ana': " + string.Join(", ", results));
+BenchmarkRunner.Run(typeof(Program).Assembly);

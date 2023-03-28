@@ -11,4 +11,8 @@
       <ProjectReference Include="..\..\src\Persistify.DataStructures\Persistify.DataStructures.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    </ItemGroup>
+
 </Project>

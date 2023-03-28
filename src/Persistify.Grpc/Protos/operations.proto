@@ -4,7 +4,12 @@ option csharp_namespace = "Persistify.Grpc.Protos";
 
 package operations;
 
-import "Protos/shared.proto";
+
+message Document {
+  int64 id = 1;
+  string type = 2;
+  string data = 3;
+}
 
 message IndexRequest {
   string type = 1;
@@ -14,7 +19,6 @@ message IndexRequest {
 
 message IndexResponse {
   int64 id = 1;
-  shared.ResponseMetadata metadata = 2;
 }
 
 message SearchRequest {
@@ -25,8 +29,7 @@ message SearchRequest {
 }
 
 message SearchResponse {
-  repeated shared.Document documents = 1;
-  shared.ResponseMetadata metadata = 2;
+  repeated Document documents = 1;
 }
 
 message DeleteRequest {
@@ -35,10 +38,9 @@ message DeleteRequest {
 }
 
 message DeleteResponse {
-  shared.ResponseMetadata metadata = 1;
 }
 
-service Operations {
+service OperationsService {
   rpc Index(IndexRequest) returns (IndexResponse);
   rpc Search(SearchRequest) returns (SearchResponse);
   rpc Delete(DeleteRequest) returns (DeleteResponse);

@@ -3,41 +3,77 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Persistify.Grpc.Protos;
 using Persistify.Indexer;
+using Persistify.Indexer.Types;
 using TypeDefinition = Persistify.Indexer.Types.TypeDefinition;
+using TypeField = Persistify.Grpc.Protos.TypeField;
 
 namespace Persistify.Grpc.Services;
 
-public class TypesService : Protos.Types.TypesBase
+public class TypesService : Protos.TypesService.TypesServiceBase
 {
-    private readonly ITypeManager _typeManager;
+    private readonly ITypeStore _typeStore;
 
-    public TypesService(ITypeManager typeManager)
+    public TypesService(ITypeStore typeStore)
     {
-        _typeManager = typeManager;
+        _typeStore = typeStore;
     }
 
-    public override Task<InitTypeResponse> InitType(InitTypeRequest request, ServerCallContext context)
+    public override async Task<InitTypeResponse> InitType(
+        InitTypeRequest request,
+        ServerCallContext context
+    )
     {
-        var typeDefinition = new TypeDefinition(request.TypeDefinition.Name,
-            request.TypeDefinition.TypeFields.Select(x => new Indexer.Types.TypeField(x.Path, x.Indexed)).ToArray());
-        _typeManager.InitTypeAsync(typeDefinition);
-        return Task.FromResult(new InitTypeResponse()
+        var typeDefinition = new TypeDefinition(
+            request.TypeDefinition.Name,
+            request.TypeDefinition.TypeFields
+                .Select(x => new Indexer.Types.TypeField(x.Path, x.Indexed))
+                .ToArray()
+        );
+        if (await _typeStore.InitTypeAsync(typeDefinition))
         {
-            Metadata = new ResponseMetadata()
+            return new InitTypeResponse();
+        }
+        context.Status = new Status(StatusCode.AlreadyExists, "Type already exists");
+        return new InitTypeResponse();
+    }
+
+    public override async Task<ListTypesResponse> ListTypes(
+        ListTypesRequest request,
+        ServerCallContext context
+    )
+    {
+        var types = await _typeStore.ListTypesAsync();
+        return new ListTypesResponse()
+        {
+            TypeDefinitions =
             {
-                Message = "Type initialized",
-                ResponseStatus = ResponseStatus.Ok
+                types.Select(
+                    x =>
+                        new Protos.TypeDefinition()
+                        {
+                            Name = x.Name,
+                            TypeFields =
+                            {
+                                x.TypeFields.Select(
+                                    y => new TypeField() { Path = y.Path, Indexed = y.Indexed }
+                                )
+                            }
+                        }
+                )
             }
-        });
+        };
     }
 
-    public override Task<ListTypesResponse> ListTypes(ListTypesRequest request, ServerCallContext context)
+    public override async Task<DropTypeResponse> DropType(
+        DropTypeRequest request,
+        ServerCallContext context
+    )
     {
-        return base.ListTypes(request, context);
-    }
-
-    public override Task<DropTypeResponse> DropType(DropTypeRequest request, ServerCallContext context)
-    {
-        return base.DropType(request, context);
+        if (await _typeStore.DropTypeAsync(request.Name))
+        {
+            return new DropTypeResponse();
+        }
+        context.Status = new Status(StatusCode.NotFound, "Type not found");
+        return new DropTypeResponse();
     }
 }

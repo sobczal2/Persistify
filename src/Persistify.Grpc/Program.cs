@@ -1,13 +1,33 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Persistify.Grpc;
 using Persistify.Grpc.Services;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
-builder.Services.AddGrpc();
+try
+{
+    Log.Information("Starting web application");
 
-var app = builder.Build();
+    var builder = WebApplication.CreateBuilder(args);
 
-app.MapGrpcService<OperationsService>();
+    builder.Host.UseSerilog();
 
-app.Run();
+    builder.Services.AddPersistify();
+
+    var app = builder.Build();
+
+    app.UsePersistify();
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

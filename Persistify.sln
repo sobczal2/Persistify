@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Storage", "src\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Common", "src\Persistify.Common\Persistify.Common.csproj", "{95A8A57D-8A4E-4422-9060-C566FE3C13C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Validators", "src\Persistify.Validators\Persistify.Validators.csproj", "{756AD3E2-A8D6-445E-AA62-56B3B440209C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.DataGenerator", "test\Persistify.DataGenerator\Persistify.DataGenerator.csproj", "{A7FEF607-A729-4EB2-B9C5-B945F7C9E029}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,8 @@ Global
 		{E5500CEC-1456-428C-A9AB-1C0BE09351DF} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{3DD42B28-FD71-49F4-A553-FE054EBBADAC} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{95A8A57D-8A4E-4422-9060-C566FE3C13C2} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{756AD3E2-A8D6-445E-AA62-56B3B440209C} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{A7FEF607-A729-4EB2-B9C5-B945F7C9E029} = {D60A572A-6F0D-4EC8-A7CB-20861F55DEC1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5518C1FC-E0F6-4F66-AE00-19418C1A82D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -63,5 +69,13 @@ Global
 		{95A8A57D-8A4E-4422-9060-C566FE3C13C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95A8A57D-8A4E-4422-9060-C566FE3C13C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95A8A57D-8A4E-4422-9060-C566FE3C13C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{756AD3E2-A8D6-445E-AA62-56B3B440209C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{756AD3E2-A8D6-445E-AA62-56B3B440209C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{756AD3E2-A8D6-445E-AA62-56B3B440209C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{756AD3E2-A8D6-445E-AA62-56B3B440209C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7FEF607-A729-4EB2-B9C5-B945F7C9E029}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7FEF607-A729-4EB2-B9C5-B945F7C9E029}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7FEF607-A729-4EB2-B9C5-B945F7C9E029}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7FEF607-A729-4EB2-B9C5-B945F7C9E029}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

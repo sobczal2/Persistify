@@ -4,8 +4,6 @@ option csharp_namespace = "Persistify.Grpc.Protos";
 
 package types;
 
-import "Protos/shared.proto";
-
 message TypeField {
   string path = 1;
   bool indexed = 2;
@@ -21,14 +19,12 @@ message InitTypeRequest {
 }
 
 message InitTypeResponse {
-  shared.ResponseMetadata metadata = 1;
 }
 
 message ListTypesRequest {}
 
 message ListTypesResponse {
   repeated TypeDefinition typeDefinitions = 1;
-  shared.ResponseMetadata metadata = 2;
 }
 
 message DropTypeRequest {
@@ -36,10 +32,9 @@ message DropTypeRequest {
 }
 
 message DropTypeResponse {
-  shared.ResponseMetadata metadata = 1;
 }
 
-service Types {
+service TypesService {
   rpc InitType(InitTypeRequest) returns (InitTypeResponse) {}
   rpc ListTypes(ListTypesRequest) returns (ListTypesResponse) {}
   rpc DropType(DropTypeRequest) returns (DropTypeResponse) {}
