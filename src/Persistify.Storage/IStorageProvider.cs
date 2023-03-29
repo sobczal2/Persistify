@@ -1,3 +1,5 @@
 namespace Persistify.Storage;
 
-public interface IStorageProvider { }
+public interface IStorageProvider
+{
+}

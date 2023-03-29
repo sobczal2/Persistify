@@ -1,4 +1,3 @@
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Persistify.Grpc.Protos;
@@ -9,7 +8,7 @@ public class PingService : Protos.PingService.PingServiceBase
 {
     public override Task<PingResponse> Ping(PingRequest request, ServerCallContext context)
     {
-        return Task.FromResult(new PingResponse() { Message = "pong" });
+        return Task.FromResult(new PingResponse { Message = "pong" });
     }
 
     public override Task<ValidationErrorPingResponse> ValidationErrorPing(

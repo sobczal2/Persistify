@@ -10,12 +10,25 @@ namespace Persistify.Indexer.Types;
 public class InMemoryTypeStore : ITypeStore, IPersistedService
 {
     private readonly ILogger<InMemoryTypeStore> _logger;
-    public ConcurrentDictionary<string, TypeDefinition> TypeDefinitions { get; set; }
 
     public InMemoryTypeStore(ILogger<InMemoryTypeStore> logger)
     {
         _logger = logger;
         TypeDefinitions = new ConcurrentDictionary<string, TypeDefinition>();
+    }
+
+    public ConcurrentDictionary<string, TypeDefinition> TypeDefinitions { get; set; }
+
+    public Task LoadAsync(IStorageProvider storageProvider)
+    {
+        _logger.LogInformation("Loading types from storage provider");
+        return Task.CompletedTask;
+    }
+
+    public Task SaveAsync(IStorageProvider storageProvider)
+    {
+        _logger.LogInformation("Saving types to storage provider");
+        return Task.CompletedTask;
     }
 
     public Task<bool> InitTypeAsync(TypeDefinition typeDefinition)
@@ -31,17 +44,5 @@ public class InMemoryTypeStore : ITypeStore, IPersistedService
     public Task<bool> DropTypeAsync(string typeName)
     {
         return Task.FromResult(TypeDefinitions.TryRemove(typeName, out _));
-    }
-
-    public Task LoadAsync(IStorageProvider storageProvider)
-    {
-        _logger.LogInformation("Loading types from storage provider");
-        return Task.CompletedTask;
-    }
-
-    public Task SaveAsync(IStorageProvider storageProvider)
-    {
-        _logger.LogInformation("Saving types to storage provider");
-        return Task.CompletedTask;
     }
 }

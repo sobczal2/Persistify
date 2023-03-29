@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>Persistify.DataStructures.Benchmark.Trie.ArrayTrie.ArrayTrieAddBenchmark-20230328-032736</title>
+<title>Persistify.DataStructures.Benchmark.Trie.ArrayTrie.ArrayTrieAddBenchmark-20230329-005458</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -13,21 +13,18 @@
 </head>
 <body>
 <pre><code>
-BenchmarkDotNet=v0.13.5, OS=ubuntu 22.04
-13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
-.NET SDK=7.0.202
-  [Host]        : .NET 7.0.4 (7.0.423.11508), X64 RyuJIT AVX2
-  ArrayTrie add : .NET 7.0.4 (7.0.423.11508), X64 RyuJIT AVX2
+BenchmarkDotNet=v0.13.5, OS=fedora 37
+11th Gen Intel Core i5-1135G7 2.40GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK=7.0.103
+  [Host]     : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
 </code></pre>
-<pre><code>Job=ArrayTrie add  
-</code></pre>
+<pre><code></code></pre>
 
 <table>
-<thead><tr><th>Method</th><th>AddedItemsCount</th><th>  Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Gen2</th><th>Allocated</th>
+<thead><tr><th>Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>Add_Items</td><td>1000</td><td>346.6 &mu;s</td><td>5.84 &mu;s</td><td>5.46 &mu;s</td><td>74.7070</td><td>55.1758</td><td>-</td><td>1.12 MB</td>
-</tr><tr><td>Add_Items</td><td>10000</td><td>6,126.0 &mu;s</td><td>45.81 &mu;s</td><td>42.85 &mu;s</td><td>726.5625</td><td>703.1250</td><td>-</td><td>10.9 MB</td>
-</tr><tr><td>Add_Items</td><td>100000</td><td>216,523.8 &mu;s</td><td>4,204.55 &mu;s</td><td>5,163.57 &mu;s</td><td>8666.6667</td><td>8333.3333</td><td>1666.6667</td><td>105.67 MB</td>
+</thead><tbody><tr><td>Add_Items</td><td>12.83 ns</td><td>0.099 ns</td><td>0.092 ns</td><td>0.0153</td><td>64 B</td>
 </tr></tbody></table>
 </body>
 </html>

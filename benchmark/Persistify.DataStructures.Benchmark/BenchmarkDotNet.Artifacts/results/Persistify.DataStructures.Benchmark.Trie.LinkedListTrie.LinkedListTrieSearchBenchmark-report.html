@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Persistify.DataStructures.Benchmark.Trie.LinkedListTrie.LinkedListTrieSearchBenchmark-20230329-010218</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.13.5, OS=fedora 37
+11th Gen Intel Core i5-1135G7 2.40GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK=7.0.103
+  [Host]     : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>      Method</th><th>IndexesToSearch</th><th>TrieSize</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>Get_Key</td><td>25</td><td>1000</td><td>59.87 &mu;s</td><td>0.184 &mu;s</td><td>0.154 &mu;s</td><td>6.6528</td><td>27.41 KB</td>
+</tr><tr><td>Get_PrefixKey</td><td>25</td><td>1000</td><td>148.14 &mu;s</td><td>0.374 &mu;s</td><td>0.331 &mu;s</td><td>10.2539</td><td>42.77 KB</td>
+</tr><tr><td>Contains_Key</td><td>25</td><td>1000</td><td>60.02 &mu;s</td><td>0.066 &mu;s</td><td>0.055 &mu;s</td><td>6.6528</td><td>27.41 KB</td>
+</tr><tr><td>Contains_PrefixKey</td><td>25</td><td>1000</td><td>150.24 &mu;s</td><td>0.468 &mu;s</td><td>0.438 &mu;s</td><td>10.2539</td><td>42.77 KB</td>
+</tr><tr><td>Get_Key</td><td>25</td><td>10000</td><td>78.75 &mu;s</td><td>1.232 &mu;s</td><td>1.092 &mu;s</td><td>7.2021</td><td>29.89 KB</td>
+</tr><tr><td>Get_PrefixKey</td><td>25</td><td>10000</td><td>554.01 &mu;s</td><td>2.562 &mu;s</td><td>2.397 &mu;s</td><td>31.2500</td><td>129 KB</td>
+</tr><tr><td>Contains_Key</td><td>25</td><td>10000</td><td>82.01 &mu;s</td><td>0.120 &mu;s</td><td>0.106 &mu;s</td><td>7.2021</td><td>29.89 KB</td>
+</tr><tr><td>Contains_PrefixKey</td><td>25</td><td>10000</td><td>563.18 &mu;s</td><td>1.221 &mu;s</td><td>1.142 &mu;s</td><td>31.2500</td><td>129 KB</td>
+</tr></tbody></table>
+</body>
+</html>

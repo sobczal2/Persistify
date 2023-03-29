@@ -6,84 +6,8 @@ using Persistify.DataStructures.Tries.Exceptions;
 
 namespace Persistify.DataStructures.Tries;
 
-public class ArrayTrie<TItem> : ITrie<TItem>
+public class ArrayTrie<TItem> : ITrie<TItem> where TItem : struct, IComparable<TItem>, IConvertible
 {
-    public class ArrayTrieNode : TrieNode<ArrayTrieNode, TItem>
-    {
-        private ArrayTrieNode[] _children;
-
-        public ArrayTrieNode(char c) : base(c)
-        {
-            _children = Array.Empty<ArrayTrieNode>();
-        }
-        
-        public ArrayTrieNode(char c, TItem item) : base(c, item)
-        {
-            _children = Array.Empty<ArrayTrieNode>();
-        }
-
-        public override ArrayTrieNode[] Children => _children;
-
-        public override ArrayTrieNode AddChild(char c)
-        {
-            var child = GetChild(c);
-            if (child != null)
-            {
-                return child;
-            }
-
-            Array.Resize(ref _children, _children.Length + 1);
-            _children[^1] = new ArrayTrieNode(c);
-            return _children[^1];
-        }
-        
-        public override ArrayTrieNode AddChild(char c, TItem item)
-        {
-            var child = GetChild(c);
-            if (child != null)
-            {
-                child.AddItem(item);
-                return child;
-            }
-
-            Array.Resize(ref _children, _children.Length + 1);
-            _children[^1] = new ArrayTrieNode(c, item);
-            return _children[^1];
-        }
-
-        public override ArrayTrieNode? GetChild(char c)
-        {
-            ArrayTrieNode? child = null;
-            // ReSharper disable once ForCanBeConvertedToForeach
-            for (var i = 0; i < _children.Length; i++)
-            {
-                if (_children[i].Char != c) continue;
-                child = _children[i];
-                break;
-            }
-
-            return child;
-        }
-
-        private void AddItem(TItem item)
-        {
-            Array.Resize(ref Items, Items.Length + 1);
-            Items[^1] = item;
-        }
-
-        public override void Add(ReadOnlySpan<char> keys, TItem item)
-        {
-            if (keys.Length == 1)
-            {
-                AddChild(keys[0], item);
-                return;
-            }
-
-            var child = AddChild(keys[0]);
-            child.Add(keys[1..], item);
-        }
-    }
-
     private ArrayTrieNode _root;
 
     public ArrayTrie()
@@ -117,23 +41,28 @@ public class ArrayTrie<TItem> : ITrie<TItem>
 
     public IEnumerable<TItem> GetPrefix(string prefix)
     {
-        var list = new List<TItem>();
         var keys = prefix.AsSpan();
         var node = _root;
-        for(var i = 0; i < keys.Length - 1; i++)
+        foreach (var c in keys)
         {
-            node = node.GetChild(keys[i]);
+            node = node.GetChild(c);
             if (node == null)
                 return Enumerable.Empty<TItem>();
         }
 
-        list.AddRange(node.Items);
-        for (var i = 0; i < node.Children.Length; i++)
-        {
-            list.AddRange(GetPrefix(prefix + node.Children[i].Char));
-        }
-
+        var list = new List<TItem>();
+        GetPrefixRecursive(node, list);
         return list;
+    }
+
+    private void GetPrefixRecursive(ArrayTrieNode node, List<TItem> items)
+    {
+        items.AddRange(node.Items);
+
+        foreach (var child in node.Children)
+        {
+            GetPrefixRecursive(child, items);
+        }
     }
 
     public bool Contains(string key)
@@ -147,7 +76,7 @@ public class ArrayTrie<TItem> : ITrie<TItem>
                 return false;
         }
 
-        return node.IsLeaf;
+        return node.Items.Count > 0;
     }
 
     public bool ContainsPrefix(string prefix)
@@ -164,14 +93,138 @@ public class ArrayTrie<TItem> : ITrie<TItem>
         return true;
     }
 
-
     public bool Remove(string key)
     {
-        throw new NotImplementedException();
+        if (string.IsNullOrEmpty(key))
+            return false;
+
+        return Remove(_root, key.AsSpan());
     }
+
+    /// <summary>
+    /// Method to remove an item from the trie. This method will remove all instances of the item from the trie.
+    /// It is much more efficient to use the Remove(string key) method if you know the key of the item you want to remove.
+    /// </summary>
+    /// <param name="item"></param>
+    /// <returns></returns>
+    public bool Remove(TItem item)
+    {
+        return Remove(_root, item);
+    }
+
+    private bool Remove(ArrayTrieNode node, TItem item)
+    {
+        var removed = false;
+        for (var i = node.Items.Count - 1; i >= 0; i--)
+        {
+            if (!node.Items[i].Equals(item)) continue;
+            node.Items.RemoveAt(i);
+            removed = true;
+        }
+
+        for (int i = node.Children.Length - 1; i >= 0; i--)
+        {
+            if (!Remove(node.Children[i], item)) continue;
+            removed = true;
+
+            if (node.Children[i].Items.Count == 0 && node.Children[i].Children.Length == 0)
+            {
+                RemoveChildNode(node, node.Children[i].Char);
+            }
+        }
+
+        return removed;
+    }
+
+
+    private bool Remove(ArrayTrieNode node, ReadOnlySpan<char> keySpan)
+    {
+        if (keySpan.Length == 0)
+        {
+            if (node.Items.Count <= 0) return false;
+            node.Items.Clear();
+            return true;
+        }
+
+        var child = node.GetChild(keySpan[0]);
+        if (child == null)
+            return false;
+
+        bool isRemoved = Remove(child, keySpan[1..]);
+
+        if (isRemoved && child.Items.Count == 0 && child.Children.Length == 0)
+        {
+            RemoveChildNode(node, child.Char);
+        }
+
+        return isRemoved;
+    }
+
+    private void RemoveChildNode(ArrayTrieNode parentNode, char childChar)
+    {
+        var index = Array.BinarySearch(parentNode.Children, new ArrayTrieNode(childChar), Comparer<ArrayTrieNode>.Create((x, y) => x.Char.CompareTo(y.Char)));
+
+        if (index < 0) return;
+        Array.Copy(parentNode.Children, index + 1, parentNode.Children, index, parentNode.Children.Length - index - 1);
+        Array.Resize(ref parentNode.Children, parentNode.Children.Length - 1);
+    }
+
 
     public void Clear()
     {
         _root = new ArrayTrieNode('\0');
+    }
+
+    private class ArrayTrieNode : TrieNode<ArrayTrieNode, TItem>
+    {
+        internal ArrayTrieNode[] Children;
+        internal readonly List<TItem> Items;
+
+        public ArrayTrieNode(char c) : base(c)
+        {
+            Children = Array.Empty<ArrayTrieNode>();
+            Items = new List<TItem>();
+        }
+
+        public override ArrayTrieNode AddChild(char c)
+        {
+            var child = GetChild(c);
+            if (child != null) return child;
+
+            Array.Resize(ref Children, Children.Length + 1);
+
+            var index = Array.BinarySearch(Children, 0, Children.Length - 1, new ArrayTrieNode(c), Comparer<ArrayTrieNode>.Create((x, y) => x.Char.CompareTo(y.Char)));
+            var insertionIndex = ~index;
+
+            Array.Copy(Children, insertionIndex, Children, insertionIndex + 1, Children.Length - insertionIndex - 1);
+            Children[insertionIndex] = new ArrayTrieNode(c);
+            return Children[insertionIndex];
+        }
+
+
+        public override ArrayTrieNode? GetChild(char c)
+        {
+            var index = Array.BinarySearch(Children, new ArrayTrieNode(c), Comparer<ArrayTrieNode>.Create((x, y) => x.Char.CompareTo(y.Char)));
+
+            return index >= 0 ? Children[index] : null;
+        }
+
+        public override void Add(ReadOnlySpan<char> keys, TItem item)
+        {
+            if (keys.Length == 1)
+            {
+                var child = AddChild(keys[0]);
+                child.AddItem(item);
+                return;
+            }
+
+            var nextChild = AddChild(keys[0]);
+            nextChild.Add(keys[1..], item);
+        }
+
+        private void AddItem(TItem item)
+        {
+            Items.Add(item);
+        }
     }
 }

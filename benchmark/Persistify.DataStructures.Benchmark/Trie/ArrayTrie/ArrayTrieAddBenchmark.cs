@@ -1,40 +1,12 @@
-using System.IO;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Configs;
-using BenchmarkDotNet.Jobs;
+using Persistify.DataStructures.Tries;
+using Persistify.DataStructures.Tries.Abstractions;
 
 namespace Persistify.DataStructures.Benchmark.Trie.ArrayTrie;
 
-[MemoryDiagnoser, SimpleJob(id: "ArrayTrie add")]
-public class ArrayTrieAddBenchmark
+public class ArrayTrieAddBenchmark : TrieAddBenchmarkBase
 {
-    [Params(1_000, 10_000, 100_000)]
-    public static int AddedItemsCount;
-    
-    private const string DataFilePath = "/home/sobczal/dev/dotnet/Persistify/data/1_000_000_words.txt";
-
-    public (string Key, int Item)[] ItemsToAdd;
-
-    [GlobalSetup]
-    public void GlobalSetup()
+    public override ITrie<int> GetTrie()
     {
-        ItemsToAdd = new (string, int)[AddedItemsCount];
-        var lines = File.ReadAllLines(DataFilePath);
-        for (var i = 0; i < AddedItemsCount; i++)
-        {
-            var line = lines[i];
-            var split = line.Split(',');
-            ItemsToAdd[i] = (split[0], int.Parse(split[1]));
-        }
-    }
-
-    [Benchmark]
-    public void Add_Items()
-    {
-        var trie = new Tries.ArrayTrie<int>();
-        for (var i = 0; i < AddedItemsCount; i++)
-        {
-            trie.Add(ItemsToAdd[i].Key, ItemsToAdd[i].Item);
-        }
+        return new ArrayTrie<int>();
     }
 }

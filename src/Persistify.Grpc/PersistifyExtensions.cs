@@ -2,10 +2,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Grpc.Interceptors;
 using Persistify.Grpc.Protos;
-using Persistify.Grpc.Validators;
 using Persistify.Grpc.Validators.Ping;
 using Persistify.Grpc.Validators.Types;
-using Persistify.Indexer;
 using Persistify.Indexer.Types;
 using Persistify.Validators.Common;
 using Serilog;
@@ -19,10 +17,7 @@ public static class PersistifyExtensions
 {
     public static IServiceCollection AddPersistify(this IServiceCollection services)
     {
-        services.AddGrpc(opt =>
-        {
-            opt.Interceptors.Add<ValidationInterceptor>();
-        });
+        services.AddGrpc(opt => { opt.Interceptors.Add<ValidationInterceptor>(); });
 
         services.AddGrpcReflection();
 

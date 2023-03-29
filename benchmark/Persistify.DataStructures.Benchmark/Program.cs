@@ -1,3 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
+using Persistify.DataStructures.Benchmark.Trie;
 
-BenchmarkRunner.Run(typeof(Program).Assembly);
+// BenchmarkRunner.Run<DictionaryTrieIntSearchBenchmark>();
+BenchmarkRunner.Run<ArrayTrieIntSearchBenchmark>();

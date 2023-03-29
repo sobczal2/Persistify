@@ -1,14 +1,17 @@
+using System;
 using System.Collections.Generic;
 
-namespace Persistify.DataStructures.Tries.Abstractions;
-
-public interface ITrie<TItem>
+namespace Persistify.DataStructures.Tries.Abstractions
 {
-    public void Add(string key, TItem item);
-    public IEnumerable<TItem> Get(string key);
-    public IEnumerable<TItem> GetPrefix(string prefix);
-    public bool Contains(string key);
-    public bool ContainsPrefix(string prefix);
-    public bool Remove(string key);
-    public void Clear();
+    public interface ITrie<TItem> where TItem : struct, IComparable<TItem>, IConvertible
+    {
+        void Add(string key, TItem item);
+        IEnumerable<TItem> Get(string key);
+        IEnumerable<TItem> GetPrefix(string prefix);
+        bool Contains(string key);
+        bool ContainsPrefix(string prefix);
+        bool Remove(string key);
+        bool Remove(TItem item);
+        void Clear();
+    }
 }

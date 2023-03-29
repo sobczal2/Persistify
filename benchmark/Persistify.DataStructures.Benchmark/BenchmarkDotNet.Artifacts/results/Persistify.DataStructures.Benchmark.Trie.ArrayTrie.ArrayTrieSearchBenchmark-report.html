@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
 <meta charset='utf-8' />
-<title>Persistify.DataStructures.Benchmark.Trie.ArrayTrie.ArrayTrieSearchBenchmark-20230328-032837</title>
+<title>Persistify.DataStructures.Benchmark.Trie.ArrayTrie.ArrayTrieSearchBenchmark-20230329-012534</title>
 
 <style type="text/css">
 	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
@@ -13,30 +13,25 @@
 </head>
 <body>
 <pre><code>
-BenchmarkDotNet=v0.13.5, OS=ubuntu 22.04
-13th Gen Intel Core i7-13700KF, 1 CPU, 24 logical and 16 physical cores
-.NET SDK=7.0.202
-  [Host]                 : .NET 7.0.4 (7.0.423.11508), X64 RyuJIT AVX2
-  ArrayTrie 100 searches : .NET 7.0.4 (7.0.423.11508), X64 RyuJIT AVX2
+BenchmarkDotNet=v0.13.5, OS=fedora 37
+11th Gen Intel Core i5-1135G7 2.40GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK=7.0.103
+  [Host]     : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
 </code></pre>
-<pre><code>Job=ArrayTrie 100 searches  
-</code></pre>
+<pre><code></code></pre>
 
 <table>
-<thead><tr><th>      Method</th><th>TrieSize</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Gen1</th><th>Allocated</th>
+<thead><tr><th>      Method</th><th>IndexesToSearch</th><th>TrieSize</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Gen0</th><th>Allocated</th>
 </tr>
-</thead><tbody><tr><td>Get_Key</td><td>1000</td><td>4.409 &mu;s</td><td>0.0095 &mu;s</td><td>0.0088 &mu;s</td><td>0.0458</td><td>-</td><td>824 B</td>
-</tr><tr><td>Get_PrefixKey</td><td>1000</td><td>13.369 &mu;s</td><td>0.0264 &mu;s</td><td>0.0234 &mu;s</td><td>1.6022</td><td>0.0153</td><td>25320 B</td>
-</tr><tr><td>Contains_Key</td><td>1000</td><td>4.394 &mu;s</td><td>0.0139 &mu;s</td><td>0.0116 &mu;s</td><td>0.0458</td><td>-</td><td>824 B</td>
-</tr><tr><td>Contains_PrefixKey</td><td>1000</td><td>13.150 &mu;s</td><td>0.0251 &mu;s</td><td>0.0235 &mu;s</td><td>1.6022</td><td>0.0153</td><td>25320 B</td>
-</tr><tr><td>Get_Key</td><td>10000</td><td>4.816 &mu;s</td><td>0.0232 &mu;s</td><td>0.0217 &mu;s</td><td>0.0458</td><td>-</td><td>824 B</td>
-</tr><tr><td>Get_PrefixKey</td><td>10000</td><td>37.504 &mu;s</td><td>0.0533 &mu;s</td><td>0.0473 &mu;s</td><td>4.4556</td><td>0.0610</td><td>70496 B</td>
-</tr><tr><td>Contains_Key</td><td>10000</td><td>4.744 &mu;s</td><td>0.0159 &mu;s</td><td>0.0149 &mu;s</td><td>0.0458</td><td>-</td><td>824 B</td>
-</tr><tr><td>Contains_PrefixKey</td><td>10000</td><td>37.455 &mu;s</td><td>0.0642 &mu;s</td><td>0.0569 &mu;s</td><td>4.4556</td><td>0.0610</td><td>70496 B</td>
-</tr><tr><td>Get_Key</td><td>100000</td><td>5.001 &mu;s</td><td>0.0112 &mu;s</td><td>0.0105 &mu;s</td><td>0.0458</td><td>-</td><td>824 B</td>
-</tr><tr><td>Get_PrefixKey</td><td>100000</td><td>260.462 &mu;s</td><td>0.5660 &mu;s</td><td>0.5294 &mu;s</td><td>33.6914</td><td>0.4883</td><td>532512 B</td>
-</tr><tr><td>Contains_Key</td><td>100000</td><td>5.051 &mu;s</td><td>0.0190 &mu;s</td><td>0.0169 &mu;s</td><td>0.0458</td><td>-</td><td>824 B</td>
-</tr><tr><td>Contains_PrefixKey</td><td>100000</td><td>251.671 &mu;s</td><td>0.8798 &mu;s</td><td>0.7799 &mu;s</td><td>33.6914</td><td>0.4883</td><td>532512 B</td>
+</thead><tbody><tr><td>Get_Key</td><td>25</td><td>1000</td><td>1.663 &mu;s</td><td>0.0307 &mu;s</td><td>0.0288 &mu;s</td><td>0.0534</td><td>224 B</td>
+</tr><tr><td>Get_PrefixKey</td><td>25</td><td>1000</td><td>4.083 &mu;s</td><td>0.0237 &mu;s</td><td>0.0222 &mu;s</td><td>1.5030</td><td>6304 B</td>
+</tr><tr><td>Contains_Key</td><td>25</td><td>1000</td><td>1.611 &mu;s</td><td>0.0088 &mu;s</td><td>0.0082 &mu;s</td><td>0.0534</td><td>224 B</td>
+</tr><tr><td>Contains_PrefixKey</td><td>25</td><td>1000</td><td>3.914 &mu;s</td><td>0.0236 &mu;s</td><td>0.0220 &mu;s</td><td>1.5030</td><td>6304 B</td>
+</tr><tr><td>Get_Key</td><td>25</td><td>10000</td><td>1.701 &mu;s</td><td>0.0306 &mu;s</td><td>0.0529 &mu;s</td><td>0.0534</td><td>224 B</td>
+</tr><tr><td>Get_PrefixKey</td><td>25</td><td>10000</td><td>10.198 &mu;s</td><td>0.1476 &mu;s</td><td>0.1380 &mu;s</td><td>3.9825</td><td>16704 B</td>
+</tr><tr><td>Contains_Key</td><td>25</td><td>10000</td><td>1.807 &mu;s</td><td>0.0359 &mu;s</td><td>0.0795 &mu;s</td><td>0.0534</td><td>224 B</td>
+</tr><tr><td>Contains_PrefixKey</td><td>25</td><td>10000</td><td>11.367 &mu;s</td><td>0.2239 &mu;s</td><td>0.3551 &mu;s</td><td>3.9825</td><td>16704 B</td>
 </tr></tbody></table>
 </body>
 </html>

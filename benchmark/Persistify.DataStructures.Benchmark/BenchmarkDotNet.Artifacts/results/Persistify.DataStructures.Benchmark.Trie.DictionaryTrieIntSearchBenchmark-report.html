@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>Persistify.DataStructures.Benchmark.Trie.DictionaryTrieIntSearchBenchmark-20230329-021721</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.13.5, OS=fedora 37
+11th Gen Intel Core i5-1135G7 2.40GHz, 1 CPU, 8 logical and 4 physical cores
+.NET SDK=7.0.103
+  [Host]     : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
+  DefaultJob : .NET 7.0.3 (7.0.323.11501), X64 RyuJIT AVX2
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>  Method</th><th>TrieSize</th><th>SearchCount</th><th>    Mean</th><th>   Error</th><th>   StdDev</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>Contains</td><td>1000</td><td>100</td><td>24.201 &mu;s</td><td>0.1259 &mu;s</td><td>0.1178 &mu;s</td><td>-</td><td>-</td>
+</tr><tr><td>Contains</td><td>100000</td><td>100</td><td>108.952 &mu;s</td><td>0.3349 &mu;s</td><td>0.2969 &mu;s</td><td>-</td><td>-</td>
+</tr><tr><td>ContainsPrefix</td><td>1000</td><td>100</td><td>6.437 &mu;s</td><td>0.0763 &mu;s</td><td>0.0713 &mu;s</td><td>-</td><td>-</td>
+</tr><tr><td>ContainsPrefix</td><td>100000</td><td>100</td><td>46.373 &mu;s</td><td>0.2665 &mu;s</td><td>0.2225 &mu;s</td><td>-</td><td>-</td>
+</tr><tr><td>Get</td><td>1000</td><td>100</td><td>23.579 &mu;s</td><td>0.2999 &mu;s</td><td>0.2658 &mu;s</td><td>-</td><td>-</td>
+</tr><tr><td>Get</td><td>100000</td><td>100</td><td>104.247 &mu;s</td><td>0.6229 &mu;s</td><td>0.5827 &mu;s</td><td>-</td><td>-</td>
+</tr><tr><td>GetPrefix</td><td>1000</td><td>100</td><td>3,551.542 &mu;s</td><td>60.3979 &mu;s</td><td>53.5411 &mu;s</td><td>35.1563</td><td>159688 B</td>
+</tr><tr><td>GetPrefix</td><td>100000</td><td>100</td><td>727,535.357 &mu;s</td><td>57,473.6464 &mu;s</td><td>168,560.2557 &mu;s</td><td>-</td><td>16068880 B</td>
+</tr></tbody></table>
+</body>
+</html>

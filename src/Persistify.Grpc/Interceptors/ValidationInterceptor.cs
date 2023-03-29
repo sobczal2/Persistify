@@ -25,14 +25,12 @@ public class ValidationInterceptor : Interceptor
             return base.UnaryServerHandler(request, context, continuation);
         var validationResult = validator.Validate(request);
         if (!validationResult.IsValid)
-        {
             throw new RpcException(
                 new Status(
                     StatusCode.InvalidArgument,
                     validationResult.Message ?? "Invalid argument"
                 )
             );
-        }
 
         return base.UnaryServerHandler(request, context, continuation);
     }
