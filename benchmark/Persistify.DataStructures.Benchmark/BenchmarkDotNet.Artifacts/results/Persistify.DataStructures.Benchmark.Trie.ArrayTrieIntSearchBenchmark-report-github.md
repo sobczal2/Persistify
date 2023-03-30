@@ -8,16 +8,26 @@ BenchmarkDotNet=v0.13.5, OS=fedora 37
 
 
 ```
-|         Method | TrieSize | SearchCount |          Mean |         Error |         StdDev |    Gen0 |   Allocated |
-|--------------- |--------- |------------ |--------------:|--------------:|---------------:|--------:|------------:|
-|       **Contains** |     **1000** |         **100** |      **64.46 μs** |      **1.251 μs** |       **1.228 μs** | **36.6211** |   **149.91 KB** |
-|       **Contains** |   **100000** |         **100** |     **125.89 μs** |      **0.402 μs** |       **0.356 μs** | **36.6211** |   **149.87 KB** |
-|                |          |             |               |               |                |         |             |
-| **ContainsPrefix** |     **1000** |         **100** |      **20.89 μs** |      **0.242 μs** |       **0.202 μs** |  **8.2397** |    **33.73 KB** |
-| **ContainsPrefix** |   **100000** |         **100** |      **57.99 μs** |      **0.134 μs** |       **0.118 μs** |  **7.9956** |    **32.73 KB** |
-|                |          |             |               |               |                |         |             |
-|            **Get** |     **1000** |         **100** |      **67.45 μs** |      **1.151 μs** |       **1.020 μs** | **36.6211** |   **149.99 KB** |
-|            **Get** |   **100000** |         **100** |     **133.44 μs** |      **0.317 μs** |       **0.297 μs** | **36.6211** |   **149.82 KB** |
-|                |          |             |               |               |                |         |             |
-|      **GetPrefix** |     **1000** |         **100** |   **1,787.32 μs** |     **34.472 μs** |      **38.316 μs** | **39.0625** |   **165.18 KB** |
-|      **GetPrefix** |   **100000** |         **100** | **484,114.73 μs** | **39,971.094 μs** | **117,855.673 μs** |       **-** | **16765.84 KB** |
+|         Method | TrieSize | SearchCount | Mean | Error |
+|--------------- |--------- |------------ |-----:|------:|
+|       **Contains** |     **1000** |         **100** |   **NA** |    **NA** |
+|       **Contains** |   **100000** |         **100** |   **NA** |    **NA** |
+|                |          |             |      |       |
+| **ContainsPrefix** |     **1000** |         **100** |   **NA** |    **NA** |
+| **ContainsPrefix** |   **100000** |         **100** |   **NA** |    **NA** |
+|                |          |             |      |       |
+|            **Get** |     **1000** |         **100** |   **NA** |    **NA** |
+|            **Get** |   **100000** |         **100** |   **NA** |    **NA** |
+|                |          |             |      |       |
+|      **GetPrefix** |     **1000** |         **100** |   **NA** |    **NA** |
+|      **GetPrefix** |   **100000** |         **100** |   **NA** |    **NA** |
+
+Benchmarks with issues:
+  ArrayTrieIntSearchBenchmark.Contains: DefaultJob [TrieSize=1000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.Contains: DefaultJob [TrieSize=100000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.ContainsPrefix: DefaultJob [TrieSize=1000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.ContainsPrefix: DefaultJob [TrieSize=100000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.Get: DefaultJob [TrieSize=1000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.Get: DefaultJob [TrieSize=100000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.GetPrefix: DefaultJob [TrieSize=1000, SearchCount=100]
+  ArrayTrieIntSearchBenchmark.GetPrefix: DefaultJob [TrieSize=100000, SearchCount=100]
