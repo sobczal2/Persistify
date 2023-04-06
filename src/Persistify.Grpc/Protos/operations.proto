@@ -5,7 +5,7 @@ option csharp_namespace = "Persistify.Grpc.Protos";
 package operations;
 
 
-message Document {
+message DocumentProto {
   int64 id = 1;
   string type = 2;
   string data = 3;
@@ -29,7 +29,7 @@ message SearchRequest {
 }
 
 message SearchResponse {
-  repeated Document documents = 1;
+  repeated DocumentProto documents = 1;
 }
 
 message DeleteRequest {

@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+
 namespace Persistify.Indexer.Types;
 
 public class TypeDefinition
@@ -10,4 +12,9 @@ public class TypeDefinition
 
     public string Name { get; set; }
     public TypeField[] TypeFields { get; set; }
+    
+    public string Serialize()
+    {
+        return JsonConvert.SerializeObject(this);
+    }
 }

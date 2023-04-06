@@ -2,12 +2,10 @@ namespace Persistify.Indexer.Types;
 
 public class TypeField
 {
-    public TypeField(string path, bool indexed)
+    public TypeField(string path)
     {
         Path = path;
-        Indexed = indexed;
     }
 
     public string Path { get; set; }
-    public bool Indexed { get; set; }
 }

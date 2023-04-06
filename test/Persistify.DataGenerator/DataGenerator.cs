@@ -16,9 +16,9 @@ public class DataGenerator
 
         var faker = new Faker();
 
-        for (var i = 0; i < 1_000_000; i++)
+        for (var i = 0; i < 1_000_0000; i++)
             writer.WriteLine(
-                new string(faker.Random.Chars('A', 'z', faker.Random.Int(8, 24))));
+                new string(faker.Random.Chars('a', 'z', faker.Random.Int(8, 24))));
 
         writer.Close();
         fileStream.Close();

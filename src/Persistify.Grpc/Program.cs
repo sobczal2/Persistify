@@ -13,7 +13,7 @@ try
 
     builder.Host.UseSerilog();
 
-    builder.Services.AddPersistify();
+    builder.Services.AddPersistify(builder.Configuration);
 
     var app = builder.Build();
 

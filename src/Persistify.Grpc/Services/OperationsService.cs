@@ -1,19 +1,39 @@
 using System.Threading.Tasks;
 using Grpc.Core;
+using Persistify.Grpc.Mappings;
 using Persistify.Grpc.Protos;
+using Persistify.Indexer.Core;
 
 namespace Persistify.Grpc.Services;
 
 public class OperationsService : Protos.OperationsService.OperationsServiceBase
 {
-    public override Task<IndexResponse> Index(IndexRequest request, ServerCallContext context)
+    private readonly IPersistifyManager _persistifyManager;
+
+    public OperationsService(IPersistifyManager persistifyManager)
     {
-        return base.Index(request, context);
+        _persistifyManager = persistifyManager;
+    }
+    public override async Task<IndexResponse> Index(IndexRequest request, ServerCallContext context)
+    {
+        var id = await _persistifyManager.IndexAsync(request.Type, request.Data);
+        return new IndexResponse
+        {
+            Id = id
+        };
     }
 
-    public override Task<SearchResponse> Search(SearchRequest request, ServerCallContext context)
+    public override async Task<SearchResponse> Search(SearchRequest request, ServerCallContext context)
     {
-        return base.Search(request, context);
+        var documents = await _persistifyManager.SearchAsync(request.Type, request.Query, request.Limit, request.Offset);
+        
+        return new SearchResponse
+        {
+            Documents =
+            {
+                documents.MapToProto()
+            }
+        };
     }
 
     public override Task<DeleteResponse> Delete(DeleteRequest request, ServerCallContext context)

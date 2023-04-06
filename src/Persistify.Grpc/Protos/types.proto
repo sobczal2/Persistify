@@ -4,18 +4,17 @@ option csharp_namespace = "Persistify.Grpc.Protos";
 
 package types;
 
-message TypeField {
+message TypeFieldProto {
   string path = 1;
-  bool indexed = 2;
 }
 
-message TypeDefinition {
+message TypeDefinitionProto {
   string name = 1;
-  repeated TypeField typeFields = 2;
+  repeated TypeFieldProto typeFields = 2;
 }
 
 message InitTypeRequest {
-  TypeDefinition typeDefinition = 1;
+  TypeDefinitionProto typeDefinition = 1;
 }
 
 message InitTypeResponse {
@@ -24,7 +23,7 @@ message InitTypeResponse {
 message ListTypesRequest {}
 
 message ListTypesResponse {
-  repeated TypeDefinition typeDefinitions = 1;
+  repeated TypeDefinitionProto typeDefinitions = 1;
 }
 
 message DropTypeRequest {

@@ -1,7 +1,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Persistify.Grpc.Mappings;
 using Persistify.Grpc.Protos;
+using Persistify.Indexer.Core;
 using Persistify.Indexer.Types;
 using TypeDefinition = Persistify.Indexer.Types.TypeDefinition;
 using TypeField = Persistify.Indexer.Types.TypeField;
@@ -10,11 +12,11 @@ namespace Persistify.Grpc.Services;
 
 public class TypesService : Protos.TypesService.TypesServiceBase
 {
-    private readonly ITypeStore _typeStore;
+    private readonly IPersistifyManager _persistifyManager;
 
-    public TypesService(ITypeStore typeStore)
+    public TypesService(IPersistifyManager persistifyManager)
     {
-        _typeStore = typeStore;
+        _persistifyManager = persistifyManager;
     }
 
     public override async Task<InitTypeResponse> InitType(
@@ -24,11 +26,13 @@ public class TypesService : Protos.TypesService.TypesServiceBase
     {
         var typeDefinition = new TypeDefinition(
             request.TypeDefinition.Name,
-            request.TypeDefinition.TypeFields
-                .Select(x => new TypeField(x.Path, x.Indexed))
-                .ToArray()
+            request.TypeDefinition.TypeFields.MapToNormal()
         );
-        if (await _typeStore.InitTypeAsync(typeDefinition)) return new InitTypeResponse();
+        if (await _persistifyManager.InitTypeAsync(typeDefinition))
+        {
+            return new InitTypeResponse();
+        }
+
         context.Status = new Status(StatusCode.AlreadyExists, "Type already exists");
         return new InitTypeResponse();
     }
@@ -38,24 +42,13 @@ public class TypesService : Protos.TypesService.TypesServiceBase
         ServerCallContext context
     )
     {
-        var types = await _typeStore.ListTypesAsync();
+        var types = await _persistifyManager.ListTypesAsync();
+
         return new ListTypesResponse
         {
             TypeDefinitions =
             {
-                types.Select(
-                    x =>
-                        new Protos.TypeDefinition
-                        {
-                            Name = x.Name,
-                            TypeFields =
-                            {
-                                x.TypeFields.Select(
-                                    y => new Protos.TypeField { Path = y.Path, Indexed = y.Indexed }
-                                )
-                            }
-                        }
-                )
+                types.MapToProto()
             }
         };
     }
@@ -65,7 +58,7 @@ public class TypesService : Protos.TypesService.TypesServiceBase
         ServerCallContext context
     )
     {
-        if (await _typeStore.DropTypeAsync(request.Name)) return new DropTypeResponse();
+        if (await _persistifyManager.DropTypeAsync(request.Name)) return new DropTypeResponse();
         context.Status = new Status(StatusCode.NotFound, "Type not found");
         return new DropTypeResponse();
     }
