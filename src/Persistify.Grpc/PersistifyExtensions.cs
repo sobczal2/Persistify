@@ -1,23 +1,13 @@
-using System;
+using System.Linq;
+using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Persistify.Common.Options;
-using Persistify.DataStructures.Tries;
-using Persistify.Grpc.Interceptors;
-using Persistify.Grpc.Protos;
-using Persistify.Grpc.Validators.Ping;
-using Persistify.Grpc.Validators.Types;
-using Persistify.Indexer.Core;
-using Persistify.Indexer.Index;
-using Persistify.Indexer.Tokens;
-using Persistify.Indexer.Types;
-using Persistify.Storage;
-using Persistify.Validators.Common;
+using Persistify.ExternalDtos.Validators;
+using Persistify.Grpc.ProtoMappers;
+using Persistify.Grpc.Services;
+using Persistify.PipelineBehaviours;
 using Serilog;
-using OperationsService = Persistify.Grpc.Services.OperationsService;
-using PingService = Persistify.Grpc.Services.PingService;
-using TypesService = Persistify.Grpc.Services.TypesService;
 
 namespace Persistify.Grpc;
 
@@ -25,42 +15,12 @@ public static class PersistifyExtensions
 {
     public static IServiceCollection AddPersistify(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddGrpc(opt => { opt.Interceptors.Add<ValidationInterceptor>(); });
-
+        services.AddGrpc();
         services.AddGrpcReflection();
 
-        services.AddSingleton<ITypeStore, StorageProviderTypeStore>();
-        services.AddScoped<IPersistifyManager, DefaultPersistifyManager>();
-        services.AddSingleton<IIndexStore>(new MemoryIndexStore(() => new ByteTranslationFixedSizeTrie<long>(c => (byte) (c - 'a'), 26)));
-        services.AddTransient<ITokenizer, JsonLowercaseTokenizer>();
-        
-        services.AddTypesAccordingToConfiguration(configuration);
-
-        services.AddSingleton<IValidatorFactory, MicrosoftDIValidatorFactory>();
-        services.AddSingleton<ValidationInterceptor>();
-        services.AddPersistifyValidators();
-
-        return services;
-    }
-    
-    private static IServiceCollection AddTypesAccordingToConfiguration(this IServiceCollection services, IConfiguration configuration)
-    {
-        var persistifyOptions = new PersistifyOptions();
-        configuration.Bind(PersistifyOptions.SectionName, persistifyOptions);
-
-        switch (persistifyOptions.StorageProvider)
-        {
-            case StorageProviderEnum.Memory:
-                services.AddSingleton<IStorageProvider, MemoryStorageProvider>();
-                break;
-            case StorageProviderEnum.File:
-                if(string.IsNullOrEmpty(persistifyOptions.FileStorageProviderRoot))
-                    throw new Exception("File storage provider root is not set");
-                services.AddSingleton<IStorageProvider>(new FileStorageProvider(persistifyOptions.FileStorageProviderRoot));;
-                break;
-            default:
-                throw new Exception("Invalid storage provider");
-        }
+        services.AddMediatorServices();
+        services.AddProtoMappers();
+        services.AddExternalDtoValidators();
 
         return services;
     }
@@ -71,24 +31,53 @@ public static class PersistifyExtensions
 
         app.MapGrpcReflectionService();
 
-        app.MapGrpcService<OperationsService>();
-        app.MapGrpcService<TypesService>();
-        app.MapGrpcService<PingService>();
+        app.MapGrpcService<TypeService>();
+        app.MapGrpcService<ObjectService>();
 
         app.MapGet("/", () => "Use gRPC client to call the service");
 
         return app;
     }
 
-    public static IServiceCollection AddPersistifyValidators(this IServiceCollection services)
+    private static IServiceCollection AddMediatorServices(this IServiceCollection services)
     {
-        services.AddSingleton<IValidator<PingRequest>, PingRequestValidator>();
-        services.AddSingleton<
-            IValidator<ValidationErrorPingRequest>,
-            ValidationErrorPingRequestValidator
-        >();
-        services.AddSingleton<IValidator<InitTypeRequest>, InitTypeRequestValidator>();
-        services.AddSingleton<IValidator<DropTypeRequest>, DropTypeRequestValidator>();
+        services.AddMediator();
+#if DEBUG
+        services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(TimeLoggingBehaviour<,>));
+#endif
+
+        return services;
+    }
+
+    private static IServiceCollection AddProtoMappers(this IServiceCollection services)
+    {
+        var mapperInterfaceType = typeof(IProtoMapper<,>);
+        var mapperImplTypes = typeof(IProtoMapper<,>).Assembly.GetExportedTypes()
+            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition)
+            .Where(t => t.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == mapperInterfaceType));
+
+        foreach (var mapperImplType in mapperImplTypes)
+            services.AddSingleton(
+                mapperImplType.GetInterfaces()
+                    .Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == mapperInterfaceType),
+                mapperImplType);
+
+        return services;
+    }
+
+    private static IServiceCollection AddExternalDtoValidators(this IServiceCollection services)
+    {
+        var validatorInterfaceType = typeof(IValidator<>);
+        var validatorImplTypes = typeof(IValidator<>).Assembly.GetExportedTypes()
+            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition)
+            .Where(t => t.GetInterfaces()
+                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == validatorInterfaceType));
+
+        foreach (var validatorImplType in validatorImplTypes)
+            services.AddSingleton(
+                validatorImplType.GetInterfaces().Single(i =>
+                    i.IsGenericType && i.GetGenericTypeDefinition() == validatorInterfaceType), validatorImplType);
 
         return services;
     }

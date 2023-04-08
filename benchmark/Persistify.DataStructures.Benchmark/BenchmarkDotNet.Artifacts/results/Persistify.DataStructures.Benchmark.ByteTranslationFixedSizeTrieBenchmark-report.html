@@ -1,15 +1,32 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-<meta charset='utf-8' />
-<title>Persistify.DataStructures.Benchmark.ByteTranslationFixedSizeTrieBenchmark-20230330-032942</title>
+    <meta charset='utf-8'/>
+    <title>Persistify.DataStructures.Benchmark.ByteTranslationFixedSizeTrieBenchmark-20230330-032942</title>
 
-<style type="text/css">
-	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
-	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
-	tr { background-color: #fff; border-top: 1px solid #ccc; }
-	tr:nth-child(even) { background: #f8f8f8; }
-</style>
+    <style type="text/css">
+        table {
+            border-collapse: collapse;
+            display: block;
+            width: 100%;
+            overflow: auto;
+        }
+
+        td, th {
+            padding: 6px 13px;
+            border: 1px solid #ddd;
+            text-align: right;
+        }
+
+        tr {
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+    </style>
 </head>
 <body>
 <pre><code>
@@ -22,14 +39,66 @@ BenchmarkDotNet=v0.13.5, OS=fedora 37
 <pre><code></code></pre>
 
 <table>
-<thead><tr><th>Method</th><th>TrieSize</th><th>SearchCount</th><th>Mean</th><th>Error</th><th>StdDev</th>
-</tr>
-</thead><tbody><tr><td>Contains</td><td>1000</td><td>100</td><td>31.32 &mu;s</td><td>0.388 &mu;s</td><td>0.324 &mu;s</td>
-</tr><tr><td>Contains</td><td>100000</td><td>100</td><td>112.77 &mu;s</td><td>0.188 &mu;s</td><td>0.176 &mu;s</td>
-</tr><tr><td>Get</td><td>1000</td><td>100</td><td>40.76 &mu;s</td><td>0.330 &mu;s</td><td>0.309 &mu;s</td>
-</tr><tr><td>Get</td><td>100000</td><td>100</td><td>143.43 &mu;s</td><td>0.360 &mu;s</td><td>0.319 &mu;s</td>
-</tr><tr><td>Search</td><td>1000</td><td>100</td><td>46.61 &mu;s</td><td>0.681 &mu;s</td><td>0.569 &mu;s</td>
-</tr><tr><td>Search</td><td>100000</td><td>100</td><td>122.06 &mu;s</td><td>0.647 &mu;s</td><td>0.605 &mu;s</td>
-</tr></tbody></table>
+    <thead>
+    <tr>
+        <th>Method</th>
+        <th>TrieSize</th>
+        <th>SearchCount</th>
+        <th>Mean</th>
+        <th>Error</th>
+        <th>StdDev</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Contains</td>
+        <td>1000</td>
+        <td>100</td>
+        <td>31.32 &mu;s</td>
+        <td>0.388 &mu;s</td>
+        <td>0.324 &mu;s</td>
+    </tr>
+    <tr>
+        <td>Contains</td>
+        <td>100000</td>
+        <td>100</td>
+        <td>112.77 &mu;s</td>
+        <td>0.188 &mu;s</td>
+        <td>0.176 &mu;s</td>
+    </tr>
+    <tr>
+        <td>Get</td>
+        <td>1000</td>
+        <td>100</td>
+        <td>40.76 &mu;s</td>
+        <td>0.330 &mu;s</td>
+        <td>0.309 &mu;s</td>
+    </tr>
+    <tr>
+        <td>Get</td>
+        <td>100000</td>
+        <td>100</td>
+        <td>143.43 &mu;s</td>
+        <td>0.360 &mu;s</td>
+        <td>0.319 &mu;s</td>
+    </tr>
+    <tr>
+        <td>Search</td>
+        <td>1000</td>
+        <td>100</td>
+        <td>46.61 &mu;s</td>
+        <td>0.681 &mu;s</td>
+        <td>0.569 &mu;s</td>
+    </tr>
+    <tr>
+        <td>Search</td>
+        <td>100000</td>
+        <td>100</td>
+        <td>122.06 &mu;s</td>
+        <td>0.647 &mu;s</td>
+        <td>0.605 &mu;s</td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

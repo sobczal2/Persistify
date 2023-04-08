@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Persistify.DataStructures.Tries.ByteTranslationFixedSizeTrie;
 
-namespace Persistify.DataStructures.Tries;
+namespace Persistify.DataStructures.Tries.ByteTranslationFixedSizeTrie;
 
 public delegate byte CharByteTranslation(char c);
 
@@ -11,22 +10,21 @@ public delegate Span<byte> StringByteTranslation(string s);
 
 public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
 {
-    private readonly StringByteTranslation _stringByteTranslation;
     private readonly ByteTranslationFixedSizeTrieNode<TItem> _root;
-    private long _uniqueItemsCount;
+    private readonly StringByteTranslation _stringByteTranslation;
 
     public ByteTranslationFixedSizeTrie(StringByteTranslation stringByteTranslation, byte size)
     {
         _stringByteTranslation = stringByteTranslation;
         _root = new ByteTranslationFixedSizeTrieNode<TItem>(size);
-        _uniqueItemsCount = 0;
+        UniqueItemsCount = 0;
     }
 
     public ByteTranslationFixedSizeTrie(CharByteTranslation charByteTranslation, byte size)
     {
         _stringByteTranslation = s => s.ToCharArray().Select(x => charByteTranslation(x)).ToArray();
         _root = new ByteTranslationFixedSizeTrieNode<TItem>(size);
-        _uniqueItemsCount = 0;
+        UniqueItemsCount = 0;
     }
 
     public void Add(string key, TItem item)
@@ -37,7 +35,7 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
             node = node.GetOrAddChild(bytes[i]);
 
         node.AddItem(item);
-        _uniqueItemsCount++;
+        UniqueItemsCount++;
     }
 
     public void AddRange(IEnumerable<KeyValuePair<string, TItem>> items)
@@ -57,7 +55,7 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
             if (node == null)
                 yield break;
         }
-        
+
         foreach (var item in node.Value.Items)
             yield return item;
     }
@@ -72,15 +70,13 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
             if (node == null)
                 yield break;
         }
-        
+
         foreach (var item in node.Value.Items)
             yield return item;
 
         foreach (var child in node.Value.GetActiveChildren())
-        {
-            foreach (var item in child.Items)
-                yield return item;
-        }
+        foreach (var item in child.Items)
+            yield return item;
     }
 
     public bool Contains(string key)
@@ -93,7 +89,7 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
             if (node == null)
                 return false;
         }
-        
+
         return node.Value.Items.Count > 0;
     }
 
@@ -107,5 +103,5 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
         throw new NotImplementedException();
     }
 
-    public long UniqueItemsCount => _uniqueItemsCount;
+    public long UniqueItemsCount { get; private set; }
 }

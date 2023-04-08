@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
 
 namespace Persistify.DataStructures.Tries;
 
 public interface ITrie<TItem>
 {
+    long UniqueItemsCount { get; }
     void Add(string key, TItem item);
     void AddRange(IEnumerable<KeyValuePair<string, TItem>> items);
     IEnumerable<TItem> Get(string key);
@@ -12,5 +12,4 @@ public interface ITrie<TItem>
     bool Contains(string key);
     bool Remove(TItem item);
     TrieStats GetStats();
-    long UniqueItemsCount { get; }
 }

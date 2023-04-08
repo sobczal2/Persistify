@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.1"/>
+        <PackageReference Include="OneOf" Version="3.0.243"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Persistify.Diagnostics\Persistify.Diagnostics.csproj"/>
+        <ProjectReference Include="..\Persistify.ExternalDtos\Persistify.ExternalDtos.csproj"/>
+    </ItemGroup>
+
+</Project>

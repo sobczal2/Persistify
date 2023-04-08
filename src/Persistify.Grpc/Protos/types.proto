@@ -1,40 +1,38 @@
 syntax = "proto3";
 
-option csharp_namespace = "Persistify.Grpc.Protos";
+import "Protos/shared.proto";
 
-package types;
-
-message TypeFieldProto {
-  string path = 1;
+// Create
+message CreateTypeRequestProto {
+  TypeDefinitionProto TypeDefinition = 1;
 }
 
-message TypeDefinitionProto {
-  string name = 1;
-  repeated TypeFieldProto typeFields = 2;
+message CreateTypeSuccessResponseProto {}
+
+message CreateTypeResponseProto {
+  oneof Response {
+    CreateTypeSuccessResponseProto Success = 1;
+    ValidationErrorResponseProto ValidationError = 2;
+    InternalErrorResponseProto InternalError = 3;
+  }
 }
 
-message InitTypeRequest {
-  TypeDefinitionProto typeDefinition = 1;
+// List
+message ListTypesRequestProto {
+  PaginationRequestProto PaginationRequest = 1;
 }
 
-message InitTypeResponse {
+message ListTypesSuccessResponseProto {
+  repeated TypeDefinitionProto TypeDefinitions = 1;
+  PaginationResponseProto PaginationResponse = 2;
 }
 
-message ListTypesRequest {}
-
-message ListTypesResponse {
-  repeated TypeDefinitionProto typeDefinitions = 1;
+message ListTypesResponseProto {
+  oneof Response {
+    ListTypesSuccessResponseProto Success = 1;
+    ValidationErrorResponseProto ValidationError = 2;
+    InternalErrorResponseProto InternalError = 3;
+  }
 }
 
-message DropTypeRequest {
-  string name = 1;
-}
-
-message DropTypeResponse {
-}
-
-service TypesService {
-  rpc InitType(InitTypeRequest) returns (InitTypeResponse) {}
-  rpc ListTypes(ListTypesRequest) returns (ListTypesResponse) {}
-  rpc DropType(DropTypeRequest) returns (DropTypeResponse) {}
-}
+// Delete

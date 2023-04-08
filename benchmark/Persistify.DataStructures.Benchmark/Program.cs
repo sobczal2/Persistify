@@ -1,6 +1,4 @@
-using System;
 using BenchmarkDotNet.Running;
-using Persistify.DataStructures.Tries;
 
 namespace Persistify.DataStructures.Benchmark;
 

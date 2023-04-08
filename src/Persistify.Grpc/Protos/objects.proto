@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+import "Protos/shared.proto";
+
+// Index
+message IndexObjectRequestProto {
+  string TypeName = 1;
+  string Data = 2;
+}
+
+message IndexObjectSuccessResponseProto {
+  int64 Id = 1;
+}
+
+message IndexObjectResponseProto {
+  oneof Response {
+    IndexObjectSuccessResponseProto Success = 1;
+    ValidationErrorResponseProto ValidationError = 2;
+    InternalErrorResponseProto InternalError = 3;
+  }
+}
+
+
+// Search
+message SearchObjectsRequestProto {
+  string TypeName = 1;
+  string Query = 2;
+  PaginationRequestProto PaginationRequest = 3;
+  repeated string FieldPaths = 4;
+}
+
+message SearchObjectsSuccessResponseProto {
+  repeated string Items = 1;
+  PaginationResponseProto PaginationResponse = 2;
+}
+
+message SearchObjectsResponseProto {
+  oneof Response {
+    SearchObjectsSuccessResponseProto Success = 1;
+    ValidationErrorResponseProto ValidationError = 2;
+    InternalErrorResponseProto InternalError = 3;
+  }
+}
+
+// Get
+
+// Delete

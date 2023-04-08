@@ -7,27 +7,36 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.52.0" />
-        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0" />
-        <PackageReference Include="Grpc.Auth" Version="2.52.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.52.0"/>
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0"/>
+        <PackageReference Include="Grpc.Auth" Version="2.52.0"/>
         <PackageReference Include="Grpc.Tools" Version="2.52.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.1"/>
+        <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <Protobuf Include="Protos/operations.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos/types.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos/ping.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos/objects.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos/services.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos/shared.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos/types.proto" GrpcServices="Server"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Services\Persistify.Services.csproj" />
-        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj" />
+        <ProjectReference Include="..\Persistify.ExternalDtos.Validators\Persistify.ExternalDtos.Validators.csproj"/>
+        <ProjectReference Include="..\Persistify.ExternalDtos\Persistify.ExternalDtos.csproj"/>
+        <ProjectReference Include="..\Persistify.PipelineBehaviours\Persistify.PipelineBehaviours.csproj"/>
+        <ProjectReference Include="..\Persistify.RequestHandlers\Persistify.RequestHandlers.csproj"/>
+        <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj"/>
     </ItemGroup>
 
 </Project>
