@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos";
+
+import "objects.proto";
+import "types.proto";
+
+service ObjectsService {
+  rpc Index (IndexObjectRequestProto) returns (IndexObjectResponseProto);
+  rpc Search (SearchObjectsRequestProto) returns (SearchObjectsResponseProto);
+//  rpc Get (GetRequestProto) returns (GetResponseProto);
+//  rpc Delete (DeleteRequestProto) returns (DeleteResponseProto);
+}
+
+service TypesService {
+  rpc Create (CreateTypeRequestProto) returns (CreateTypeResponseProto);
+  rpc List (ListTypesRequestProto) returns (ListTypesResponseProto);
+//  rpc Delete (DeleteTypeRequestProto) returns (DeleteTypeResponseProto);
+}

@@ -21,18 +21,19 @@ public class TimeLoggingBehaviour<TMessage, TResponse> : IPipelineBehavior<TMess
         MessageHandlerDelegate<TMessage, TResponse> next)
     {
         var stopwatch = Stopwatch.StartNew();
-
-        var response = await next(message, cancellationToken);
-
+        
+        var result = await next(message, cancellationToken);
+        
         stopwatch.Stop();
+
 
         var type = message.GetType();
         _logger.LogInformation(
-            "Step {TMessage}({StepType}) handled in {ElapsedMicroseconds}us",
+            "Step {TMessage}({StepType}) handled in {ElapsedMicroseconds}μs.",
             type.Name,
             type.GetPipelineStepType(),
             stopwatch.Elapsed.Microseconds);
 
-        return response;
+        return result;
     }
 }

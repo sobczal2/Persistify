@@ -1,3 +1,4 @@
+using System;
 using Persistify.Diagnostics.Enums;
 
 namespace Persistify.Diagnostics.Attributes;

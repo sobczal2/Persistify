@@ -4,5 +4,8 @@ public enum PipelineStepType
 {
     Unknown,
     Core,
-    Validation
+    Mapping,
+    StaticValidation,
+    StoreManipulation,
+    Remapping
 }

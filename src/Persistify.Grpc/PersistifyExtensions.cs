@@ -3,10 +3,14 @@ using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Persistify.ExternalDtos.Validators;
-using Persistify.Grpc.ProtoMappers;
+using Persistify.Dtos.Validators;
 using Persistify.Grpc.Services;
+using Persistify.HostedServices;
 using Persistify.PipelineBehaviours;
+using Persistify.ProtoMappers;
+using Persistify.Storage;
+using Persistify.Stores.Common;
+using Persistify.Stores.Types;
 using Serilog;
 
 namespace Persistify.Grpc;
@@ -20,7 +24,9 @@ public static class PersistifyExtensions
 
         services.AddMediatorServices();
         services.AddProtoMappers();
-        services.AddExternalDtoValidators();
+        services.AddDtoValidators();
+        services.AddStores();
+        services.AddStorage();
 
         return services;
     }
@@ -66,7 +72,7 @@ public static class PersistifyExtensions
         return services;
     }
 
-    private static IServiceCollection AddExternalDtoValidators(this IServiceCollection services)
+    private static IServiceCollection AddDtoValidators(this IServiceCollection services)
     {
         var validatorInterfaceType = typeof(IValidator<>);
         var validatorImplTypes = typeof(IValidator<>).Assembly.GetExportedTypes()
@@ -78,6 +84,24 @@ public static class PersistifyExtensions
             services.AddSingleton(
                 validatorImplType.GetInterfaces().Single(i =>
                     i.IsGenericType && i.GetGenericTypeDefinition() == validatorInterfaceType), validatorImplType);
+
+        return services;
+    }
+
+    private static IServiceCollection AddStores(this IServiceCollection services)
+    {
+        var typeStore = new HashSetTypeStore();
+        services.AddSingleton<ITypeStore>(typeStore);
+        services.AddSingleton<IPersistedStore>(typeStore);
+
+        services.AddHostedService<PersistedStoreHostedService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddStorage(this IServiceCollection services)
+    {
+        services.AddTransient<IStorage>(_ => new CompressingFileSystemStorage("/home/sobczal/temp"));
 
         return services;
     }

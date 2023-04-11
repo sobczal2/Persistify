@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using Persistify.Diagnostics.Attributes;
 using Persistify.Diagnostics.Enums;

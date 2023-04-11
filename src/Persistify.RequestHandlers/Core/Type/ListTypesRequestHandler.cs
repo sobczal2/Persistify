@@ -1,51 +1,70 @@
-using System.Linq;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Mediator;
-using OneOf;
-using Persistify.ExternalDtos.Request.Type;
-using Persistify.ExternalDtos.Response.Shared;
-using Persistify.ExternalDtos.Response.Type;
+using Persistify.Dtos.Common.Pagination;
+using Persistify.Dtos.Common.Types;
+using Persistify.Dtos.Request.Type;
+using Persistify.Dtos.Response.Shared;
+using Persistify.ProtoMappers;
+using Persistify.Protos;
 using Persistify.RequestHandlers.Common;
-using Persistify.Requests.Common;
 using Persistify.Requests.Core.Type;
 using Persistify.Requests.StaticValidation.Type;
+using Persistify.Requests.StoreManipulation.Types;
 
 namespace Persistify.RequestHandlers.Core.Type;
 
-public class ListTypesRequestHandler : CoreRequestHandler<ListTypesRequest, ListTypesSuccessResponseDto>
+public class ListTypesRequestHandler : CoreRequestHandler<ListTypesRequest, ListTypesResponseProto,
+    ListTypesRequestProto, ListTypesRequestDto>
 {
-    private readonly IMediator _mediator;
+    private readonly IProtoMapper<TypeDefinitionProto, TypeDefinitionDto> _typeDefinitionProtoMapper;
+    private readonly IProtoMapper<PaginationResponseProto, PaginationResponseDto> _paginationResponseProtoMapper;
 
-    public ListTypesRequestHandler(IMediator mediator)
+    public ListTypesRequestHandler(
+        IMediator mediator,
+        IProtoMapper<ValidationErrorResponseProto, ValidationErrorResponseDto> validationErrorResponseProtoMapper,
+        IProtoMapper<ListTypesRequestProto, ListTypesRequestDto> requestProtoMapper,
+        IProtoMapper<TypeDefinitionProto, TypeDefinitionDto> typeDefinitionProtoMapper,
+        IProtoMapper<PaginationResponseProto, PaginationResponseDto> paginationResponseProtoMapper
+        ) : base(mediator, validationErrorResponseProtoMapper, requestProtoMapper)
     {
-        _mediator = mediator;
+        _typeDefinitionProtoMapper = typeDefinitionProtoMapper;
+        _paginationResponseProtoMapper = paginationResponseProtoMapper;
     }
 
-    public override async
-        ValueTask<OneOf<ListTypesSuccessResponseDto, ValidationErrorResponseDto, InternalErrorResponseDto>> Handle(
-            ListTypesRequest request, CancellationToken cancellationToken)
+    public override async ValueTask<ListTypesResponseProto> Handle(ListTypesRequest request,
+        CancellationToken cancellationToken)
     {
-        var validationErrors =
-            (await _mediator.Send(new StaticValidateListTypesRequest(request.Request), cancellationToken))
-            .ToArray();
+        var requestDto = MapToDto(request.Proto);
 
-        if (validationErrors.Any())
-            return new ValidationErrorResponseDto
+        var validationResponse =
+            await Mediator.Send(new ListTypesStaticValidationRequest(requestDto), cancellationToken);
+        if (validationResponse.IsT1)
+            return new ListTypesResponseProto
             {
-                Errors = validationErrors.ToArray()
+                ValidationError = ValidationErrorResponseProtoMapper.MapToProto(validationResponse.AsT1)
             };
 
-        return new ValidationErrorResponseDto
-        {
-            Errors = new[]
+        var response = await Mediator.Send(new GetPagedTypesFromStoreRequest(requestDto.PaginationRequest),
+            cancellationToken);
+        
+        return response.Match(
+            success => new ListTypesResponseProto
             {
-                new ValidationErrorDto
+                Success = new ListTypesSuccessResponseProto()
                 {
-                    Field = "Hello",
-                    Message = "World"
+                    PaginationResponse = _paginationResponseProtoMapper.MapToProto(success.Data.PaginationResponse),
+                    TypeDefinitions = { _typeDefinitionProtoMapper.MapToProtoRF(success.Data.Types) }
+                }
+            },
+            error => new ListTypesResponseProto
+            {
+                InternalError = new InternalErrorResponseProto
+                {
+                    Message = error.Message
                 }
             }
-        };
+        );
     }
 }

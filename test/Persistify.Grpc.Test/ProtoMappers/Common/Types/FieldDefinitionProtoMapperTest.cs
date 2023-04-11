@@ -1,7 +1,8 @@
 using System;
+using Persistify.Dtos.Common.Types;
 using Persistify.Extensions;
-using Persistify.ExternalDtos.Common.Types;
-using Persistify.Grpc.ProtoMappers.Common.Types;
+using Persistify.ProtoMappers.Common.Types;
+using Persistify.Protos;
 using Xunit;
 
 namespace Persistify.Grpc.Test.ProtoMappers.Common.Types;

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.52.0"/>
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0"/>
+        <PackageReference Include="Grpc.Auth" Version="2.52.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.52.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="Protos\objects.proto">
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Include="Protos\services.proto">
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Include="Protos\shared.proto">
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Include="Protos\types.proto">
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj"/>
+    </ItemGroup>
+
+</Project>

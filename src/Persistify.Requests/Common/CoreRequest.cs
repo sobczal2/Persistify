@@ -1,22 +1,17 @@
 using Mediator;
-using OneOf;
 using Persistify.Diagnostics.Attributes;
 using Persistify.Diagnostics.Enums;
-using Persistify.ExternalDtos.Response.Shared;
 
 namespace Persistify.Requests.Common;
 
 [PipelineStep(PipelineStepType.Core)]
 public abstract class
-    CoreRequest<TRequest, TSuccessResponse> : IRequest<
-        OneOf<TSuccessResponse, ValidationErrorResponseDto, InternalErrorResponseDto>>
-    where TRequest : notnull
-    where TSuccessResponse : notnull
+    CoreRequest<TProto, TResponse> : IRequest<TResponse>
 {
-    public CoreRequest(TRequest request)
+    protected CoreRequest(TProto proto)
     {
-        Request = request;
+        Proto = proto;
     }
 
-    public TRequest Request { get; init; }
+    public TProto Proto { get; }
 }

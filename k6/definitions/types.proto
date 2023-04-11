@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos";
+
+import "shared.proto";
+
+// Create
+message CreateTypeRequestProto {
+  TypeDefinitionProto TypeDefinition = 1;
+}
+
+message CreateTypeSuccessResponseProto {}
+
+message CreateTypeResponseProto {
+  oneof Response {
+    CreateTypeSuccessResponseProto Success = 1;
+    ValidationErrorResponseProto ValidationError = 2;
+    InternalErrorResponseProto InternalError = 3;
+  }
+}
+
+// List
+message ListTypesRequestProto {
+  PaginationRequestProto PaginationRequest = 1;
+}
+
+message ListTypesSuccessResponseProto {
+  repeated TypeDefinitionProto TypeDefinitions = 1;
+  PaginationResponseProto PaginationResponse = 2;
+}
+
+message ListTypesResponseProto {
+  oneof Response {
+    ListTypesSuccessResponseProto Success = 1;
+    ValidationErrorResponseProto ValidationError = 2;
+    InternalErrorResponseProto InternalError = 3;
+  }
+}
+
+// Delete

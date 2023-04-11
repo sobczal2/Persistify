@@ -16,7 +16,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Grpc", "src\Pers
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.DataGenerator", "test\Persistify.DataGenerator\Persistify.DataGenerator.csproj", "{A7FEF607-A729-4EB2-B9C5-B945F7C9E029}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.ExternalDtos", "src\Persistify.ExternalDtos\Persistify.ExternalDtos.csproj", "{DD254204-479E-47F7-8ED7-1F841B6DEAD5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Dtos", "src\Persistify.Dtos\Persistify.Dtos.csproj", "{DD254204-479E-47F7-8ED7-1F841B6DEAD5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Grpc.Test", "test\Persistify.Grpc.Test\Persistify.Grpc.Test.csproj", "{62DCA984-08FB-45DE-8ED1-05DD1E0A71CF}"
 EndProject
@@ -30,9 +30,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.RequestHandlers"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.PipelineBehaviours", "src\Persistify.PipelineBehaviours\Persistify.PipelineBehaviours.csproj", "{F8113BC6-4F50-46F9-A277-152BF9BDCBF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.ExternalDtos.Validators", "src\Persistify.ExternalDtos.Validators\Persistify.ExternalDtos.Validators.csproj", "{6D43E30C-6009-4D8F-9781-758045135282}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Dtos.Validators", "src\Persistify.Dtos.Validators\Persistify.Dtos.Validators.csproj", "{6D43E30C-6009-4D8F-9781-758045135282}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Diagnostics", "src\Persistify.Diagnostics\Persistify.Diagnostics.csproj", "{4D03C814-A982-4500-9532-01EF96D91570}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Stores", "src\Persistify.Stores\Persistify.Stores.csproj", "{E392B2D9-1009-499F-B4B6-89EE61BC2B30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Storage", "src\Persistify.Storage\Persistify.Storage.csproj", "{ADA024F9-5322-4B67-9460-61CCE682AA67}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.HostedServices", "src\Persistify.HostedServices\Persistify.HostedServices.csproj", "{005CC3D0-D699-4D37-8480-7D5C8C02F92A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Protos", "src\Persistify.Protos\Persistify.Protos.csproj", "{0AEBC168-AC17-4F33-B46E-1C096F8D3A26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.ProtoMappers", "src\Persistify.ProtoMappers\Persistify.ProtoMappers.csproj", "{B113D03C-3A12-43CF-BC3C-ED27461761B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +64,11 @@ Global
 		{F8113BC6-4F50-46F9-A277-152BF9BDCBF4} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{6D43E30C-6009-4D8F-9781-758045135282} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{4D03C814-A982-4500-9532-01EF96D91570} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{E392B2D9-1009-499F-B4B6-89EE61BC2B30} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{ADA024F9-5322-4B67-9460-61CCE682AA67} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{005CC3D0-D699-4D37-8480-7D5C8C02F92A} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{0AEBC168-AC17-4F33-B46E-1C096F8D3A26} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{B113D03C-3A12-43CF-BC3C-ED27461761B0} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5518C1FC-E0F6-4F66-AE00-19418C1A82D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -112,5 +127,25 @@ Global
 		{4D03C814-A982-4500-9532-01EF96D91570}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D03C814-A982-4500-9532-01EF96D91570}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D03C814-A982-4500-9532-01EF96D91570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E392B2D9-1009-499F-B4B6-89EE61BC2B30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E392B2D9-1009-499F-B4B6-89EE61BC2B30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E392B2D9-1009-499F-B4B6-89EE61BC2B30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E392B2D9-1009-499F-B4B6-89EE61BC2B30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADA024F9-5322-4B67-9460-61CCE682AA67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADA024F9-5322-4B67-9460-61CCE682AA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADA024F9-5322-4B67-9460-61CCE682AA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADA024F9-5322-4B67-9460-61CCE682AA67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{005CC3D0-D699-4D37-8480-7D5C8C02F92A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{005CC3D0-D699-4D37-8480-7D5C8C02F92A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{005CC3D0-D699-4D37-8480-7D5C8C02F92A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{005CC3D0-D699-4D37-8480-7D5C8C02F92A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AEBC168-AC17-4F33-B46E-1C096F8D3A26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AEBC168-AC17-4F33-B46E-1C096F8D3A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AEBC168-AC17-4F33-B46E-1C096F8D3A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AEBC168-AC17-4F33-B46E-1C096F8D3A26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -3,7 +3,14 @@ using Microsoft.AspNetCore.Builder;
 using Persistify.Grpc;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+Log.Logger = new LoggerConfiguration()
+#if DEBUG
+    .MinimumLevel.Debug()
+#else
+    .MinimumLevel.Error()
+#endif
+    .WriteTo.Console()
+    .CreateLogger();
 
 try
 {

@@ -1,50 +1,45 @@
-using System.Linq;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Mediator;
-using OneOf;
-using Persistify.ExternalDtos.Request.Object;
-using Persistify.ExternalDtos.Response.Object;
-using Persistify.ExternalDtos.Response.Shared;
+using Persistify.Dtos.Request.Object;
+using Persistify.Dtos.Response.Shared;
+using Persistify.ProtoMappers;
+using Persistify.Protos;
 using Persistify.RequestHandlers.Common;
-using Persistify.Requests.Common;
 using Persistify.Requests.Core.Objects;
 using Persistify.Requests.StaticValidation.Objects;
 
 namespace Persistify.RequestHandlers.Core.Objects;
 
-public class IndexObjectRequestHandler : CoreRequestHandler<IndexObjectRequest, IndexObjectSuccessResponseDto>
+public class IndexObjectRequestHandler : CoreRequestHandler<IndexObjectRequest, IndexObjectResponseProto,
+    IndexObjectRequestProto, IndexObjectRequestDto>
 {
-    private readonly IMediator _mediator;
-
-    public IndexObjectRequestHandler(IMediator mediator)
+    public IndexObjectRequestHandler(IMediator mediator,
+        IProtoMapper<ValidationErrorResponseProto, ValidationErrorResponseDto> validationErrorResponseProtoMapper,
+        IProtoMapper<IndexObjectRequestProto, IndexObjectRequestDto> requestProtoMapper) : base(mediator,
+        validationErrorResponseProtoMapper, requestProtoMapper)
     {
-        _mediator = mediator;
     }
-
-    public override async
-        ValueTask<OneOf<IndexObjectSuccessResponseDto, ValidationErrorResponseDto, InternalErrorResponseDto>> Handle(
-            IndexObjectRequest request, CancellationToken cancellationToken)
+    
+    public override async ValueTask<IndexObjectResponseProto> Handle(IndexObjectRequest request,
+        CancellationToken cancellationToken)
     {
-        var validationErrors =
-            (await _mediator.Send(new StaticValidateIndexObjectRequest(request.Request), cancellationToken))
-            .ToArray();
+        var requestDto = MapToDto(request.Proto);
 
-        if (validationErrors.Any())
-            return new ValidationErrorResponseDto
+        var validationResponse =
+            await Mediator.Send(new IndexObjectStaticValidationRequest(requestDto), cancellationToken);
+        if (validationResponse.IsT1)
+            return new IndexObjectResponseProto
             {
-                Errors = validationErrors.ToArray()
+                ValidationError = ValidationErrorResponseProtoMapper.MapToProto(validationResponse.AsT1)
             };
 
-        return new ValidationErrorResponseDto
+        return new IndexObjectResponseProto
         {
-            Errors = new[]
+            InternalError = new InternalErrorResponseProto
             {
-                new ValidationErrorDto
-                {
-                    Field = "Hello",
-                    Message = "World"
-                }
+                Message = "Not yet implemented"
             }
         };
     }

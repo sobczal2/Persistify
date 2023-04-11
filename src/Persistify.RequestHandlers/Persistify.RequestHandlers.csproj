@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mediator.Abstractions" Version="2.1.1"/>
-        <PackageReference Include="OneOf" Version="3.0.243"/>
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
+        <PackageReference Include="OneOf" Version="3.0.243" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.ExternalDtos.Validators\Persistify.ExternalDtos.Validators.csproj"/>
-        <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj"/>
+        <ProjectReference Include="..\Persistify.Dtos.Validators\Persistify.Dtos.Validators.csproj" />
+        <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj" />
     </ItemGroup>
 
 </Project>

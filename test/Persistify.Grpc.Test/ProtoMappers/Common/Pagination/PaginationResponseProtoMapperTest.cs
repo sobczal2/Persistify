@@ -1,6 +1,7 @@
 using System;
-using Persistify.ExternalDtos.Common.Pagination;
-using Persistify.Grpc.ProtoMappers.Common.Pagination;
+using Persistify.Dtos.Common.Pagination;
+using Persistify.ProtoMappers.Common.Pagination;
+using Persistify.Protos;
 using Xunit;
 
 namespace Persistify.Grpc.Test.ProtoMappers.Common.Pagination;

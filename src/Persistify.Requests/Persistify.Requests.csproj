@@ -7,13 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mediator.Abstractions" Version="2.1.1"/>
-        <PackageReference Include="OneOf" Version="3.0.243"/>
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
+        <PackageReference Include="OneOf" Version="3.0.243" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Diagnostics\Persistify.Diagnostics.csproj"/>
-        <ProjectReference Include="..\Persistify.ExternalDtos\Persistify.ExternalDtos.csproj"/>
+        <ProjectReference Include="..\Persistify.Diagnostics\Persistify.Diagnostics.csproj" />
+        <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj" />
+        <ProjectReference Include="..\Persistify.ProtoMappers\Persistify.ProtoMappers.csproj" />
+        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
     </ItemGroup>
 
 </Project>

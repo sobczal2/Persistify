@@ -1,6 +1,6 @@
 using System;
 using Google.Protobuf.Collections;
-using Persistify.Grpc.ProtoMappers;
+using Persistify.ProtoMappers;
 using Xunit;
 
 namespace Persistify.Grpc.Test.ProtoMappers;

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos";
+
+message PaginationRequestProto {
+  int32 PageNumber = 1;
+  int32 PageSize = 2;
+}
+
+message PaginationResponseProto {
+  int32 PageNumber = 1;
+  int32 PageSize = 2;
+  int32 TotalItems = 3;
+  int32 TotalPages = 4;
+}
+
+message ValidationErrorResponseProto {
+  repeated ValidationErrorProto Errors = 1;
+}
+
+message ValidationErrorProto {
+  string Field = 1;
+  string Message = 2;
+}
+
+message InternalErrorResponseProto {
+  string Message = 1;
+}
+
+message TypeDefinitionProto {
+  string TypeName = 1;
+  repeated FieldDefinitionProto Fields = 2;
+  string IdFieldPath = 3;
+}
+
+enum FieldTypeProto {
+  TEXT = 0;
+  NUMBER = 1;
+  BOOLEAN = 2;
+  DATE = 3;
+}
+
+message FieldDefinitionProto {
+  string Path = 1;
+  FieldTypeProto Type = 2;
+  bool IsRequired = 3;
+}
