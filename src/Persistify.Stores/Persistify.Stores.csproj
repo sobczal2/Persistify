@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Persistify.DataStructures\Persistify.DataStructures.csproj" />
         <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj" />
         <ProjectReference Include="..\Persistify.Storage\Persistify.Storage.csproj" />
     </ItemGroup>

@@ -22,4 +22,6 @@ public interface ITypeStore
 
     ValueTask<OneOf<StoreSuccess<PagedTypes>, StoreError>> GetPagedAsync(PaginationRequestDto paginationRequest,
         CancellationToken cancellationToken = default);
+    
+    ValueTask<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>> GetAsync(string type, CancellationToken cancellationToken = default);
 }

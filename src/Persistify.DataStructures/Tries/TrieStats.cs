@@ -7,5 +7,6 @@ public record TrieStats
     long MaxDepth,
     long AverageDepth,
     long MaxBranchingFactor,
-    long AverageBranchingFactor
+    long AverageBranchingFactor,
+    long UniqueItemsCount
 );

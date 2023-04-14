@@ -14,6 +14,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Persistify.Dtos.Validators\Persistify.Dtos.Validators.csproj" />
         <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj" />
+        <ProjectReference Include="..\Persistify.Tokenizer\Persistify.Tokenizer.csproj" />
     </ItemGroup>
 
 </Project>

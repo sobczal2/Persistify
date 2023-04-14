@@ -7,34 +7,29 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Mediator.Abstractions" Version="2.1.1"/>
+        <PackageReference Include="Mediator.Abstractions" Version="2.1.1" />
         <PackageReference Include="Mediator.SourceGenerator" Version="2.1.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Dtos.Validators\Persistify.Dtos.Validators.csproj"/>
-        <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj"/>
-        <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj"/>
-        <ProjectReference Include="..\Persistify.PipelineBehaviours\Persistify.PipelineBehaviours.csproj"/>
-        <ProjectReference Include="..\Persistify.ProtoMappers\Persistify.ProtoMappers.csproj"/>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
-        <ProjectReference Include="..\Persistify.RequestHandlers\Persistify.RequestHandlers.csproj"/>
-        <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj"/>
-        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj"/>
+        <ProjectReference Include="..\Persistify.Dtos.Validators\Persistify.Dtos.Validators.csproj" />
+        <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj" />
+        <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj" />
+        <ProjectReference Include="..\Persistify.PipelineBehaviours\Persistify.PipelineBehaviours.csproj" />
+        <ProjectReference Include="..\Persistify.ProtoMappers\Persistify.ProtoMappers.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
+        <ProjectReference Include="..\Persistify.RequestHandlers\Persistify.RequestHandlers.csproj" />
+        <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj" />
+        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
         <DefineConstants>_WINDOWS</DefineConstants>
     </PropertyGroup>
-
-
-    <ItemGroup>
-        <Folder Include="ProtoMappers\"/>
-    </ItemGroup>
 
 </Project>

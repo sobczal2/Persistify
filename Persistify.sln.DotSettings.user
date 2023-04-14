@@ -9,4 +9,5 @@
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::A7FEF607-A729-4EB2-B9C5-B945F7C9E029::net7.0::Persistify.DataGenerator.DataGenerator.Generate_1_000_000_random_words&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Persistify/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

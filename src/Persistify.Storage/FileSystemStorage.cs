@@ -19,7 +19,7 @@ public class FileSystemStorage : IStorage
     }
 
     public async ValueTask<OneOf<StorageSuccess<EmptyDto>, StorageError>> SaveBlobAsync(string key, string data,
-        bool overwrite = false)
+        bool overwrite = false, CancellationToken cancellationToken = default)
     {
         var existsResult = await ExistsBlobAsync(key);
         if (existsResult.IsT1)
@@ -31,9 +31,9 @@ public class FileSystemStorage : IStorage
         try
         {
             using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            using var fileStream = File.Create(Path.Combine(_rootPath, key));
-            using var compressedStream = _compress != null ? _compress(memoryStream) : memoryStream;
-            await compressedStream.CopyToAsync(fileStream);
+            await using var fileStream = File.Create(Path.Combine(_rootPath, key));
+            await using var compressedStream = _compress != null ? _compress(memoryStream) : memoryStream;
+            await compressedStream.CopyToAsync(fileStream, cancellationToken);
             return new StorageSuccess<EmptyDto>(new EmptyDto());
         }
         catch (Exception e)
@@ -42,9 +42,9 @@ public class FileSystemStorage : IStorage
         }
     }
 
-    public async ValueTask<OneOf<StorageSuccess<string>, StorageError>> LoadBlobAsync(string key)
+    public async ValueTask<OneOf<StorageSuccess<string>, StorageError>> LoadBlobAsync(string key, CancellationToken cancellationToken = default)
     {
-        var existsResult = await ExistsBlobAsync(key);
+        var existsResult = await ExistsBlobAsync(key, cancellationToken);
         if (existsResult.IsT1)
             return new StorageError(existsResult.AsT1.Message);
 
@@ -52,10 +52,10 @@ public class FileSystemStorage : IStorage
             return new StorageError("File does not exist");
         try
         {
-            using var fileStream = File.OpenRead(Path.Combine(_rootPath, key));
-            using var decompressedStream = _decompress != null ? _decompress(fileStream) : fileStream;
+            await using var fileStream = File.OpenRead(Path.Combine(_rootPath, key));
+            await using var decompressedStream = _decompress != null ? _decompress(fileStream) : fileStream;
             using var memoryStream = new MemoryStream();
-            await decompressedStream.CopyToAsync(memoryStream);
+            await decompressedStream.CopyToAsync(memoryStream, cancellationToken);
             var data = Encoding.UTF8.GetString(memoryStream.ToArray());
             return new StorageSuccess<string>(data);
         }
@@ -65,9 +65,9 @@ public class FileSystemStorage : IStorage
         }
     }
 
-    public async ValueTask<OneOf<StorageSuccess<EmptyDto>, StorageError>> DeleteBlobAsync(string key)
+    public async ValueTask<OneOf<StorageSuccess<EmptyDto>, StorageError>> DeleteBlobAsync(string key, CancellationToken cancellationToken = default)
     {
-        var existsResult = await ExistsBlobAsync(key);
+        var existsResult = await ExistsBlobAsync(key, cancellationToken);
         if (existsResult.IsT1)
             return new StorageError(existsResult.AsT1.Message);
 
@@ -78,7 +78,7 @@ public class FileSystemStorage : IStorage
         return new StorageSuccess<EmptyDto>(new EmptyDto());
     }
 
-    public ValueTask<OneOf<StorageSuccess<bool>, StorageError>> ExistsBlobAsync(string key)
+    public ValueTask<OneOf<StorageSuccess<bool>, StorageError>> ExistsBlobAsync(string key, CancellationToken cancellationToken = default)
     {
         return ValueTask.FromResult<OneOf<StorageSuccess<bool>, StorageError>>(
             new StorageSuccess<bool>(File.Exists(Path.Combine(_rootPath, key))));

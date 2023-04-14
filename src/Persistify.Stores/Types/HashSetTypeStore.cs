@@ -105,4 +105,17 @@ public class HashSetTypeStore : ITypeStore, IPersistedStore
         return ValueTask.FromResult<OneOf<StoreSuccess<PagedTypes>, StoreError>>(
             new StoreSuccess<PagedTypes>(new PagedTypes(pagedTypes, paginationResponse)));
     }
+
+    public ValueTask<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>> GetAsync(string type, CancellationToken cancellationToken = default)
+    {
+        if (_types == null)
+            return ValueTask.FromResult<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>>(
+                new StoreError("Store not yet initialized", StoreErrorType.InvalidState));
+
+        if (!_types.TryGetValue(type, out var typeDefinition))
+            return ValueTask.FromResult<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>>(
+                new StoreError("Type not found", StoreErrorType.NotFound));
+        return ValueTask.FromResult<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>>(
+            new StoreSuccess<TypeDefinitionDto>(typeDefinition));
+    }
 }

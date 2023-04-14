@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Protos", "src\Pe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.ProtoMappers", "src\Persistify.ProtoMappers\Persistify.ProtoMappers.csproj", "{B113D03C-3A12-43CF-BC3C-ED27461761B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Tokenizer", "src\Persistify.Tokenizer\Persistify.Tokenizer.csproj", "{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,7 @@ Global
 		{005CC3D0-D699-4D37-8480-7D5C8C02F92A} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{0AEBC168-AC17-4F33-B46E-1C096F8D3A26} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{B113D03C-3A12-43CF-BC3C-ED27461761B0} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5518C1FC-E0F6-4F66-AE00-19418C1A82D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -147,5 +150,9 @@ Global
 		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B113D03C-3A12-43CF-BC3C-ED27461761B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

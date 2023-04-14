@@ -3,6 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistify.DataStructures.MultiTargetTries.MultitargetTrieByteTranslationTrie.Mappers;
 using Persistify.Dtos.Validators;
 using Persistify.Grpc.Services;
 using Persistify.HostedServices;
@@ -10,7 +11,10 @@ using Persistify.PipelineBehaviours;
 using Persistify.ProtoMappers;
 using Persistify.Storage;
 using Persistify.Stores.Common;
+using Persistify.Stores.Documents;
+using Persistify.Stores.Objects;
 using Persistify.Stores.Types;
+using Persistify.Tokenizer;
 using Serilog;
 
 namespace Persistify.Grpc;
@@ -27,6 +31,7 @@ public static class PersistifyExtensions
         services.AddDtoValidators();
         services.AddStores();
         services.AddStorage();
+        services.AddOtherServices();
 
         return services;
     }
@@ -94,6 +99,11 @@ public static class PersistifyExtensions
         services.AddSingleton<ITypeStore>(typeStore);
         services.AddSingleton<IPersistedStore>(typeStore);
 
+        var indexStore = new TrieIndexStore(new StandardCaseSensitiveSingleTargetMapper());
+        services.AddSingleton<IIndexStore>(indexStore);
+
+        services.AddSingleton<IDocumentStore, StorageDocumentStore>();
+
         services.AddHostedService<PersistedStoreHostedService>();
 
         return services;
@@ -102,6 +112,13 @@ public static class PersistifyExtensions
     private static IServiceCollection AddStorage(this IServiceCollection services)
     {
         services.AddTransient<IStorage>(_ => new CompressingFileSystemStorage("/home/sobczal/temp"));
+
+        return services;
+    }
+
+    private static IServiceCollection AddOtherServices(this IServiceCollection services)
+    {
+        services.AddSingleton<ITokenizer, CaseSensitiveTokenizer>();
 
         return services;
     }
