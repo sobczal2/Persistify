@@ -47,7 +47,7 @@ export default () => {
                     "IsRequired": true
                 }
             ],
-            "TypeName": makeid(10),
+            "Name": `T${makeid(10)}`,
             "IdFieldPath": "dolor.sit.amet"
         }
     };

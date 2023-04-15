@@ -6,6 +6,5 @@ public class AlphabetTooLargeException : Exception
 {
     public AlphabetTooLargeException() : base("Alphabet size is too large")
     {
-        
     }
 }

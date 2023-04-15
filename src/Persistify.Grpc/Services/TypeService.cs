@@ -1,30 +1,51 @@
 using System.Threading.Tasks;
+using Google.Apis.Logging;
 using Grpc.Core;
-using Mediator;
+using Microsoft.Extensions.Logging;
+using Persistify.Pipeline.Contexts.Types;
+using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
-using Persistify.Requests.Core.Type;
 
 namespace Persistify.Grpc.Services;
 
 public class TypeService : TypesService.TypesServiceBase
 {
-    private readonly IMediator _mediator;
+    private readonly IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>
+        _createTypePipelineOrchestrator;
+
+    private readonly IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>
+        _listTypesPipelineOrchestrator;
+
+    private readonly ILogger<TypeService> _logger;
 
     public TypeService(
-        IMediator mediator
+        IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>
+            createTypePipelineOrchestrator,
+        IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>
+            listTypesPipelineOrchestrator,
+        ILogger<TypeService> logger
     )
     {
-        _mediator = mediator;
+        _createTypePipelineOrchestrator = createTypePipelineOrchestrator;
+        _listTypesPipelineOrchestrator = listTypesPipelineOrchestrator;
+        _logger = logger;
     }
 
     public override async Task<CreateTypeResponseProto> Create(CreateTypeRequestProto request,
         ServerCallContext context)
     {
-        return await _mediator.Send(new CreateTypeRequest(request));
+        var pipelineContext = new CreateTypePipelineContext(request);
+        await _createTypePipelineOrchestrator.ExecuteAsync(pipelineContext);
+        return pipelineContext.Response;
     }
 
     public override async Task<ListTypesResponseProto> List(ListTypesRequestProto request, ServerCallContext context)
     {
-        return await _mediator.Send(new ListTypesRequest(request));
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var pipelineContext = new ListTypesPipelineContext(request);
+        await _listTypesPipelineOrchestrator.ExecuteAsync(pipelineContext);
+        
+        _logger.LogInformation($"ListTypes took {stopwatch.Elapsed.Milliseconds} ms.");
+        return pipelineContext.Response;
     }
 }

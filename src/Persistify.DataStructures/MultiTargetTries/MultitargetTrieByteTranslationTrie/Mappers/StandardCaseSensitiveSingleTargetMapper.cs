@@ -5,6 +5,8 @@ namespace Persistify.DataStructures.MultiTargetTries.MultitargetTrieByteTranslat
 
 public class StandardCaseSensitiveSingleTargetMapper : ISingleTargetMapper
 {
+    private static readonly Regex StaticAlphabetRegex = new("^[A-Za-z0-9]$");
+
     public byte MapToIndex(char value)
     {
         return value switch
@@ -18,5 +20,4 @@ public class StandardCaseSensitiveSingleTargetMapper : ISingleTargetMapper
 
     public byte AlphabetSize => 62;
     public Regex AlphabetRegex => StaticAlphabetRegex;
-    private static readonly Regex StaticAlphabetRegex = new Regex("^[A-Za-z0-9]$");
 }

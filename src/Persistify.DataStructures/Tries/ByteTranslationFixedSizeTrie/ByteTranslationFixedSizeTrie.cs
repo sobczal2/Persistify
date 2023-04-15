@@ -27,6 +27,8 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
         UniqueItemsCount = 0;
     }
 
+    public long UniqueItemsCount { get; private set; }
+
     public void Add(string key, TItem item)
     {
         var bytes = _stringByteTranslation(key);
@@ -102,6 +104,4 @@ public class ByteTranslationFixedSizeTrie<TItem> : ITrie<TItem>
     {
         throw new NotImplementedException();
     }
-
-    public long UniqueItemsCount { get; private set; }
 }

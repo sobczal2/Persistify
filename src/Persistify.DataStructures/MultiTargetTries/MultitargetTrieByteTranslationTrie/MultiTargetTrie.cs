@@ -22,14 +22,14 @@ public class MultiTargetTrie<TItem> : IMultiTargetTrie<TItem>
             throw new AlphabetTooLargeException();
         var keySpan = key.AsSpan();
         var currentNode = _root;
-        
+
         // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < keySpan.Length; i++)
         {
             var mappedValue = mapper.MapToIndex(keySpan[i]);
             currentNode = currentNode.GetOrAddChild(mappedValue);
         }
-        
+
         currentNode.AddItem(item);
     }
 
@@ -73,14 +73,14 @@ public class MultiTargetTrie<TItem> : IMultiTargetTrie<TItem>
 
     public bool Contains(string key, IMultiTargetMapper mapper)
     {
-        if(mapper.AlphabetSize > _alphabetSize)
+        if (mapper.AlphabetSize > _alphabetSize)
             throw new AlphabetTooLargeException();
-        
+
         var keySpan = key.AsSpan();
         var queue = new Queue<MultiTargetTrieNode<TItem>>();
-        
+
         queue.Enqueue(_root);
-        
+
         // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < keySpan.Length; i++)
         {
@@ -96,14 +96,14 @@ public class MultiTargetTrie<TItem> : IMultiTargetTrie<TItem>
                 }
             }
         }
-        
+
         while (queue.Count > 0)
         {
             var currentNode = queue.Dequeue();
             if (currentNode.Items.Count > 0)
                 return true;
         }
-        
+
         return false;
     }
 

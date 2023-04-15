@@ -32,19 +32,14 @@ public class PersistedStoreHostedService : IHostedService, IDisposable
     {
         _logger.LogInformation("Starting persisted store hosted service");
         foreach (var store in _persistedStores)
-        {
-            var result = await store.LoadAsync(_storage);
-
-            if (result.IsT0)
+            try
             {
-                _logger.LogInformation("Loaded persisted store {Store}", store.GetType().Name);
+                await store.LoadAsync(_storage, cancellationToken);
             }
-            else
+            catch (Exception e)
             {
-                _logger.LogError("Failed to load persisted store {Store}: {Error}", store.GetType().Name, result.AsT1);
-                throw new FatalHostedServiceException($"Failed to load persisted store {store.GetType().Name}");
+                throw new FatalHostedServiceException(e.Message);
             }
-        }
 
         _timer = new Timer(TimerExecuteSaveAsync, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
     }
@@ -65,18 +60,13 @@ public class PersistedStoreHostedService : IHostedService, IDisposable
     private async Task ExecuteSaveAsync()
     {
         foreach (var store in _persistedStores)
-        {
-            var result = await store.SaveAsync(_storage);
-
-            if (result.IsT0)
+            try
             {
-                _logger.LogInformation("Saved persisted store {Store}", store.GetType().Name);
+                await store.SaveAsync(_storage);
             }
-            else
+            catch (Exception e)
             {
-                _logger.LogError("Failed to save persisted store {Store}: {Error}", store.GetType().Name, result.AsT1);
-                throw new FatalHostedServiceException($"Failed to save persisted store {store.GetType().Name}");
+                throw new FatalHostedServiceException(e.Message);
             }
-        }
     }
 }

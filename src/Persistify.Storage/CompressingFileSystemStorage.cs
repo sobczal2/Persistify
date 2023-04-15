@@ -11,10 +11,11 @@ public class CompressingFileSystemStorage : FileSystemStorage
     private static Stream Compress(Stream data)
     {
         var compressedStream = new MemoryStream();
-        using (var gzipStream = new GZipStream(compressedStream, CompressionLevel.Optimal, leaveOpen: true))
+        using (var gzipStream = new GZipStream(compressedStream, CompressionLevel.Optimal, true))
         {
             data.CopyTo(gzipStream);
         }
+
         compressedStream.Position = 0;
         return compressedStream;
     }
@@ -22,10 +23,11 @@ public class CompressingFileSystemStorage : FileSystemStorage
     private static Stream Decompress(Stream data)
     {
         var decompressedStream = new MemoryStream();
-        using (var gzipStream = new GZipStream(data, CompressionMode.Decompress, leaveOpen: true))
+        using (var gzipStream = new GZipStream(data, CompressionMode.Decompress, true))
         {
             gzipStream.CopyTo(decompressedStream);
         }
+
         decompressedStream.Position = 0;
         return decompressedStream;
     }

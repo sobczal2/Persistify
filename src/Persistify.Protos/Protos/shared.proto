@@ -28,7 +28,7 @@ message InternalErrorResponseProto {
 }
 
 message TypeDefinitionProto {
-  string TypeName = 1;
+  string Name = 1;
   repeated FieldDefinitionProto Fields = 2;
   string IdFieldPath = 3;
 }

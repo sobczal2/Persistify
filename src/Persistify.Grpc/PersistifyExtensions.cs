@@ -1,20 +1,23 @@
-using System.Linq;
-using Mediator;
+using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Persistify.DataStructures.MultiTargetTries.MultitargetTrieByteTranslationTrie.Mappers;
-using Persistify.Dtos.Validators;
+using Persistify.Grpc.Interceptors;
 using Persistify.Grpc.Services;
 using Persistify.HostedServices;
-using Persistify.PipelineBehaviours;
-using Persistify.ProtoMappers;
+using Persistify.Pipeline.Contexts.Types;
+using Persistify.Pipeline.Middlewares.Common;
+using Persistify.Pipeline.Middlewares.Types;
+using Persistify.Pipeline.Orchestrators.Abstractions;
+using Persistify.Pipeline.Orchestrators.Types;
+using Persistify.Pipeline.Wrappers.Abstractions;
+using Persistify.Pipeline.Wrappers.Common;
+using Persistify.Protos;
+using Persistify.RequestValidators.Types;
 using Persistify.Storage;
 using Persistify.Stores.Common;
 using Persistify.Stores.Documents;
-using Persistify.Stores.Objects;
 using Persistify.Stores.Types;
-using Persistify.Tokenizer;
 using Serilog;
 
 namespace Persistify.Grpc;
@@ -23,12 +26,11 @@ public static class PersistifyExtensions
 {
     public static IServiceCollection AddPersistify(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddGrpc();
+        services.AddGrpc(opt => { opt.Interceptors.Add<ValidationInterceptor>(); });
         services.AddGrpcReflection();
 
-        services.AddMediatorServices();
-        services.AddProtoMappers();
-        services.AddDtoValidators();
+        services.AddPipeline();
+        services.AddValidatorsFromAssemblyContaining<CreateTypeRequestProtoValidator>(ServiceLifetime.Singleton);
         services.AddStores();
         services.AddStorage();
         services.AddOtherServices();
@@ -50,45 +52,24 @@ public static class PersistifyExtensions
         return app;
     }
 
-    private static IServiceCollection AddMediatorServices(this IServiceCollection services)
+    private static IServiceCollection AddPipeline(this IServiceCollection services)
     {
-        services.AddMediator();
-#if DEBUG
-        services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(TimeLoggingBehaviour<,>));
-#endif
+        services.AddSingleton(typeof(ICommonMiddlewareWrapper<,,>), typeof(TimeLoggingMiddlewareWrapper<,,>));
+        services.AddSingleton(typeof(RequestProtoValidationMiddleware<,,>));
 
-        return services;
-    }
+        services.AddSingleton<
+            IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
+            CreateTypePipelineOrchestrator
+        >();
 
-    private static IServiceCollection AddProtoMappers(this IServiceCollection services)
-    {
-        var mapperInterfaceType = typeof(IProtoMapper<,>);
-        var mapperImplTypes = typeof(IProtoMapper<,>).Assembly.GetExportedTypes()
-            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition)
-            .Where(t => t.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == mapperInterfaceType));
+        services.AddSingleton<
+            IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>,
+            ListTypesPipelineOrchestrator
+        >();
 
-        foreach (var mapperImplType in mapperImplTypes)
-            services.AddSingleton(
-                mapperImplType.GetInterfaces()
-                    .Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == mapperInterfaceType),
-                mapperImplType);
+        services.AddSingleton<AddTypeToStoreMiddleware>();
+        services.AddSingleton<ListTypesFromStoreMiddleware>();
 
-        return services;
-    }
-
-    private static IServiceCollection AddDtoValidators(this IServiceCollection services)
-    {
-        var validatorInterfaceType = typeof(IValidator<>);
-        var validatorImplTypes = typeof(IValidator<>).Assembly.GetExportedTypes()
-            .Where(t => !t.IsAbstract && !t.IsGenericTypeDefinition)
-            .Where(t => t.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == validatorInterfaceType));
-
-        foreach (var validatorImplType in validatorImplTypes)
-            services.AddSingleton(
-                validatorImplType.GetInterfaces().Single(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == validatorInterfaceType), validatorImplType);
 
         return services;
     }
@@ -99,8 +80,6 @@ public static class PersistifyExtensions
         services.AddSingleton<ITypeStore>(typeStore);
         services.AddSingleton<IPersistedStore>(typeStore);
 
-        var indexStore = new TrieIndexStore(new StandardCaseSensitiveSingleTargetMapper());
-        services.AddSingleton<IIndexStore>(indexStore);
 
         services.AddSingleton<IDocumentStore, StorageDocumentStore>();
 
@@ -118,8 +97,6 @@ public static class PersistifyExtensions
 
     private static IServiceCollection AddOtherServices(this IServiceCollection services)
     {
-        services.AddSingleton<ITokenizer, CaseSensitiveTokenizer>();
-
         return services;
     }
 }

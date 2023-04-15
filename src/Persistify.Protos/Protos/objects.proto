@@ -10,16 +10,8 @@ message IndexObjectRequestProto {
   string Data = 2;
 }
 
-message IndexObjectSuccessResponseProto {
-  int64 Id = 1;
-}
-
 message IndexObjectResponseProto {
-  oneof Response {
-    IndexObjectSuccessResponseProto Success = 1;
-    ValidationErrorResponseProto ValidationError = 2;
-    InternalErrorResponseProto InternalError = 3;
-  }
+  int64 Id = 1;
 }
 
 
@@ -31,17 +23,9 @@ message SearchObjectsRequestProto {
   repeated string FieldPaths = 4;
 }
 
-message SearchObjectsSuccessResponseProto {
+message SearchObjectsResponseProto {
   repeated string Items = 1;
   PaginationResponseProto PaginationResponse = 2;
-}
-
-message SearchObjectsResponseProto {
-  oneof Response {
-    SearchObjectsSuccessResponseProto Success = 1;
-    ValidationErrorResponseProto ValidationError = 2;
-    InternalErrorResponseProto InternalError = 3;
-  }
 }
 
 // Get
