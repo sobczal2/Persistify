@@ -41,11 +41,8 @@ public class TypeService : TypesService.TypesServiceBase
 
     public override async Task<ListTypesResponseProto> List(ListTypesRequestProto request, ServerCallContext context)
     {
-        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         var pipelineContext = new ListTypesPipelineContext(request);
         await _listTypesPipelineOrchestrator.ExecuteAsync(pipelineContext);
-        
-        _logger.LogInformation($"ListTypes took {stopwatch.Elapsed.Milliseconds} ms.");
         return pipelineContext.Response;
     }
 }

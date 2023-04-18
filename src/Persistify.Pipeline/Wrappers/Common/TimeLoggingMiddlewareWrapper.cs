@@ -8,7 +8,7 @@ using Persistify.Pipeline.Wrappers.Abstractions;
 namespace Persistify.Pipeline.Wrappers.Common;
 
 public class
-    TimeLoggingMiddlewareWrapper<TContext, TRequest, TResponse> : ICommonMiddlewareWrapper<TContext, TRequest,
+    TimeLoggingMiddlewareWrapper<TContext, TRequest, TResponse> : IMiddlewareWrapper<TContext, TRequest,
         TResponse> where TContext : IPipelineContext<TRequest, TResponse>
     where TRequest : class
     where TResponse : class

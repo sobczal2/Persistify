@@ -14,22 +14,22 @@ public abstract class
     where TRequest : class
     where TResponse : class
 {
+    private readonly IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> _middlewares;
     private readonly IEnumerable<IMiddlewareWrapper<TContext, TRequest, TResponse>> _wrappers;
-    private IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>>? _middlewares;
 
-    protected PipelineOrchestratorBase(IEnumerable<IMiddlewareWrapper<TContext, TRequest, TResponse>> wrappers)
+    protected PipelineOrchestratorBase(
+        IEnumerable<IMiddlewareWrapper<TContext, TRequest, TResponse>> wrappers,
+        IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> middlewares)
     {
+        _middlewares = middlewares;
         _wrappers = wrappers.ToList();
     }
 
     public async Task ExecuteAsync(TContext context)
     {
-        _middlewares ??= CreatePipeline();
         foreach (var middleware in _middlewares)
             await Wrap(context, async pipelineContext => await middleware.InvokeAsync(pipelineContext));
     }
-
-    protected abstract IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> CreatePipeline();
 
     private Task Wrap(TContext context, Func<TContext, Task> action)
     {

@@ -7,12 +7,12 @@ using Persistify.Stores.Types;
 
 namespace Persistify.Pipeline.Middlewares.Types;
 
-public class ListTypesFromStoreMiddleware : IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto,
+public class GetTypesFromStoreMiddleware : IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto,
     ListTypesResponseProto>
 {
     private readonly ITypeStore _typeStore;
 
-    public ListTypesFromStoreMiddleware(
+    public GetTypesFromStoreMiddleware(
         ITypeStore typeStore
     )
     {

@@ -7,13 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.5.2"/>
-        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0"/>
+        <PackageReference Include="FluentValidation" Version="11.5.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
-        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj"/>
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
+        <ProjectReference Include="..\Persistify.RequestValidators\Persistify.RequestValidators.csproj" />
+        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
     </ItemGroup>
 
 </Project>

@@ -31,11 +31,9 @@ public class ValidationInterceptor : Interceptor
             _logger.LogError(ex, "Validation error occurred.");
 
             var status = new Status(StatusCode.InvalidArgument, "Validation failed.");
+            var metadata = new Metadata { { "error-code", string.Join(';', ex.Errors.Select(x => x.ErrorCode)) } };
 
-            var metadata = new Metadata();
-            metadata.Add("error-code", string.Join(';', ex.Errors.Select(x => x.ErrorCode)));
-
-            throw new RpcException(status, metadata, "Test");
+            throw new RpcException(status, metadata);
         }
         catch (Exception ex)
         {

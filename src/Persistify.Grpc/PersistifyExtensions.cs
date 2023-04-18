@@ -6,6 +6,7 @@ using Persistify.Grpc.Interceptors;
 using Persistify.Grpc.Services;
 using Persistify.HostedServices;
 using Persistify.Pipeline.Contexts.Types;
+using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Pipeline.Middlewares.Common;
 using Persistify.Pipeline.Middlewares.Types;
 using Persistify.Pipeline.Orchestrators.Abstractions;
@@ -54,8 +55,7 @@ public static class PersistifyExtensions
 
     private static IServiceCollection AddPipeline(this IServiceCollection services)
     {
-        services.AddSingleton(typeof(ICommonMiddlewareWrapper<,,>), typeof(TimeLoggingMiddlewareWrapper<,,>));
-        services.AddSingleton(typeof(RequestProtoValidationMiddleware<,,>));
+        // Orchestrators
 
         services.AddSingleton<
             IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
@@ -67,8 +67,25 @@ public static class PersistifyExtensions
             ListTypesPipelineOrchestrator
         >();
 
-        services.AddSingleton<AddTypeToStoreMiddleware>();
-        services.AddSingleton<ListTypesFromStoreMiddleware>();
+        services.AddSingleton<
+            IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
+            CreateTypePipelineOrchestrator
+        >();
+        
+        // Wrappers
+        services.AddSingleton(typeof(IMiddlewareWrapper<,,>), typeof(TimeLoggingMiddlewareWrapper<,,>));
+        
+        // Common Middlewares
+        services.AddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
+        
+        // Create Type Middlewares
+        services.AddSingleton(typeof(IPipelineMiddleware<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>), typeof(AddTypeToStoreMiddleware));
+        
+        // List Types Middlewares
+        services.AddSingleton(typeof(IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>), typeof(GetTypesFromStoreMiddleware));
+        
+        // Index Object Middlewares
+        
 
 
         return services;

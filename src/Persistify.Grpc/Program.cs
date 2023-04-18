@@ -4,11 +4,7 @@ using Persistify.Grpc;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-#if DEBUG
     .MinimumLevel.Information()
-#else
-    .MinimumLevel.Error()
-#endif
     .WriteTo.Console()
     .CreateLogger();
 

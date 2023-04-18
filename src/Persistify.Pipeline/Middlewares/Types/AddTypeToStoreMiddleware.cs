@@ -5,6 +5,7 @@ using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
+using Persistify.RequestValidators.Types;
 using Persistify.Stores.Types;
 
 namespace Persistify.Pipeline.Middlewares.Types;
@@ -24,7 +25,10 @@ public class AddTypeToStoreMiddleware : IPipelineMiddleware<CreateTypePipelineCo
     public Task InvokeAsync(CreateTypePipelineContext context)
     {
         if (_typeStore.Exists(context.Request.TypeDefinition.Name))
-            throw new ValidationException(new[] { new ValidationFailure("TypeName", "Type already exists") });
+            throw new ValidationException(new[] { new ValidationFailure("TypeName", "Type already exists")
+            {
+                ErrorCode = TypeErrorCodes.NameDuplicate
+            } });
 
         _typeStore.Create(context.Request.TypeDefinition);
 
