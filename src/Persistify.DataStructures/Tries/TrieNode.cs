@@ -1,6 +1,6 @@
 namespace Persistify.DataStructures.Tries;
 
-public class ITrie
+public class TrieNode
 {
     
 }

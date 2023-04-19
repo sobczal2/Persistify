@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
-using Google.Apis.Logging;
 using Grpc.Core;
-using Microsoft.Extensions.Logging;
 using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
@@ -16,19 +14,15 @@ public class TypeService : TypesService.TypesServiceBase
     private readonly IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>
         _listTypesPipelineOrchestrator;
 
-    private readonly ILogger<TypeService> _logger;
-
     public TypeService(
         IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>
             createTypePipelineOrchestrator,
         IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>
-            listTypesPipelineOrchestrator,
-        ILogger<TypeService> logger
+            listTypesPipelineOrchestrator
     )
     {
         _createTypePipelineOrchestrator = createTypePipelineOrchestrator;
         _listTypesPipelineOrchestrator = listTypesPipelineOrchestrator;
-        _logger = logger;
     }
 
     public override async Task<CreateTypeResponseProto> Create(CreateTypeRequestProto request,

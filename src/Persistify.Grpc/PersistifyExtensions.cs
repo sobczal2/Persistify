@@ -2,24 +2,35 @@ using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistify.DataStructures.MultiTargetTries;
+using Persistify.DataStructures.MultiTargetTries.MultitargetTrieByteTranslationTrie.Mappers;
 using Persistify.Grpc.Interceptors;
 using Persistify.Grpc.Services;
 using Persistify.HostedServices;
+using Persistify.Indexes.Boolean;
+using Persistify.Indexes.Common;
+using Persistify.Indexes.Number;
+using Persistify.Indexes.Text;
+using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Pipeline.Middlewares.Common;
-using Persistify.Pipeline.Middlewares.Types;
+using Persistify.Pipeline.Middlewares.Documents.Index;
+using Persistify.Pipeline.Middlewares.Documents.Search;
+using Persistify.Pipeline.Middlewares.Types.Create;
+using Persistify.Pipeline.Middlewares.Types.List;
 using Persistify.Pipeline.Orchestrators.Abstractions;
+using Persistify.Pipeline.Orchestrators.Documents;
 using Persistify.Pipeline.Orchestrators.Types;
-using Persistify.Pipeline.Wrappers.Abstractions;
-using Persistify.Pipeline.Wrappers.Common;
 using Persistify.Protos;
-using Persistify.RequestValidators.Types;
 using Persistify.Storage;
 using Persistify.Stores.Common;
 using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
+using Persistify.Tokens;
+using Persistify.Validators.Types;
 using Serilog;
+using ValidateTokensMiddleware = Persistify.Pipeline.Middlewares.Documents.Index.ValidateTokensMiddleware;
 
 namespace Persistify.Grpc;
 
@@ -33,6 +44,7 @@ public static class PersistifyExtensions
         services.AddPipeline();
         services.AddValidatorsFromAssemblyContaining<CreateTypeRequestProtoValidator>(ServiceLifetime.Singleton);
         services.AddStores();
+        services.AddIndexers();
         services.AddStorage();
         services.AddOtherServices();
 
@@ -46,7 +58,7 @@ public static class PersistifyExtensions
         app.MapGrpcReflectionService();
 
         app.MapGrpcService<TypeService>();
-        app.MapGrpcService<ObjectService>();
+        app.MapGrpcService<DocumentService>();
 
         app.MapGet("/", () => "Use gRPC client to call the service");
 
@@ -68,26 +80,124 @@ public static class PersistifyExtensions
         >();
 
         services.AddSingleton<
-            IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
-            CreateTypePipelineOrchestrator
+            IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>,
+            IndexDocumentPipelineOrchestrator
         >();
-        
-        // Wrappers
-        services.AddSingleton(typeof(IMiddlewareWrapper<,,>), typeof(TimeLoggingMiddlewareWrapper<,,>));
-        
+
+        services.AddSingleton<
+            IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>,
+            SearchDocumentsPipelineOrchestrator
+        >();
+
         // Common Middlewares
         services.AddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
-        
+
         // Create Type Middlewares
-        services.AddSingleton(typeof(IPipelineMiddleware<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>), typeof(AddTypeToStoreMiddleware));
-        
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>),
+            typeof(AddTypeToTypeStoreMiddleware));
+
         // List Types Middlewares
-        services.AddSingleton(typeof(IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>), typeof(GetTypesFromStoreMiddleware));
-        
-        // Index Object Middlewares
-        
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>),
+            typeof(GetTypesFromTypeStoreMiddleware));
 
+        // Index Document Middlewares
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(FetchTypeFromTypeStoreMiddleware));
 
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(ParseDataMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(ValidateDataAgainstTypeMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(TokenizeFieldsMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(InsertDocumentIntoDocumentStoreMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(ValidateTokensMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>),
+            typeof(InsertTokensIntoIndexStoreMiddleware));
+
+        // Search Documents Middlewares
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(ValidateTypeNameMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(TokenizeQueryMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(Pipeline.Middlewares.Documents.Search.ValidateTokensMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(SearchIndexesInIndexStoreMiddleware));
+        
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(FilterIndexesByFieldsMiddleware));
+        
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(RemoveDuplicateIndexesMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(ApplyPaginationMiddleware));
+
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(FetchDocumentsFromDocumentStoreMiddleware));
+
+        return services;
+    }
+    
+    private static IServiceCollection AddIndexers(this IServiceCollection services)
+    {
+        var textIndexer = new TextIndexer();
+        services.AddSingleton<IIndexer<string>>(textIndexer);
+        services.AddSingleton<IPersisted>(textIndexer);
+        
+        var numberIndexer = new NumberIndexer();
+        services.AddSingleton<IIndexer<double>>(numberIndexer);
+        services.AddSingleton<IPersisted>(numberIndexer);
+        
+        var booleanIndexer = new BooleanIndexer();
+        services.AddSingleton<IIndexer<bool>>(booleanIndexer);
+        services.AddSingleton<IPersisted>(booleanIndexer);
+        
         return services;
     }
 
@@ -95,12 +205,11 @@ public static class PersistifyExtensions
     {
         var typeStore = new HashSetTypeStore();
         services.AddSingleton<ITypeStore>(typeStore);
-        services.AddSingleton<IPersistedStore>(typeStore);
-
+        services.AddSingleton<IPersisted>(typeStore);
 
         services.AddSingleton<IDocumentStore, StorageDocumentStore>();
-
-        services.AddHostedService<PersistedStoreHostedService>();
+        
+        services.AddHostedService<PersistedHostedService>();
 
         return services;
     }
@@ -114,6 +223,10 @@ public static class PersistifyExtensions
 
     private static IServiceCollection AddOtherServices(this IServiceCollection services)
     {
+        services.AddSingleton<ITokenizer, Tokenizer>();
+        services.AddSingleton<ISingleTargetMapper, StandardCaseSensitiveSingleTargetMapper>();
+        services.AddSingleton<IMultiTargetMapper, StandardCaseSensitiveMultiTargetMapper>();
+        
         return services;
     }
 }

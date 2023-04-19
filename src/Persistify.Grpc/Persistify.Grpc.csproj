@@ -7,17 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2"/>
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj"/>
-        <ProjectReference Include="..\Persistify.Pipeline\Persistify.Pipeline.csproj"/>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
-        <ProjectReference Include="..\Persistify.RequestValidators\Persistify.RequestValidators.csproj"/>
-        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj"/>
+        <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj" />
+        <ProjectReference Include="..\Persistify.Indexes\Persistify.Indexes.csproj" />
+        <ProjectReference Include="..\Persistify.Pipeline\Persistify.Pipeline.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
+        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj" />
+        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">

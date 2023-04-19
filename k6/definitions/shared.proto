@@ -30,18 +30,21 @@ message InternalErrorResponseProto {
 message TypeDefinitionProto {
   string Name = 1;
   repeated FieldDefinitionProto Fields = 2;
-  string IdFieldPath = 3;
 }
 
 enum FieldTypeProto {
   TEXT = 0;
   NUMBER = 1;
   BOOLEAN = 2;
-  DATE = 3;
 }
 
 message FieldDefinitionProto {
   string Path = 1;
   FieldTypeProto Type = 2;
   bool IsRequired = 3;
+}
+
+message DocumentProto {
+  int64 Id = 1;
+  string Data = 2;
 }
