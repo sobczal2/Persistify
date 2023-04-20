@@ -13,9 +13,15 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Persistify.Indexes\Persistify.Indexes.csproj" />
         <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
-        <ProjectReference Include="..\Persistify.RequestValidators\Persistify.RequestValidators.csproj" />
+        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj" />
         <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
+        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Middlewares\Types\Drop" />
     </ItemGroup>
 
 </Project>

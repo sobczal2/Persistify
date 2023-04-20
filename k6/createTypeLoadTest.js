@@ -47,8 +47,7 @@ export default () => {
                     "IsRequired": true
                 }
             ],
-            "Name": `T${makeid(10)}`,
-            "IdFieldPath": "dolor.sit.amet"
+            "Name": `T${makeid(10)}`
         }
     };
     const response = client.invoke('/TypesService/Create', data);

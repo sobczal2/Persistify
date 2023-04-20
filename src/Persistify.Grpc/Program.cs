@@ -5,7 +5,11 @@ using Serilog;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .WriteTo.Console()
+    // .MinimumLevel.Error()
+    .WriteTo.Async(c =>
+    {
+        c.Console();
+    })
     .CreateLogger();
 
 try

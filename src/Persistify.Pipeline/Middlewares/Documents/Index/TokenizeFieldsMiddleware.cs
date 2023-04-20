@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Exceptions;
@@ -24,17 +25,37 @@ public class TokenizeFieldsMiddleware : IPipelineMiddleware<IndexDocumentPipelin
 
     public Task InvokeAsync(IndexDocumentPipelineContext context)
     {
-        var tokens = new List<Token>();
-        foreach (var field in context.TypeDefinition?.Fields ?? throw new InternalPipelineError())
+        var textTokens = new List<Token<string>>();
+        var numberTokens = new List<Token<double>>();
+        var booleanTokens = new List<Token<bool>>();
+        var jObject = context.Data ?? throw new InternalPipelineError();
+        
+        foreach (var field in context.TypeDefinition!.Fields)
         {
-            if (field.Type != FieldTypeProto.Text) continue;
-            var fieldValue = context.Data?.Value<string>(field.Path);
-            if (fieldValue == null) continue;
-            var innerTokens = _tokenizer.Tokenize(fieldValue);
-            tokens.AddRange(innerTokens);
+            var jToken = jObject.SelectToken(field.Path);
+            if(jToken == null) continue;
+            switch (field.Type)
+            {
+                case FieldTypeProto.Text:
+                    var text = jToken.Value<string>() ?? throw new InternalPipelineError();
+                    textTokens.AddRange(_tokenizer.TokenizeText(text, field.Path));
+                    break;
+                case FieldTypeProto.Number:
+                    var number = jToken.Value<double?>() ?? throw new InternalPipelineError();
+                    numberTokens.Add(_tokenizer.TokenizeNumber(number, field.Path));
+                    break;
+                case FieldTypeProto.Boolean:
+                    var boolean = jToken.Value<bool?>() ?? throw new InternalPipelineError();
+                    booleanTokens.Add(_tokenizer.TokenizeBoolean(boolean, field.Path));
+                    break;
+                default:
+                    throw new InternalPipelineError();
+            }
         }
-
-        context.Tokens = tokens.ToArray();
+        
+        context.TextTokens = textTokens.ToArray();
+        context.NumberTokens = numberTokens.ToArray();
+        context.BooleanTokens = booleanTokens.ToArray();
 
         return Task.CompletedTask;
     }

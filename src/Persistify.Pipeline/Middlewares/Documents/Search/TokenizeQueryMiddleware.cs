@@ -1,13 +1,16 @@
+using System.Linq;
 using System.Threading.Tasks;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Tokens;
 
-namespace Persistify.Pipeline.Middlewares.Documents;
+namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
-public class TokenizeQueryMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+[PipelineStep(PipelineStepType.Tokenizer)]
+public class TokenizeQueryMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+    SearchDocumentsResponseProto>
 {
     private readonly ITokenizer _tokenizer;
 
@@ -15,12 +18,11 @@ public class TokenizeQueryMiddleware : IPipelineMiddleware<SearchDocumentsPipeli
     {
         _tokenizer = tokenizer;
     }
+
     public Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
-        context.Tokens = _tokenizer.Tokenize(context.Request.Query);
-        
-        context.PreviousPipelineStep = PipelineStep.Tokenization;
-        
+        context.Tokens = _tokenizer.TokenizeText(context.Request.Query).ToArray();
+
         return Task.CompletedTask;
     }
 }

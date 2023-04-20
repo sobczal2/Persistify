@@ -1,10 +1,12 @@
 using System.Threading.Tasks;
 using FluentValidation;
 using Persistify.Pipeline.Contexts.Abstractions;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 
 namespace Persistify.Pipeline.Middlewares.Common;
 
+[PipelineStep(PipelineStepType.StaticValidation)]
 public class
     RequestProtoValidationMiddleware<TContext, TRequest, TResponse> : IPipelineMiddleware<TContext, TRequest, TResponse>
     where TContext : IPipelineContext<TRequest, TResponse>
@@ -21,7 +23,7 @@ public class
     public Task InvokeAsync(TContext context)
     {
         _validator.ValidateAndThrow(context.Request);
-        context.PreviousPipelineStep = PipelineStep.Validation;
+
         return Task.CompletedTask;
     }
 }

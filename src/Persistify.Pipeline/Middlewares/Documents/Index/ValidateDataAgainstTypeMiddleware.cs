@@ -2,15 +2,16 @@ using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
 using Newtonsoft.Json.Linq;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Exceptions;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Validators.Documents;
 
-namespace Persistify.Pipeline.Middlewares.Documents;
+namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
+[PipelineStep(PipelineStepType.DynamicValidation)]
 public class ValidateDataAgainstTypeMiddleware : IPipelineMiddleware<IndexDocumentPipelineContext,
     IndexDocumentRequestProto
     , IndexDocumentResponseProto>
@@ -18,10 +19,10 @@ public class ValidateDataAgainstTypeMiddleware : IPipelineMiddleware<IndexDocume
     public Task InvokeAsync(IndexDocumentPipelineContext context)
     {
         var jObject = context.Data ?? throw new InternalPipelineError();
-        
+
         foreach (var field in context.TypeDefinition!.Fields)
         {
-            var jToken = jObject[field.Path];
+            var jToken = jObject.SelectToken(field.Path);
 
             if (field.IsRequired && jToken == null)
                 throw new ValidationException(new[]
@@ -42,7 +43,6 @@ public class ValidateDataAgainstTypeMiddleware : IPipelineMiddleware<IndexDocume
                 });
         }
 
-        context.PreviousPipelineStep = PipelineStep.Validation;
         return Task.CompletedTask;
     }
 

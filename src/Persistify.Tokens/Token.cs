@@ -1,6 +1,14 @@
 namespace Persistify.Tokens;
 
-public struct Token
+public struct Token<TValue>
+    where TValue : notnull
 {
-    public string Value { get; set; }
+    public TValue Value { get; set; }
+    public string Path { get; set; }
+    
+    public Token(TValue value, string path)
+    {
+        Value = value;
+        Path = path;
+    }
 }

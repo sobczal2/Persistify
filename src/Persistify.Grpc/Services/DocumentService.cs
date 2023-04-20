@@ -16,14 +16,19 @@ public class DocumentService : DocumentsService.DocumentsServiceBase
         IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
         _searchDocumentsPipelineOrchestrator;
 
+    private readonly IPipelineOrchestrator<RemoveDocumentPipelineContext, RemoveDocumentRequestProto, RemoveDocumentResponseProto> _removeDocumentPipelineOrchestrator;
+
     public DocumentService(
         IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>
             indexDocumentPipelineOrchestrator,
         IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
-            searchDocumentsPipelineOrchestrator)
+            searchDocumentsPipelineOrchestrator,
+        IPipelineOrchestrator<RemoveDocumentPipelineContext, RemoveDocumentRequestProto, RemoveDocumentResponseProto>
+            removeDocumentPipelineOrchestrator)
     {
         _indexDocumentPipelineOrchestrator = indexDocumentPipelineOrchestrator;
         _searchDocumentsPipelineOrchestrator = searchDocumentsPipelineOrchestrator;
+        _removeDocumentPipelineOrchestrator = removeDocumentPipelineOrchestrator;
     }
 
     public override async Task<IndexDocumentResponseProto> Index(IndexDocumentRequestProto request,
@@ -39,6 +44,13 @@ public class DocumentService : DocumentsService.DocumentsServiceBase
     {
         var pipelineContext = new SearchDocumentsPipelineContext(request);
         await _searchDocumentsPipelineOrchestrator.ExecuteAsync(pipelineContext);
+        return pipelineContext.Response;
+    }
+
+    public override async Task<RemoveDocumentResponseProto> Remove(RemoveDocumentRequestProto request, ServerCallContext context)
+    {
+        var pipelineContext = new RemoveDocumentPipelineContext(request);
+        await _removeDocumentPipelineOrchestrator.ExecuteAsync(pipelineContext);
         return pipelineContext.Response;
     }
 }

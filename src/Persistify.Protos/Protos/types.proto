@@ -22,4 +22,10 @@ message ListTypesResponseProto {
   PaginationResponseProto PaginationResponse = 2;
 }
 
-// Delete
+// Drop
+message DropTypeRequestProto {
+  string TypeName = 1;
+}
+
+message DropTypeResponseProto {
+}

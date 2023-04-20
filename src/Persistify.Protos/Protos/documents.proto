@@ -5,29 +5,36 @@ import "Protos/shared.proto";
 option csharp_namespace = "Persistify.Protos";
 
 // Index
-message IndexObjectRequestProto {
+message IndexDocumentRequestProto {
   string TypeName = 1;
   string Data = 2;
 }
 
-message IndexObjectResponseProto {
-  int64 Id = 1;
+message IndexDocumentResponseProto {
+  int64 DocumentId = 1;
 }
 
 
 // Search
-message SearchObjectsRequestProto {
+message SearchDocumentsRequestProto {
   string TypeName = 1;
   string Query = 2;
   PaginationRequestProto PaginationRequest = 3;
-  repeated string FieldPaths = 4;
+  repeated string SearchPaths = 4;
 }
 
-message SearchObjectsResponseProto {
-  repeated string Items = 1;
+message SearchDocumentsResponseProto {
+  repeated DocumentProto Documents = 1;
   PaginationResponseProto PaginationResponse = 2;
 }
 
 // Get
 
-// Delete
+// Remove
+message RemoveDocumentRequestProto {
+  string TypeName = 1;
+  int64 DocumentId = 2;
+}
+
+message RemoveDocumentResponseProto {
+}

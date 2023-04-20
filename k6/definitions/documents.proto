@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-import "Protos/shared.proto";
+import "shared.proto";
 
 option csharp_namespace = "Persistify.Protos";
 

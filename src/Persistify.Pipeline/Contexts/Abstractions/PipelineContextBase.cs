@@ -1,3 +1,4 @@
+using System;
 using Persistify.Pipeline.Exceptions;
 
 namespace Persistify.Pipeline.Contexts.Abstractions;
@@ -13,12 +14,12 @@ public abstract class
     protected PipelineContextBase(TProtoRequest request)
     {
         RequestField = request;
-        PreviousPipelineStep = PipelineStep.None;
+        CorrelationId = Guid.NewGuid();
     }
 
+    public Guid CorrelationId { get; }
     public TProtoRequest Request => RequestField;
     public TProtoResponse Response => ResponseField ?? throw new ResponseNotYetReadyException();
-    public PipelineStep PreviousPipelineStep { get; set; }
 
     public void SetResponse(TProtoResponse response)
     {

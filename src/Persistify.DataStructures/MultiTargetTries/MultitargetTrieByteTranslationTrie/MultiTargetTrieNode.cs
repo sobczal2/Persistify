@@ -16,6 +16,13 @@ public class MultiTargetTrieNode<TItem>
         _items = new List<TItem>();
     }
 
+    public MultiTargetTrieNode(byte alphabetSize, List<TItem> items, MultiTargetTrieNode<TItem>?[] children)
+    {
+        _alphabetSize = alphabetSize;
+        _items = items;
+        _children = children;
+    }
+
     public IReadOnlyList<TItem> Items => GetAllItems();
 
     public void AddItem(TItem item)

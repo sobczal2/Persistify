@@ -1,12 +1,13 @@
 using System.Threading.Tasks;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Stores.Documents;
 
-namespace Persistify.Pipeline.Middlewares.Documents;
+namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
+[PipelineStep(PipelineStepType.DocumentStore)]
 public class InsertDocumentIntoDocumentStoreMiddleware : IPipelineMiddleware<IndexDocumentPipelineContext,
     IndexDocumentRequestProto, IndexDocumentResponseProto>
 {
@@ -22,7 +23,5 @@ public class InsertDocumentIntoDocumentStoreMiddleware : IPipelineMiddleware<Ind
     public async Task InvokeAsync(IndexDocumentPipelineContext context)
     {
         context.DocumentId = await _documentStore.AddAsync(context.Request.Data);
-
-        context.PreviousPipelineStep = PipelineStep.DocumentStore;
     }
 }

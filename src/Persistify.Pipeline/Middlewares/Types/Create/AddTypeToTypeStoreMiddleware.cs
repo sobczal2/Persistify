@@ -1,15 +1,16 @@
 using System.Threading.Tasks;
 using FluentValidation;
 using FluentValidation.Results;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Types;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
-using Persistify.Validators.Types;
 using Persistify.Stores.Types;
+using Persistify.Validators.Types;
 
-namespace Persistify.Pipeline.Middlewares.Types;
+namespace Persistify.Pipeline.Middlewares.Types.Create;
 
+[PipelineStep(PipelineStepType.TypeStore)]
 public class AddTypeToTypeStoreMiddleware : IPipelineMiddleware<CreateTypePipelineContext, CreateTypeRequestProto,
     CreateTypeResponseProto>
 {

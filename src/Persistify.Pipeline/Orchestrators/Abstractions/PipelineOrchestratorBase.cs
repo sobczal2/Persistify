@@ -1,39 +1,48 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Pipeline.Contexts.Abstractions;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
-using Persistify.Pipeline.Wrappers.Abstractions;
 
 namespace Persistify.Pipeline.Orchestrators.Abstractions;
 
 public abstract class
-    PipelineOrchestratorBase<TContext, TRequest, TResponse> : IPipelineOrchestrator<TContext, TRequest, TResponse>
+    PipelineOrchestratorBase<TSelf, TContext, TRequest, TResponse> : IPipelineOrchestrator<TContext, TRequest, TResponse>
+    where TSelf : PipelineOrchestratorBase<TSelf, TContext, TRequest, TResponse>
     where TContext : IPipelineContext<TRequest, TResponse>
     where TRequest : class
     where TResponse : class
 {
-    private readonly IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> _middlewares;
-    private readonly IEnumerable<IMiddlewareWrapper<TContext, TRequest, TResponse>> _wrappers;
+    private readonly ILogger<TSelf> _logger;
+    private readonly ImmutableArray<IPipelineMiddleware<TContext, TRequest, TResponse>> _middlewares;
 
     protected PipelineOrchestratorBase(
-        IEnumerable<IMiddlewareWrapper<TContext, TRequest, TResponse>> wrappers,
-        IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> middlewares)
+        IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> middlewares,
+        ILogger<TSelf> logger
+        )
     {
-        _middlewares = middlewares;
-        _wrappers = wrappers.ToList();
+        _logger = logger;
+        _middlewares = middlewares.ToImmutableArray();
     }
 
     public async Task ExecuteAsync(TContext context)
     {
-        foreach (var middleware in _middlewares)
-            await Wrap(context, async pipelineContext => await middleware.InvokeAsync(pipelineContext));
-    }
-
-    private Task Wrap(TContext context, Func<TContext, Task> action)
-    {
-        var task = action(context);
-        return _wrappers.Aggregate(task, (current, wrapper) => wrapper.Wrap(context, async () => { await current; }));
+        for (var i = 0; i < _middlewares.Length; i++)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            await _middlewares[i].InvokeAsync(context);
+            var middlewareType = _middlewares[i].GetType();
+            _logger.LogInformation(
+                "[Id: {corellationId}] Pipeline step {middlewareNumber}: {middlewareName}({middlewareStepType}) took {microseconds} us.",
+                context.CorrelationId,
+                i + 1,
+                middlewareType.Name,
+                middlewareType.GetPipelineStep(),
+                stopwatch.Elapsed.Microseconds);
+            
+        }
     }
 }

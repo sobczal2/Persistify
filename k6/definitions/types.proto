@@ -2,7 +2,7 @@ syntax = "proto3";
 
 option csharp_namespace = "Persistify.Protos";
 
-import "Protos/shared.proto";
+import "shared.proto";
 
 // Create
 message CreateTypeRequestProto {

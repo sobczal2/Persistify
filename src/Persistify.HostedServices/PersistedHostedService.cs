@@ -1,25 +1,27 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Persistify.Indexes.Common;
 using Persistify.Storage;
-using Persistify.Stores.Common;
 
 namespace Persistify.HostedServices;
 
 public class PersistedHostedService : IHostedService, IDisposable
 {
-    private readonly ILogger<PersistedStoreHostedService> _logger;
-    private readonly IEnumerable<IPersistedIndexer> _persistedIndexers;
+    private readonly ILogger<PersistedHostedService> _logger;
+    private readonly IEnumerable<IPersisted> _persisteds;
     private readonly IStorage _storage;
     private Timer? _timer;
 
     public PersistedHostedService(
-        IEnumerable<IPersistedIndexer> persistedIndexers,
+        IEnumerable<IPersisted> persisteds,
         IStorage storage,
-        ILogger<PersistedStoreHostedService> logger
+        ILogger<PersistedHostedService> logger
     )
     {
-        _persistedIndexers = persistedIndexers;
+        _persisteds = persisteds;
         _storage = storage;
         _logger = logger;
     }
@@ -32,12 +34,12 @@ public class PersistedHostedService : IHostedService, IDisposable
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting {name}", GetType().Name);
-        foreach (var indexer in _persistedIndexers)
+        foreach (var persisted in _persisteds)
         {
             try
             {
-                _logger.LogInformation("Attempting to load {indexerName}", indexer.GetType().Name);
-                await indexer.LoadAsync(_storage, cancellationToken);
+                _logger.LogInformation("Attempting to load {indexerName}", persisted.GetType().Name);
+                await persisted.LoadAsync(_storage, cancellationToken);
             }
             catch (Exception e)
             {
@@ -63,12 +65,12 @@ public class PersistedHostedService : IHostedService, IDisposable
 
     private async Task ExecuteSaveAsync()
     {
-        foreach (var indexer in _persistedIndexers)
+        foreach (var persisted in _persisteds)
         {
-            _logger.LogInformation("Attempting to save {storeName}", indexer.GetType().Name);
+            _logger.LogInformation("Attempting to save {storeName}", persisted.GetType().Name);
             try
             {
-                await indexer.SaveAsync(_storage);
+                await persisted.SaveAsync(_storage);
             }
             catch (Exception e)
             {

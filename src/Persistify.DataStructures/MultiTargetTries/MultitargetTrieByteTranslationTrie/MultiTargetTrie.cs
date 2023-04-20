@@ -16,6 +16,12 @@ public class MultiTargetTrie<TItem> : IMultiTargetTrie<TItem>
         _root = new MultiTargetTrieNode<TItem>(alphabetSize);
     }
 
+    public MultiTargetTrie(byte alphabetSize, MultiTargetTrieNode<TItem> root)
+    {
+        _alphabetSize = alphabetSize;
+        _root = root;
+    }
+
     public void Add(string key, TItem item, ISingleTargetMapper mapper)
     {
         if (mapper.AlphabetSize > _alphabetSize)

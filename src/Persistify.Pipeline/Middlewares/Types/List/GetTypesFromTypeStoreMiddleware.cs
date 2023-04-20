@@ -1,12 +1,13 @@
 using System.Threading.Tasks;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Types;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Stores.Types;
 
-namespace Persistify.Pipeline.Middlewares.Types;
+namespace Persistify.Pipeline.Middlewares.Types.List;
 
+[PipelineStep(PipelineStepType.TypeStore)]
 public class GetTypesFromTypeStoreMiddleware : IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto,
     ListTypesResponseProto>
 {

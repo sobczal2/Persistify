@@ -30,11 +30,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.HostedServices",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Protos", "src\Persistify.Protos\Persistify.Protos.csproj", "{0AEBC168-AC17-4F33-B46E-1C096F8D3A26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Tokenizer", "src\Persistify.Tokenizer\Persistify.Tokenizer.csproj", "{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Tokens", "src\Persistify.Tokens\Persistify.Tokens.csproj", "{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Pipeline", "src\Persistify.Pipeline\Persistify.Pipeline.csproj", "{D34902A4-EE3D-429A-94DB-30BDD7879D12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.RequestValidators", "src\Persistify.RequestValidators\Persistify.RequestValidators.csproj", "{46B7AAB2-1727-4267-A98D-5B6B716A985E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Validators", "src\Persistify.Validators\Persistify.Validators.csproj", "{46B7AAB2-1727-4267-A98D-5B6B716A985E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Indexes", "src\Persistify.Indexes\Persistify.Indexes.csproj", "{B65F7E6B-7C9E-4E85-9E9B-3ED27D216897}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,7 @@ Global
 		{DDAB4F44-77C5-4D8F-8F3A-716EEFAF24D7} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{D34902A4-EE3D-429A-94DB-30BDD7879D12} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 		{46B7AAB2-1727-4267-A98D-5B6B716A985E} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
+		{B65F7E6B-7C9E-4E85-9E9B-3ED27D216897} = {497F1B45-87FA-40C6-BA04-28970B9989E9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5518C1FC-E0F6-4F66-AE00-19418C1A82D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -119,5 +122,9 @@ Global
 		{46B7AAB2-1727-4267-A98D-5B6B716A985E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46B7AAB2-1727-4267-A98D-5B6B716A985E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46B7AAB2-1727-4267-A98D-5B6B716A985E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B65F7E6B-7C9E-4E85-9E9B-3ED27D216897}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B65F7E6B-7C9E-4E85-9E9B-3ED27D216897}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B65F7E6B-7C9E-4E85-9E9B-3ED27D216897}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B65F7E6B-7C9E-4E85-9E9B-3ED27D216897}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

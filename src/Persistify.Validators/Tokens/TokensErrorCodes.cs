@@ -1,6 +1,6 @@
 namespace Persistify.Validators.Tokens;
 
-public class TokensErrorCodes
+public static class TokensErrorCodes
 {
-    
+    public const string TokenInvalid = "token-invalid";
 }

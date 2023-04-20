@@ -10,7 +10,7 @@ using Persistify.Stores.Common;
 
 namespace Persistify.Stores.Types;
 
-public class HashSetTypeStore : ITypeStore, IPersistedStore
+public class HashSetTypeStore : ITypeStore, IPersisted
 {
     private ConcurrentDictionary<string, TypeDefinitionProto>? _types;
 

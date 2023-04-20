@@ -1,4 +1,6 @@
+using System.IO.Compression;
 using FluentValidation;
+using Grpc.Net.Compression;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,7 @@ using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Pipeline.Middlewares.Common;
 using Persistify.Pipeline.Middlewares.Documents.Index;
+using Persistify.Pipeline.Middlewares.Documents.Remove;
 using Persistify.Pipeline.Middlewares.Documents.Search;
 using Persistify.Pipeline.Middlewares.Types.Create;
 using Persistify.Pipeline.Middlewares.Types.List;
@@ -24,13 +27,13 @@ using Persistify.Pipeline.Orchestrators.Documents;
 using Persistify.Pipeline.Orchestrators.Types;
 using Persistify.Protos;
 using Persistify.Storage;
-using Persistify.Stores.Common;
 using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
 using Persistify.Tokens;
 using Persistify.Validators.Types;
 using Serilog;
 using ValidateTokensMiddleware = Persistify.Pipeline.Middlewares.Documents.Index.ValidateTokensMiddleware;
+using ValidateTypeNameMiddleware = Persistify.Pipeline.Middlewares.Documents.Search.ValidateTypeNameMiddleware;
 
 namespace Persistify.Grpc;
 
@@ -38,14 +41,17 @@ public static class PersistifyExtensions
 {
     public static IServiceCollection AddPersistify(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddGrpc(opt => { opt.Interceptors.Add<ValidationInterceptor>(); });
+        services.AddGrpc(opt =>
+        {
+            opt.Interceptors.Add<ValidationInterceptor>();
+            opt.CompressionProviders.Add(new DeflateCompressionProvider(CompressionLevel.SmallestSize));
+        });
         services.AddGrpcReflection();
 
         services.AddPipeline();
         services.AddValidatorsFromAssemblyContaining<CreateTypeRequestProtoValidator>(ServiceLifetime.Singleton);
         services.AddStores();
         services.AddIndexers();
-        services.AddStorage();
         services.AddOtherServices();
 
         return services;
@@ -69,10 +75,7 @@ public static class PersistifyExtensions
     {
         // Orchestrators
 
-        services.AddSingleton<
-            IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
-            CreateTypePipelineOrchestrator
-        >();
+
 
         services.AddSingleton<
             IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>,
@@ -84,19 +87,19 @@ public static class PersistifyExtensions
             IndexDocumentPipelineOrchestrator
         >();
 
+
+        
         services.AddSingleton<
-            IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>,
-            SearchDocumentsPipelineOrchestrator
+            IPipelineOrchestrator<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
+                RemoveDocumentResponseProto>,
+            RemoveDocumentPipelineOrchestrator
         >();
 
         // Common Middlewares
         services.AddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
 
         // Create Type Middlewares
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>),
-            typeof(AddTypeToTypeStoreMiddleware));
+
 
         // List Types Middlewares
         services.AddSingleton(
@@ -137,49 +140,27 @@ public static class PersistifyExtensions
         services.AddSingleton(
             typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
                 IndexDocumentResponseProto>),
-            typeof(InsertTokensIntoIndexStoreMiddleware));
+            typeof(InsertTokensIntoIndexersMiddleware));
 
         // Search Documents Middlewares
 
+        
+        // Remove Document Middlewares
         services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
+            typeof(IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
+                RemoveDocumentResponseProto>),
             typeof(ValidateTypeNameMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(TokenizeQueryMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(Pipeline.Middlewares.Documents.Search.ValidateTokensMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(SearchIndexesInIndexStoreMiddleware));
         
         services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(FilterIndexesByFieldsMiddleware));
+            typeof(IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
+                RemoveDocumentResponseProto>),
+            typeof(RemoveDocumentFromIndexersMiddleware));
         
         services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(RemoveDuplicateIndexesMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(ApplyPaginationMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(FetchDocumentsFromDocumentStoreMiddleware));
+            typeof(IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
+                RemoveDocumentResponseProto>),
+            typeof(RemoveDocumentFromDocumentStoreMiddleware));
+            
 
         return services;
     }
@@ -203,20 +184,18 @@ public static class PersistifyExtensions
 
     private static IServiceCollection AddStores(this IServiceCollection services)
     {
+        var fileStorage = new CompressingFileSystemStorage("/home/sobczal/temp");
+        services.AddSingleton<IStorage>(fileStorage);
+        
         var typeStore = new HashSetTypeStore();
         services.AddSingleton<ITypeStore>(typeStore);
         services.AddSingleton<IPersisted>(typeStore);
 
-        services.AddSingleton<IDocumentStore, StorageDocumentStore>();
+        var documentStore = new StorageDocumentStore(fileStorage);
+        services.AddSingleton<IDocumentStore>(documentStore);
+        services.AddSingleton<IPersisted>(documentStore);
         
         services.AddHostedService<PersistedHostedService>();
-
-        return services;
-    }
-
-    private static IServiceCollection AddStorage(this IServiceCollection services)
-    {
-        services.AddTransient<IStorage>(_ => new CompressingFileSystemStorage("/home/sobczal/temp"));
 
         return services;
     }

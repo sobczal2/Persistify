@@ -12,12 +12,12 @@ using Persistify.Protos;
 namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
 [PipelineStep(PipelineStepType.IndexStore)]
-public class SearchIndexesInIndexStoreMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
+public class SearchIndexesInIndexerMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
     SearchDocumentsRequestProto, SearchDocumentsResponseProto>
 {
     private readonly IIndexer<string> _textIndexer;
 
-    public SearchIndexesInIndexStoreMiddleware(
+    public SearchIndexesInIndexerMiddleware(
         IIndexer<string> textIndexer
     )
     {

@@ -2,8 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "Persistify.Protos";
 
-import "Protos/documents.proto";
-import "Protos/types.proto";
+import "documents.proto";
+import "types.proto";
 
 service DocumentsService {
   rpc Index (IndexDocumentRequestProto) returns (IndexDocumentResponseProto);

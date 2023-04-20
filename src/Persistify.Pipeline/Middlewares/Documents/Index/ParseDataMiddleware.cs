@@ -3,14 +3,15 @@ using FluentValidation;
 using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Validators.Documents;
 
-namespace Persistify.Pipeline.Middlewares.Documents;
+namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
+[PipelineStep(PipelineStepType.Mutation)]
 public class ParseDataMiddleware : IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
     IndexDocumentResponseProto>
 {
@@ -19,7 +20,8 @@ public class ParseDataMiddleware : IPipelineMiddleware<IndexDocumentPipelineCont
         try
         {
             context.Data = JObject.Parse(context.Request.Data);
-        } catch (JsonReaderException)
+        }
+        catch (JsonReaderException)
         {
             throw new ValidationException(new[]
             {
@@ -29,8 +31,6 @@ public class ParseDataMiddleware : IPipelineMiddleware<IndexDocumentPipelineCont
                 }
             });
         }
-
-        context.PreviousPipelineStep = PipelineStep.Parsing;
 
         return Task.CompletedTask;
     }

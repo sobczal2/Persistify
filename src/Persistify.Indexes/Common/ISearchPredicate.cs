@@ -1,6 +1,6 @@
 namespace Persistify.Indexes.Common;
 
-public class ISearchPredicate
+public interface ISearchPredicate
 {
     
 }

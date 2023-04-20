@@ -9,9 +9,9 @@ public class SearchDocumentRequestProtoValidator : AbstractValidator<SearchDocum
     public SearchDocumentRequestProtoValidator(IValidator<PaginationRequestProto> paginationRequestValidator)
     {
         RuleFor(x => x.Query)
-            .NotEmpty()
+            .NotNull()
             .WithErrorCode(DocumentErrorCodes.QueryMissing);
-        
+
         RuleFor(x => x.PaginationRequest)
             .NotEmpty()
             .WithErrorCode(CommonErrorCodes.PaginationRequestEmpty)

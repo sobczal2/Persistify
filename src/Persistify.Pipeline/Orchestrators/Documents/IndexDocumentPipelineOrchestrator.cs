@@ -1,20 +1,21 @@
 using System.Collections.Generic;
-using Persistify.Pipeline.Contexts.Objects;
+using Microsoft.Extensions.Logging;
+using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Pipeline.Orchestrators.Abstractions;
-using Persistify.Pipeline.Wrappers.Abstractions;
 using Persistify.Protos;
 
-namespace Persistify.Pipeline.Orchestrators.Objects;
+namespace Persistify.Pipeline.Orchestrators.Documents;
 
-public class IndexDocumentPipelineOrchestrator : PipelineOrchestratorBase<IndexDocumentPipelineContext,
-    IndexObjectRequestProto, IndexObjectResponseProto>
+public class IndexDocumentPipelineOrchestrator : PipelineOrchestratorBase<IndexDocumentPipelineOrchestrator,
+    IndexDocumentPipelineContext,
+    IndexDocumentRequestProto, IndexDocumentResponseProto>
 {
     public IndexDocumentPipelineOrchestrator(
-        IEnumerable<IMiddlewareWrapper<IndexDocumentPipelineContext, IndexObjectRequestProto, IndexObjectResponseProto>>
-            wrappers,
-        IEnumerable<IPipelineMiddleware<IndexDocumentPipelineContext, IndexObjectRequestProto, IndexObjectResponseProto>>
-            middlewares) : base(wrappers, middlewares)
+        IEnumerable<IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
+                IndexDocumentResponseProto>>
+            middlewares,
+        ILogger<IndexDocumentPipelineOrchestrator> logger) : base(middlewares, logger)
     {
     }
 }

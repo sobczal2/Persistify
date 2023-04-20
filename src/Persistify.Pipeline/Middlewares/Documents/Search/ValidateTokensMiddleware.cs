@@ -1,31 +1,29 @@
 using System.Threading.Tasks;
 using FluentValidation;
-using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Exceptions;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
-using Persistify.Stores.Documents;
 using Persistify.Tokens;
 
-namespace Persistify.Pipeline.Middlewares.Documents;
+namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
-public class ValidateTokensMiddleware : IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>
+[PipelineStep(PipelineStepType.StaticValidation)]
+public class ValidateTokensMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+    SearchDocumentsResponseProto>
 {
-    private readonly IValidator<Token> _tokenValidator;
+    private readonly IValidator<Token<string>> _tokenValidator;
 
-    public ValidateTokensMiddleware(IValidator<Token> tokenValidator)
+    public ValidateTokensMiddleware(IValidator<Token<string>> tokenValidator)
     {
         _tokenValidator = tokenValidator;
     }
-    public Task InvokeAsync(IndexDocumentPipelineContext context)
+
+    public Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
         foreach (var token in context.Tokens ?? throw new InternalPipelineError())
-        {
             _tokenValidator.ValidateAndThrow(token);
-        }
-        
-        context.PreviousPipelineStep = PipelineStep.Validation;
 
         return Task.CompletedTask;
     }

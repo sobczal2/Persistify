@@ -3,11 +3,11 @@ using Persistify.Tokens;
 
 namespace Persistify.Validators.Tokens;
 
-public class TextTokenValidator : AbstractValidator<Token>
+public class TextTokenValidator : AbstractValidator<Token<string>>
 {
     public TextTokenValidator()
     {
         RuleFor(x => x.Value)
-            .Matches(@"^[a-zA-Z0-9]+$");
+            .Matches(@"^[a-z0-9$]+$").When(x => x.Value != string.Empty);
     }
 }
