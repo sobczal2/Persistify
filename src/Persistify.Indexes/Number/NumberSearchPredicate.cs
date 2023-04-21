@@ -4,6 +4,6 @@ namespace Persistify.Indexes.Number;
 
 public class NumberSearchPredicate : ISearchPredicate
 {
-    public double MaxValue { get; set; }
-    public double MinValue { get; set; }
+    public double Min { get; set; }
+    public double Max { get; set; }
 }

@@ -22,11 +22,6 @@
         <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
     </ItemGroup>
 
-
-    <ItemGroup>
-      <Folder Include="Extensions\Types" />
-    </ItemGroup>
-
     <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
         <DefineConstants>_WINDOWS</DefineConstants>
     </PropertyGroup>

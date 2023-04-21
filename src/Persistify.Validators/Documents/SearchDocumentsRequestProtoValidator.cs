@@ -4,9 +4,9 @@ using Persistify.Validators.Common;
 
 namespace Persistify.Validators.Documents;
 
-public class SearchDocumentRequestProtoValidator : AbstractValidator<SearchDocumentsRequestProto>
+public class SearchDocumentsRequestProtoValidator : AbstractValidator<SearchDocumentsRequestProto>
 {
-    public SearchDocumentRequestProtoValidator(IValidator<PaginationRequestProto> paginationRequestValidator)
+    public SearchDocumentsRequestProtoValidator(IValidator<PaginationRequestProto> paginationRequestValidator)
     {
         RuleFor(x => x.Query)
             .NotNull()

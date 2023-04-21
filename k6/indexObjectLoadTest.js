@@ -24,8 +24,8 @@ export default () => {
     });
 
     const data = {
-        "Data": "{ \"test\": { \"one\": \"Ala ma kita\", \"two\": \"Lorem ipsum dolor sit amet\", \"three\": 1 } }",
-        "TypeName": "Test3"
+        "Data": "{ \"imie\": \"Stasiu\", \"nazwisko\": \"Augustyniak\", \"wiek\": 21 }",
+        "TypeName": "Osoba"
     };
     const response = client.invoke('/DocumentsService/Index', data);
 

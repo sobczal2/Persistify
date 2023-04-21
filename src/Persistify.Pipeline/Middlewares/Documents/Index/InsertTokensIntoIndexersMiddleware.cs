@@ -10,7 +10,7 @@ using Persistify.Stores.Documents;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
-[PipelineStep(PipelineStepType.IndexStore)]
+[PipelineStep(PipelineStepType.Indexer)]
 public class InsertTokensIntoIndexersMiddleware : IPipelineMiddleware<IndexDocumentPipelineContext,
     IndexDocumentRequestProto,
     IndexDocumentResponseProto>

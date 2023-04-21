@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Persistify.Helpers;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Exceptions;
@@ -19,7 +20,7 @@ public class ApplyPaginationMiddleware : IPipelineMiddleware<SearchDocumentsPipe
         context.Pagination = new PaginationResponseProto
         {
             TotalItems = indexes.Length,
-            TotalPages = (int)Math.Ceiling(indexes.Length / (double)context.Request.PaginationRequest.PageSize),
+            TotalPages = MathI.Ceiling(indexes.Length / (double)context.Request.PaginationRequest.PageSize),
             PageNumber = context.Request.PaginationRequest.PageNumber,
             PageSize = context.Request.PaginationRequest.PageSize
         };

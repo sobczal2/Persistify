@@ -4,6 +4,7 @@ option csharp_namespace = "Persistify.Protos";
 
 import "Protos/documents.proto";
 import "Protos/types.proto";
+import "Protos/auth.proto";
 
 service DocumentsService {
   rpc Index (IndexDocumentRequestProto) returns (IndexDocumentResponseProto);
@@ -15,4 +16,11 @@ service TypesService {
   rpc Create (CreateTypeRequestProto) returns (CreateTypeResponseProto);
   rpc List (ListTypesRequestProto) returns (ListTypesResponseProto);
 //  rpc Delete (DeleteTypeRequestProto) returns (DeleteTypeResponseProto);
+}
+
+service AuthService {
+  rpc Login (SignInRequestProto) returns (SignInResponseProto);
+  rpc RefreshToken (RefreshTokenRequestProto) returns (RefreshTokenResponseProto);
+  rpc CreateUser (CreateUserRequestProto) returns (CreateUserResponseProto);
+  rpc DeleteUser (DeleteUserRequestProto) returns (DeleteUserResponseProto);
 }

@@ -14,36 +14,25 @@ namespace Persistify.Indexes.Text;
 
 public class TextIndexer : IIndexer<string>, IPersisted
 {
+    private const string IndexerName = "textindexer";
     private ConcurrentDictionary<string, ITrie<Index>> _tries = default!;
-    private readonly ConcurrentDictionary<string, object> _locks = new();
-
-    private object GetOrCreateLock(string typeName)
-    {
-        return _locks.GetOrAdd(typeName, _ => new object());
-    }
 
     public Task IndexAsync(long id, Token<string> token, string typeName)
     {
-        lock (GetOrCreateLock(typeName))
-        {
-            AssertInitialized();
-            var trie = _tries.GetOrAdd(typeName, _ => new Trie<Index>());
-            trie.Add(token.Value, new Index(id, token.Path));
-            return Task.CompletedTask;
-        }
+        AssertInitialized();
+        var trie = _tries.GetOrAdd(typeName, _ => new ConcurrentByteMapTrie<Index>());
+        trie.Add(token.Value, new Index(id, token.Path));
+        return Task.CompletedTask;
     }
 
     public Task IndexAsync(long id, IEnumerable<Token<string>> tokens, string typeName)
     {
-        lock (GetOrCreateLock(typeName))
-        {
-            AssertInitialized();
-            var trie = _tries.GetOrAdd(typeName, _ => new Trie<Index>());
-            foreach (var token in tokens)
-                trie.Add(token.Value, new Index(id, token.Path));
+        AssertInitialized();
+        var trie = _tries.GetOrAdd(typeName, _ => new ConcurrentByteMapTrie<Index>());
+        foreach (var token in tokens)
+            trie.Add(token.Value, new Index(id, token.Path));
 
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 
     public Task<IEnumerable<Index>> SearchAsync(ISearchPredicate searchPredicate, string typeName)
@@ -52,28 +41,26 @@ public class TextIndexer : IIndexer<string>, IPersisted
         if (searchPredicate is not TextSearchPredicate textSearchPredicate)
             throw new ArgumentException("Search predicate must be of type TextSearchPredicate");
 
-        var trie = _tries.GetOrAdd(typeName, _ => new Trie<Index>());
+        var trie = _tries.GetOrAdd(typeName, _ => new ConcurrentByteMapTrie<Index>());
         return Task.FromResult(trie.Search(textSearchPredicate.Value));
     }
 
     public Task<int> RemoveAsync(long id, string typeName)
     {
-        lock (GetOrCreateLock(typeName))
-        {
-            AssertInitialized();
-            var trie = _tries.GetOrAdd(typeName, _ => new Trie<Index>());
-            return Task.FromResult(trie.Remove(index => index.Id == id));
-        }
+        AssertInitialized();
+        var trie = _tries.GetOrAdd(typeName, _ => new ConcurrentByteMapTrie<Index>());
+        return Task.FromResult(trie.Remove(index => index.Id == id));
     }
 
     public async ValueTask LoadAsync(IStorage storage, CancellationToken cancellationToken = default)
     {
-        var exists = await storage.ExistsBlobAsync("textindexer", cancellationToken);
+        var exists = await storage.ExistsBlobAsync(IndexerName, cancellationToken);
         _tries = new ConcurrentDictionary<string, ITrie<Index>>();
         if (!exists)
             return;
-        var serializedTries = await storage.LoadBlobAsync("textindexer", cancellationToken);
-        var tries = JsonConvert.DeserializeObject<ConcurrentDictionary<string, Trie<Index>>>(serializedTries);
+        var serializedTries = await storage.LoadBlobAsync(IndexerName, cancellationToken);
+        var tries = JsonConvert.DeserializeObject<ConcurrentDictionary<string, ConcurrentByteMapTrie<Index>>>(serializedTries);
+        if(tries == null) throw new InvalidOperationException("Could not deserialize tries");
         foreach (var (key, value) in tries)
             _tries.TryAdd(key, value);
     }
@@ -82,9 +69,9 @@ public class TextIndexer : IIndexer<string>, IPersisted
     {
         AssertInitialized();
         var serializedTries = JsonConvert.SerializeObject(_tries);
-        await storage.SaveBlobAsync("textindexer", serializedTries, cancellationToken);
+        await storage.SaveBlobAsync(IndexerName, serializedTries, cancellationToken);
     }
-    
+
     private void AssertInitialized()
     {
         if (_tries == null)

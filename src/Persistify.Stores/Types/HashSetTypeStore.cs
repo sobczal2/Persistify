@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Persistify.Helpers;
 using Persistify.Protos;
 using Persistify.Storage;
 using Persistify.Stores.Common;
@@ -77,7 +78,7 @@ public class HashSetTypeStore : ITypeStore, IPersisted
                 PageNumber = paginationRequest.PageNumber,
                 PageSize = paginationRequest.PageSize,
                 TotalItems = totalCount,
-                TotalPages = (int)Math.Ceiling(totalCount / (double)paginationRequest.PageSize)
+                TotalPages = MathI.Ceiling(totalCount / (double)paginationRequest.PageSize)
             });
     }
 

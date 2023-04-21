@@ -4,5 +4,5 @@ namespace Persistify.Indexes.Text;
 
 public class TextSearchPredicate : ISearchPredicate
 {
-    public string Value { get; set; }
+    public string Value { get; set; } = default!;
 }

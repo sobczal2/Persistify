@@ -46,7 +46,7 @@ public static class SearchDocumentsEndpointExtensions
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),
-            typeof(Pipeline.Middlewares.Documents.Search.ValidateTokensMiddleware));
+            typeof(ValidateTokensMiddleware));
 
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,

@@ -6,7 +6,7 @@ public enum PipelineStepType
     DynamicValidation,
     TypeStore,
     DocumentStore,
-    IndexStore,
+    Indexer,
     Mutation,
     Tokenizer
 }

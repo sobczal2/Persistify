@@ -3,9 +3,9 @@ using System.IO.Compression;
 
 namespace Persistify.Storage;
 
-public class CompressingFileSystemStorage : FileSystemStorage
+public class GzipFileSystemStorage : FileSystemStorage
 {
-    public CompressingFileSystemStorage(string rootPath) : base(rootPath, Compress, Decompress)
+    public GzipFileSystemStorage(string rootPath) : base(rootPath, Compress, Decompress)
     {
     }
 

@@ -6,9 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.52.0"/>
-        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0"/>
-        <PackageReference Include="Grpc.Auth" Version="2.52.0"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.52.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0" />
+        <PackageReference Include="Grpc.Auth" Version="2.52.0" />
         <PackageReference Include="Grpc.Tools" Version="2.54.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -26,6 +26,9 @@
             <Generator>MSBuild:Compile</Generator>
         </Protobuf>
         <Protobuf Include="Protos\types.proto">
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Include="Protos\auth.proto">
             <Generator>MSBuild:Compile</Generator>
         </Protobuf>
     </ItemGroup>

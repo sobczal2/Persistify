@@ -11,7 +11,7 @@ using Persistify.Protos;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
-[PipelineStep(PipelineStepType.IndexStore)]
+[PipelineStep(PipelineStepType.Indexer)]
 public class SearchIndexesInIndexerMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
     SearchDocumentsRequestProto, SearchDocumentsResponseProto>
 {

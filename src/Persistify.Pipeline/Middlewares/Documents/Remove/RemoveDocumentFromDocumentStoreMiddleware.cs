@@ -1,11 +1,13 @@
 using System.Threading.Tasks;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Stores.Documents;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Remove;
 
+[PipelineStep(PipelineStepType.DocumentStore)]
 public class RemoveDocumentFromDocumentStoreMiddleware : IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto, RemoveDocumentResponseProto>
 {
     private readonly IDocumentStore _documentStore;

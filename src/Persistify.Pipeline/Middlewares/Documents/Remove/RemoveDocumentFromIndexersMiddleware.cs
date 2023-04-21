@@ -4,12 +4,14 @@ using FluentValidation;
 using FluentValidation.Results;
 using Persistify.Indexes.Common;
 using Persistify.Pipeline.Contexts.Documents;
+using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Validators.Documents;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Remove;
 
+[PipelineStep(PipelineStepType.Indexer)]
 public class RemoveDocumentFromIndexersMiddleware : IPipelineMiddleware<RemoveDocumentPipelineContext,
     RemoveDocumentRequestProto, RemoveDocumentResponseProto>
 {
