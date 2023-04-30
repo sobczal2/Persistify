@@ -1,11 +1,13 @@
 using System.Threading.Tasks;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
 
 namespace Persistify.Grpc.Services;
 
+[Authorize]
 public class TypeService : TypesService.TypesServiceBase
 {
     private readonly IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>

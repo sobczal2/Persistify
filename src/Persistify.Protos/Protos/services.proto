@@ -9,6 +9,7 @@ import "Protos/auth.proto";
 service DocumentsService {
   rpc Index (IndexDocumentRequestProto) returns (IndexDocumentResponseProto);
   rpc Search (SearchDocumentsRequestProto) returns (SearchDocumentsResponseProto);
+  rpc ComplexSearch (ComplexSearchDocumentsRequestProto) returns (ComplexSearchDocumentsResponseProto);
   rpc Remove (RemoveDocumentRequestProto) returns (RemoveDocumentResponseProto);
 }
 

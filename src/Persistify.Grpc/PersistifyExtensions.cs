@@ -1,9 +1,13 @@
+using System;
 using System.IO.Compression;
+using System.Text;
 using FluentValidation;
-using Grpc.Net.Compression;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Persistify.Grpc.Extensions.Documents;
 using Persistify.Grpc.Extensions.Types;
 using Persistify.Grpc.Interceptors;
@@ -13,12 +17,15 @@ using Persistify.Indexes.Boolean;
 using Persistify.Indexes.Common;
 using Persistify.Indexes.Number;
 using Persistify.Indexes.Text;
+using Persistify.Options;
 using Persistify.Storage;
 using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
+using Persistify.Stores.User;
 using Persistify.Tokens;
 using Persistify.Validators.Types;
 using Serilog;
+using DeflateCompressionProvider = Grpc.Net.Compression.DeflateCompressionProvider;
 
 namespace Persistify.Grpc;
 
@@ -32,12 +39,30 @@ public static class PersistifyExtensions
             opt.CompressionProviders.Add(new DeflateCompressionProvider(CompressionLevel.SmallestSize));
         });
         services.AddGrpcReflection();
-
-        services.AddPipeline();
+        services.AddPersistifyOptions(configuration);
+        services.AddAuthorization();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(opt =>
+            {
+                opt.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration.GetSection(AuthOptions.SectionName).GetValue<string>("Issuer"),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration
+                            .GetSection(AuthOptions.SectionName).GetValue<string>("JwtSecret") ??
+                        throw new InvalidOperationException())),
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
         services.AddValidatorsFromAssemblyContaining<CreateTypeRequestProtoValidator>(ServiceLifetime.Singleton);
-        services.AddStores();
-        services.AddIndexers();
-        services.AddOtherServices();
+
+        services.AddPersistifyPipeline();
+        services.AddPersistifyStores();
+        services.AddPersistifyIndexers();
+        services.AddOtherPersistifyServices();
 
         return services;
     }
@@ -48,62 +73,81 @@ public static class PersistifyExtensions
 
         app.MapGrpcReflectionService();
 
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.MapGrpcService<TypeService>();
         app.MapGrpcService<DocumentService>();
+        app.MapGrpcService<AuthService>();
 
         app.MapGet("/", () => "Use gRPC client to call the service");
 
         return app;
     }
 
-    private static IServiceCollection AddPipeline(this IServiceCollection services)
+    private static IServiceCollection AddPersistifyPipeline(this IServiceCollection services)
     {
         services.AddIndexDocumentEndpoint();
         services.AddRemoveDocumentEndpoint();
         services.AddSearchDocumentsEndpoint();
-        
+        services.AddComplexSearchDocumentsEndpoint();
+
         services.AddCreateTypeEndpoint();
         services.AddListTypesEndpoint();
 
         return services;
     }
-    
-    private static IServiceCollection AddIndexers(this IServiceCollection services)
+
+    private static IServiceCollection AddPersistifyIndexers(this IServiceCollection services)
     {
         var textIndexer = new TextIndexer();
         services.AddSingleton<IIndexer<string>>(textIndexer);
         services.AddSingleton<IPersisted>(textIndexer);
-        
+
         var numberIndexer = new NumberIndexer();
         services.AddSingleton<IIndexer<double>>(numberIndexer);
         services.AddSingleton<IPersisted>(numberIndexer);
-        
+
         var booleanIndexer = new BooleanIndexer();
         services.AddSingleton<IIndexer<bool>>(booleanIndexer);
         services.AddSingleton<IPersisted>(booleanIndexer);
-        
+
         return services;
     }
 
-    private static IServiceCollection AddStores(this IServiceCollection services)
+    private static IServiceCollection AddPersistifyStores(this IServiceCollection services)
     {
-        var fileStorage = new GzipFileSystemStorage("/home/sobczal/temp");
-        services.AddSingleton<IStorage>(fileStorage);
-        
-        var typeStore = new HashSetTypeStore();
-        services.AddSingleton<ITypeStore>(typeStore);
-        services.AddSingleton<IPersisted>(typeStore);
+        services.AddSingleton<IStorage>(_ => new GzipFileSystemStorage("/home/sobczal/temp"));
 
-        var documentStore = new StorageDocumentStore(fileStorage);
-        services.AddSingleton<IDocumentStore>(documentStore);
-        services.AddSingleton<IPersisted>(documentStore);
-        
+        services.AddSingleton<ITypeStore>(_ => new HashSetTypeStore());
+        services.AddSingleton<IPersisted>(sp =>
+            sp.GetRequiredService<ITypeStore>() as IPersisted ?? throw new InvalidOperationException());
+
+        services.AddSingleton<IDocumentStore>(sp =>
+        {
+            var storage = sp.GetRequiredService<IStorage>();
+            return new StorageDocumentStore(storage);
+        });
+        services.AddSingleton<IPersisted>(sp =>
+            sp.GetRequiredService<IDocumentStore>() as IPersisted ?? throw new InvalidOperationException());
+
+        services.AddSingleton<IUserStore>(sp =>
+        {
+            var authOptionsMonitor = sp.GetRequiredService<IOptionsMonitor<AuthOptions>>();
+            return new UserStore(authOptionsMonitor);
+        });
+        services.AddSingleton<IPersisted>(sp =>
+            sp.GetRequiredService<IUserStore>() as IPersisted ?? throw new InvalidOperationException());
+
+
         services.AddHostedService<PersistedHostedService>();
 
         return services;
     }
 
-    private static IServiceCollection AddOtherServices(this IServiceCollection services)
+    private static IServiceCollection AddOtherPersistifyServices(this IServiceCollection services)
     {
         services.AddSingleton<ITokenizer, Tokenizer>();
 

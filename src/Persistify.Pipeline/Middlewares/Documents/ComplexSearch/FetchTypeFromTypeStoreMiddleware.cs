@@ -8,12 +8,10 @@ using Persistify.Protos;
 using Persistify.Stores.Types;
 using Persistify.Validators.Documents;
 
-namespace Persistify.Pipeline.Middlewares.Documents.Index;
+namespace Persistify.Pipeline.Middlewares.Documents.ComplexSearch;
 
 [PipelineStep(PipelineStepType.TypeStore)]
-public class FetchTypeFromTypeStoreMiddleware : IPipelineMiddleware<IndexDocumentPipelineContext,
-    IndexDocumentRequestProto,
-    IndexDocumentResponseProto>
+public class FetchTypeFromTypeStoreMiddleware : IPipelineMiddleware<ComplexSearchDocumentsPipelineContext, ComplexSearchDocumentsRequestProto, ComplexSearchDocumentsResponseProto>
 {
     private readonly ITypeStore _typeStore;
 
@@ -24,7 +22,7 @@ public class FetchTypeFromTypeStoreMiddleware : IPipelineMiddleware<IndexDocumen
         _typeStore = typeStore;
     }
 
-    public Task InvokeAsync(IndexDocumentPipelineContext context)
+    public Task InvokeAsync(ComplexSearchDocumentsPipelineContext context)
     {
         if (!_typeStore.Exists(context.Request.TypeName))
             throw new ValidationException(new[]

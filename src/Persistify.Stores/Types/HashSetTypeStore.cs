@@ -44,21 +44,21 @@ public class HashSetTypeStore : ITypeStore, IPersisted
     {
         AssertInitialized();
         if (!_types!.TryAdd(type.Name, type))
-            throw new TypeExistsException();
+            throw new StoreException("Type not found");
     }
 
     public void Delete(string typeName)
     {
         AssertInitialized();
         if (!_types!.TryRemove(typeName, out _))
-            throw new TypeNotFoundException();
+            throw new StoreException("Type not found");
     }
 
     public TypeDefinitionProto Get(string typeName)
     {
         AssertInitialized();
         if (!_types!.TryGetValue(typeName, out var typeDefinition))
-            throw new TypeNotFoundException();
+            throw new StoreException("Type not found");
         return typeDefinition;
     }
 

@@ -21,6 +21,7 @@ message SignInResponseProto {
 // refresh token
 message RefreshTokenRequestProto {
   string refresh_token = 1;
+  string username = 2;
 }
 
 message RefreshTokenResponseProto {
