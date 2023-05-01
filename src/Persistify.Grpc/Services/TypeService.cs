@@ -1,30 +1,44 @@
 using System.Threading.Tasks;
 using Grpc.Core;
-using Mediator;
+using Microsoft.AspNetCore.Authorization;
+using Persistify.Pipeline.Contexts.Types;
+using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
-using Persistify.Requests.Core.Type;
 
 namespace Persistify.Grpc.Services;
 
-public class TypeService : TypesService.TypesServiceBase
+[Authorize]
+public class TypeService : Protos.TypeService.TypeServiceBase
 {
-    private readonly IMediator _mediator;
+    private readonly IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>
+        _createTypePipelineOrchestrator;
+
+    private readonly IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>
+        _listTypesPipelineOrchestrator;
 
     public TypeService(
-        IMediator mediator
+        IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>
+            createTypePipelineOrchestrator,
+        IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>
+            listTypesPipelineOrchestrator
     )
     {
-        _mediator = mediator;
+        _createTypePipelineOrchestrator = createTypePipelineOrchestrator;
+        _listTypesPipelineOrchestrator = listTypesPipelineOrchestrator;
     }
 
     public override async Task<CreateTypeResponseProto> Create(CreateTypeRequestProto request,
         ServerCallContext context)
     {
-        return await _mediator.Send(new CreateTypeRequest(request));
+        var pipelineContext = new CreateTypePipelineContext(request);
+        await _createTypePipelineOrchestrator.ExecuteAsync(pipelineContext);
+        return pipelineContext.Response;
     }
 
     public override async Task<ListTypesResponseProto> List(ListTypesRequestProto request, ServerCallContext context)
     {
-        return await _mediator.Send(new ListTypesRequest(request));
+        var pipelineContext = new ListTypesPipelineContext(request);
+        await _listTypesPipelineOrchestrator.ExecuteAsync(pipelineContext);
+        return pipelineContext.Response;
     }
 }

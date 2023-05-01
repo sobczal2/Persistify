@@ -1,27 +1,14 @@
-using System.Threading;
-using System.Threading.Tasks;
-using OneOf;
-using Persistify.Dtos.Common;
-using Persistify.Dtos.Common.Pagination;
-using Persistify.Dtos.Common.Types;
-using Persistify.Dtos.Internal.Types;
-using Persistify.Stores.Common;
+using Persistify.Protos;
 
 namespace Persistify.Stores.Types;
 
 public interface ITypeStore
 {
-    ValueTask<OneOf<StoreSuccess<bool>, StoreError>> ExistsAsync(string type,
-        CancellationToken cancellationToken = default);
+    bool Exists(string typeName);
+    void Create(TypeDefinitionProto typeDefinitionDtoName);
+    void Delete(string typeName);
+    TypeDefinitionProto Get(string typeName);
 
-    ValueTask<OneOf<StoreSuccess<EmptyDto>, StoreError>> CreateAsync(TypeDefinitionDto typeDefinitionDto,
-        CancellationToken cancellationToken = default);
-
-    ValueTask<OneOf<StoreSuccess<EmptyDto>, StoreError>> DeleteAsync(string type,
-        CancellationToken cancellationToken = default);
-
-    ValueTask<OneOf<StoreSuccess<PagedTypes>, StoreError>> GetPagedAsync(PaginationRequestDto paginationRequest,
-        CancellationToken cancellationToken = default);
-    
-    ValueTask<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>> GetAsync(string type, CancellationToken cancellationToken = default);
+    (TypeDefinitionProto[] TypeDefinitions, PaginationResponseProto PaginationResponse) List(
+        PaginationRequestProto paginationRequest);
 }

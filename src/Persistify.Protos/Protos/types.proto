@@ -9,14 +9,7 @@ message CreateTypeRequestProto {
   TypeDefinitionProto TypeDefinition = 1;
 }
 
-message CreateTypeSuccessResponseProto {}
-
 message CreateTypeResponseProto {
-  oneof Response {
-    CreateTypeSuccessResponseProto Success = 1;
-    ValidationErrorResponseProto ValidationError = 2;
-    InternalErrorResponseProto InternalError = 3;
-  }
 }
 
 // List
@@ -24,17 +17,15 @@ message ListTypesRequestProto {
   PaginationRequestProto PaginationRequest = 1;
 }
 
-message ListTypesSuccessResponseProto {
+message ListTypesResponseProto {
   repeated TypeDefinitionProto TypeDefinitions = 1;
   PaginationResponseProto PaginationResponse = 2;
 }
 
-message ListTypesResponseProto {
-  oneof Response {
-    ListTypesSuccessResponseProto Success = 1;
-    ValidationErrorResponseProto ValidationError = 2;
-    InternalErrorResponseProto InternalError = 3;
-  }
+// Drop
+message DropTypeRequestProto {
+  string TypeName = 1;
 }
 
-// Delete
+message DropTypeResponseProto {
+}

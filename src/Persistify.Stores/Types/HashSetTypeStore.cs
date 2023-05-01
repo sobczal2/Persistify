@@ -1,121 +1,90 @@
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OneOf;
-using Persistify.Dtos.Common;
-using Persistify.Dtos.Common.Pagination;
-using Persistify.Dtos.Common.Types;
-using Persistify.Dtos.Internal.Types;
+using Persistify.Helpers;
+using Persistify.Protos;
 using Persistify.Storage;
 using Persistify.Stores.Common;
 
 namespace Persistify.Stores.Types;
 
-public class HashSetTypeStore : ITypeStore, IPersistedStore
+public class HashSetTypeStore : ITypeStore, IPersisted
 {
-    private ConcurrentDictionary<string, TypeDefinitionDto>? _types;
+    private ConcurrentDictionary<string, TypeDefinitionProto>? _types;
 
-    public async ValueTask<OneOf<StoreSuccess<EmptyDto>, StoreError>> LoadAsync(IStorage storage)
+    public async ValueTask LoadAsync(IStorage storage, CancellationToken cancellationToken = default)
     {
-        var exists = await storage.ExistsBlobAsync("types");
-        if (exists.IsT1) return new StoreError(exists.AsT1.Message, StoreErrorType.StorageError);
-
-        if (exists.AsT0.Data)
+        var exists = await storage.ExistsBlobAsync("types", cancellationToken);
+        if (exists)
         {
-            var result = await storage.LoadBlobAsync("types");
-            return result.Match<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-                success =>
-                {
-                    _types =
-                        JsonConvert.DeserializeObject<ConcurrentDictionary<string, TypeDefinitionDto>>(success.Data);
-                    return new StoreSuccess<EmptyDto>(new EmptyDto());
-                },
-                error => new StoreError(error.Message, StoreErrorType.StorageError)
-            );
+            var result = await storage.LoadBlobAsync("types", cancellationToken);
+            _types = JsonConvert.DeserializeObject<ConcurrentDictionary<string, TypeDefinitionProto>>(result);
+            return;
         }
 
-        _types = new ConcurrentDictionary<string, TypeDefinitionDto>();
-        return new StoreSuccess<EmptyDto>(new EmptyDto());
+        _types = new ConcurrentDictionary<string, TypeDefinitionProto>();
     }
 
-    public async ValueTask<OneOf<StoreSuccess<EmptyDto>, StoreError>> SaveAsync(IStorage storage)
+    public async ValueTask SaveAsync(IStorage storage, CancellationToken cancellationToken = default)
     {
-        if(_types == null)
-            return new StoreError("Store not yet initialized", StoreErrorType.InvalidState);
-        var result = await storage.SaveBlobAsync("types", JsonConvert.SerializeObject(_types), true);
-        return result.Match<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-            _ => new StoreSuccess<EmptyDto>(new EmptyDto()),
-            error => new StoreError(error.Message, StoreErrorType.StorageError)
-        );
+        AssertInitialized();
+        await storage.SaveBlobAsync("types", JsonConvert.SerializeObject(_types), cancellationToken);
     }
 
-    public ValueTask<OneOf<StoreSuccess<bool>, StoreError>> ExistsAsync(string type,
-        CancellationToken cancellationToken = default)
+    public bool Exists(string type)
     {
-        if (_types == null)
-            return ValueTask.FromResult<OneOf<StoreSuccess<bool>, StoreError>>(
-                new StoreError("Store not yet initialized", StoreErrorType.InvalidState));
-
-        return ValueTask.FromResult<OneOf<StoreSuccess<bool>, StoreError>>(
-            new StoreSuccess<bool>(_types.ContainsKey(type)));
+        AssertInitialized();
+        return _types!.ContainsKey(type);
     }
 
-    public ValueTask<OneOf<StoreSuccess<EmptyDto>, StoreError>> CreateAsync(TypeDefinitionDto type,
-        CancellationToken cancellationToken = default)
+    public void Create(TypeDefinitionProto type)
     {
-        if (_types == null)
-            return ValueTask.FromResult<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-                new StoreError("Store not yet initialized", StoreErrorType.InvalidState));
-
-        if (!_types.TryAdd(type.TypeName, type))
-            return ValueTask.FromResult<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-                new StoreError("Type already exists", StoreErrorType.AlreadyExists));
-        return ValueTask.FromResult<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-            new StoreSuccess<EmptyDto>(new EmptyDto()));
+        AssertInitialized();
+        if (!_types!.TryAdd(type.Name, type))
+            throw new StoreException("Type not found");
     }
 
-    public ValueTask<OneOf<StoreSuccess<EmptyDto>, StoreError>> DeleteAsync(string type,
-        CancellationToken cancellationToken = default)
+    public void Delete(string typeName)
     {
-        if (_types == null)
-            return ValueTask.FromResult<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-                new StoreError("Store not yet initialized", StoreErrorType.InvalidState));
-
-        _types.TryRemove(type, out _);
-        return ValueTask.FromResult<OneOf<StoreSuccess<EmptyDto>, StoreError>>(
-            new StoreSuccess<EmptyDto>(new EmptyDto()));
+        AssertInitialized();
+        if (!_types!.TryRemove(typeName, out _))
+            throw new StoreException("Type not found");
     }
 
-    public ValueTask<OneOf<StoreSuccess<PagedTypes>, StoreError>> GetPagedAsync(
-        PaginationRequestDto paginationRequest, CancellationToken cancellationToken = default)
+    public TypeDefinitionProto Get(string typeName)
     {
-        if (_types == null)
-            return ValueTask.FromResult<OneOf<StoreSuccess<PagedTypes>, StoreError>>(
-                new StoreError("Store not yet initialized", StoreErrorType.InvalidState));
-
-        var types = _types.Values.ToArray();
-        var skip = (paginationRequest.PageNumber - 1) * paginationRequest.PageSize;
-
-        var pagedTypes = types.Skip(skip).Take(paginationRequest.PageSize).ToArray();
-        var paginationResponse = new PaginationResponseDto(paginationRequest.PageNumber, paginationRequest.PageSize,
-            types.Length);
-
-        return ValueTask.FromResult<OneOf<StoreSuccess<PagedTypes>, StoreError>>(
-            new StoreSuccess<PagedTypes>(new PagedTypes(pagedTypes, paginationResponse)));
+        AssertInitialized();
+        if (!_types!.TryGetValue(typeName, out var typeDefinition))
+            throw new StoreException("Type not found");
+        return typeDefinition;
     }
 
-    public ValueTask<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>> GetAsync(string type, CancellationToken cancellationToken = default)
+    public (TypeDefinitionProto[] TypeDefinitions, PaginationResponseProto PaginationResponse) List(
+        PaginationRequestProto paginationRequest)
+    {
+        AssertInitialized();
+        var typeDefinitions = _types!.Values.ToList();
+        var totalCount = typeDefinitions.Count;
+        return (
+            typeDefinitions
+                .Skip((paginationRequest.PageNumber - 1) * paginationRequest.PageSize)
+                .Take(paginationRequest.PageSize)
+                .ToArray(),
+            new PaginationResponseProto
+            {
+                PageNumber = paginationRequest.PageNumber,
+                PageSize = paginationRequest.PageSize,
+                TotalItems = totalCount,
+                TotalPages = MathI.Ceiling(totalCount / (double)paginationRequest.PageSize)
+            });
+    }
+
+    private void AssertInitialized()
     {
         if (_types == null)
-            return ValueTask.FromResult<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>>(
-                new StoreError("Store not yet initialized", StoreErrorType.InvalidState));
-
-        if (!_types.TryGetValue(type, out var typeDefinition))
-            return ValueTask.FromResult<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>>(
-                new StoreError("Type not found", StoreErrorType.NotFound));
-        return ValueTask.FromResult<OneOf<StoreSuccess<TypeDefinitionDto>, StoreError>>(
-            new StoreSuccess<TypeDefinitionDto>(typeDefinition));
+            throw new StoreException("Store not yet initialized");
     }
 }

@@ -1,0 +1,95 @@
+@using Persistify.Monitor.Database
+@using Persistify.Helpers
+@inject MonitorDbContext DbContext
+@inject IJSRuntime JSRuntime
+<div id="@PipelineName-modal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="@PipelineName-modalLabel" style="display: block;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="@PipelineName-modalLabel">@PipelineName Details</h5>
+                <button type="button" class="btn btn-danger" @onclick="OnClose">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <canvas id="executionCounts"></canvas>
+                <canvas id="executionTimes"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public string PipelineName { get; set; }
+
+    [Parameter]
+    public Action OnClose { get; set; }
+
+    private List<int> Labels { get; set; }
+    private List<int> ExecutionCounts { get; set; }
+    private List<int> FaultedExecutionCounts { get; set; }
+    private List<int> ExecutionTimes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Labels = Enumerable.Range(0, 16).Select(x => -x * 4).Reverse().ToList();
+        var pipelineEvents = DbContext.PipelineEvents.Where(x => x.PipelineName == PipelineName).ToList();
+        ExecutionCounts = Labels
+            .Select(x => pipelineEvents
+                .Count(y => y.Timestamp >= DateTime.Now.AddMinutes(x - 2) && y.Timestamp < DateTime.Now.AddMinutes(x + 2)))
+            .ToList();
+        FaultedExecutionCounts = Labels
+            .Select(x => pipelineEvents
+                .Count(y => y.Timestamp >= DateTime.Now.AddMinutes(x - 2) && y.Timestamp < DateTime.Now.AddMinutes(x + 2) && !y.Success))
+            .ToList();
+        ExecutionTimes = Labels
+            .Select(x => pipelineEvents
+                .Where(y => y.Timestamp >= DateTime.Now.AddMinutes(x - 2) && y.Timestamp < DateTime.Now.AddMinutes(x + 2))
+                .Select(y => y.Duration).Average())
+            .Select(x => x.Microseconds)
+            .ToList();
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("createChart", "executionCounts", Labels, new[]
+            {
+                new
+                {
+                    Label = "Execution Count",
+                    BackgroundColor = "limegreen",
+                    BorderColor = "limegreen",
+                    Data = ExecutionCounts
+                },
+                new
+                {
+                    Label = "Faulted Execution Count",
+                    BackgroundColor = "red",
+                    BorderColor = "red",
+                    Data = FaultedExecutionCounts
+                },
+            },
+                "Timestamp(minutes)",
+                "Count");
+
+            await JSRuntime.InvokeVoidAsync("createChart", "executionTimes", Labels, new[]
+            {
+                new
+                {
+                    Label = "Average Execution Time",
+                    BackgroundColor = "magenta",
+                    BorderColor = "magenta",
+                    Data = ExecutionTimes
+                },
+            },
+                "Timestamp(minutes)",
+                "Time(μs)");
+        }
+    }
+
+}

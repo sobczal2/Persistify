@@ -2,18 +2,34 @@ syntax = "proto3";
 
 option csharp_namespace = "Persistify.Protos";
 
-import "Protos/objects.proto";
+import "Protos/documents.proto";
 import "Protos/types.proto";
+import "Protos/auth.proto";
+import "Protos/shared.proto";
+import "Protos/monitor.proto";
 
-service ObjectsService {
-  rpc Index (IndexObjectRequestProto) returns (IndexObjectResponseProto);
-  rpc Search (SearchObjectsRequestProto) returns (SearchObjectsResponseProto);
-//  rpc Get (GetRequestProto) returns (GetResponseProto);
-//  rpc Delete (DeleteRequestProto) returns (DeleteResponseProto);
+service DocumentService {
+  rpc Index (IndexDocumentRequestProto) returns (IndexDocumentResponseProto);
+  rpc Search (SearchDocumentsRequestProto) returns (SearchDocumentsResponseProto);
+  rpc ComplexSearch (ComplexSearchDocumentsRequestProto) returns (ComplexSearchDocumentsResponseProto);
+  rpc Remove (RemoveDocumentRequestProto) returns (RemoveDocumentResponseProto);
 }
 
-service TypesService {
+service TypeService {
   rpc Create (CreateTypeRequestProto) returns (CreateTypeResponseProto);
   rpc List (ListTypesRequestProto) returns (ListTypesResponseProto);
 //  rpc Delete (DeleteTypeRequestProto) returns (DeleteTypeResponseProto);
+}
+
+service AuthService {
+  rpc Login (SignInRequestProto) returns (SignInResponseProto);
+  rpc RefreshToken (RefreshTokenRequestProto) returns (RefreshTokenResponseProto);
+  rpc CreateUser (CreateUserRequestProto) returns (CreateUserResponseProto);
+  rpc DeleteUser (DeleteUserRequestProto) returns (DeleteUserResponseProto);
+}
+
+service MonitorService {
+  rpc Health (EmptyProto) returns (EmptyProto);
+  rpc PipelineStream (EmptyProto) returns (stream PipelineEventProto);
+  rpc PipelineInfos (EmptyProto) returns (PipelineInfosResponseProto);
 }

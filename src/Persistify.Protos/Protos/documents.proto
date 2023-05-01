@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+import "Protos/shared.proto";
+
+option csharp_namespace = "Persistify.Protos";
+
+// Index
+message IndexDocumentRequestProto {
+  string TypeName = 1;
+  string Data = 2;
+}
+
+message IndexDocumentResponseProto {
+  int64 DocumentId = 1;
+}
+
+
+// Search
+message SearchDocumentsRequestProto {
+  string TypeName = 1;
+  string Query = 2;
+  PaginationRequestProto PaginationRequest = 3;
+  repeated string SearchPaths = 4;
+}
+
+message SearchDocumentsResponseProto {
+  repeated DocumentProto Documents = 1;
+  PaginationResponseProto PaginationResponse = 2;
+}
+
+// Complex search
+message ComplexSearchDocumentsRequestProto {
+  string TypeName = 1;
+  PaginationRequestProto PaginationRequest = 2;
+  oneof Query {
+    ComplexSearchOrOperatorProto Or = 3;
+    ComplexSearchAndOperatorProto And = 4;
+    ComplexSearchNumberQueryProto NumberQuery = 5;
+    ComplexSearchTextQueryProto TextQuery = 6;
+    ComplexSearchBooleanQueryProto BooleanQuery = 7;
+  }
+}
+
+message ComplexSearchOrOperatorProto {
+  repeated ComplexSearchOrOperatorProto Or = 1;
+  repeated ComplexSearchAndOperatorProto And = 2;
+  repeated ComplexSearchNumberQueryProto NumberQuery = 3;
+  repeated ComplexSearchTextQueryProto TextQuery = 4;
+  repeated ComplexSearchBooleanQueryProto BooleanQuery = 5;
+}
+
+message ComplexSearchAndOperatorProto {
+  repeated ComplexSearchOrOperatorProto Or = 1;
+  repeated ComplexSearchAndOperatorProto And = 2;
+  repeated ComplexSearchNumberQueryProto NumberQuery = 3;
+  repeated ComplexSearchTextQueryProto TextQuery = 4;
+  repeated ComplexSearchBooleanQueryProto BooleanQuery = 5;
+}
+
+message ComplexSearchNumberQueryProto {
+  string Path = 1;
+  double Min = 2;
+  double Max = 3;
+}
+
+message ComplexSearchTextQueryProto {
+  string Path = 1;
+  string Value = 2;
+}
+
+message ComplexSearchBooleanQueryProto {
+  string Path = 1;
+  bool Value = 2;
+}
+
+message ComplexSearchDocumentsResponseProto {
+  repeated DocumentProto Documents = 1;
+  PaginationResponseProto PaginationResponse = 2;
+}
+
+// Remove
+message RemoveDocumentRequestProto {
+  string TypeName = 1;
+  int64 DocumentId = 2;
+}
+
+message RemoveDocumentResponseProto {
+}

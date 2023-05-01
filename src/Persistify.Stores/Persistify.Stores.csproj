@@ -7,14 +7,22 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="OneOf" Version="3.0.243" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\Persistify.DataStructures\Persistify.DataStructures.csproj" />
-        <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj" />
+        <ProjectReference Include="..\Persistify.Options\Persistify.Options.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
         <ProjectReference Include="..\Persistify.Storage\Persistify.Storage.csproj" />
+        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="FluentValidation">
+            <HintPath>..\..\..\..\.nuget\packages\fluentvalidation\11.5.2\lib\net7.0\FluentValidation.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

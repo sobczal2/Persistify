@@ -24,10 +24,10 @@ export default () => {
     });
 
     const data = {
-        "Data": "{ \"tempor\": \"ala ma kota\" }",
-        "TypeName": "temp"
+        "Data": "{ \"imie\": \"Stasiu\", \"nazwisko\": \"Augustyniak\", \"wiek\": 21 }",
+        "TypeName": "Osoba"
     };
-    const response = client.invoke('/ObjectsService/Index', data);
+    const response = client.invoke('/DocumentsService/Index', data);
 
     check(response, {
         'status is OK': (r) => r && r.status === grpc.StatusOK,

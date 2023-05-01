@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Persistify.DataStructures\Persistify.DataStructures.csproj" />
+      <ProjectReference Include="..\Persistify.Storage\Persistify.Storage.csproj" />
+      <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+    </ItemGroup>
+
+</Project>

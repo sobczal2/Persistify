@@ -1,3 +1,5 @@
+using System;
+
 namespace Persistify.HostedServices;
 
 public class FatalHostedServiceException : Exception
