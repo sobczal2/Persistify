@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Persistify.Grpc;
+using Persistify.Helpers;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -14,15 +15,16 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Starting web application");
 
     var builder = WebApplication.CreateBuilder(args);
-
+    
     builder.Host.UseSerilog();
 
     builder.Services.AddPersistify(builder.Configuration);
 
     var app = builder.Build();
+    
+    PersistifyHelpers.WriteWelcomeMessage(app.Environment.EnvironmentName);
 
     app.UsePersistify();
 

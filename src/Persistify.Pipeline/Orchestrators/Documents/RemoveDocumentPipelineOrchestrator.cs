@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Middlewares.Abstractions;
@@ -12,8 +13,8 @@ public class RemoveDocumentPipelineOrchestrator : PipelineOrchestratorBase<Remov
 {
     public RemoveDocumentPipelineOrchestrator(
         IEnumerable<IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
-            RemoveDocumentResponseProto>> middlewares, ILogger<RemoveDocumentPipelineOrchestrator> logger) : base(
-        middlewares, logger)
+            RemoveDocumentResponseProto>> middlewares, ILogger<RemoveDocumentPipelineOrchestrator> logger,
+        ISubject<PipelineEventProto> pipelineEventSubject) : base(middlewares, logger, pipelineEventSubject)
     {
     }
 }

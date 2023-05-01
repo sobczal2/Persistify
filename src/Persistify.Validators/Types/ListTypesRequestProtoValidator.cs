@@ -6,10 +6,11 @@ namespace Persistify.Validators.Types;
 
 public class ListTypesRequestProtoValidator : AbstractValidator<ListTypesRequestProto>
 {
-    public ListTypesRequestProtoValidator()
+    public ListTypesRequestProtoValidator(IValidator<PaginationRequestProto> paginationRequestValidator)
     {
         RuleFor(x => x.PaginationRequest)
             .NotEmpty()
-            .WithErrorCode(CommonErrorCodes.PaginationRequestEmpty);
+            .WithErrorCode(CommonErrorCodes.PaginationRequestEmpty)
+            .SetValidator(paginationRequestValidator);
     }
 }

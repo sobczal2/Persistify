@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Middlewares.Abstractions;
@@ -14,7 +15,8 @@ public class SearchDocumentsPipelineOrchestrator : PipelineOrchestratorBase<Sear
     public SearchDocumentsPipelineOrchestrator(
         IEnumerable<IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
             SearchDocumentsResponseProto>> middlewares,
-        ILogger<SearchDocumentsPipelineOrchestrator> logger) : base(middlewares, logger)
+        ILogger<SearchDocumentsPipelineOrchestrator> logger,
+        ISubject<PipelineEventProto> pipelineEventSubject) : base(middlewares, logger, pipelineEventSubject)
     {
     }
 }

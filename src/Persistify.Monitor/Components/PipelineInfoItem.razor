@@ -1,0 +1,96 @@
+@using Persistify.Monitor.Database
+@using Microsoft.EntityFrameworkCore
+@using Persistify.Helpers
+@using Persistify.Protos
+@inject MonitorDbContext DbContext
+
+<h2 @onclick="() => _showChart = !_showChart" style="cursor: pointer">@PipelineInfo.Name</h2>
+
+@if (_showChart)
+{
+    <PipelineInfoChart PipelineName="@PipelineInfo.Name" OnClose="() => _showChart = !_showChart"/>
+}
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="d-flex flex-column align-items-start">
+                @for (var i = 0; i < PipelineInfo.MiddlewareNames.Count; i++)
+                {
+                    <div class="step-wrapper">
+                        <div class="step completed">
+                            <span class="number">@(i + 1)</span>
+                        </div>
+                        <div class="text">@PipelineInfo.MiddlewareNames[i]</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <h3>Stats</h3>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th scope="row">Total Events</th>
+                        <td>@_totalEvents</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Total Faulted</th>
+                        <td>@_totalFaulted</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Average Duration</th>
+                        <td>@_averageDuration.Microseconds μs</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Min Duration</th>
+                        <td>@_minDuration.Microseconds μs</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Max Duration</th>
+                        <td>@_maxDuration.Microseconds μs</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Median Duration</th>
+                        <td>@_medianDuration.Microseconds μs</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Standard Deviation</th>
+                        <td>@_standardDeviation.Microseconds μs</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public PipelineInfoProto PipelineInfo { get; set; }
+    
+    private TimeSpan _averageDuration;
+    private TimeSpan _minDuration;
+    private TimeSpan _maxDuration;
+    private TimeSpan _medianDuration;
+    private TimeSpan _standardDeviation;
+    private int _totalEvents;
+    private int _totalFaulted;
+    
+    private bool _showChart;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var events = await DbContext.PipelineEvents
+            .Where(x => x.PipelineName == PipelineInfo.Name)
+            .ToListAsync();
+        
+        _totalEvents = events.Count;
+        _totalFaulted = events.Count(x => x.Success == false);
+        _averageDuration = events.Select(x => x.Duration).Average();
+        _medianDuration = events.Select(x => x.Duration).Median();
+        _standardDeviation = events.Select(x => x.Duration).StandardDeviation();
+        _minDuration = events.Any() ? events.Select(x => x.Duration).Min() : TimeSpan.Zero;
+        _maxDuration = events.Any() ? events.Select(x => x.Duration).Max() : TimeSpan.Zero;
+    }
+}

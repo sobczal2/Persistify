@@ -1,5 +1,7 @@
 using System;
 using System.IO.Compression;
+using System.IO.Pipes;
+using System.Reactive.Subjects;
 using System.Text;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,13 +13,13 @@ using Microsoft.IdentityModel.Tokens;
 using Persistify.Grpc.Extensions.Documents;
 using Persistify.Grpc.Extensions.Types;
 using Persistify.Grpc.Interceptors;
-using Persistify.Grpc.Services;
 using Persistify.HostedServices;
 using Persistify.Indexes.Boolean;
 using Persistify.Indexes.Common;
 using Persistify.Indexes.Number;
 using Persistify.Indexes.Text;
 using Persistify.Options;
+using Persistify.Protos;
 using Persistify.Storage;
 using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
@@ -25,7 +27,11 @@ using Persistify.Stores.User;
 using Persistify.Tokens;
 using Persistify.Validators.Types;
 using Serilog;
+using AuthService = Persistify.Grpc.Services.AuthService;
 using DeflateCompressionProvider = Grpc.Net.Compression.DeflateCompressionProvider;
+using DocumentService = Persistify.Grpc.Services.DocumentService;
+using TypeService = Persistify.Grpc.Services.TypeService;
+using MonitorService = Persistify.Grpc.Services.MonitorService;
 
 namespace Persistify.Grpc;
 
@@ -62,6 +68,7 @@ public static class PersistifyExtensions
         services.AddPersistifyPipeline();
         services.AddPersistifyStores();
         services.AddPersistifyIndexers();
+        services.AddPersistifySubjects();
         services.AddOtherPersistifyServices();
 
         return services;
@@ -81,8 +88,7 @@ public static class PersistifyExtensions
         app.MapGrpcService<TypeService>();
         app.MapGrpcService<DocumentService>();
         app.MapGrpcService<AuthService>();
-
-        app.MapGet("/", () => "Use gRPC client to call the service");
+        app.MapGrpcService<MonitorService>();
 
         return app;
     }
@@ -147,9 +153,20 @@ public static class PersistifyExtensions
         return services;
     }
 
+    public static IServiceCollection AddPersistifySubjects(this IServiceCollection services)
+    {
+        services.AddSingleton<ISubject<PipelineEventProto>, Subject<PipelineEventProto>>();
+        
+        return services;
+    }
+
     private static IServiceCollection AddOtherPersistifyServices(this IServiceCollection services)
     {
         services.AddSingleton<ITokenizer, Tokenizer>();
+
+        services.AddSingleton(_ => new NamedPipeServerStream("monitoring-pipe", PipeDirection.Out, 1,
+            PipeTransmissionMode.Byte,
+            PipeOptions.Asynchronous));
 
         return services;
     }

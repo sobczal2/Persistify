@@ -48,3 +48,5 @@ message DocumentProto {
   int64 Id = 1;
   string Data = 2;
 }
+
+message EmptyProto {}

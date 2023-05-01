@@ -27,6 +27,11 @@ public static class RemoveDocumentEndpointExtensions
                 RemoveDocumentResponseProto>,
             RemoveDocumentPipelineOrchestrator
         >();
+        
+        services.AddSingleton<
+            IPipelineOrchestrator,
+            RemoveDocumentPipelineOrchestrator
+        >();
     }
     
     private static void AddMiddlewares(this IServiceCollection services)

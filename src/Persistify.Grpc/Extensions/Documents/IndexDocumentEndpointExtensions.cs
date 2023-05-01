@@ -26,6 +26,11 @@ public static class IndexDocumentEndpointExtensions
             IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>,
             IndexDocumentPipelineOrchestrator
         >();
+        
+        services.AddSingleton<
+            IPipelineOrchestrator,
+            IndexDocumentPipelineOrchestrator
+        >();
     }
     
     private static void AddMiddlewares(this IServiceCollection services)

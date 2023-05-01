@@ -8,7 +8,7 @@ using Persistify.Protos;
 namespace Persistify.Grpc.Services;
 
 [Authorize]
-public class TypeService : TypesService.TypesServiceBase
+public class TypeService : Protos.TypeService.TypeServiceBase
 {
     private readonly IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>
         _createTypePipelineOrchestrator;

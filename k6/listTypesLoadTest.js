@@ -29,7 +29,14 @@ export default () => {
             "PageSize": 100
         }
     };
-    const response = client.invoke('/TypesService/List', data);
+
+    const token = 'eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTUxMiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJTdXBlclVzZXIiLCJleHAiOjE2ODI5NTI1MDEsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMSJ9.7THPOixYh4wxPhBE4LvktEbPu29PCI25YmUTWuSJGLQIiTCea7HBKIBLRgn278rxw6Lp3s3XL0z6RpgMOUuYug'; // replace this with your actual JWT token
+
+    const headers = {
+        'authorization': `bearer ${token}`,
+    };
+
+    const response = client.invoke('/TypeService/List', data, { headers });
 
     check(response, {
         'status is OK': (r) => r && r.status === grpc.StatusOK,

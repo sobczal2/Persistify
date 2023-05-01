@@ -10,6 +10,10 @@ public static class OptionsExtensions
         services.AddOptions<AuthOptions>()
             .Bind(configuration.GetSection(AuthOptions.SectionName))
             .ValidateDataAnnotations();
+        
+        services.AddOptions<PersistifyOptions>()
+            .Bind(configuration.GetSection(PersistifyOptions.SectionName))
+            .ValidateDataAnnotations();
 
         return services;
     }

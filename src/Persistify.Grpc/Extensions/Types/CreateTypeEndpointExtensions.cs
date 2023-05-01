@@ -26,6 +26,11 @@ public static class CreateTypeEndpointExtensions
             IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
             CreateTypePipelineOrchestrator
         >();
+        
+        services.AddSingleton<
+            IPipelineOrchestrator,
+            CreateTypePipelineOrchestrator
+        >();
     }
 
     private static void AddMiddlewares(this IServiceCollection services)

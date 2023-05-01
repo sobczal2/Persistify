@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos";
+
+message PipelineEventProto {
+  string correlationId = 1;
+  string pipelineName = 2;
+  uint64 timestamp = 3;
+  uint32 durationUs = 4;
+  bool success = 5;
+  optional string faultedStepName = 6;
+}
+
+message PipelineInfoProto {
+  string name = 1;
+  repeated string middlewareNames = 2;
+}
+
+message PipelineInfosResponseProto {
+  repeated PipelineInfoProto pipelines = 1;
+}

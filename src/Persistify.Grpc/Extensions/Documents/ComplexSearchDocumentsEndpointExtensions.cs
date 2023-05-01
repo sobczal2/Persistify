@@ -25,6 +25,11 @@ public static class ComplexSearchDocumentsEndpointExtensions
                 ComplexSearchDocumentsResponseProto>,
             ComplexSearchDocumentsPipelineOrchestrator
         >();
+        
+        services.AddSingleton<
+            IPipelineOrchestrator,
+            ComplexSearchDocumentsPipelineOrchestrator
+        >();
     }
 
     private static void AddMiddlewares(this IServiceCollection services)
@@ -38,7 +43,7 @@ public static class ComplexSearchDocumentsEndpointExtensions
             typeof(IPipelineMiddleware<ComplexSearchDocumentsPipelineContext, ComplexSearchDocumentsRequestProto,
                 ComplexSearchDocumentsResponseProto>),
             typeof(ValidateQueryAgainstTypeMiddleware));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<ComplexSearchDocumentsPipelineContext, ComplexSearchDocumentsRequestProto,
                 ComplexSearchDocumentsResponseProto>),

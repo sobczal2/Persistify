@@ -27,6 +27,11 @@ public static class SearchDocumentsEndpointExtensions
                 SearchDocumentsResponseProto>,
             SearchDocumentsPipelineOrchestrator
         >();
+        
+        services.AddSingleton<
+            IPipelineOrchestrator,
+            SearchDocumentsPipelineOrchestrator
+        >();
     }
 
     private static void AddMiddlewares(this IServiceCollection services)

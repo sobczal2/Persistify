@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Middlewares.Abstractions;
@@ -13,8 +14,8 @@ public class ListTypesPipelineOrchestrator : PipelineOrchestratorBase<ListTypesP
     public ListTypesPipelineOrchestrator(
         IEnumerable<IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>>
             middlewares,
-        ILogger<ListTypesPipelineOrchestrator> logger
-        ) : base(middlewares, logger)
+        ILogger<ListTypesPipelineOrchestrator> logger,
+        ISubject<PipelineEventProto> pipelineEventSubject) : base(middlewares, logger, pipelineEventSubject)
     {
     }
 }

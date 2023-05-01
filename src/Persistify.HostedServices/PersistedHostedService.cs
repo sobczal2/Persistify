@@ -38,8 +38,9 @@ public class PersistedHostedService : IHostedService, IDisposable
         {
             try
             {
-                _logger.LogInformation("Attempting to load {indexerName}", persisted.GetType().Name);
+                _logger.LogInformation("Loading {indexerName}", persisted.GetType().Name);
                 await persisted.LoadAsync(_storage, cancellationToken);
+                _logger.LogInformation("Loaded {indexerName}", persisted.GetType().Name);
             }
             catch (Exception e)
             {
@@ -67,10 +68,11 @@ public class PersistedHostedService : IHostedService, IDisposable
     {
         foreach (var persisted in _persisteds)
         {
-            _logger.LogInformation("Attempting to save {storeName}", persisted.GetType().Name);
             try
             {
+                _logger.LogInformation("Saving {indexerName}", persisted.GetType().Name);
                 await persisted.SaveAsync(_storage);
+                _logger.LogInformation("Loaded {indexerName}", persisted.GetType().Name);
             }
             catch (Exception e)
             {

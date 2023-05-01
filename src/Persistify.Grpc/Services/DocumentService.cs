@@ -8,7 +8,7 @@ using Persistify.Protos;
 namespace Persistify.Grpc.Services;
 
 [Authorize]
-public class DocumentService : DocumentsService.DocumentsServiceBase
+public class DocumentService : Protos.DocumentService.DocumentServiceBase
 {
     private readonly
         IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>

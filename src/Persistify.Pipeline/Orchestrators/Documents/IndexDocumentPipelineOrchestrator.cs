@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reactive.Subjects;
 using Microsoft.Extensions.Logging;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Middlewares.Abstractions;
@@ -15,7 +16,8 @@ public class IndexDocumentPipelineOrchestrator : PipelineOrchestratorBase<IndexD
         IEnumerable<IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
                 IndexDocumentResponseProto>>
             middlewares,
-        ILogger<IndexDocumentPipelineOrchestrator> logger) : base(middlewares, logger)
+        ILogger<IndexDocumentPipelineOrchestrator> logger,
+        ISubject<PipelineEventProto> pipelineEventSubject) : base(middlewares, logger, pipelineEventSubject)
     {
     }
 }

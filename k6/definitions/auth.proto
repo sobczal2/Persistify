@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos";
+
+// common
+message TokenResponseProto {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+// sign in
+message SignInRequestProto {
+  string username = 1;
+  string password = 2;
+}
+
+message SignInResponseProto {
+  TokenResponseProto token = 1;
+}
+
+// refresh token
+message RefreshTokenRequestProto {
+  string refresh_token = 1;
+  string username = 2;
+}
+
+message RefreshTokenResponseProto {
+  TokenResponseProto token = 1;
+}
+
+// create user
+message CreateUserRequestProto {
+  string username = 1;
+  string password = 2;
+}
+
+message CreateUserResponseProto {}
+
+// delete user
+message DeleteUserRequestProto {
+  string username = 1;
+}
+
+message DeleteUserResponseProto {}
+

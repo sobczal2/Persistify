@@ -1,0 +1,35 @@
+@page "/Pipelines"
+@using Persistify.Client
+@using Persistify.Protos
+@inject IPersistifyClient PersistifyClient
+
+@if (_pipelines is null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    @foreach (var pipeline in _pipelines)
+    {
+        <PipelineInfoItem PipelineInfo="pipeline"/>
+    }
+}
+
+@code {
+    List<PipelineInfoProto>? _pipelines;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(_pipelines is not null) return;
+        try
+        {
+            var response = await PersistifyClient.PipelineInfosAsync();
+            _pipelines = response.Pipelines.ToList();
+        } catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
+    }
+}

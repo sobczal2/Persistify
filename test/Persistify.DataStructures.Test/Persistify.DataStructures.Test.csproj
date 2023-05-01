@@ -26,8 +26,4 @@
         <ProjectReference Include="..\..\src\Persistify.Extensions\Persistify.Extensions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Tries\" />
-    </ItemGroup>
-
 </Project>
