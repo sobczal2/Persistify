@@ -48,7 +48,7 @@ public abstract partial class
                 await _middlewares[i].InvokeAsync(context);
                 var middlewareType = _middlewares[i].GetType();
                 _logger.LogInformation(
-                    "[Id: {corellationId}] Pipeline step {middlewareNumber}: {middlewareName}({middlewareStepType}) took {microseconds} us.",
+                    "[Id: {CorrelationId}] Pipeline step {MiddlewareNumber}: {MiddlewareName}({MiddlewareStepType}) took {Microseconds} us",
                     context.CorrelationId,
                     i + 1,
                     middlewareType.Name,

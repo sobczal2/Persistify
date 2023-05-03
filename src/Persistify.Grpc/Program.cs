@@ -5,8 +5,8 @@ using Persistify.Helpers;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    // .MinimumLevel.Error()
+    // .MinimumLevel.Information()
+    .MinimumLevel.Error()
     .WriteTo.Async(c =>
     {
         c.Console();
