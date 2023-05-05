@@ -1,8 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Middlewares.Abstractions;
-using Persistify.Pipeline.Middlewares.Common;
 using Persistify.Pipeline.Middlewares.Documents.Search;
 using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Pipeline.Orchestrators.Documents;
@@ -12,11 +10,11 @@ namespace Persistify.Grpc.Extensions.Documents;
 
 public static class SearchDocumentsEndpointExtensions
 {
-    public static IServiceCollection AddSearchDocumentsEndpoint(this IServiceCollection services)
+    public static IServiceCollection AddComplexSearchDocumentsEndpoint(this IServiceCollection services)
     {
         services.AddOrchestrator();
         services.AddMiddlewares();
-        
+
         return services;
     }
 
@@ -36,43 +34,26 @@ public static class SearchDocumentsEndpointExtensions
 
     private static void AddMiddlewares(this IServiceCollection services)
     {
-        services.TryAddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
+        services.AddSingleton(
+            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+                SearchDocumentsResponseProto>),
+            typeof(FetchTypeFromTypeStoreMiddleware));
 
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),
-            typeof(ValidateTypeNameMiddleware));
+            typeof(ValidateQueryAgainstTypeMiddleware));
 
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),
-            typeof(TokenizeQueryMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(ValidateTokensMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(SearchIndexesInIndexerMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(FilterIndexesByFieldsMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
-                SearchDocumentsResponseProto>),
-            typeof(RemoveDuplicateIndexesMiddleware));
+            typeof(SearchIndexesInIndexersMiddleware));
 
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),
             typeof(ApplyPaginationMiddleware));
-
+        
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),

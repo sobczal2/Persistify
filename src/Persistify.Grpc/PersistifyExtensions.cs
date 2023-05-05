@@ -97,7 +97,6 @@ public static class PersistifyExtensions
     {
         services.AddIndexDocumentEndpoint();
         services.AddRemoveDocumentEndpoint();
-        services.AddSearchDocumentsEndpoint();
         services.AddComplexSearchDocumentsEndpoint();
 
         services.AddCreateTypeEndpoint();

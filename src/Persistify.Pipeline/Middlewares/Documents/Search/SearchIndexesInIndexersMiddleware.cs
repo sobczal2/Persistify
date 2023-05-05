@@ -12,11 +12,11 @@ using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 
-namespace Persistify.Pipeline.Middlewares.Documents.ComplexSearch;
+namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
 [PipelineStep(PipelineStepType.Indexer)]
-public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<ComplexSearchDocumentsPipelineContext,
-    ComplexSearchDocumentsRequestProto, ComplexSearchDocumentsResponseProto>
+public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
+    SearchDocumentsRequestProto, SearchDocumentsResponseProto>
 {
     private readonly IIndexer<string> _textIndexer;
     private readonly IIndexer<double> _numberIndexer;
@@ -33,35 +33,40 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<ComplexSear
         _booleanIndexer = booleanIndexer;
     }
 
-    public async Task InvokeAsync(ComplexSearchDocumentsPipelineContext context)
+    public async Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
         if (context.Request.Or != null)
         {
-            context.DocumentIds = await EvaluateOrOperator(context.Request.Or, context.TypeDefinition!.Name);
+            context.DocumentIds =
+                (await EvaluateOrOperator(context.Request.Or, context.TypeDefinition!.Name)).ToArray();
         }
-        
+
         if (context.Request.And != null)
         {
-            context.DocumentIds = await EvaluateAndOperator(context.Request.And, context.TypeDefinition!.Name);
+            context.DocumentIds =
+                (await EvaluateAndOperator(context.Request.And, context.TypeDefinition!.Name)).ToArray();
         }
-        
+
         if (context.Request.NumberQuery != null)
         {
-            context.DocumentIds = await EvaluateNumberQuery(context.Request.NumberQuery, context.TypeDefinition!.Name);
+            context.DocumentIds = (await EvaluateNumberQuery(context.Request.NumberQuery, context.TypeDefinition!.Name))
+                .ToArray();
         }
-        
+
         if (context.Request.TextQuery != null)
         {
-            context.DocumentIds = await EvaluateTextQuery(context.Request.TextQuery, context.TypeDefinition!.Name);
+            context.DocumentIds = (await EvaluateTextQuery(context.Request.TextQuery, context.TypeDefinition!.Name))
+                .ToArray();
         }
-        
+
         if (context.Request.BooleanQuery != null)
         {
-            context.DocumentIds = await EvaluateBooleanQuery(context.Request.BooleanQuery, context.TypeDefinition!.Name);
+            context.DocumentIds =
+                (await EvaluateBooleanQuery(context.Request.BooleanQuery, context.TypeDefinition!.Name)).ToArray();
         }
     }
 
-    private async Task<IEnumerable<long>> EvaluateOrOperator(ComplexSearchOrOperatorProto orOperator, string typeName)
+    private async Task<IEnumerable<long>> EvaluateOrOperator(SearchOrOperatorProto orOperator, string typeName)
     {
         var groupedResults = new List<List<long>>();
 
@@ -93,7 +98,8 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<ComplexSear
         return groupedResults.SelectMany(x => x).Distinct();
     }
 
-    private async Task<IEnumerable<long>> EvaluateAndOperator(ComplexSearchAndOperatorProto andOperator, string typeName)
+    private async Task<IEnumerable<long>> EvaluateAndOperator(SearchAndOperatorProto andOperator,
+        string typeName)
     {
         var groupedResults = new List<List<long>>();
 
@@ -121,7 +127,7 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<ComplexSear
         {
             groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
         }
-        
+
         if (groupedResults.Count == 0)
         {
             return Enumerable.Empty<long>();
@@ -137,45 +143,48 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<ComplexSear
         return commonIds;
     }
 
-    private async Task<IEnumerable<long>> EvaluateNumberQuery(ComplexSearchNumberQueryProto numberQuery,
+    private async Task<IEnumerable<long>> EvaluateNumberQuery(SearchNumberQueryProto numberQuery,
         string typeName)
     {
-        var indexes = await _numberIndexer.SearchAsync(new NumberSearchPredicate()
-            {
-                Min = numberQuery.Min,
-                Max = numberQuery.Max
-            },
-            typeName);
+        var documentIds = await _numberIndexer.SearchAsync(new NumberSearchPredicate()
+        {
+            TypeName = typeName,
+            Path = numberQuery.Path,
+            Min = numberQuery.Min,
+            Max = numberQuery.Max,
+        });
 
-        return indexes.Where(x => x.Path == typeName).Select(x => x.Id).Distinct();
+        return documentIds.Distinct();
     }
 
-    private async Task<IEnumerable<long>> EvaluateTextQuery(ComplexSearchTextQueryProto textQuery, string typeName)
+    private async Task<IEnumerable<long>> EvaluateTextQuery(SearchTextQueryProto textQuery, string typeName)
     {
-        var indexes = await _textIndexer.SearchAsync(new TextSearchPredicate()
-            {
-                Value = textQuery.Value
-            },
-            typeName);
+        var documentIds = await _textIndexer.SearchAsync(new TextSearchPredicate()
+        {
+            TypeName = typeName,
+            Path = textQuery.Path,
+            Value = textQuery.Value
+        });
 
-        return indexes.Where(x => x.Path == typeName).Select(x => x.Id).Distinct();
+        return documentIds.Distinct();
     }
 
-    private async Task<IEnumerable<long>> EvaluateBooleanQuery(ComplexSearchBooleanQueryProto booleanQuery,
+    private async Task<IEnumerable<long>> EvaluateBooleanQuery(SearchBooleanQueryProto booleanQuery,
         string typeName)
     {
-        var indexes = await _booleanIndexer.SearchAsync(new BooleanSearchPredicate()
-            {
-                Value = booleanQuery.Value
-            },
-            typeName);
+        var documentIds = await _booleanIndexer.SearchAsync(new BooleanSearchPredicate()
+        {
+            TypeName = typeName,
+            Path = booleanQuery.Path,
+            Value = booleanQuery.Value
+        });
 
-        return indexes.Where(x => x.Path == typeName).Select(x => x.Id).Distinct();
+        return documentIds.Distinct();
     }
 
     private async Task<IEnumerable<long>> Evaluate(
-        OneOf<ComplexSearchOrOperatorProto, ComplexSearchAndOperatorProto, ComplexSearchNumberQueryProto,
-            ComplexSearchTextQueryProto, ComplexSearchBooleanQueryProto> query, string typeName)
+        OneOf<SearchOrOperatorProto, SearchAndOperatorProto, SearchNumberQueryProto,
+            SearchTextQueryProto, SearchBooleanQueryProto> query, string typeName)
     {
         return await query.Match(
             orOperator => EvaluateOrOperator(orOperator, typeName),

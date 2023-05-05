@@ -22,7 +22,7 @@ public class ValidateTokensMiddleware : IPipelineMiddleware<IndexDocumentPipelin
 
     public Task InvokeAsync(IndexDocumentPipelineContext context)
     {
-        foreach (var token in context.TextTokens ?? throw new InternalPipelineError())
+        foreach (var token in context.TextTokens ?? throw new InternalPipelineException())
             _tokenValidator.ValidateAndThrow(token);
 
         return Task.CompletedTask;

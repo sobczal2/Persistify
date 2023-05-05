@@ -32,11 +32,11 @@ public class InsertTokensIntoIndexersMiddleware : IPipelineMiddleware<IndexDocum
 
     public async Task InvokeAsync(IndexDocumentPipelineContext context)
     {
-        var documentId = context.DocumentId ?? throw new InternalPipelineError();
-        var textTokens = context.TextTokens ?? throw new InternalPipelineError();
-        var numberTokens = context.NumberTokens ?? throw new InternalPipelineError();
-        var booleanTokens = context.BooleanTokens ?? throw new InternalPipelineError();
-        var typeDefinition = context.TypeDefinition ?? throw new InternalPipelineError();
+        var documentId = context.DocumentId ?? throw new InternalPipelineException();
+        var textTokens = context.TextTokens ?? throw new InternalPipelineException();
+        var numberTokens = context.NumberTokens ?? throw new InternalPipelineException();
+        var booleanTokens = context.BooleanTokens ?? throw new InternalPipelineException();
+        var typeDefinition = context.TypeDefinition ?? throw new InternalPipelineException();
         
         var indexTextTask = _textIndexer.IndexAsync(documentId, textTokens, typeDefinition.Name);
         var indexNumberTask = _numberIndexer.IndexAsync(documentId, numberTokens, typeDefinition.Name);
@@ -46,7 +46,7 @@ public class InsertTokensIntoIndexersMiddleware : IPipelineMiddleware<IndexDocum
 
         context.SetResponse(new IndexDocumentResponseProto
         {
-            DocumentId = context.DocumentId ?? throw new InternalPipelineError()
+            DocumentId = context.DocumentId ?? throw new InternalPipelineException()
         });
     }
 }

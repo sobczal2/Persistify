@@ -10,13 +10,12 @@ using Persistify.Validators.Documents;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
-[PipelineStep(PipelineStepType.DynamicValidation)]
-public class ValidateTypeNameMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
-    SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+[PipelineStep(PipelineStepType.TypeStore)]
+public class FetchTypeFromTypeStoreMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
 {
     private readonly ITypeStore _typeStore;
 
-    public ValidateTypeNameMiddleware(
+    public FetchTypeFromTypeStoreMiddleware(
         ITypeStore typeStore
     )
     {
@@ -25,15 +24,16 @@ public class ValidateTypeNameMiddleware : IPipelineMiddleware<SearchDocumentsPip
 
     public Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
-        var typeExists = _typeStore.Exists(context.Request.TypeName);
-        if (!typeExists)
+        if (!_typeStore.Exists(context.Request.TypeName))
             throw new ValidationException(new[]
             {
-                new ValidationFailure("TypeName", "Type does not exist")
+                new ValidationFailure("TypeName", "Type not found")
                 {
                     ErrorCode = DocumentErrorCodes.TypeNotFound
                 }
             });
+        
+        context.TypeDefinition = _typeStore.Get(context.Request.TypeName);
 
         return Task.CompletedTask;
     }

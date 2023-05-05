@@ -8,9 +8,11 @@ using Persistify.Protos;
 
 namespace Persistify.Pipeline.Orchestrators.Documents;
 
-public class SearchDocumentsPipelineOrchestrator : PipelineOrchestratorBase<SearchDocumentsPipelineOrchestrator,
+public class SearchDocumentsPipelineOrchestrator : PipelineOrchestratorBase<
+    SearchDocumentsPipelineOrchestrator,
     SearchDocumentsPipelineContext,
-    SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+    SearchDocumentsRequestProto,
+    SearchDocumentsResponseProto>
 {
     public SearchDocumentsPipelineOrchestrator(
         IEnumerable<IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
@@ -9,36 +10,35 @@ using Persistify.Stores.Documents;
 namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
 [PipelineStep(PipelineStepType.DocumentStore)]
-public class FetchDocumentsFromDocumentStoreMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
-    SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+public class FetchDocumentsFromDocumentStoreMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
 {
     private readonly IDocumentStore _documentStore;
 
     public FetchDocumentsFromDocumentStoreMiddleware(
         IDocumentStore documentStore
-    )
+        )
     {
         _documentStore = documentStore;
     }
 
     public async Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
-        var indexes = context.Indexes ?? throw new InternalPipelineError();
-        var documentProtos = new DocumentProto[indexes.Length];
-        for (var i = 0; i < indexes.Length; i++)
-        {
-            documentProtos[i] = new DocumentProto()
-            {
-                Id = indexes[i].Id,
-                Data = await _documentStore.GetAsync(indexes[i].Id)
-            };
-        }
-        
+        var documents = new List<DocumentProto>();
+        var documentIds = context.DocumentIds ?? throw new InternalPipelineException();
 
-        context.SetResponse(new SearchDocumentsResponseProto
+        foreach (var documentId in documentIds)
         {
-            PaginationResponse = context.Pagination,
-            Documents = { documentProtos }
+            documents.Add(new DocumentProto()
+            {
+                Id = documentId,
+                Data = await _documentStore.GetAsync(documentId)
+            });
+        }
+
+        context.SetResponse(new SearchDocumentsResponseProto()
+        {
+            Documents = { documents },
+            PaginationResponse = context.PaginationResponse
         });
     }
 }

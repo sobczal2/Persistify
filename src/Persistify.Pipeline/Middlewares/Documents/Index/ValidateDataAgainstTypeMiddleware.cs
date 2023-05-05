@@ -18,7 +18,7 @@ public class ValidateDataAgainstTypeMiddleware : IPipelineMiddleware<IndexDocume
 {
     public Task InvokeAsync(IndexDocumentPipelineContext context)
     {
-        var jObject = context.Data ?? throw new InternalPipelineError();
+        var jObject = context.Data ?? throw new InternalPipelineException();
 
         foreach (var field in context.TypeDefinition!.Fields)
         {

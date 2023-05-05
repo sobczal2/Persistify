@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Persistify.Indexes.Common;
 using Persistify.Storage;
 using Persistify.Tokens;
-using Index = Persistify.Indexes.Common.Index;
 
 namespace Persistify.Indexes.Boolean;
 
@@ -21,9 +20,9 @@ public class BooleanIndexer : IIndexer<bool>, IPersisted
         return Task.CompletedTask;
     }
 
-    public Task<IEnumerable<Index>> SearchAsync(ISearchPredicate searchPredicate, string typeName)
+    public Task<IEnumerable<long>> SearchAsync(ISearchPredicate searchPredicate)
     {
-        return Task.FromResult(Enumerable.Empty<Index>());
+        return Task.FromResult(Enumerable.Empty<long>());
     }
 
     public Task<int> RemoveAsync(long id, string typeName)
