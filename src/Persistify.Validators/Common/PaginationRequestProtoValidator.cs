@@ -1,18 +1,25 @@
-using FluentValidation;
+using System.Collections.Generic;
 using Persistify.Protos;
+using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Common;
 
-public class PaginationRequestProtoValidator : AbstractValidator<PaginationRequestProto>
+public class PaginationRequestProtoValidator : IValidator<PaginationRequestProto>
 {
-    public PaginationRequestProtoValidator()
+    public ValidationFailure[] Validate(PaginationRequestProto instance)
     {
-        RuleFor(x => x.PageNumber)
-            .GreaterThanOrEqualTo(1)
-            .WithErrorCode(CommonErrorCodes.PageNumberInvalid);
+        var failures = new List<ValidationFailure>(2);
 
-        RuleFor(x => x.PageSize)
-            .GreaterThanOrEqualTo(1)
-            .WithErrorCode(CommonErrorCodes.PageSizeInvalid);
+        if (instance.PageNumber < 1)
+        {
+            failures.Add(ValidationFailures.PageNumberInvalid);
+        }
+
+        if (instance.PageSize < 1)
+        {
+            failures.Add(ValidationFailures.PageSizeInvalid);
+        }
+
+        return failures.ToArray();
     }
 }

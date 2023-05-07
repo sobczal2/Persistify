@@ -65,11 +65,6 @@ public static class IndexDocumentEndpointExtensions
         services.AddSingleton(
             typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
                 IndexDocumentResponseProto>),
-            typeof(ValidateTokensMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
-                IndexDocumentResponseProto>),
             typeof(InsertTokensIntoIndexersMiddleware));
     }
 }

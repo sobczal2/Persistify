@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
 using Newtonsoft.Json.Linq;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Exceptions;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
-using Persistify.Validators.Documents;
+using Persistify.Validators;
+using Persistify.Validators.Core;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
@@ -25,22 +24,10 @@ public class ValidateDataAgainstTypeMiddleware : IPipelineMiddleware<IndexDocume
             var jToken = jObject.SelectToken(field.Path);
 
             if (field.IsRequired && jToken == null)
-                throw new ValidationException(new[]
-                {
-                    new ValidationFailure("Data", "Required field missing")
-                    {
-                        ErrorCode = DocumentErrorCodes.RequiredFieldMissing
-                    }
-                });
+                throw new ValidationException(new[]{ValidationFailures.RequiredFieldMissing});
 
             if (jToken != null && !ValidateFieldType(jToken, field.Type))
-                throw new ValidationException(new[]
-                {
-                    new ValidationFailure("Data", "Field type mismatch")
-                    {
-                        ErrorCode = DocumentErrorCodes.FieldTypeMismatch
-                    }
-                });
+                throw new ValidationException(new[]{ ValidationFailures.FieldTypeInvalid });
         }
 
         return Task.CompletedTask;

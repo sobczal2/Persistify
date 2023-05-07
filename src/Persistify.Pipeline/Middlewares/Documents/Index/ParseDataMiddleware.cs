@@ -1,13 +1,12 @@
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
-using Persistify.Validators.Documents;
+using Persistify.Validators;
+using Persistify.Validators.Core;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
@@ -23,13 +22,7 @@ public class ParseDataMiddleware : IPipelineMiddleware<IndexDocumentPipelineCont
         }
         catch (JsonReaderException)
         {
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("Data", "Invalid JSON")
-                {
-                    ErrorCode = DocumentErrorCodes.InvalidJson
-                }
-            });
+            throw new ValidationException(new[] { ValidationFailures.DataInvalid });
         }
 
         return Task.CompletedTask;

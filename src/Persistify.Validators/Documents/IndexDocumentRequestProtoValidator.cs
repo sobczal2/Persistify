@@ -1,13 +1,20 @@
-using FluentValidation;
+using System.Collections.Generic;
 using Persistify.Protos;
+using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Documents;
 
-public class IndexDocumentRequestProtoValidator : AbstractValidator<IndexDocumentRequestProto>
+public class IndexDocumentRequestProtoValidator : IValidator<IndexDocumentRequestProto>
 {
-    public IndexDocumentRequestProtoValidator()
+    public ValidationFailure[] Validate(IndexDocumentRequestProto instance)
     {
-        RuleFor(x => x.TypeName)
-            .NotEmpty();
+        var failures = new List<ValidationFailure>(1);
+
+        if (string.IsNullOrEmpty(instance.TypeName))
+        {
+            failures.Add(ValidationFailures.TypeNameEmpty);
+        }
+
+        return failures.ToArray();
     }
 }

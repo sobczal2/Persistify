@@ -1,13 +1,12 @@
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation;
-using FluentValidation.Results;
 using Persistify.Indexes.Common;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
-using Persistify.Validators.Documents;
+using Persistify.Validators;
+using Persistify.Validators.Core;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Remove;
 
@@ -44,12 +43,6 @@ public class RemoveDocumentFromIndexersMiddleware : IPipelineMiddleware<RemoveDo
             .ContinueWith(task => { removedIndexes = task.Result.Sum(); });
         
         if(removedIndexes == 0)
-            throw new ValidationException(new[]
-            {
-                new ValidationFailure("DocumentId", "Document with that id was not found")
-                {
-                    ErrorCode = DocumentErrorCodes.DocumentNotFound
-                }
-            });
+            throw new ValidationException(new[]{ValidationFailures.DocumentNotFound});
     }
 }

@@ -12,5 +12,6 @@ public class ValidateQueryAgainstTypeMiddleware : IPipelineMiddleware<SearchDocu
 {
     public async Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
+        // TODO: Implement validation
     }
 }

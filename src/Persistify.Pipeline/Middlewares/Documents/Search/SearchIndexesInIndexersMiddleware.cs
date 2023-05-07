@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +9,7 @@ using Persistify.Indexes.Number;
 using Persistify.Indexes.Text;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
+using Persistify.Pipeline.Exceptions;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 
@@ -35,118 +36,121 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<SearchDocum
 
     public async Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
-        if (context.Request.Or != null)
-        {
-            context.DocumentIds =
-                (await EvaluateOrOperator(context.Request.Or, context.TypeDefinition!.Name)).ToArray();
-        }
+        var query = context.Request.Query;
 
-        if (context.Request.And != null)
+        if (query != null)
         {
-            context.DocumentIds =
-                (await EvaluateAndOperator(context.Request.And, context.TypeDefinition!.Name)).ToArray();
+            context.DocumentIds = (await EvaluateQuery(query, context.TypeDefinition!.Name)).ToArray();
         }
+    }
 
-        if (context.Request.NumberQuery != null)
+    private async Task<IEnumerable<long>> EvaluateQuery(SearchQuery query, string typeName)
+    {
+        return query.QueryCase switch
         {
-            context.DocumentIds = (await EvaluateNumberQuery(context.Request.NumberQuery, context.TypeDefinition!.Name))
-                .ToArray();
-        }
-
-        if (context.Request.TextQuery != null)
-        {
-            context.DocumentIds = (await EvaluateTextQuery(context.Request.TextQuery, context.TypeDefinition!.Name))
-                .ToArray();
-        }
-
-        if (context.Request.BooleanQuery != null)
-        {
-            context.DocumentIds =
-                (await EvaluateBooleanQuery(context.Request.BooleanQuery, context.TypeDefinition!.Name)).ToArray();
-        }
+            SearchQuery.QueryOneofCase.And => await EvaluateAndOperator(query.And, typeName),
+            SearchQuery.QueryOneofCase.Or => await EvaluateOrOperator(query.Or, typeName),
+            SearchQuery.QueryOneofCase.NumberQuery => await EvaluateNumberQuery(query.NumberQuery, typeName),
+            SearchQuery.QueryOneofCase.TextQuery => await EvaluateTextQuery(query.TextQuery, typeName),
+            SearchQuery.QueryOneofCase.BooleanQuery => await EvaluateBooleanQuery(query.BooleanQuery, typeName),
+            _ => throw new InternalPipelineException()
+        };
     }
 
     private async Task<IEnumerable<long>> EvaluateOrOperator(SearchOrOperatorProto orOperator, string typeName)
     {
-        var groupedResults = new List<List<long>>();
+        var searchTasks = new List<Task<IEnumerable<long>>>();
 
-        foreach (var queryOperator in orOperator.And)
+        foreach (var query in orOperator.Queries)
         {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
+            switch (query.QueryCase)
+            {
+                case SearchQuery.QueryOneofCase.And:
+                    searchTasks.Add(EvaluateAndOperator(query.And, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.Or:
+                    searchTasks.Add(EvaluateOrOperator(query.Or, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.NumberQuery:
+                    searchTasks.Add(EvaluateNumberQuery(query.NumberQuery, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.TextQuery:
+                    searchTasks.Add(EvaluateTextQuery(query.TextQuery, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.BooleanQuery:
+                    searchTasks.Add(EvaluateBooleanQuery(query.BooleanQuery, typeName));
+                    break;
+                case SearchQuery.QueryOneofCase.None:
+                    break;
+                default:
+                    throw new InternalPipelineException();
+            }
         }
 
-        foreach (var queryOperator in orOperator.Or)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
+        var results = await Task.WhenAll(searchTasks);
 
-        foreach (var queryOperator in orOperator.NumberQuery)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
-
-        foreach (var queryOperator in orOperator.TextQuery)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
-
-        foreach (var queryOperator in orOperator.BooleanQuery)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
-
-        return groupedResults.SelectMany(x => x).Distinct();
+        return results.SelectMany(x => x).Distinct();
     }
 
-    private async Task<IEnumerable<long>> EvaluateAndOperator(SearchAndOperatorProto andOperator,
-        string typeName)
+
+    private async Task<IEnumerable<long>> EvaluateAndOperator(SearchAndOperatorProto andOperator, string typeName)
     {
-        var groupedResults = new List<List<long>>();
+        var searchTasks = new List<Task<IEnumerable<long>>>();
 
-        foreach (var queryOperator in andOperator.And)
+        foreach (var query in andOperator.Queries)
         {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
+            switch (query.QueryCase)
+            {
+                case SearchQuery.QueryOneofCase.And:
+                    searchTasks.Add(EvaluateAndOperator(query.And, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.Or:
+                    searchTasks.Add(EvaluateOrOperator(query.Or, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.NumberQuery:
+                    searchTasks.Add(EvaluateNumberQuery(query.NumberQuery, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.TextQuery:
+                    searchTasks.Add(EvaluateTextQuery(query.TextQuery, typeName));
+                    break;
+
+                case SearchQuery.QueryOneofCase.BooleanQuery:
+                    searchTasks.Add(EvaluateBooleanQuery(query.BooleanQuery, typeName));
+                    break;
+                case SearchQuery.QueryOneofCase.None:
+                    break;
+                default:
+                    throw new InternalPipelineException();
+            }
         }
 
-        foreach (var queryOperator in andOperator.Or)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
+        var results = await Task.WhenAll(searchTasks);
 
-        foreach (var queryOperator in andOperator.NumberQuery)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
-
-        foreach (var queryOperator in andOperator.TextQuery)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
-
-        foreach (var queryOperator in andOperator.BooleanQuery)
-        {
-            groupedResults.Add((await Evaluate(queryOperator, typeName)).ToList());
-        }
-
-        if (groupedResults.Count == 0)
+        if (results.Length == 0)
         {
             return Enumerable.Empty<long>();
         }
 
-        IEnumerable<long> commonIds = groupedResults[0];
+        var commonIds = results[0].Distinct();
 
-        for (int i = 1; i < groupedResults.Count; i++)
+        for (var i = 1; i < results.Length; i++)
         {
-            commonIds = commonIds.Intersect(groupedResults[i]);
+            commonIds = commonIds.Intersect(results[i].Distinct());
         }
 
         return commonIds;
     }
 
-    private async Task<IEnumerable<long>> EvaluateNumberQuery(SearchNumberQueryProto numberQuery,
-        string typeName)
+    private async Task<IEnumerable<long>> EvaluateNumberQuery(SearchNumberQueryProto numberQuery, string typeName)
     {
-        var documentIds = await _numberIndexer.SearchAsync(new NumberSearchPredicate()
+        var documentIds = await _numberIndexer.SearchAsync(new NumberSearchPredicate
         {
             TypeName = typeName,
             Path = numberQuery.Path,
@@ -159,20 +163,21 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<SearchDocum
 
     private async Task<IEnumerable<long>> EvaluateTextQuery(SearchTextQueryProto textQuery, string typeName)
     {
-        var documentIds = await _textIndexer.SearchAsync(new TextSearchPredicate()
+        var documentIds = await _textIndexer.SearchAsync(new TextSearchPredicate
         {
             TypeName = typeName,
             Path = textQuery.Path,
-            Value = textQuery.Value
+            Value = textQuery.Value,
+            CaseSensitive = textQuery.CaseSensitive,
+            Exact = textQuery.Exact,
         });
 
         return documentIds.Distinct();
     }
 
-    private async Task<IEnumerable<long>> EvaluateBooleanQuery(SearchBooleanQueryProto booleanQuery,
-        string typeName)
+    private async Task<IEnumerable<long>> EvaluateBooleanQuery(SearchBooleanQueryProto booleanQuery, string typeName)
     {
-        var documentIds = await _booleanIndexer.SearchAsync(new BooleanSearchPredicate()
+        var documentIds = await _booleanIndexer.SearchAsync(new BooleanSearchPredicate
         {
             TypeName = typeName,
             Path = booleanQuery.Path,
@@ -180,18 +185,5 @@ public class SearchIndexesInIndexersMiddleware : IPipelineMiddleware<SearchDocum
         });
 
         return documentIds.Distinct();
-    }
-
-    private async Task<IEnumerable<long>> Evaluate(
-        OneOf<SearchOrOperatorProto, SearchAndOperatorProto, SearchNumberQueryProto,
-            SearchTextQueryProto, SearchBooleanQueryProto> query, string typeName)
-    {
-        return await query.Match(
-            orOperator => EvaluateOrOperator(orOperator, typeName),
-            andOperator => EvaluateAndOperator(andOperator, typeName),
-            numberQuery => EvaluateNumberQuery(numberQuery, typeName),
-            textQuery => EvaluateTextQuery(textQuery, typeName),
-            booleanQuery => EvaluateBooleanQuery(booleanQuery, typeName)
-        );
     }
 }

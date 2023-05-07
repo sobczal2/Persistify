@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
-using FluentValidation;
 using Persistify.Pipeline.Contexts.Abstractions;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Middlewares.Abstractions;
+using Persistify.Validators.Core;
 
 namespace Persistify.Pipeline.Middlewares.Common;
 

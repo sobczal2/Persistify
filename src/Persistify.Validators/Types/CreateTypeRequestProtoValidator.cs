@@ -1,17 +1,18 @@
-using FluentValidation;
 using Persistify.Protos;
+using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Types;
 
-public class CreateTypeRequestProtoValidator : AbstractValidator<CreateTypeRequestProto>
+public class CreateTypeRequestProtoValidator : IValidator<CreateTypeRequestProto>
 {
-    public CreateTypeRequestProtoValidator(
-        IValidator<TypeDefinitionProto> typeDefinitionProtoValidator
-    )
+    private readonly IValidator<TypeDefinitionProto> _typeDefinitionProtoValidator;
+
+    public CreateTypeRequestProtoValidator(IValidator<TypeDefinitionProto> typeDefinitionProtoValidator)
     {
-        RuleFor(x => x.TypeDefinition)
-            .NotEmpty()
-            .WithErrorCode(TypeErrorCodes.TypeDefinitionEmpty)
-            .SetValidator(typeDefinitionProtoValidator);
+        _typeDefinitionProtoValidator = typeDefinitionProtoValidator;
+    }
+    public ValidationFailure[] Validate(CreateTypeRequestProto instance)
+    {
+        return _typeDefinitionProtoValidator.Validate(instance.TypeDefinition);
     }
 }

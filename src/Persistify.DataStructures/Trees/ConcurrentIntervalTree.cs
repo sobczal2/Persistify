@@ -59,18 +59,18 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
         }
     }
 
-    private static void Search(TreeNode<TItem>? node, double min, double max, List<TItem> result)
+    private static void Search(TreeNode<TItem>? node, double min, double max, ICollection<TItem> result)
     {
         if (node == null)
             return;
 
-        if (min < node.Value)
+        if (min <= node.Value)
             Search(node.Left, min, max, result);
 
         if (min <= node.Value && max >= node.Value)
             result.Add(node.Item);
 
-        if (max > node.Value)
+        if (max >= node.Value)
             Search(node.Right, min, max, result);
     }
 

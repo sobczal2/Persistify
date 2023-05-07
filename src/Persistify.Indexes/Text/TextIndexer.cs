@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Persistify.DataStructures.Tries;
 using Persistify.Indexes.Common;
-using Persistify.Indexes.Number;
 using Persistify.Storage;
 using Persistify.Tokens;
 
@@ -46,8 +45,10 @@ public class TextIndexer : IIndexer<string>, IPersisted
         if (searchPredicate is not TextSearchPredicate textSearchPredicate)
             throw new ArgumentException("Search predicate must be of type TextSearchPredicate");
 
-        var trie = _tries.GetOrAdd(new TypePath(searchPredicate.TypeName, searchPredicate.Path), _ => new ConcurrentByteMapTrie<long>());
-        return Task.FromResult(trie.Search(textSearchPredicate.Value));
+        var trie = _tries.GetOrAdd(new TypePath(searchPredicate.TypeName, searchPredicate.Path),
+            _ => new ConcurrentByteMapTrie<long>());
+        return Task.FromResult(trie.Search(textSearchPredicate.Value, textSearchPredicate.CaseSensitive,
+            textSearchPredicate.Exact));
     }
 
     public Task<int> RemoveAsync(long id, string typeName)
@@ -62,23 +63,38 @@ public class TextIndexer : IIndexer<string>, IPersisted
     public async ValueTask LoadAsync(IStorage storage, CancellationToken cancellationToken = default)
     {
         var exists = await storage.ExistsBlobAsync(IndexerName, cancellationToken);
-        _tries = new ConcurrentDictionary<TypePath, ITrie<long>>();
+        ConcurrentDictionary<TypePath, ITrie<long>> tries;
         if (!exists)
+        {
+            tries = new ConcurrentDictionary<TypePath, ITrie<long>>();
+            _tries = tries;
             return;
+        }
+
         var serializedTries = await storage.LoadBlobAsync(IndexerName, cancellationToken);
-        var tries =
+        var deserializedTries =
             JsonConvert.DeserializeObject<ConcurrentDictionary<TypePath, ConcurrentByteMapTrie<long>>>(serializedTries);
-        if (tries == null) throw new InvalidOperationException("Could not deserialize tries");
-        foreach (var (key, value) in tries)
-            _tries.TryAdd(key, value);
+        if (deserializedTries == null) throw new InvalidOperationException("Could not deserialize tries");
+
+        _tries = new ConcurrentDictionary<TypePath, ITrie<long>>();
+        foreach (var trie in deserializedTries)
+            _tries.TryAdd(trie.Key, trie.Value);
     }
 
     public async ValueTask SaveAsync(IStorage storage, CancellationToken cancellationToken = default)
     {
         AssertInitialized();
-        var serializedTries = JsonConvert.SerializeObject(_tries);
+
+        ConcurrentDictionary<TypePath, ITrie<long>> tries;
+        lock (_tries)
+        {
+            tries = new ConcurrentDictionary<TypePath, ITrie<long>>(_tries);
+        }
+
+        var serializedTries = JsonConvert.SerializeObject(tries);
         await storage.SaveBlobAsync(IndexerName, serializedTries, cancellationToken);
     }
+
 
     private void AssertInitialized()
     {

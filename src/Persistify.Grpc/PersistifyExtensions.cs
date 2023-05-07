@@ -3,7 +3,6 @@ using System.IO.Compression;
 using System.IO.Pipes;
 using System.Reactive.Subjects;
 using System.Text;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +24,7 @@ using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
 using Persistify.Stores.User;
 using Persistify.Tokens;
-using Persistify.Validators.Types;
+using Persistify.Validators.Core;
 using Serilog;
 using AuthService = Persistify.Grpc.Services.AuthService;
 using DeflateCompressionProvider = Grpc.Net.Compression.DeflateCompressionProvider;
@@ -63,7 +62,7 @@ public static class PersistifyExtensions
                     ClockSkew = TimeSpan.Zero
                 };
             });
-        services.AddValidatorsFromAssemblyContaining<CreateTypeRequestProtoValidator>(ServiceLifetime.Singleton);
+        services.AddValidators();
 
         services.AddPersistifyPipeline();
         services.AddPersistifyStores();
@@ -166,7 +165,7 @@ public static class PersistifyExtensions
         services.AddSingleton(_ => new NamedPipeServerStream("monitoring-pipe", PipeDirection.Out, 1,
             PipeTransmissionMode.Byte,
             PipeOptions.Asynchronous));
-
+        
         return services;
     }
 }

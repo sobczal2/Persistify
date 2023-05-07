@@ -1,23 +1,41 @@
-using FluentValidation;
+using System;
+using System.Collections.Generic;
 using Persistify.Protos;
+using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Types;
 
-public class TypeDefinitionProtoValidator : AbstractValidator<TypeDefinitionProto>
+public class TypeDefinitionProtoValidator : IValidator<TypeDefinitionProto>
 {
-    public TypeDefinitionProtoValidator(
-        IValidator<FieldDefinitionProto> fieldDefinitionProtoValidator
-    )
-    {
-        RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithErrorCode(TypeErrorCodes.NameEmpty)
-            .Matches(@"^([A-Z][a-zA-Z0-9]*\.)*[A-Z][a-zA-Z0-9]*$")
-            .WithErrorCode(TypeErrorCodes.NameInvalid);
+    private readonly IValidator<FieldDefinitionProto> _fieldDefinitionProtoValidator;
 
-        RuleFor(x => x.Fields)
-            .NotEmpty()
-            .WithErrorCode(TypeErrorCodes.FieldsEmpty)
-            .ForEach(x => x.SetValidator(fieldDefinitionProtoValidator));
+    public TypeDefinitionProtoValidator(IValidator<FieldDefinitionProto> fieldDefinitionProtoValidator)
+    {
+        _fieldDefinitionProtoValidator = fieldDefinitionProtoValidator;
+    }
+
+    public ValidationFailure[] Validate(TypeDefinitionProto instance)
+    {
+        var failures = new List<ValidationFailure>(3);
+
+        if (string.IsNullOrEmpty(instance.Name))
+        {
+            failures.Add(ValidationFailures.TypeNameEmpty);
+        }
+
+        if (instance.Fields.Count == 0)
+        {
+            failures.Add(ValidationFailures.TypeFieldsEmpty);
+        }
+
+        foreach (var field in instance.Fields)
+        {
+            var fieldFailures = _fieldDefinitionProtoValidator.Validate(field);
+            if (fieldFailures.Length <= 0) continue;
+            failures.AddRange(fieldFailures);
+            break;
+        }
+
+        return failures.ToArray();
     }
 }

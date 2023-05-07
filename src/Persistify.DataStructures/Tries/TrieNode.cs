@@ -12,7 +12,7 @@ public class TrieNode<TItem>
 
     public TrieNode()
     {
-        _children = new TrieNode<TItem>[36];
+        _children = new TrieNode<TItem>[62];
         _items = new List<TItem>();
     }
 
@@ -42,48 +42,76 @@ public class TrieNode<TItem>
         return items;
     }
 
-    public List<TItem> Search(ReadOnlySpan<char> key)
+    public List<TItem> Search(ReadOnlySpan<char> key, bool caseSensitive, bool exact)
     {
         if (key.IsEmpty)
-            return GetAllItems();
-
-        if (key[0] == '$')
         {
-            var items = new List<TItem>();
-            for (var i = 0; i < _children.Length; i++)
-            {
-                if (_children[i] is null)
-                    continue;
-                items.AddRange(_children[i]!.Search(key[1..]));
-            }
-
-            return items;
+            return exact ? new List<TItem>(_items) : GetAllItems();
         }
 
-        var index = GetIndex(key[0]);
-        return _children[index] is null ? new List<TItem>() : _children[index]!.Search(key[1..]);
+        var indexes = GetIndexes(key[0], caseSensitive);
+        var items = new List<TItem>();
+        foreach (var index in indexes)
+        {
+            if (_children[index] is null)
+                continue;
+            items.AddRange(_children[index]!.Search(key[1..], caseSensitive, exact));
+        }
+
+        return items;
     }
+
 
     public int Remove(Predicate<TItem> predicate)
     {
         var deletedCount = _items.RemoveAll(predicate);
-        for (var i = 0; i < _children.Length; i++)
+        foreach (var child in _children)
         {
-            if (_children[i] is null)
+            if (child is null)
                 continue;
-            deletedCount += _children[i]!.Remove(predicate);
+            deletedCount += child.Remove(predicate);
         }
 
         return deletedCount;
     }
 
+    private static int[] GetIndexes(char c, bool caseSensitive)
+    {
+        if (c >= '0' && c <= '9')
+        {
+            return new[] { c - '0' };
+        }
+
+        if (c >= 'a' && c <= 'z')
+        {
+            return caseSensitive ? new[] { c - 'a' + 10 } : new[] { c - 'a' + 10, c - 'a' + 36 };
+        }
+
+        if (c >= 'A' && c <= 'Z')
+        {
+            return caseSensitive ? new[] { c - 'A' + 36 } : new[] { c - 'A' + 36, c - 'A' + 10 };
+        }
+
+        throw new ArgumentException($"Invalid character: {c}");
+    }
+
     private static int GetIndex(char c)
     {
-        return c switch
+        if (c >= '0' && c <= '9')
         {
-            >= '0' and <= '9' => c - '0',
-            >= 'a' and <= 'z' => c - 'a' + 10,
-            _ => throw new ArgumentOutOfRangeException(nameof(c), c, "Invalid character")
-        };
+            return c - '0';
+        }
+
+        if (c >= 'a' && c <= 'z')
+        {
+            return c - 'a' + 10;
+        }
+
+        if (c >= 'A' && c <= 'Z')
+        {
+            return c - 'A' + 36;
+        }
+
+        throw new ArgumentException($"Invalid character: {c}");
     }
 }

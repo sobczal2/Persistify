@@ -14,34 +14,29 @@ message IndexDocumentResponseProto {
   int64 DocumentId = 1;
 }
 
-
 // Search
-message SearchDocumentsRequestProto {
-  string TypeName = 1;
-  PaginationRequestProto PaginationRequest = 2;
+message SearchQuery {
   oneof Query {
-    SearchOrOperatorProto Or = 3;
-    SearchAndOperatorProto And = 4;
-    SearchNumberQueryProto NumberQuery = 5;
-    SearchTextQueryProto TextQuery = 6;
-    SearchBooleanQueryProto BooleanQuery = 7;
+    SearchOrOperatorProto Or = 1;
+    SearchAndOperatorProto And = 2;
+    SearchNumberQueryProto NumberQuery = 3;
+    SearchTextQueryProto TextQuery = 4;
+    SearchBooleanQueryProto BooleanQuery = 5;
   }
 }
 
+message SearchDocumentsRequestProto {
+  string TypeName = 1;
+  PaginationRequestProto PaginationRequest = 2;
+  SearchQuery Query = 3;
+}
+
 message SearchOrOperatorProto {
-  repeated SearchOrOperatorProto Or = 1;
-  repeated SearchAndOperatorProto And = 2;
-  repeated SearchNumberQueryProto NumberQuery = 3;
-  repeated SearchTextQueryProto TextQuery = 4;
-  repeated SearchBooleanQueryProto BooleanQuery = 5;
+  repeated SearchQuery Queries = 1;
 }
 
 message SearchAndOperatorProto {
-  repeated SearchOrOperatorProto Or = 1;
-  repeated SearchAndOperatorProto And = 2;
-  repeated SearchNumberQueryProto NumberQuery = 3;
-  repeated SearchTextQueryProto TextQuery = 4;
-  repeated SearchBooleanQueryProto BooleanQuery = 5;
+  repeated SearchQuery Queries = 2;
 }
 
 message SearchNumberQueryProto {
@@ -53,6 +48,8 @@ message SearchNumberQueryProto {
 message SearchTextQueryProto {
   string Path = 1;
   string Value = 2;
+  bool Exact = 3;
+  bool CaseSensitive = 4;
 }
 
 message SearchBooleanQueryProto {
