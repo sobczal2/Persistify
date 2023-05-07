@@ -19,10 +19,4 @@
         <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Reference Include="FluentValidation">
-            <HintPath>..\..\..\..\.nuget\packages\fluentvalidation\11.5.2\lib\net7.0\FluentValidation.dll</HintPath>
-        </Reference>
-    </ItemGroup>
-
 </Project>

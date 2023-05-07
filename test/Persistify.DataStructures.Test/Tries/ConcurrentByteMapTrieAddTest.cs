@@ -20,7 +20,7 @@ public class ConcurrentByteMapTrieAddTest : TrieTestBase
     {
         Trie.Add("b", "Item2");
 
-        Assert.Equal("Item2", Trie.Search("b").FirstOrDefault());
+        Assert.Equal("Item2", Trie.Search("b", false, false).FirstOrDefault());
     }
 
     [Fact]
@@ -30,9 +30,9 @@ public class ConcurrentByteMapTrieAddTest : TrieTestBase
         Trie.Add("b", "Item2");
         Trie.Add("c", "Item3");
 
-        Assert.Equal("Item1", Trie.Search("a").FirstOrDefault());
-        Assert.Equal("Item2", Trie.Search("b").FirstOrDefault());
-        Assert.Equal("Item3", Trie.Search("c").FirstOrDefault());
+        Assert.Equal("Item1", Trie.Search("a", false, false).FirstOrDefault());
+        Assert.Equal("Item2", Trie.Search("b", false, false).FirstOrDefault());
+        Assert.Equal("Item3", Trie.Search("c", false, false).FirstOrDefault());
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class ConcurrentByteMapTrieAddTest : TrieTestBase
     {
         Trie.Add("", "Item1");
 
-        Assert.Equal("Item1", Trie.Search("").FirstOrDefault());
+        Assert.Equal("Item1", Trie.Search("", false, false).FirstOrDefault());
     }
 
     [Fact]
@@ -48,6 +48,6 @@ public class ConcurrentByteMapTrieAddTest : TrieTestBase
     {
         Trie.Add("a", null!);
 
-        Assert.Null(Trie.Search("a").FirstOrDefault());
+        Assert.Null(Trie.Search("a", false, false).FirstOrDefault());
     }
 }
