@@ -6,7 +6,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <AssemblyVersion>1.0.*</AssemblyVersion>
         <FileVersion>1.0.*</FileVersion>
-        <Version>1.0.*</Version>
         <Deterministic>false</Deterministic>
         <AssemblyName>Persistify.Monitor</AssemblyName>
         <ProductName>Persistify-Monitor</ProductName>
