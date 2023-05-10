@@ -62,7 +62,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
         Trie.Add("a2", "Item2");
         Trie.Add("b1", "Item3");
 
-        var results = Trie.Search("a$", false, false).ToList();
+        var results = Trie.Search("a?", false, false).ToList();
 
         Assert.Equal(2, results.Count);
         Assert.Contains("Item1", results);

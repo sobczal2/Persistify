@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace Persistify.DataStructures.Tries;
@@ -8,6 +9,7 @@ public class TrieNode<TItem>
 {
     [JsonProperty] private readonly TrieNode<TItem>?[] _children;
     [JsonProperty] private readonly List<TItem> _items;
+    private static readonly int[] _allIndexes = Enumerable.Range(0, 62).ToArray();
 
     public TrieNode()
     {
@@ -78,6 +80,8 @@ public class TrieNode<TItem>
         if (c >= 'a' && c <= 'z') return caseSensitive ? new[] { c - 'a' + 10 } : new[] { c - 'a' + 10, c - 'a' + 36 };
 
         if (c >= 'A' && c <= 'Z') return caseSensitive ? new[] { c - 'A' + 36 } : new[] { c - 'A' + 36, c - 'A' + 10 };
+        
+        if(c == '?') return _allIndexes;
 
         throw new ArgumentException($"Invalid character: {c}");
     }
