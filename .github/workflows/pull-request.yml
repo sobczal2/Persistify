@@ -12,6 +12,8 @@ jobs:
       matrix:
         configuration: [Debug, Release]
         os: [windows-latest, ubuntu-latest]
+        
+    runs-on: ${{ matrix.os }}
 
     env:
       Solution_Name: Persistify.sln
