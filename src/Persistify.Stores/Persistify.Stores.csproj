@@ -4,6 +4,12 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyVersion>1.0.*</AssemblyVersion>
+        <FileVersion>1.0.*</FileVersion>
+        <Version>1.0.*</Version>
+        <Deterministic>false</Deterministic>
+        <AssemblyName>Persistify.Stores</AssemblyName>
+        <ProductName>Persistify-Internal</ProductName>
     </PropertyGroup>
 
     <ItemGroup>

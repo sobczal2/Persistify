@@ -4,35 +4,36 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>disable</ImplicitUsings>
+        <AssemblyVersion>1.0.*</AssemblyVersion>
+        <FileVersion>1.0.*</FileVersion>
+        <Version>1.0.*</Version>
+        <Deterministic>false</Deterministic>
+        <AssemblyName>Persistify.Grpc</AssemblyName>
+        <ProductName>Persistify-Server</ProductName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
-        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0"/>
-        <PackageReference Include="System.Reactive" Version="5.0.0"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+        <PackageReference Include="System.Reactive" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj" />
+        <ProjectReference Include="..\Persistify.Indexes\Persistify.Indexes.csproj" />
+        <ProjectReference Include="..\Persistify.Pipeline\Persistify.Pipeline.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
+        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj" />
+        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj"/>
-        <ProjectReference Include="..\Persistify.Indexes\Persistify.Indexes.csproj"/>
-        <ProjectReference Include="..\Persistify.Pipeline\Persistify.Pipeline.csproj"/>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
-        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj"/>
-        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj"/>
+        <_ContentIncludedByDefault Remove="Monitoring\Pages\_Host.cshtml" />
+        <_ContentIncludedByDefault Remove="Monitoring\App.razor" />
+        <_ContentIncludedByDefault Remove="Monitoring\MainLayout.razor" />
+        <_ContentIncludedByDefault Remove="Monitoring\Pages\Index.razor" />
+        <_ContentIncludedByDefault Remove="Monitoring\_Imports.razor" />
     </ItemGroup>
-
-
-    <ItemGroup>
-        <_ContentIncludedByDefault Remove="Monitoring\Pages\_Host.cshtml"/>
-        <_ContentIncludedByDefault Remove="Monitoring\App.razor"/>
-        <_ContentIncludedByDefault Remove="Monitoring\MainLayout.razor"/>
-        <_ContentIncludedByDefault Remove="Monitoring\Pages\Index.razor"/>
-        <_ContentIncludedByDefault Remove="Monitoring\_Imports.razor"/>
-    </ItemGroup>
-
-    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' ">
-        <DefineConstants>_WINDOWS</DefineConstants>
-    </PropertyGroup>
 
 </Project>
