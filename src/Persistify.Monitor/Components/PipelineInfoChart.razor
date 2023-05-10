@@ -1,5 +1,5 @@
-@using Persistify.Monitor.Database
 @using Persistify.Helpers
+@using Persistify.Monitor.Database
 @inject MonitorDbContext DbContext
 @inject IJSRuntime JSRuntime
 <div id="@PipelineName-modal" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="@PipelineName-modalLabel" style="display: block;">
@@ -72,7 +72,7 @@
                     BackgroundColor = "red",
                     BorderColor = "red",
                     Data = FaultedExecutionCounts
-                },
+                }
             },
                 "Timestamp(minutes)",
                 "Count");
@@ -85,7 +85,7 @@
                     BackgroundColor = "magenta",
                     BorderColor = "magenta",
                     Data = ExecutionTimes
-                },
+                }
             },
                 "Timestamp(minutes)",
                 "Time(μs)");

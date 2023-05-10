@@ -29,11 +29,11 @@ public class TokenizeFieldsMiddleware : IPipelineMiddleware<IndexDocumentPipelin
         var numberTokens = new List<Token<double>>();
         var booleanTokens = new List<Token<bool>>();
         var jObject = context.Data ?? throw new InternalPipelineException();
-        
+
         foreach (var field in context.TypeDefinition!.Fields)
         {
             var jToken = jObject.SelectToken(field.Path);
-            if(jToken == null) continue;
+            if (jToken == null) continue;
             switch (field.Type)
             {
                 case FieldTypeProto.Text:
@@ -52,7 +52,7 @@ public class TokenizeFieldsMiddleware : IPipelineMiddleware<IndexDocumentPipelin
                     throw new InternalPipelineException();
             }
         }
-        
+
         context.TextTokens = textTokens.ToArray();
         context.NumberTokens = numberTokens.ToArray();
         context.BooleanTokens = booleanTokens.ToArray();

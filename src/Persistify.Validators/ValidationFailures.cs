@@ -20,4 +20,6 @@ public static class ValidationFailures
     public static readonly ValidationFailure TypeAlreadyExists = new("type-already-exists");
     public static readonly ValidationFailure QueryEmpty = new("query-empty");
     public static readonly ValidationFailure PaginationEmpty = new("pagination-empty");
+    public static readonly ValidationFailure FieldNotFound = new("field-not-found");
+    public static readonly ValidationFailure SearchQueryEmpty = new("search-query-empty");
 }

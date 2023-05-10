@@ -10,15 +10,9 @@ public class RemoveDocumentRequestProtoValidator : IValidator<RemoveDocumentRequ
     {
         var failures = new List<ValidationFailure>(1);
 
-        if (string.IsNullOrEmpty(instance.TypeName))
-        {
-            failures.Add(ValidationFailures.TypeNameEmpty);
-        }
-        
-        if (instance.DocumentId <= 0)
-        {
-            failures.Add(ValidationFailures.IdInvalid);
-        }
+        if (string.IsNullOrEmpty(instance.TypeName)) failures.Add(ValidationFailures.TypeNameEmpty);
+
+        if (instance.DocumentId <= 0) failures.Add(ValidationFailures.IdInvalid);
 
         return failures.ToArray();
     }

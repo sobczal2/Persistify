@@ -25,7 +25,7 @@ public static class SearchDocumentsEndpointExtensions
                 SearchDocumentsResponseProto>,
             SearchDocumentsPipelineOrchestrator
         >();
-        
+
         services.AddSingleton<
             IPipelineOrchestrator,
             SearchDocumentsPipelineOrchestrator
@@ -53,7 +53,7 @@ public static class SearchDocumentsEndpointExtensions
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),
             typeof(ApplyPaginationMiddleware));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
                 SearchDocumentsResponseProto>),

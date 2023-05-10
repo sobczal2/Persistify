@@ -10,15 +10,9 @@ public class PaginationRequestProtoValidator : IValidator<PaginationRequestProto
     {
         var failures = new List<ValidationFailure>(2);
 
-        if (instance.PageNumber < 1)
-        {
-            failures.Add(ValidationFailures.PageNumberInvalid);
-        }
+        if (instance.PageNumber < 1) failures.Add(ValidationFailures.PageNumberInvalid);
 
-        if (instance.PageSize < 1)
-        {
-            failures.Add(ValidationFailures.PageSizeInvalid);
-        }
+        if (instance.PageSize < 1) failures.Add(ValidationFailures.PageSizeInvalid);
 
         return failures.ToArray();
     }

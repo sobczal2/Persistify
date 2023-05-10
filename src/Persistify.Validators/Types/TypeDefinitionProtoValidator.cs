@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Persistify.Protos;
 using Persistify.Validators.Core;
@@ -18,15 +17,9 @@ public class TypeDefinitionProtoValidator : IValidator<TypeDefinitionProto>
     {
         var failures = new List<ValidationFailure>(3);
 
-        if (string.IsNullOrEmpty(instance.Name))
-        {
-            failures.Add(ValidationFailures.TypeNameEmpty);
-        }
+        if (string.IsNullOrEmpty(instance.Name)) failures.Add(ValidationFailures.TypeNameEmpty);
 
-        if (instance.Fields.Count == 0)
-        {
-            failures.Add(ValidationFailures.TypeFieldsEmpty);
-        }
+        if (instance.Fields.Count == 0) failures.Add(ValidationFailures.TypeFieldsEmpty);
 
         foreach (var field in instance.Fields)
         {

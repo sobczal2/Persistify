@@ -11,6 +11,7 @@ public class CreateTypeRequestProtoValidator : IValidator<CreateTypeRequestProto
     {
         _typeDefinitionProtoValidator = typeDefinitionProtoValidator;
     }
+
     public ValidationFailure[] Validate(CreateTypeRequestProto instance)
     {
         return _typeDefinitionProtoValidator.Validate(instance.TypeDefinition);

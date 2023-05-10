@@ -5,7 +5,8 @@ namespace Persistify.Storage;
 
 public class GzipFileSystemStorage : FileSystemStorage
 {
-    public GzipFileSystemStorage(string rootPath) : base(rootPath, Compress, Decompress)
+    public GzipFileSystemStorage(string rootPath)
+        : base(rootPath, Compress, Decompress)
     {
     }
 

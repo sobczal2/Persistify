@@ -10,15 +10,9 @@ public class SearchNumberQueryValidator : IValidator<SearchNumberQueryProto>
     {
         var failures = new List<ValidationFailure>();
 
-        if (string.IsNullOrEmpty(instance.Path))
-        {
-            failures.Add(ValidationFailures.FieldPathEmpty);
-        }
+        if (string.IsNullOrEmpty(instance.Path)) failures.Add(ValidationFailures.FieldPathEmpty);
 
-        if (instance.Min > instance.Max)
-        {
-            failures.Add(ValidationFailures.NumberRangeInvalid);
-        }
+        if (instance.Min > instance.Max) failures.Add(ValidationFailures.NumberRangeInvalid);
 
         return failures.ToArray();
     }

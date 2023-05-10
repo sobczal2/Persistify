@@ -8,8 +8,8 @@ namespace Persistify.DataStructures.Trees;
 
 public class ConcurrentIntervalTree<TItem> : ITree<TItem>
 {
-    [JsonProperty] private TreeNode<TItem>? _root;
     private readonly ReaderWriterLockSlim _lock;
+    [JsonProperty] private TreeNode<TItem>? _root;
 
     public ConcurrentIntervalTree()
     {
@@ -22,6 +22,36 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
         try
         {
             _root = Insert(_root, item, value);
+        }
+        finally
+        {
+            _lock.ExitWriteLock();
+        }
+    }
+
+    public IEnumerable<TItem> Search(double min, double max)
+    {
+        _lock.EnterReadLock();
+        try
+        {
+            var result = new List<TItem>();
+            Search(_root, min, max, result);
+            return result;
+        }
+        finally
+        {
+            _lock.ExitReadLock();
+        }
+    }
+
+    public int Remove(Predicate<TItem> predicate)
+    {
+        _lock.EnterWriteLock();
+        try
+        {
+            var removedCount = 0;
+            _root = Remove(_root, predicate, ref removedCount);
+            return removedCount;
         }
         finally
         {
@@ -44,21 +74,6 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
         return BalanceNode(node);
     }
 
-    public IEnumerable<TItem> Search(double min, double max)
-    {
-        _lock.EnterReadLock();
-        try
-        {
-            var result = new List<TItem>();
-            Search(_root, min, max, result);
-            return result;
-        }
-        finally
-        {
-            _lock.ExitReadLock();
-        }
-    }
-
     private static void Search(TreeNode<TItem>? node, double min, double max, ICollection<TItem> result)
     {
         if (node == null)
@@ -72,21 +87,6 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
 
         if (max >= node.Value)
             Search(node.Right, min, max, result);
-    }
-
-    public int Remove(Predicate<TItem> predicate)
-    {
-        _lock.EnterWriteLock();
-        try
-        {
-            var removedCount = 0;
-            _root = Remove(_root, predicate, ref removedCount);
-            return removedCount;
-        }
-        finally
-        {
-            _lock.ExitWriteLock();
-        }
     }
 
     private TreeNode<TItem>? Remove(TreeNode<TItem>? node, Predicate<TItem> predicate, ref int removedCount)
@@ -143,8 +143,10 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
     }
 
 
-    private static void UpdateNodeHeight(TreeNode<TItem> node) =>
+    private static void UpdateNodeHeight(TreeNode<TItem> node)
+    {
         node.Height = 1 + MathI.Max(GetHeight(node.Left), GetHeight(node.Right));
+    }
 
     private static TreeNode<TItem> BalanceNode(TreeNode<TItem> node)
     {
@@ -154,20 +156,14 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
         {
             case > 1:
             {
-                if (GetBalance(node.Left) < 0)
-                {
-                    node.Left = LeftRotate(node.Left!);
-                }
+                if (GetBalance(node.Left) < 0) node.Left = LeftRotate(node.Left!);
 
                 node = RightRotate(node);
                 break;
             }
             case < -1:
             {
-                if (GetBalance(node.Right) > 0)
-                {
-                    node.Right = RightRotate(node.Right!);
-                }
+                if (GetBalance(node.Right) > 0) node.Right = RightRotate(node.Right!);
 
                 node = LeftRotate(node);
                 break;
@@ -184,7 +180,10 @@ public class ConcurrentIntervalTree<TItem> : ITree<TItem>
         return GetHeight(node.Left) - GetHeight(node.Right);
     }
 
-    private static int GetHeight(TreeNode<TItem>? node) => node?.Height ?? 0;
+    private static int GetHeight(TreeNode<TItem>? node)
+    {
+        return node?.Height ?? 0;
+    }
 
     private static TreeNode<TItem> RightRotate(TreeNode<TItem> node)
     {

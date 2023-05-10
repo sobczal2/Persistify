@@ -11,14 +11,16 @@ namespace Persistify.Grpc.Services;
 public class DocumentService : Protos.DocumentService.DocumentServiceBase
 {
     private readonly
+        IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+        _complexSearchDocumentsPipelineOrchestrator;
+
+    private readonly
         IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>
         _indexDocumentPipelineOrchestrator;
 
     private readonly
         IPipelineOrchestrator<RemoveDocumentPipelineContext, RemoveDocumentRequestProto, RemoveDocumentResponseProto>
         _removeDocumentPipelineOrchestrator;
-
-    private readonly IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto> _complexSearchDocumentsPipelineOrchestrator;
 
     public DocumentService(
         IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>

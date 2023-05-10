@@ -1,25 +1,19 @@
 using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Persistify.Grpc;
 using Persistify.Helpers;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
+Log.Logger = new LoggerConfiguration().MinimumLevel
+    .Information()
     // .MinimumLevel.Error()
-    .WriteTo.Async(c =>
-    {
-        c.Console();
-    })
+    .WriteTo.Async(c => { c.Console(); })
     .CreateLogger();
 
 try
 {
-
     var builder = WebApplication.CreateBuilder(args);
-    
+
     builder.Host.UseSerilog();
 
     builder.Services.AddPersistify(builder.Configuration);

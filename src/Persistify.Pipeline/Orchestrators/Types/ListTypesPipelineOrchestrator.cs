@@ -8,7 +8,8 @@ using Persistify.Protos;
 
 namespace Persistify.Pipeline.Orchestrators.Types;
 
-public class ListTypesPipelineOrchestrator : PipelineOrchestratorBase<ListTypesPipelineOrchestrator, ListTypesPipelineContext, ListTypesRequestProto
+public class ListTypesPipelineOrchestrator : PipelineOrchestratorBase<ListTypesPipelineOrchestrator,
+    ListTypesPipelineContext, ListTypesRequestProto
     , ListTypesResponseProto>
 {
     public ListTypesPipelineOrchestrator(

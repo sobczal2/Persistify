@@ -8,11 +8,8 @@ public class FieldDefinitionProtoValidator : IValidator<FieldDefinitionProto>
 {
     public ValidationFailure[] Validate(FieldDefinitionProto instance)
     {
-        if (string.IsNullOrEmpty(instance.Path))
-        {
-            return new[] { ValidationFailures.FieldPathEmpty };
-        }
-        
+        if (string.IsNullOrEmpty(instance.Path)) return new[] { ValidationFailures.FieldPathEmpty };
+
         return Array.Empty<ValidationFailure>();
     }
 }

@@ -10,10 +10,7 @@ public class IndexDocumentRequestProtoValidator : IValidator<IndexDocumentReques
     {
         var failures = new List<ValidationFailure>(1);
 
-        if (string.IsNullOrEmpty(instance.TypeName))
-        {
-            failures.Add(ValidationFailures.TypeNameEmpty);
-        }
+        if (string.IsNullOrEmpty(instance.TypeName)) failures.Add(ValidationFailures.TypeNameEmpty);
 
         return failures.ToArray();
     }

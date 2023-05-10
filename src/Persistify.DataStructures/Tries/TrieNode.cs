@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Newtonsoft.Json;
 
 namespace Persistify.DataStructures.Tries;
@@ -44,10 +43,7 @@ public class TrieNode<TItem>
 
     public List<TItem> Search(ReadOnlySpan<char> key, bool caseSensitive, bool exact)
     {
-        if (key.IsEmpty)
-        {
-            return exact ? new List<TItem>(_items) : GetAllItems();
-        }
+        if (key.IsEmpty) return exact ? new List<TItem>(_items) : GetAllItems();
 
         var indexes = GetIndexes(key[0], caseSensitive);
         var items = new List<TItem>();
@@ -77,40 +73,22 @@ public class TrieNode<TItem>
 
     private static int[] GetIndexes(char c, bool caseSensitive)
     {
-        if (c >= '0' && c <= '9')
-        {
-            return new[] { c - '0' };
-        }
+        if (c >= '0' && c <= '9') return new[] { c - '0' };
 
-        if (c >= 'a' && c <= 'z')
-        {
-            return caseSensitive ? new[] { c - 'a' + 10 } : new[] { c - 'a' + 10, c - 'a' + 36 };
-        }
+        if (c >= 'a' && c <= 'z') return caseSensitive ? new[] { c - 'a' + 10 } : new[] { c - 'a' + 10, c - 'a' + 36 };
 
-        if (c >= 'A' && c <= 'Z')
-        {
-            return caseSensitive ? new[] { c - 'A' + 36 } : new[] { c - 'A' + 36, c - 'A' + 10 };
-        }
+        if (c >= 'A' && c <= 'Z') return caseSensitive ? new[] { c - 'A' + 36 } : new[] { c - 'A' + 36, c - 'A' + 10 };
 
         throw new ArgumentException($"Invalid character: {c}");
     }
 
     private static int GetIndex(char c)
     {
-        if (c >= '0' && c <= '9')
-        {
-            return c - '0';
-        }
+        if (c >= '0' && c <= '9') return c - '0';
 
-        if (c >= 'a' && c <= 'z')
-        {
-            return c - 'a' + 10;
-        }
+        if (c >= 'a' && c <= 'z') return c - 'a' + 10;
 
-        if (c >= 'A' && c <= 'Z')
-        {
-            return c - 'A' + 36;
-        }
+        if (c >= 'A' && c <= 'Z') return c - 'A' + 36;
 
         throw new ArgumentException($"Invalid character: {c}");
     }

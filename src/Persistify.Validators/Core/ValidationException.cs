@@ -5,12 +5,12 @@ namespace Persistify.Validators.Core;
 
 public class ValidationException : Exception
 {
-    public ValidationFailure[] Failures { get; }
-
     public ValidationException(ValidationFailure[] failures)
     {
         Failures = failures;
     }
+
+    public ValidationFailure[] Failures { get; }
 
     public override IDictionary Data => null!;
     public override string Message => string.Empty;

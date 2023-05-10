@@ -8,6 +8,6 @@ public class MonitorDbContext : DbContext
     public MonitorDbContext(DbContextOptions<MonitorDbContext> options) : base(options)
     {
     }
-    
+
     public DbSet<PipelineEvent> PipelineEvents { get; set; } = default!;
 }

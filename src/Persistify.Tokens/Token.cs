@@ -5,7 +5,7 @@ public struct Token<TValue>
 {
     public TValue Value { get; set; }
     public string Path { get; set; }
-    
+
     public Token(TValue value, string path)
     {
         Value = value;

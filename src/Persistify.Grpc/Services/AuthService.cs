@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -20,29 +19,28 @@ public class AuthService : Protos.AuthService.AuthServiceBase
     public override Task<SignInResponseProto> Login(SignInRequestProto request, ServerCallContext context)
     {
         if (_userStore.Verify(request.Username, request.Password))
-        {
             return Task.FromResult(new SignInResponseProto
             {
-                Token = new TokenResponseProto()
+                Token = new TokenResponseProto
                 {
                     AccessToken = _userStore.GenerateJwtToken(request.Username),
                     RefreshToken = _userStore.GenerateRefreshToken(request.Username)
                 }
             });
-        }
-        
+
         throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid username or password"));
     }
 
     [Authorize(Roles = UserRoles.SuperUser)]
     public override Task<CreateUserResponseProto> CreateUser(CreateUserRequestProto request, ServerCallContext context)
     {
-        if(request.Username.Length < 4)
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "Username must be at least 4 characters long"));
+        if (request.Username.Length < 4)
+            throw new RpcException(
+                new Status(StatusCode.InvalidArgument, "Username must be at least 4 characters long"));
         if (request.Password.Length < 8)
             throw new RpcException(
                 new Status(StatusCode.InvalidArgument, "Password must be at least 8 characters long"));
-        if(_userStore.Exists(request.Username))
+        if (_userStore.Exists(request.Username))
             throw new RpcException(new Status(StatusCode.AlreadyExists, "User already exists"));
         _userStore.Create(request.Username, request.Password);
         return Task.FromResult(new CreateUserResponseProto());
@@ -51,9 +49,9 @@ public class AuthService : Protos.AuthService.AuthServiceBase
     [Authorize(Roles = UserRoles.SuperUser)]
     public override Task<DeleteUserResponseProto> DeleteUser(DeleteUserRequestProto request, ServerCallContext context)
     {
-        if(!_userStore.Exists(request.Username))
+        if (!_userStore.Exists(request.Username))
             throw new RpcException(new Status(StatusCode.NotFound, "User not found"));
-        if(_userStore.IsSuperUser(request.Username))
+        if (_userStore.IsSuperUser(request.Username))
             throw new RpcException(new Status(StatusCode.PermissionDenied, "Cannot delete super user"));
         _userStore.Delete(request.Username);
         return Task.FromResult(new DeleteUserResponseProto());
@@ -62,16 +60,16 @@ public class AuthService : Protos.AuthService.AuthServiceBase
     public override Task<RefreshTokenResponseProto> RefreshToken(RefreshTokenRequestProto request,
         ServerCallContext context)
     {
-        if(_userStore.VerifyRefreshToken(request.Username, request.RefreshToken))
+        if (_userStore.VerifyRefreshToken(request.Username, request.RefreshToken))
             return Task.FromResult(new RefreshTokenResponseProto
             {
-                Token = new TokenResponseProto()
+                Token = new TokenResponseProto
                 {
                     AccessToken = _userStore.GenerateJwtToken(request.Username),
                     RefreshToken = _userStore.GenerateRefreshToken(request.Username)
                 }
             });
-        
+
         throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid refresh token"));
     }
 }

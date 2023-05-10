@@ -7,9 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Persistify.DataStructures\Persistify.DataStructures.csproj" />
-      <ProjectReference Include="..\Persistify.Storage\Persistify.Storage.csproj" />
-      <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+        <ProjectReference Include="..\Persistify.DataStructures\Persistify.DataStructures.csproj"/>
+        <ProjectReference Include="..\Persistify.Storage\Persistify.Storage.csproj"/>
+        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj"/>
     </ItemGroup>
 
 </Project>

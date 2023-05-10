@@ -24,10 +24,10 @@ public class ValidateDataAgainstTypeMiddleware : IPipelineMiddleware<IndexDocume
             var jToken = jObject.SelectToken(field.Path);
 
             if (field.IsRequired && jToken == null)
-                throw new ValidationException(new[]{ValidationFailures.RequiredFieldMissing});
+                throw new ValidationException(new[] { ValidationFailures.RequiredFieldMissing });
 
             if (jToken != null && !ValidateFieldType(jToken, field.Type))
-                throw new ValidationException(new[]{ ValidationFailures.FieldTypeInvalid });
+                throw new ValidationException(new[] { ValidationFailures.FieldTypeInvalid });
         }
 
         return Task.CompletedTask;

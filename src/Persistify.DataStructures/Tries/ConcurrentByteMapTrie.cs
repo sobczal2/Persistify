@@ -7,9 +7,9 @@ namespace Persistify.DataStructures.Tries;
 
 public class ConcurrentByteMapTrie<TItem> : ITrie<TItem>
 {
-    [JsonProperty]
-    private readonly TrieNode<TItem> _root;
     private readonly ReaderWriterLockSlim _lock;
+
+    [JsonProperty] private readonly TrieNode<TItem> _root;
 
     public ConcurrentByteMapTrie()
     {

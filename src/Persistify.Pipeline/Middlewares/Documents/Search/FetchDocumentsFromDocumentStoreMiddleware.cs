@@ -10,13 +10,14 @@ using Persistify.Stores.Documents;
 namespace Persistify.Pipeline.Middlewares.Documents.Search;
 
 [PipelineStep(PipelineStepType.DocumentStore)]
-public class FetchDocumentsFromDocumentStoreMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+public class FetchDocumentsFromDocumentStoreMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext,
+    SearchDocumentsRequestProto, SearchDocumentsResponseProto>
 {
     private readonly IDocumentStore _documentStore;
 
     public FetchDocumentsFromDocumentStoreMiddleware(
         IDocumentStore documentStore
-        )
+    )
     {
         _documentStore = documentStore;
     }
@@ -27,15 +28,13 @@ public class FetchDocumentsFromDocumentStoreMiddleware : IPipelineMiddleware<Sea
         var documentIds = context.DocumentIds ?? throw new InternalPipelineException();
 
         foreach (var documentId in documentIds)
-        {
-            documents.Add(new DocumentProto()
+            documents.Add(new DocumentProto
             {
                 Id = documentId,
                 Data = await _documentStore.GetAsync(documentId)
             });
-        }
 
-        context.SetResponse(new SearchDocumentsResponseProto()
+        context.SetResponse(new SearchDocumentsResponseProto
         {
             Documents = { documents },
             PaginationResponse = context.PaginationResponse

@@ -11,7 +11,7 @@ public class ConcurrentByteMapTrieAddTest : TrieTestBase
         Trie.Add("a", "Item1");
 
         var root = Trie.GetRoot();
-        
+
         Assert.Equal("Item1", root?.GetChildren()[10]?.GetItems()?.FirstOrDefault());
     }
 

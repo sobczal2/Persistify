@@ -27,12 +27,8 @@ public class Tokenizer : ITokenizer
             }
         }
 
-        if (previousCharValid)
-        {
-            yield return new Token<string>(stringBuilder.ToString(), path);
-        }
+        if (previousCharValid) yield return new Token<string>(stringBuilder.ToString(), path);
     }
-
 
     public Token<double> TokenizeNumber(double number, string path)
     {

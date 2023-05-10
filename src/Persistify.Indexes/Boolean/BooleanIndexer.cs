@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Persistify.Indexes.Common;
-using Persistify.Indexes.Number;
 using Persistify.Storage;
 using Persistify.Tokens;
 
@@ -17,8 +16,8 @@ public class BooleanIndexer : IIndexer<bool>, IPersisted
     private const string IndexerName = "booleanindexer";
     private const string TrueSetsName = "truesets";
     private const string FalseSetsName = "falsesets";
-    private ConcurrentDictionary<TypePath, HashSet<long>> _trueSets = default!;
     private ConcurrentDictionary<TypePath, HashSet<long>> _falseSets = default!;
+    private ConcurrentDictionary<TypePath, HashSet<long>> _trueSets = default!;
 
     public Task IndexAsync(long id, Token<bool> token, string typeName)
     {
@@ -38,12 +37,10 @@ public class BooleanIndexer : IIndexer<bool>, IPersisted
             var trueSet = _trueSets.GetOrAdd(new TypePath(typeName, tokenGroup.Key), _ => new HashSet<long>());
             var falseSet = _falseSets.GetOrAdd(new TypePath(typeName, tokenGroup.Key), _ => new HashSet<long>());
             foreach (var token in tokenGroup)
-            {
                 if (token.Value)
                     trueSet.Add(id);
                 else
                     falseSet.Add(id);
-            }
         }
 
         return Task.CompletedTask;
@@ -97,9 +94,9 @@ public class BooleanIndexer : IIndexer<bool>, IPersisted
 
         falseSets = JsonConvert.DeserializeObject<ConcurrentDictionary<TypePath, HashSet<long>>>(
             falseSerializedSets) ?? throw new InvalidOperationException("Could not deserialize sets");
-        
+
         _trueSets = trueSets;
-        
+
         _falseSets = falseSets;
     }
 

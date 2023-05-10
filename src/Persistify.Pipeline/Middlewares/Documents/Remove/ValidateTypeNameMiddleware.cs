@@ -26,7 +26,7 @@ public class ValidateTypeNameMiddleware : IPipelineMiddleware<RemoveDocumentPipe
     {
         var typeExists = _typeStore.Exists(context.Request.TypeName);
         if (!typeExists)
-            throw new ValidationException(new[] {ValidationFailures.TypeNotFound});
+            throw new ValidationException(new[] { ValidationFailures.TypeNotFound });
 
         return Task.CompletedTask;
     }

@@ -35,10 +35,7 @@ public struct UserData
             return false;
         }
 
-        if (RefreshToken.Value.Data != refreshToken)
-        {
-            return false;
-        }
+        if (RefreshToken.Value.Data != refreshToken) return false;
 
         RefreshToken = null;
         return true;

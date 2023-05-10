@@ -27,7 +27,7 @@ public class FetchTypeFromTypeStoreMiddleware : IPipelineMiddleware<IndexDocumen
     {
         if (!_typeStore.Exists(context.Request.TypeName))
             throw new ValidationException(new[] { ValidationFailures.TypeNotFound });
-        
+
         context.TypeDefinition = _typeStore.Get(context.Request.TypeName);
 
         return Task.CompletedTask;

@@ -7,22 +7,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="OneOf" Version="3.0.243" />
-        <PackageReference Include="System.Reactive" Version="5.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+        <PackageReference Include="OneOf" Version="3.0.243"/>
+        <PackageReference Include="System.Reactive" Version="5.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Indexes\Persistify.Indexes.csproj" />
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
-        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj" />
-        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj" />
-        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+        <ProjectReference Include="..\Persistify.Indexes\Persistify.Indexes.csproj"/>
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
+        <ProjectReference Include="..\Persistify.Validators\Persistify.Validators.csproj"/>
+        <ProjectReference Include="..\Persistify.Stores\Persistify.Stores.csproj"/>
+        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Middlewares\Types\Drop" />
+        <Folder Include="Middlewares\Types\Drop"/>
     </ItemGroup>
 
 </Project>

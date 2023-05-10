@@ -1,12 +1,10 @@
 using System.Threading.Tasks;
 using Persistify.Indexes.Common;
-using Persistify.Indexes.Text;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
 using Persistify.Pipeline.Exceptions;
 using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
-using Persistify.Stores.Documents;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Index;
 
@@ -15,15 +13,15 @@ public class InsertTokensIntoIndexersMiddleware : IPipelineMiddleware<IndexDocum
     IndexDocumentRequestProto,
     IndexDocumentResponseProto>
 {
-    private readonly IIndexer<string> _textIndexer;
-    private readonly IIndexer<double> _numberIndexer;
     private readonly IIndexer<bool> _booleanIndexer;
+    private readonly IIndexer<double> _numberIndexer;
+    private readonly IIndexer<string> _textIndexer;
 
     public InsertTokensIntoIndexersMiddleware(
         IIndexer<string> textIndexer,
         IIndexer<double> numberIndexer,
         IIndexer<bool> booleanIndexer
-        )
+    )
     {
         _textIndexer = textIndexer;
         _numberIndexer = numberIndexer;
@@ -37,11 +35,11 @@ public class InsertTokensIntoIndexersMiddleware : IPipelineMiddleware<IndexDocum
         var numberTokens = context.NumberTokens ?? throw new InternalPipelineException();
         var booleanTokens = context.BooleanTokens ?? throw new InternalPipelineException();
         var typeDefinition = context.TypeDefinition ?? throw new InternalPipelineException();
-        
+
         var indexTextTask = _textIndexer.IndexAsync(documentId, textTokens, typeDefinition.Name);
         var indexNumberTask = _numberIndexer.IndexAsync(documentId, numberTokens, typeDefinition.Name);
         var indexBooleanTask = _booleanIndexer.IndexAsync(documentId, booleanTokens, typeDefinition.Name);
-        
+
         await Task.WhenAll(indexTextTask, indexNumberTask, indexBooleanTask);
 
         context.SetResponse(new IndexDocumentResponseProto

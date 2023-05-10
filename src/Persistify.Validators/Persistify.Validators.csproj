@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
-        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
+        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj"/>
     </ItemGroup>
 
 </Project>

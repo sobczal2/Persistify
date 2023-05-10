@@ -4,10 +4,9 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Persistify.Pipeline.Orchestrators.Abstractions;
+using Persistify.Protos;
 
 namespace Persistify.Grpc.Services;
-
-using Persistify.Protos;
 
 // [Authorize(Roles = UserRoles.SuperUser)]
 public class MonitorService : Protos.MonitorService.MonitorServiceBase
@@ -23,18 +22,17 @@ public class MonitorService : Protos.MonitorService.MonitorServiceBase
         _pipelineOrchestrators = pipelineOrchestrators;
     }
 
-    public override async Task PipelineStream(EmptyProto request, IServerStreamWriter<PipelineEventProto> responseStream,
+    public override async Task PipelineStream(EmptyProto request,
+        IServerStreamWriter<PipelineEventProto> responseStream,
         ServerCallContext context)
     {
-        var subscription = _pipelineEventSubject.Subscribe(@event =>
-        {
-            responseStream.WriteAsync(@event);
-        });
+        var subscription = _pipelineEventSubject.Subscribe(@event => { responseStream.WriteAsync(@event); });
 
         try
         {
             await Task.Delay(-1, context.CancellationToken);
-        } catch (OperationCanceledException)
+        }
+        catch (OperationCanceledException)
         {
             // ignored
         }
@@ -54,7 +52,7 @@ public class MonitorService : Protos.MonitorService.MonitorServiceBase
                 MiddlewareNames = { middlewareNames }
             });
         }
-        
+
         return Task.FromResult(pipelineStatusResponse);
     }
 }

@@ -14,9 +14,9 @@ namespace Persistify.Pipeline.Middlewares.Documents.Remove;
 public class RemoveDocumentFromIndexersMiddleware : IPipelineMiddleware<RemoveDocumentPipelineContext,
     RemoveDocumentRequestProto, RemoveDocumentResponseProto>
 {
-    private readonly IIndexer<string> _textIndexer;
-    private readonly IIndexer<double> _numberIndexer;
     private readonly IIndexer<bool> _booleanIndexer;
+    private readonly IIndexer<double> _numberIndexer;
+    private readonly IIndexer<string> _textIndexer;
 
     public RemoveDocumentFromIndexersMiddleware(
         IIndexer<string> textIndexer,
@@ -41,8 +41,8 @@ public class RemoveDocumentFromIndexersMiddleware : IPipelineMiddleware<RemoveDo
 
         await Task.WhenAll(removeTextTask, removeNumberTask, removeBooleanTask)
             .ContinueWith(task => { removedIndexes = task.Result.Sum(); });
-        
-        if(removedIndexes == 0)
-            throw new ValidationException(new[]{ValidationFailures.DocumentNotFound});
+
+        if (removedIndexes == 0)
+            throw new ValidationException(new[] { ValidationFailures.DocumentNotFound });
     }
 }

@@ -10,10 +10,7 @@ public class SearchTextQueryValidator : IValidator<SearchTextQueryProto>
     {
         var failures = new List<ValidationFailure>();
 
-        if (string.IsNullOrEmpty(instance.Path))
-        {
-            failures.Add(ValidationFailures.FieldPathEmpty);
-        }
+        if (string.IsNullOrEmpty(instance.Path)) failures.Add(ValidationFailures.FieldPathEmpty);
 
         return failures.ToArray();
     }

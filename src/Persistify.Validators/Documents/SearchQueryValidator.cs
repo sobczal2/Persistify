@@ -4,11 +4,11 @@ using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Documents;
 
-public class SearchQueryValidator : IValidator<SearchQuery>
+public class SearchQueryValidator : IValidator<SearchQueryProto>
 {
+    private readonly IValidator<SearchBooleanQueryProto> _booleanQueryValidator;
     private readonly IValidator<SearchNumberQueryProto> _numberQueryValidator;
     private readonly IValidator<SearchTextQueryProto> _textQueryValidator;
-    private readonly IValidator<SearchBooleanQueryProto> _booleanQueryValidator;
 
     public SearchQueryValidator(
         IValidator<SearchNumberQueryProto> numberQueryValidator,
@@ -20,37 +20,40 @@ public class SearchQueryValidator : IValidator<SearchQuery>
         _booleanQueryValidator = booleanQueryValidator;
     }
 
-    public ValidationFailure[] Validate(SearchQuery instance)
+    public ValidationFailure[] Validate(SearchQueryProto instance)
     {
         var failures = new List<ValidationFailure>();
 
         switch (instance.QueryCase)
         {
-            case SearchQuery.QueryOneofCase.Or:
-                if(instance.Or != null)
-                    failures.AddRange(ValidateOr(instance.Or));
+            case SearchQueryProto.QueryOneofCase.OrOperator:
+                if (instance.OrOperator != null)
+                    failures.AddRange(ValidateOr(instance.OrOperator));
                 break;
-            case SearchQuery.QueryOneofCase.And:
-                if(instance.And != null)
-                    failures.AddRange(ValidateAnd(instance.And));
+            case SearchQueryProto.QueryOneofCase.AndOperator:
+                if (instance.AndOperator != null)
+                    failures.AddRange(ValidateAnd(instance.AndOperator));
                 break;
-            case SearchQuery.QueryOneofCase.NumberQuery:
-                if(instance.NumberQuery != null)
+            case SearchQueryProto.QueryOneofCase.NumberQuery:
+                if (instance.NumberQuery != null)
                     failures.AddRange(_numberQueryValidator.Validate(instance.NumberQuery));
                 break;
-            case SearchQuery.QueryOneofCase.TextQuery:
-                if(instance.TextQuery != null)
+            case SearchQueryProto.QueryOneofCase.TextQuery:
+                if (instance.TextQuery != null)
                     failures.AddRange(_textQueryValidator.Validate(instance.TextQuery));
                 break;
-            case SearchQuery.QueryOneofCase.BooleanQuery:
-                if(instance.BooleanQuery != null)
+            case SearchQueryProto.QueryOneofCase.BooleanQuery:
+                if (instance.BooleanQuery != null)
                     failures.AddRange(_booleanQueryValidator.Validate(instance.BooleanQuery));
+                break;
+            case SearchQueryProto.QueryOneofCase.None:
+                failures.Add(ValidationFailures.SearchQueryEmpty);
                 break;
         }
 
         return failures.ToArray();
     }
-    
+
     private ValidationFailure[] ValidateOr(SearchOrOperatorProto instance)
     {
         var failures = new List<ValidationFailure>();
@@ -60,7 +63,7 @@ public class SearchQueryValidator : IValidator<SearchQuery>
 
         return failures.ToArray();
     }
-    
+
     private ValidationFailure[] ValidateAnd(SearchAndOperatorProto instance)
     {
         var failures = new List<ValidationFailure>();
