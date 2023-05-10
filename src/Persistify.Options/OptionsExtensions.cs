@@ -5,13 +5,18 @@ namespace Persistify.Options;
 
 public static class OptionsExtensions
 {
-    public static IServiceCollection AddPersistifyOptions(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPersistifyOptions(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        services.AddOptions<AuthOptions>()
+        services
+            .AddOptions<AuthOptions>()
             .Bind(configuration.GetSection(AuthOptions.SectionName))
             .ValidateDataAnnotations();
-        
-        services.AddOptions<PersistifyOptions>()
+
+        services
+            .AddOptions<PersistifyOptions>()
             .Bind(configuration.GetSection(PersistifyOptions.SectionName))
             .ValidateDataAnnotations();
 

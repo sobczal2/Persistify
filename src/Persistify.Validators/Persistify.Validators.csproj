@@ -7,12 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.5.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
-        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
+        <ProjectReference Include="..\Persistify.Tokens\Persistify.Tokens.csproj"/>
     </ItemGroup>
 
 </Project>

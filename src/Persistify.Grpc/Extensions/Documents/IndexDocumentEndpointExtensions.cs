@@ -16,27 +16,27 @@ public static class IndexDocumentEndpointExtensions
     {
         services.AddOrchestrator();
         services.AddMiddlewares();
-        
+
         return services;
     }
-    
+
     private static void AddOrchestrator(this IServiceCollection services)
     {
         services.AddSingleton<
             IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>,
             IndexDocumentPipelineOrchestrator
         >();
-        
+
         services.AddSingleton<
             IPipelineOrchestrator,
             IndexDocumentPipelineOrchestrator
         >();
     }
-    
+
     private static void AddMiddlewares(this IServiceCollection services)
     {
         services.TryAddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
                 IndexDocumentResponseProto>),
@@ -61,11 +61,6 @@ public static class IndexDocumentEndpointExtensions
             typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
                 IndexDocumentResponseProto>),
             typeof(InsertDocumentIntoDocumentStoreMiddleware));
-
-        services.AddSingleton(
-            typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,
-                IndexDocumentResponseProto>),
-            typeof(ValidateTokensMiddleware));
 
         services.AddSingleton(
             typeof(IPipelineMiddleware<IndexDocumentPipelineContext, IndexDocumentRequestProto,

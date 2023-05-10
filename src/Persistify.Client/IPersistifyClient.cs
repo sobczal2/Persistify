@@ -4,6 +4,11 @@ namespace Persistify.Client;
 
 public interface IPersistifyClient
 {
-    IAsyncEnumerable<PipelineEventProto> PipelineStreamAsync(CancellationToken cancellationToken = default);
-    Task<PipelineInfosResponseProto> PipelineInfosAsync(CancellationToken cancellationToken = default);
+    IAsyncEnumerable<PipelineEventProto> PipelineStreamAsync(
+        CancellationToken cancellationToken = default
+    );
+
+    Task<PipelineInfosResponseProto> PipelineInfosAsync(
+        CancellationToken cancellationToken = default
+    );
 }

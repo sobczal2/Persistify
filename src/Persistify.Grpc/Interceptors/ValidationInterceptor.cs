@@ -1,10 +1,10 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Logging;
+using Persistify.Validators.Core;
 
 namespace Persistify.Grpc.Interceptors;
 
@@ -28,16 +28,16 @@ public class ValidationInterceptor : Interceptor
         }
         catch (ValidationException ex)
         {
-            _logger.LogError(ex, "Validation error occurred.");
+            _logger.LogError(ex, "Validation failed");
 
             var status = new Status(StatusCode.InvalidArgument, "Validation failed.");
-            var metadata = new Metadata { { "error-code", string.Join(';', ex.Errors.Select(x => x.ErrorCode)) } };
+            var metadata = new Metadata { { "error-codes", string.Join(';', ex.Failures.Select(x => x.ErrorCode)) } };
 
             throw new RpcException(status, metadata);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred.");
+            _logger.LogError(ex, "An error occurred");
             throw;
         }
     }

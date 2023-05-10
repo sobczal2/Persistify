@@ -1,4 +1,3 @@
-using System.IO.Pipes;
 using Microsoft.EntityFrameworkCore;
 using Persistify.Client;
 using Persistify.Monitor.Database;
@@ -7,14 +6,10 @@ using Persistify.Monitor.Hubs;
 using Persistify.Monitor.Services;
 using Serilog;
 
-
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
+Log.Logger = new LoggerConfiguration().MinimumLevel
+    .Information()
     // .MinimumLevel.Error()
-    .WriteTo.Async(c =>
-    {
-        c.Console();
-    })
+    .WriteTo.Async(c => { c.Console(); })
     .CreateLogger();
 
 try
@@ -23,27 +18,20 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
     builder.Host.UseSerilog();
-    
+
     builder.Services.AddRazorPages();
     builder.Services.AddServerSideBlazor();
     builder.Services.AddSignalR();
 
     builder.Services.AddHostedService<PipelineStreamHostedService>();
-    builder.Services.AddPersistifyClient(opt =>
-    {
-        opt.BaseAddress = "http://localhost:5001";
-    });
+    builder.Services.AddPersistifyClient(opt => { opt.BaseAddress = "http://localhost:5001"; });
 
-    builder.Services.AddDbContext<MonitorDbContext>(opt =>
-    {
-        opt.UseSqlite("Data Source=monitor.db");
-    });
+    builder.Services.AddDbContext<MonitorDbContext>(opt => { opt.UseSqlite("Data Source=monitor.db"); });
 
     builder.Services.AddSingleton<StatusProvider>();
 
-
     var app = builder.Build();
-    
+
     app.UseSerilogRequestLogging();
 
     app.UseHttpsRedirection();

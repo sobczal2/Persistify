@@ -16,7 +16,7 @@ public static class CreateTypeEndpointExtensions
     {
         services.AddOrchestrator();
         services.AddMiddlewares();
-        
+
         return services;
     }
 
@@ -26,7 +26,7 @@ public static class CreateTypeEndpointExtensions
             IPipelineOrchestrator<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>,
             CreateTypePipelineOrchestrator
         >();
-        
+
         services.AddSingleton<
             IPipelineOrchestrator,
             CreateTypePipelineOrchestrator
@@ -36,7 +36,7 @@ public static class CreateTypeEndpointExtensions
     private static void AddMiddlewares(this IServiceCollection services)
     {
         services.TryAddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<CreateTypePipelineContext, CreateTypeRequestProto, CreateTypeResponseProto>),
             typeof(AddTypeToTypeStoreMiddleware));

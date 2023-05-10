@@ -23,8 +23,8 @@ public abstract partial class
     where TResponse : class
 {
     private readonly ILogger<TSelf> _logger;
-    private readonly ISubject<PipelineEventProto> _pipelineEventSubject;
     private readonly ImmutableArray<IPipelineMiddleware<TContext, TRequest, TResponse>> _middlewares;
+    private readonly ISubject<PipelineEventProto> _pipelineEventSubject;
 
     protected PipelineOrchestratorBase(
         IEnumerable<IPipelineMiddleware<TContext, TRequest, TResponse>> middlewares,
@@ -59,7 +59,7 @@ public abstract partial class
         finally
         {
             var success = i == _middlewares.Length;
-            _pipelineEventSubject.OnNext(new PipelineEventProto()
+            _pipelineEventSubject.OnNext(new PipelineEventProto
             {
                 CorrelationId = context.CorrelationId.ToString(),
                 PipelineName = GetType().Name.Replace("Orchestrator", string.Empty),

@@ -16,27 +16,27 @@ public static class ListTypesEndpointExtensions
     {
         services.AddOrchestrator();
         services.AddMiddlewares();
-        
+
         return services;
     }
-    
+
     private static void AddOrchestrator(this IServiceCollection services)
     {
         services.AddSingleton<
             IPipelineOrchestrator<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>,
             ListTypesPipelineOrchestrator
         >();
-        
+
         services.AddSingleton<
             IPipelineOrchestrator,
             ListTypesPipelineOrchestrator
         >();
     }
-    
+
     private static void AddMiddlewares(this IServiceCollection services)
     {
         services.TryAddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<ListTypesPipelineContext, ListTypesRequestProto, ListTypesResponseProto>),
             typeof(GetTypesFromTypeStoreMiddleware));

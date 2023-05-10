@@ -10,7 +10,7 @@ public class ConcurrentByteMapTrieRemoveTest : TrieTestBase
         Trie.Remove(item => item == "Item1");
 
         var root = Trie.GetRoot();
-        
+
         Assert.NotNull(root);
         Assert.Empty(root.GetItems()!);
     }
@@ -20,7 +20,7 @@ public class ConcurrentByteMapTrieRemoveTest : TrieTestBase
     {
         Trie.Add("b", "Item2");
         Trie.Remove(item => item == "Item2");
-        Assert.Empty(Trie.Search("b"));
+        Assert.Empty(Trie.Search("b", false, false));
     }
 
     [Fact]
@@ -32,9 +32,9 @@ public class ConcurrentByteMapTrieRemoveTest : TrieTestBase
 
         Trie.Remove(item => item == "Item2");
 
-        Assert.Empty(Trie.Search("b"));
-        Assert.Single(Trie.Search("a"));
-        Assert.Single(Trie.Search("c"));
+        Assert.Empty(Trie.Search("b", false, false));
+        Assert.Single(Trie.Search("a", false, false));
+        Assert.Single(Trie.Search("c", false, false));
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public class ConcurrentByteMapTrieRemoveTest : TrieTestBase
 
         Trie.Remove(item => item == "Item1");
 
-        Assert.Empty(Trie.Search(""));
+        Assert.Empty(Trie.Search("", false, false));
     }
 
     [Fact]
@@ -54,6 +54,6 @@ public class ConcurrentByteMapTrieRemoveTest : TrieTestBase
 
         Trie.Remove(item => item == null!);
 
-        Assert.Empty(Trie.Search("a"));
+        Assert.Empty(Trie.Search("a", false, false));
     }
 }

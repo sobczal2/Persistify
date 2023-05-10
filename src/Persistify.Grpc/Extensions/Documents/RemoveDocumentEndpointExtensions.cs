@@ -16,10 +16,10 @@ public static class RemoveDocumentEndpointExtensions
     {
         services.AddOrchestrator();
         services.AddMiddlewares();
-        
+
         return services;
     }
-    
+
     private static void AddOrchestrator(this IServiceCollection services)
     {
         services.AddSingleton<
@@ -27,27 +27,27 @@ public static class RemoveDocumentEndpointExtensions
                 RemoveDocumentResponseProto>,
             RemoveDocumentPipelineOrchestrator
         >();
-        
+
         services.AddSingleton<
             IPipelineOrchestrator,
             RemoveDocumentPipelineOrchestrator
         >();
     }
-    
+
     private static void AddMiddlewares(this IServiceCollection services)
     {
         services.TryAddSingleton(typeof(IPipelineMiddleware<,,>), typeof(RequestProtoValidationMiddleware<,,>));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
                 RemoveDocumentResponseProto>),
             typeof(ValidateTypeNameMiddleware));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
                 RemoveDocumentResponseProto>),
             typeof(RemoveDocumentFromIndexersMiddleware));
-        
+
         services.AddSingleton(
             typeof(IPipelineMiddleware<RemoveDocumentPipelineContext, RemoveDocumentRequestProto,
                 RemoveDocumentResponseProto>),

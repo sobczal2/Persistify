@@ -8,7 +8,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
     [Fact]
     public void Search_WhenTreeIsEmpty_ShouldReturnEmptyList()
     {
-        var result = Trie.Search("a");
+        var result = Trie.Search("a", false, false);
 
         Assert.Empty(result);
     }
@@ -18,7 +18,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
     {
         Trie.Add("b", "Item2");
 
-        Assert.Equal("Item2", Trie.Search("b").First());
+        Assert.Equal("Item2", Trie.Search("b", false, false).First());
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
         Trie.Add("b", "Item2");
         Trie.Add("c", "Item3");
 
-        Assert.Equal("Item2", Trie.Search("b").First());
+        Assert.Equal("Item2", Trie.Search("b", false, false).First());
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
     {
         Trie.Add("", "Item1");
 
-        Assert.Equal("Item1", Trie.Search("").First());
+        Assert.Equal("Item1", Trie.Search("", false, false).First());
     }
 
     [Fact]
@@ -44,15 +44,15 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
     {
         Trie.Add("a", null!);
 
-        Assert.Null(Trie.Search("a").First());
+        Assert.Null(Trie.Search("a", false, false).First());
     }
-    
+
     [Fact]
     public void Search_WhenLongKeyIsUsed_ShouldReturnCorrectItem()
     {
         Trie.Add("longkey", "Item1");
 
-        Assert.Equal("Item1", Trie.Search("longkey").First());
+        Assert.Equal("Item1", Trie.Search("longkey", false, false).First());
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
         Trie.Add("a2", "Item2");
         Trie.Add("b1", "Item3");
 
-        var results = Trie.Search("a$").ToList();
+        var results = Trie.Search("a?", false, false).ToList();
 
         Assert.Equal(2, results.Count);
         Assert.Contains("Item1", results);
@@ -76,7 +76,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
         Trie.Add("prefix2", "Item2");
         Trie.Add("otherprefix1", "Item3");
 
-        var results = Trie.Search("prefix").ToList();
+        var results = Trie.Search("prefix", false, false).ToList();
 
         Assert.Equal(2, results.Count);
         Assert.Contains("Item1", results);
@@ -90,7 +90,7 @@ public class ConcurrentByteMapTrieSearchTest : TrieTestBase
         Trie.Add("actualkey1", "Item2");
         Trie.Add("actualkey2", "Item3");
 
-        var result = Trie.Search("actualkey").First();
+        var result = Trie.Search("actualkey", false, false).First();
 
         Assert.Equal("Item1", result);
     }

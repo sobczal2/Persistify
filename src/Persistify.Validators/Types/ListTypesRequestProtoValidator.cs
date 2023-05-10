@@ -1,16 +1,21 @@
-using FluentValidation;
 using Persistify.Protos;
-using Persistify.Validators.Common;
+using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Types;
 
-public class ListTypesRequestProtoValidator : AbstractValidator<ListTypesRequestProto>
+public class ListTypesRequestProtoValidator : IValidator<ListTypesRequestProto>
 {
-    public ListTypesRequestProtoValidator(IValidator<PaginationRequestProto> paginationRequestValidator)
+    private readonly IValidator<PaginationRequestProto> _paginationRequestProtoValidator;
+
+    public ListTypesRequestProtoValidator(IValidator<PaginationRequestProto> paginationRequestProtoValidator)
     {
-        RuleFor(x => x.PaginationRequest)
-            .NotEmpty()
-            .WithErrorCode(CommonErrorCodes.PaginationRequestEmpty)
-            .SetValidator(paginationRequestValidator);
+        _paginationRequestProtoValidator = paginationRequestProtoValidator;
+    }
+
+    public ValidationFailure[] Validate(ListTypesRequestProto instance)
+    {
+        return instance.PaginationRequest is null
+            ? new[] { ValidationFailures.PaginationEmpty }
+            : _paginationRequestProtoValidator.Validate(instance.PaginationRequest);
     }
 }

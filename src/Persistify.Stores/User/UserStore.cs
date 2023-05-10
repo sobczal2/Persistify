@@ -26,6 +26,25 @@ public class UserStore : IUserStore, IPersisted
                 authOptions.CurrentValue.Iterations, authOptions.CurrentValue.KeyLength));
     }
 
+    public async ValueTask LoadAsync(IStorage storage, CancellationToken cancellationToken = default)
+    {
+        var exists = await storage.ExistsBlobAsync("users", cancellationToken);
+        if (exists)
+        {
+            var result = await storage.LoadBlobAsync("users", cancellationToken);
+            _users = JsonConvert.DeserializeObject<ConcurrentDictionary<string, UserData>>(result)!;
+            return;
+        }
+
+        _users = new ConcurrentDictionary<string, UserData>();
+    }
+
+    public async ValueTask SaveAsync(IStorage storage, CancellationToken cancellationToken = default)
+    {
+        AssertInitialized();
+        await storage.SaveBlobAsync("users", JsonConvert.SerializeObject(_users), cancellationToken);
+    }
+
     public void Create(string username, string password)
     {
         AssertInitialized();
@@ -108,32 +127,13 @@ public class UserStore : IUserStore, IPersisted
             };
 
         var token = new JwtSecurityToken(
-            issuer: _authOptions.CurrentValue.Issuer,
+            _authOptions.CurrentValue.Issuer,
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(_authOptions.CurrentValue.JwtTokenExpirationMinutes),
             signingCredentials: _authOptions.CurrentValue.GetSigningCredentials()
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    public async ValueTask LoadAsync(IStorage storage, CancellationToken cancellationToken = default)
-    {
-        var exists = await storage.ExistsBlobAsync("users", cancellationToken);
-        if (exists)
-        {
-            var result = await storage.LoadBlobAsync("users", cancellationToken);
-            _users = JsonConvert.DeserializeObject<ConcurrentDictionary<string, UserData>>(result)!;
-            return;
-        }
-
-        _users = new ConcurrentDictionary<string, UserData>();
-    }
-
-    public async ValueTask SaveAsync(IStorage storage, CancellationToken cancellationToken = default)
-    {
-        AssertInitialized();
-        await storage.SaveBlobAsync("users", JsonConvert.SerializeObject(_users), cancellationToken);
     }
 
     private void AssertInitialized()

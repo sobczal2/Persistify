@@ -3,7 +3,6 @@ using System.IO.Compression;
 using System.IO.Pipes;
 using System.Reactive.Subjects;
 using System.Text;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -25,45 +24,58 @@ using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
 using Persistify.Stores.User;
 using Persistify.Tokens;
-using Persistify.Validators.Types;
+using Persistify.Validators.Core;
 using Serilog;
 using AuthService = Persistify.Grpc.Services.AuthService;
 using DeflateCompressionProvider = Grpc.Net.Compression.DeflateCompressionProvider;
 using DocumentService = Persistify.Grpc.Services.DocumentService;
-using TypeService = Persistify.Grpc.Services.TypeService;
 using MonitorService = Persistify.Grpc.Services.MonitorService;
+using TypeService = Persistify.Grpc.Services.TypeService;
 
 namespace Persistify.Grpc;
 
 public static class PersistifyExtensions
 {
-    public static IServiceCollection AddPersistify(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPersistify(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services.AddGrpc(opt =>
         {
             opt.Interceptors.Add<ValidationInterceptor>();
-            opt.CompressionProviders.Add(new DeflateCompressionProvider(CompressionLevel.SmallestSize));
+            opt.CompressionProviders.Add(
+                new DeflateCompressionProvider(CompressionLevel.SmallestSize)
+            );
         });
         services.AddGrpcReflection();
         services.AddPersistifyOptions(configuration);
         services.AddAuthorization();
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
             {
-                opt.TokenValidationParameters = new TokenValidationParameters()
+                opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration.GetSection(AuthOptions.SectionName).GetValue<string>("Issuer"),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration
-                            .GetSection(AuthOptions.SectionName).GetValue<string>("JwtSecret") ??
-                        throw new InvalidOperationException())),
+                    ValidIssuer = configuration
+                        .GetSection(AuthOptions.SectionName)
+                        .GetValue<string>("Issuer"),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            configuration
+                                .GetSection(AuthOptions.SectionName)
+                                .GetValue<string>("JwtSecret")
+                            ?? throw new InvalidOperationException()
+                        )
+                    ),
                     ClockSkew = TimeSpan.Zero
                 };
             });
-        services.AddValidatorsFromAssemblyContaining<CreateTypeRequestProtoValidator>(ServiceLifetime.Singleton);
+        services.AddValidators();
 
         services.AddPersistifyPipeline();
         services.AddPersistifyStores();
@@ -97,7 +109,6 @@ public static class PersistifyExtensions
     {
         services.AddIndexDocumentEndpoint();
         services.AddRemoveDocumentEndpoint();
-        services.AddSearchDocumentsEndpoint();
         services.AddComplexSearchDocumentsEndpoint();
 
         services.AddCreateTypeEndpoint();
@@ -128,25 +139,33 @@ public static class PersistifyExtensions
         services.AddSingleton<IStorage>(_ => new GzipFileSystemStorage("/home/sobczal/temp"));
 
         services.AddSingleton<ITypeStore>(_ => new HashSetTypeStore());
-        services.AddSingleton<IPersisted>(sp =>
-            sp.GetRequiredService<ITypeStore>() as IPersisted ?? throw new InvalidOperationException());
+        services.AddSingleton<IPersisted>(
+            sp =>
+                sp.GetRequiredService<ITypeStore>() as IPersisted
+                ?? throw new InvalidOperationException()
+        );
 
         services.AddSingleton<IDocumentStore>(sp =>
         {
             var storage = sp.GetRequiredService<IStorage>();
             return new StorageDocumentStore(storage);
         });
-        services.AddSingleton<IPersisted>(sp =>
-            sp.GetRequiredService<IDocumentStore>() as IPersisted ?? throw new InvalidOperationException());
+        services.AddSingleton<IPersisted>(
+            sp =>
+                sp.GetRequiredService<IDocumentStore>() as IPersisted
+                ?? throw new InvalidOperationException()
+        );
 
         services.AddSingleton<IUserStore>(sp =>
         {
             var authOptionsMonitor = sp.GetRequiredService<IOptionsMonitor<AuthOptions>>();
             return new UserStore(authOptionsMonitor);
         });
-        services.AddSingleton<IPersisted>(sp =>
-            sp.GetRequiredService<IUserStore>() as IPersisted ?? throw new InvalidOperationException());
-
+        services.AddSingleton<IPersisted>(
+            sp =>
+                sp.GetRequiredService<IUserStore>() as IPersisted
+                ?? throw new InvalidOperationException()
+        );
 
         services.AddHostedService<PersistedHostedService>();
 
@@ -156,7 +175,7 @@ public static class PersistifyExtensions
     public static IServiceCollection AddPersistifySubjects(this IServiceCollection services)
     {
         services.AddSingleton<ISubject<PipelineEventProto>, Subject<PipelineEventProto>>();
-        
+
         return services;
     }
 
@@ -164,9 +183,16 @@ public static class PersistifyExtensions
     {
         services.AddSingleton<ITokenizer, Tokenizer>();
 
-        services.AddSingleton(_ => new NamedPipeServerStream("monitoring-pipe", PipeDirection.Out, 1,
-            PipeTransmissionMode.Byte,
-            PipeOptions.Asynchronous));
+        services.AddSingleton(
+            _ =>
+                new NamedPipeServerStream(
+                    "monitoring-pipe",
+                    PipeDirection.Out,
+                    1,
+                    PipeTransmissionMode.Byte,
+                    PipeOptions.Asynchronous
+                )
+        );
 
         return services;
     }

@@ -22,14 +22,16 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if(_pipelines is not null) return;
+        if (_pipelines is not null) return;
         try
         {
             var response = await PersistifyClient.PipelineInfosAsync();
             _pipelines = response.Pipelines.ToList();
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             Console.WriteLine(ex);
         }
     }
+
 }

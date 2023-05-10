@@ -1,10 +1,8 @@
 using Grpc.Core;
-using Microsoft.AspNetCore.SignalR;
 using Persistify.Client;
 using Persistify.Helpers;
 using Persistify.Monitor.Database;
 using Persistify.Monitor.Database.Domain;
-using Persistify.Monitor.Hubs;
 using Persistify.Monitor.Services;
 
 namespace Persistify.Monitor.HostedServices;

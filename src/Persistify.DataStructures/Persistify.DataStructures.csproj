@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Persistify.Helpers\Persistify.Helpers.csproj" />
+        <ProjectReference Include="..\Persistify.Helpers\Persistify.Helpers.csproj"/>
     </ItemGroup>
 
 </Project>

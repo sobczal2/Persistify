@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Helpers;
 using Persistify.Pipeline.Contexts.Documents;
@@ -13,29 +14,27 @@ namespace Persistify.Pipeline.Middlewares.Documents.Search;
 public class ApplyPaginationMiddleware : IPipelineMiddleware<SearchDocumentsPipelineContext, SearchDocumentsRequestProto
     , SearchDocumentsResponseProto>
 {
-    public Task InvokeAsync(SearchDocumentsPipelineContext context)
+    public async Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
-        var indexes = context.Indexes ?? throw new InternalPipelineError();
-        Array.Sort(indexes, (a, b) => a.Id.CompareTo(b.Id));
-        context.Pagination = new PaginationResponseProto
+        var paginationRequest = context.Request.PaginationRequest ?? throw new InternalPipelineException();
+        var documentIds = context.DocumentIds ?? throw new InternalPipelineException();
+        var totalCount = documentIds.Length;
+
+        Array.Sort(documentIds);
+
+        context.DocumentIds = documentIds
+            .Skip((paginationRequest.PageNumber - 1) * paginationRequest.PageSize)
+            .Take(paginationRequest.PageSize)
+            .ToArray();
+
+        context.PaginationResponse = new PaginationResponseProto
         {
-            TotalItems = indexes.Length,
-            TotalPages = MathI.Ceiling(indexes.Length / (double)context.Request.PaginationRequest.PageSize),
-            PageNumber = context.Request.PaginationRequest.PageNumber,
-            PageSize = context.Request.PaginationRequest.PageSize
+            PageNumber = paginationRequest.PageNumber,
+            PageSize = paginationRequest.PageSize,
+            TotalItems = totalCount,
+            TotalPages = MathI.Ceiling(totalCount / (double)paginationRequest.PageSize)
         };
 
-        var startIndex = (context.Request.PaginationRequest.PageNumber - 1) *
-                         context.Request.PaginationRequest.PageSize;
-        var endIndex = startIndex + context.Request.PaginationRequest.PageSize;
-
-        if (endIndex >= context.Indexes.Length)
-        {
-            endIndex = context.Indexes.Length;
-        }
-
-        context.Indexes = indexes[startIndex..endIndex];
-
-        return Task.CompletedTask;
+        await Task.CompletedTask;
     }
 }

@@ -28,31 +28,31 @@ public class TokenizeFieldsMiddleware : IPipelineMiddleware<IndexDocumentPipelin
         var textTokens = new List<Token<string>>();
         var numberTokens = new List<Token<double>>();
         var booleanTokens = new List<Token<bool>>();
-        var jObject = context.Data ?? throw new InternalPipelineError();
-        
+        var jObject = context.Data ?? throw new InternalPipelineException();
+
         foreach (var field in context.TypeDefinition!.Fields)
         {
             var jToken = jObject.SelectToken(field.Path);
-            if(jToken == null) continue;
+            if (jToken == null) continue;
             switch (field.Type)
             {
                 case FieldTypeProto.Text:
-                    var text = jToken.Value<string>() ?? throw new InternalPipelineError();
+                    var text = jToken.Value<string>() ?? throw new InternalPipelineException();
                     textTokens.AddRange(_tokenizer.TokenizeText(text, field.Path));
                     break;
                 case FieldTypeProto.Number:
-                    var number = jToken.Value<double?>() ?? throw new InternalPipelineError();
+                    var number = jToken.Value<double?>() ?? throw new InternalPipelineException();
                     numberTokens.Add(_tokenizer.TokenizeNumber(number, field.Path));
                     break;
                 case FieldTypeProto.Boolean:
-                    var boolean = jToken.Value<bool?>() ?? throw new InternalPipelineError();
+                    var boolean = jToken.Value<bool?>() ?? throw new InternalPipelineException();
                     booleanTokens.Add(_tokenizer.TokenizeBoolean(boolean, field.Path));
                     break;
                 default:
-                    throw new InternalPipelineError();
+                    throw new InternalPipelineException();
             }
         }
-        
+
         context.TextTokens = textTokens.ToArray();
         context.NumberTokens = numberTokens.ToArray();
         context.BooleanTokens = booleanTokens.ToArray();

@@ -1,5 +1,3 @@
-using BenchmarkDotNet.Running;
-
 namespace Persistify.DataStructures.Benchmark;
 
 public class Program

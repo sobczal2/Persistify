@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Diagnostics;
@@ -23,22 +24,20 @@ public class FetchDocumentsFromDocumentStoreMiddleware : IPipelineMiddleware<Sea
 
     public async Task InvokeAsync(SearchDocumentsPipelineContext context)
     {
-        var indexes = context.Indexes ?? throw new InternalPipelineError();
-        var documentProtos = new DocumentProto[indexes.Length];
-        for (var i = 0; i < indexes.Length; i++)
-        {
-            documentProtos[i] = new DocumentProto()
+        var documents = new List<DocumentProto>();
+        var documentIds = context.DocumentIds ?? throw new InternalPipelineException();
+
+        foreach (var documentId in documentIds)
+            documents.Add(new DocumentProto
             {
-                Id = indexes[i].Id,
-                Data = await _documentStore.GetAsync(indexes[i].Id)
-            };
-        }
-        
+                Id = documentId,
+                Data = await _documentStore.GetAsync(documentId)
+            });
 
         context.SetResponse(new SearchDocumentsResponseProto
         {
-            PaginationResponse = context.Pagination,
-            Documents = { documentProtos }
+            Documents = { documents },
+            PaginationResponse = context.PaginationResponse
         });
     }
 }

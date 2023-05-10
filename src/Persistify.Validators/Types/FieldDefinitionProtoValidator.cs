@@ -1,16 +1,15 @@
-using FluentValidation;
+using System;
 using Persistify.Protos;
+using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Types;
 
-public class FieldDefinitionProtoValidator : AbstractValidator<FieldDefinitionProto>
+public class FieldDefinitionProtoValidator : IValidator<FieldDefinitionProto>
 {
-    public FieldDefinitionProtoValidator()
+    public ValidationFailure[] Validate(FieldDefinitionProto instance)
     {
-        RuleFor(x => x.Path)
-            .NotEmpty()
-            .WithErrorCode(TypeErrorCodes.PathEmpty)
-            .Matches(@"^[a-z]+(?:\.[a-z]+)*$")
-            .WithErrorCode(TypeErrorCodes.PathInvalid);
+        if (string.IsNullOrEmpty(instance.Path)) return new[] { ValidationFailures.FieldPathEmpty };
+
+        return Array.Empty<ValidationFailure>();
     }
 }

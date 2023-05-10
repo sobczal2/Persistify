@@ -7,24 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Persistify.Client\Persistify.Client.csproj" />
-      <ProjectReference Include="..\Persistify.Helpers\Persistify.Helpers.csproj" />
-      <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
+        <ProjectReference Include="..\Persistify.Client\Persistify.Client.csproj"/>
+        <ProjectReference Include="..\Persistify.Helpers\Persistify.Helpers.csproj"/>
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
-      <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-      <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="7.0.5"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5"/>
+        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
+        <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\images\" />
+        <Folder Include="wwwroot\images\"/>
     </ItemGroup>
 
 </Project>

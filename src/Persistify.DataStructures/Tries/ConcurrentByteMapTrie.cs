@@ -7,15 +7,16 @@ namespace Persistify.DataStructures.Tries;
 
 public class ConcurrentByteMapTrie<TItem> : ITrie<TItem>
 {
-    [JsonProperty]
-    private readonly TrieNode<TItem> _root;
     private readonly ReaderWriterLockSlim _lock;
+
+    [JsonProperty] private readonly TrieNode<TItem> _root;
 
     public ConcurrentByteMapTrie()
     {
         _root = new TrieNode<TItem>();
         _lock = new ReaderWriterLockSlim();
     }
+
     public void Add(string key, TItem item)
     {
         _lock.EnterWriteLock();
@@ -29,12 +30,12 @@ public class ConcurrentByteMapTrie<TItem> : ITrie<TItem>
         }
     }
 
-    public IEnumerable<TItem> Search(string key)
+    public IEnumerable<TItem> Search(string key, bool caseSensitive, bool exact)
     {
         _lock.EnterReadLock();
         try
         {
-            return _root.Search(key.AsSpan());
+            return _root.Search(key.AsSpan(), caseSensitive, exact);
         }
         finally
         {

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Pipeline.Contexts.Abstractions;
-using Persistify.Pipeline.Middlewares.Abstractions;
 
 namespace Persistify.Pipeline.Orchestrators.Abstractions;
 
@@ -16,5 +15,5 @@ public interface IPipelineOrchestrator<in TContext, TRequest, TResponse>
 
 public interface IPipelineOrchestrator
 {
-   (string name, IEnumerable<string> middlewareNames) GetPipelineInfo();
+    (string name, IEnumerable<string> middlewareNames) GetPipelineInfo();
 }

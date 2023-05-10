@@ -11,31 +11,26 @@ namespace Persistify.Grpc.Services;
 public class DocumentService : Protos.DocumentService.DocumentServiceBase
 {
     private readonly
-        IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>
-        _indexDocumentPipelineOrchestrator;
+        IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
+        _complexSearchDocumentsPipelineOrchestrator;
 
     private readonly
-        IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
-        _searchDocumentsPipelineOrchestrator;
+        IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>
+        _indexDocumentPipelineOrchestrator;
 
     private readonly
         IPipelineOrchestrator<RemoveDocumentPipelineContext, RemoveDocumentRequestProto, RemoveDocumentResponseProto>
         _removeDocumentPipelineOrchestrator;
 
-    private readonly IPipelineOrchestrator<ComplexSearchDocumentsPipelineContext, ComplexSearchDocumentsRequestProto, ComplexSearchDocumentsResponseProto> _complexSearchDocumentsPipelineOrchestrator;
-
     public DocumentService(
         IPipelineOrchestrator<IndexDocumentPipelineContext, IndexDocumentRequestProto, IndexDocumentResponseProto>
             indexDocumentPipelineOrchestrator,
-        IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto, SearchDocumentsResponseProto>
-            searchDocumentsPipelineOrchestrator,
         IPipelineOrchestrator<RemoveDocumentPipelineContext, RemoveDocumentRequestProto, RemoveDocumentResponseProto>
             removeDocumentPipelineOrchestrator,
-        IPipelineOrchestrator<ComplexSearchDocumentsPipelineContext, ComplexSearchDocumentsRequestProto,
-            ComplexSearchDocumentsResponseProto> complexSearchDocumentsPipelineOrchestrator)
+        IPipelineOrchestrator<SearchDocumentsPipelineContext, SearchDocumentsRequestProto,
+            SearchDocumentsResponseProto> complexSearchDocumentsPipelineOrchestrator)
     {
         _indexDocumentPipelineOrchestrator = indexDocumentPipelineOrchestrator;
-        _searchDocumentsPipelineOrchestrator = searchDocumentsPipelineOrchestrator;
         _removeDocumentPipelineOrchestrator = removeDocumentPipelineOrchestrator;
         _complexSearchDocumentsPipelineOrchestrator = complexSearchDocumentsPipelineOrchestrator;
     }
@@ -48,18 +43,10 @@ public class DocumentService : Protos.DocumentService.DocumentServiceBase
         return pipelineContext.Response;
     }
 
-    public override async Task<SearchDocumentsResponseProto> Search(SearchDocumentsRequestProto request,
-        ServerCallContext context)
+    public override async Task<SearchDocumentsResponseProto> Search(
+        SearchDocumentsRequestProto request, ServerCallContext context)
     {
         var pipelineContext = new SearchDocumentsPipelineContext(request);
-        await _searchDocumentsPipelineOrchestrator.ExecuteAsync(pipelineContext);
-        return pipelineContext.Response;
-    }
-
-    public override async Task<ComplexSearchDocumentsResponseProto> ComplexSearch(
-        ComplexSearchDocumentsRequestProto request, ServerCallContext context)
-    {
-        var pipelineContext = new ComplexSearchDocumentsPipelineContext(request);
         await _complexSearchDocumentsPipelineOrchestrator.ExecuteAsync(pipelineContext);
         return pipelineContext.Response;
     }
