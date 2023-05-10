@@ -4,14 +4,19 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AssemblyVersion>1.0.*</AssemblyVersion>
+        <FileVersion>1.0.*</FileVersion>
+        <Deterministic>false</Deterministic>
+        <AssemblyName>Persistify.Client</AssemblyName>
+        <ProductName>Persistify-Client</ProductName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.Net.Client" Version="2.52.0"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
     </ItemGroup>
 
 </Project>

@@ -4,11 +4,16 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+
+        <AssemblyName>Persistify.Protos</AssemblyName>
+        <ProductName>Persistify-Internal</ProductName>
     </PropertyGroup>
+    
     <ItemGroup>
-        <PackageReference Include="Grpc.AspNetCore" Version="2.52.0"/>
-        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.52.0"/>
-        <PackageReference Include="Grpc.Auth" Version="2.52.0"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.53.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.53.0" />
+        <PackageReference Include="Grpc.Auth" Version="2.53.0" />
         <PackageReference Include="Grpc.Tools" Version="2.54.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
@@ -37,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="ProtoPartials\"/>
+        <Folder Include="ProtoPartials\" />
     </ItemGroup>
 
 </Project>

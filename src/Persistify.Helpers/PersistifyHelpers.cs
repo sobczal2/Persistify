@@ -8,7 +8,7 @@ public static class PersistifyHelpers
     {
         Console.WriteLine();
         WriteLine(
-            $"Welcome to Persistify v{Assembly.GetExecutingAssembly().GetName().Version}! 🚀\n",
+            $"Welcome to Persistify v{Assembly.GetEntryAssembly()?.GetName().Version ?? Assembly.GetCallingAssembly().GetName().Version}! 🚀\n",
             ConsoleColor.Magenta
         );
 
