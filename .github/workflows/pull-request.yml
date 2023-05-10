@@ -11,8 +11,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-
-    runs-on: windows-latest, ubuntu-latest
+        os: [windows-latest, ubuntu-latest]
 
     env:
       Solution_Name: Persistify.sln
