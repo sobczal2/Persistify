@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Debug, Release]
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         
     runs-on: ${{ matrix.os }}
 
