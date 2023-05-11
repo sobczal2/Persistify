@@ -1,6 +1,6 @@
 using Persistify.Validators.Core;
 
-namespace Persistify.Validators;
+namespace Persistify.Validators.Common;
 
 public static class ValidationFailures
 {
