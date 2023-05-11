@@ -53,7 +53,7 @@ public abstract partial class
                     i + 1,
                     middlewareType.Name,
                     middlewareType.GetPipelineStep(),
-                    stopwatch.Elapsed.Microseconds);
+                    stopwatch.Elapsed.TotalMicroseconds);
             }
         }
         finally

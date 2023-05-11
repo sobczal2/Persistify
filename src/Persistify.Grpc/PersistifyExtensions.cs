@@ -47,6 +47,9 @@ public static class PersistifyExtensions
             opt.CompressionProviders.Add(
                 new DeflateCompressionProvider(CompressionLevel.SmallestSize)
             );
+            opt.MaxReceiveMessageSize = configuration
+                .GetSection(GrpcOptions.SectionName)
+                .GetValue<int?>("MaxReceiveMessageSize");
         });
         services.AddGrpcReflection();
         services.AddPersistifyOptions(configuration);
