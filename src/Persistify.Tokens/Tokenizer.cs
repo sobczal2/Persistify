@@ -39,9 +39,4 @@ public class Tokenizer : ITokenizer
     {
         return new Token<bool>(boolean, path);
     }
-
-    public IEnumerable<Token<string>> TokenizeText(string text)
-    {
-        return TokenizeText(text, string.Empty);
-    }
 }
