@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Persistify.Protos;
+using Persistify.Validators.Common;
 using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Documents;

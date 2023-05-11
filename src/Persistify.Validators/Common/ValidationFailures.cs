@@ -1,6 +1,6 @@
 using Persistify.Validators.Core;
 
-namespace Persistify.Validators;
+namespace Persistify.Validators.Common;
 
 public static class ValidationFailures
 {
@@ -22,4 +22,5 @@ public static class ValidationFailures
     public static readonly ValidationFailure PaginationEmpty = new("pagination-empty");
     public static readonly ValidationFailure FieldNotFound = new("field-not-found");
     public static readonly ValidationFailure SearchQueryEmpty = new("search-query-empty");
+    public static readonly ValidationFailure FieldValueInvalidCharacter = new("field-value-invalid-character");
 }

@@ -5,6 +5,7 @@ using Persistify.Pipeline.Middlewares.Abstractions;
 using Persistify.Protos;
 using Persistify.Stores.Types;
 using Persistify.Validators;
+using Persistify.Validators.Common;
 using Persistify.Validators.Core;
 
 namespace Persistify.Pipeline.Middlewares.Documents.Index;

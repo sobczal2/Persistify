@@ -1,4 +1,5 @@
 using Persistify.Protos;
+using Persistify.Validators.Common;
 using Persistify.Validators.Core;
 
 namespace Persistify.Validators.Types;
