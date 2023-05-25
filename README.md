@@ -67,5 +67,13 @@ Persistify was designed to allow the creation of an app using Persistify as the 
 - Reduced memory usage mode (indexes loaded from storage on demand)
 - High performance mode (everything in memory)
 - Caching layer
+- Streams of event-driven triggers
+- Backup and restore
+- Document edition
+- Cost-Based Query Optimizer
+- [maybe] Arrays support
+- [maybe] Null support
+- Unix timestamp based DateTime support
+- Bulk operations
 
 ## Stay tuned for more updates and features to come!
