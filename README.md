@@ -53,11 +53,19 @@ All queries operate on a single field of a JSON that needs to be specified.
 ## Typical use cases
 
 Persistify was designed to allow the creation of an app using Persistify as the only database in the system. However, a more typical use case would involve using Persistify for its rapid read and full-text search capabilities. It can also be used as a cache layer.
-## Roadmap
+## Planned features
 
 - Support for 'Not' operator.
 - Support for '?' and '*' wildcards.
 - Optimizations for serialization and memory efficiency.
 - A full .NET client.
-- A web app for monitoring traffic in the database.
+- A web app for monitoring traffic in the database (Persistify.Monitor project).
+- Bidirectional stream based search besides request based search
+- ordering based on field value or boosting
+- More text search options
+- Partial document return support (save transfer)
+- Reduced memory usage mode (indexes loaded from storage on demand)
+- High performance mode (everything in memory)
+- Caching layer
+
 ## Stay tuned for more updates and features to come!
