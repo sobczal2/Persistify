@@ -6,7 +6,7 @@ using Grpc.Core;
 using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
 
-namespace Persistify.Grpc.Services;
+namespace Persistify.Server.Services;
 
 // [Authorize(Roles = UserRoles.SuperUser)]
 public class MonitorService : Protos.MonitorService.MonitorServiceBase

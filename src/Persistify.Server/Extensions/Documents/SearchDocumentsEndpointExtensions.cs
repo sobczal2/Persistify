@@ -6,7 +6,7 @@ using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Pipeline.Orchestrators.Documents;
 using Persistify.Protos;
 
-namespace Persistify.Grpc.Extensions.Documents;
+namespace Persistify.Server.Extensions.Documents;
 
 public static class SearchDocumentsEndpointExtensions
 {

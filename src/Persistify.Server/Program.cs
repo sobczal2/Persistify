@@ -1,8 +1,7 @@
 using System;
-using System.Reflection;
 using Microsoft.AspNetCore.Builder;
-using Persistify.Grpc;
 using Persistify.Helpers;
+using Persistify.Server;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration().MinimumLevel

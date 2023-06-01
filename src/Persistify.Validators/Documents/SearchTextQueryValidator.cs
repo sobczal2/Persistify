@@ -14,10 +14,8 @@ public class SearchTextQueryValidator : IValidator<SearchTextQueryProto>
         if (string.IsNullOrEmpty(instance.Path)) failures.Add(ValidationFailures.FieldPathEmpty);
 
         foreach (var character in instance.Value)
-        {
             if (!char.IsLetterOrDigit(character) && character != '?')
                 failures.Add(ValidationFailures.FieldValueInvalidCharacter);
-        }
 
         return failures.ToArray();
     }
