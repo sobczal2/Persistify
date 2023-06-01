@@ -5,6 +5,7 @@ using System.Reactive.Subjects;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -15,6 +16,7 @@ using Persistify.Indexes.Common;
 using Persistify.Indexes.Number;
 using Persistify.Indexes.Text;
 using Persistify.Options;
+using Persistify.Options.Storage;
 using Persistify.Protos;
 using Persistify.Server.Extensions.Documents;
 using Persistify.Server.Extensions.Types;
@@ -41,39 +43,32 @@ public static class PersistifyExtensions
         IConfiguration configuration
     )
     {
+        services.AddAndValidateOptions(configuration);
         services.AddGrpc(opt =>
         {
             opt.Interceptors.Add<ValidationInterceptor>();
-            opt.CompressionProviders.Add(
-                new DeflateCompressionProvider(CompressionLevel.SmallestSize)
-            );
-            opt.MaxReceiveMessageSize = configuration
-                .GetSection(GrpcOptions.SectionName)
-                .GetValue<int?>("MaxReceiveMessageSize");
+            // TODO: add grpc options
         });
         services.AddGrpcReflection();
-        services.AddPersistifyOptions(configuration);
         services.AddAuthorization();
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
             {
+                var securityOptions = services
+                    .BuildServiceProvider()
+                    .GetRequiredService<IOptions<SecurityOptions>>()
+                    .Value;
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration
-                        .GetSection(AuthOptions.SectionName)
-                        .GetValue<string>("Issuer"),
+                    ValidIssuer = securityOptions.Token.Issuer,
+                    ValidAudience = securityOptions.Token.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            configuration
-                                .GetSection(AuthOptions.SectionName)
-                                .GetValue<string>("JwtSecret")
-                            ?? throw new InvalidOperationException()
-                        )
+                        Encoding.UTF8.GetBytes(securityOptions.Token.Key)
                     ),
                     ClockSkew = TimeSpan.Zero
                 };
@@ -139,7 +134,20 @@ public static class PersistifyExtensions
 
     private static IServiceCollection AddPersistifyStores(this IServiceCollection services)
     {
-        services.AddSingleton<IStorage>(_ => new GzipFileSystemStorage("/home/sobczal/temp"));
+        services.AddSingleton<IStorage>(sp =>
+        {
+            var storageOptions = sp
+                .GetRequiredService<IOptions<StorageOptions>>()
+                .Value;
+            
+            return storageOptions.Type switch
+            {
+                "InMemory" => new InMemoryStorage(),
+                "Files" => new FilesStorage(storageOptions.Path!),
+                "GzipFiles" => new GzipFilesStorage(storageOptions.Path!),
+                _ => throw new InvalidOperationException()
+            };
+        });
 
         services.AddSingleton<ITypeStore>(_ => new HashSetTypeStore());
         services.AddSingleton<IPersisted>(
@@ -159,11 +167,7 @@ public static class PersistifyExtensions
                 ?? throw new InvalidOperationException()
         );
 
-        services.AddSingleton<IUserStore>(sp =>
-        {
-            var authOptionsMonitor = sp.GetRequiredService<IOptionsMonitor<AuthOptions>>();
-            return new UserStore(authOptionsMonitor);
-        });
+        services.AddSingleton<IUserStore>(sp => new UserStore(sp.GetRequiredService<IOptions<SecurityOptions>>()));
         services.AddSingleton<IPersisted>(
             sp =>
                 sp.GetRequiredService<IUserStore>() as IPersisted
@@ -185,17 +189,6 @@ public static class PersistifyExtensions
     private static IServiceCollection AddOtherPersistifyServices(this IServiceCollection services)
     {
         services.AddSingleton<ITokenizer, Tokenizer>();
-
-        services.AddSingleton(
-            _ =>
-                new NamedPipeServerStream(
-                    "monitoring-pipe",
-                    PipeDirection.Out,
-                    1,
-                    PipeTransmissionMode.Byte,
-                    PipeOptions.Asynchronous
-                )
-        );
 
         return services;
     }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Persistify.Storage;
 
-public class FileSystemStorage : IStorage
+public class FilesStorage : IStorage
 {
     private readonly Func<Stream, Stream>? _compress;
     private readonly Func<Stream, Stream>? _decompress;
     private readonly string _rootPath;
 
-    public FileSystemStorage(
+    public FilesStorage(
         string rootPath,
         Func<Stream, Stream>? compress = null,
         Func<Stream, Stream>? decompress = null

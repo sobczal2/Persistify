@@ -2,9 +2,11 @@ using System;
 using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Persistify.Options;
 using Persistify.Storage;
@@ -14,16 +16,19 @@ namespace Persistify.Stores.User;
 
 public class UserStore : IUserStore, IPersisted
 {
-    private readonly IOptionsMonitor<AuthOptions> _authOptions;
+    private readonly SecurityOptions _securityOptions;
     private (string Username, UserData Data) _superUser;
     private ConcurrentDictionary<string, UserData> _users = default!;
 
-    public UserStore(IOptionsMonitor<AuthOptions> authOptions)
+    public UserStore(IOptions<SecurityOptions> securityOptions)
     {
-        _authOptions = authOptions;
-        _superUser = (authOptions.CurrentValue.SuUsername,
-            new UserData(authOptions.CurrentValue.SuPassword, authOptions.CurrentValue.Salt,
-                authOptions.CurrentValue.Iterations, authOptions.CurrentValue.KeyLength));
+        _securityOptions = securityOptions.Value;
+        _superUser = (_securityOptions.SuperUser.Username,
+            new UserData(_securityOptions.SuperUser.Password,
+                _securityOptions.Hash.Salt,
+                _securityOptions.Hash.Iterations,
+                _securityOptions.Hash.KeyLength
+            ));
     }
 
     public async ValueTask LoadAsync(IStorage storage, CancellationToken cancellationToken = default)
@@ -49,8 +54,11 @@ public class UserStore : IUserStore, IPersisted
     {
         AssertInitialized();
         if (!_users.TryAdd(username,
-                new UserData(password, _authOptions.CurrentValue.Salt, _authOptions.CurrentValue.Iterations,
-                    _authOptions.CurrentValue.KeyLength)))
+                new UserData(password,
+                    _securityOptions.Hash.Salt,
+                    _securityOptions.Hash.Iterations,
+                    _securityOptions.Hash.KeyLength
+                )))
             throw new StoreException("User already exists");
     }
 
@@ -65,12 +73,18 @@ public class UserStore : IUserStore, IPersisted
     {
         AssertInitialized();
         if (_superUser.Username == username)
-            return _superUser.Data.Verify(password, _authOptions.CurrentValue.Salt,
-                _authOptions.CurrentValue.Iterations, _authOptions.CurrentValue.KeyLength);
+            return _superUser.Data.Verify(password,
+                _securityOptions.Hash.Salt,
+                _securityOptions.Hash.Iterations,
+                _securityOptions.Hash.KeyLength
+                );
         if (!_users.TryGetValue(username, out var userData))
             return false;
-        return userData.Verify(password, _authOptions.CurrentValue.Salt, _authOptions.CurrentValue.Iterations,
-            _authOptions.CurrentValue.KeyLength);
+        return userData.Verify(password,
+            _securityOptions.Hash.Salt,
+            _securityOptions.Hash.Iterations,
+            _securityOptions.Hash.KeyLength
+            );
     }
 
     public bool Exists(string username)
@@ -88,14 +102,16 @@ public class UserStore : IUserStore, IPersisted
     public string GenerateRefreshToken(string username)
     {
         if (_superUser.Username == username)
-            return _superUser.Data.CreateRefreshToken(_authOptions.CurrentValue.RefreshTokenLength,
-                TimeSpan.FromMinutes(_authOptions.CurrentValue.RefreshTokenExpirationMinutes));
+            return _superUser.Data.CreateRefreshToken(
+                _securityOptions.Token.RefreshTokenLength,
+                TimeSpan.FromMinutes(_securityOptions.Token.RefreshTokenExpiration));
 
         if (!_users.TryGetValue(username, out var userData))
             throw new StoreException("User not found");
 
-        return userData.CreateRefreshToken(_authOptions.CurrentValue.RefreshTokenLength,
-            TimeSpan.FromMinutes(_authOptions.CurrentValue.RefreshTokenExpirationMinutes));
+        return userData.CreateRefreshToken(
+            _securityOptions.Token.RefreshTokenLength,
+            TimeSpan.FromMinutes(_securityOptions.Token.RefreshTokenExpiration));
     }
 
     public bool VerifyRefreshToken(string username, string refreshToken)
@@ -127,10 +143,14 @@ public class UserStore : IUserStore, IPersisted
             };
 
         var token = new JwtSecurityToken(
-            _authOptions.CurrentValue.Issuer,
+            issuer: _securityOptions.Token.Issuer,
+            audience: _securityOptions.Token.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_authOptions.CurrentValue.JwtTokenExpirationMinutes),
-            signingCredentials: _authOptions.CurrentValue.GetSigningCredentials()
+            expires: DateTime.UtcNow.AddMinutes(_securityOptions.Token.AccessTokenExpiration),
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_securityOptions.Token.Key)),
+                SecurityAlgorithms.HmacSha512Signature
+            )
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
