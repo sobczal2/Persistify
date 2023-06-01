@@ -5,7 +5,7 @@ using Persistify.Pipeline.Contexts.Documents;
 using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
 
-namespace Persistify.Grpc.Services;
+namespace Persistify.Server.Services;
 
 [Authorize]
 public class DocumentService : Protos.DocumentService.DocumentServiceBase

@@ -8,7 +8,7 @@ using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Pipeline.Orchestrators.Types;
 using Persistify.Protos;
 
-namespace Persistify.Grpc.Extensions.Types;
+namespace Persistify.Server.Extensions.Types;
 
 public static class CreateTypeEndpointExtensions
 {

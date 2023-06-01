@@ -5,7 +5,7 @@ using Persistify.Pipeline.Contexts.Types;
 using Persistify.Pipeline.Orchestrators.Abstractions;
 using Persistify.Protos;
 
-namespace Persistify.Grpc.Services;
+namespace Persistify.Server.Services;
 
 [Authorize]
 public class TypeService : Protos.TypeService.TypeServiceBase

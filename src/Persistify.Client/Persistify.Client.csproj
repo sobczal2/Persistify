@@ -12,11 +12,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.Net.Client" Version="2.53.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.53.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj" />
+        <ProjectReference Include="..\Persistify.Protos\Persistify.Protos.csproj"/>
     </ItemGroup>
 
 </Project>

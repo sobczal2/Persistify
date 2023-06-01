@@ -9,9 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Persistify.Grpc.Extensions.Documents;
-using Persistify.Grpc.Extensions.Types;
-using Persistify.Grpc.Interceptors;
 using Persistify.HostedServices;
 using Persistify.Indexes.Boolean;
 using Persistify.Indexes.Common;
@@ -19,6 +16,9 @@ using Persistify.Indexes.Number;
 using Persistify.Indexes.Text;
 using Persistify.Options;
 using Persistify.Protos;
+using Persistify.Server.Extensions.Documents;
+using Persistify.Server.Extensions.Types;
+using Persistify.Server.Interceptors;
 using Persistify.Storage;
 using Persistify.Stores.Documents;
 using Persistify.Stores.Types;
@@ -26,13 +26,13 @@ using Persistify.Stores.User;
 using Persistify.Tokens;
 using Persistify.Validators.Core;
 using Serilog;
-using AuthService = Persistify.Grpc.Services.AuthService;
+using AuthService = Persistify.Server.Services.AuthService;
 using DeflateCompressionProvider = Grpc.Net.Compression.DeflateCompressionProvider;
-using DocumentService = Persistify.Grpc.Services.DocumentService;
-using MonitorService = Persistify.Grpc.Services.MonitorService;
-using TypeService = Persistify.Grpc.Services.TypeService;
+using DocumentService = Persistify.Server.Services.DocumentService;
+using MonitorService = Persistify.Server.Services.MonitorService;
+using TypeService = Persistify.Server.Services.TypeService;
 
-namespace Persistify.Grpc;
+namespace Persistify.Server;
 
 public static class PersistifyExtensions
 {

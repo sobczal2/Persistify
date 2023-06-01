@@ -6,7 +6,7 @@ using Grpc.Core.Interceptors;
 using Microsoft.Extensions.Logging;
 using Persistify.Validators.Core;
 
-namespace Persistify.Grpc.Interceptors;
+namespace Persistify.Server.Interceptors;
 
 public class ValidationInterceptor : Interceptor
 {

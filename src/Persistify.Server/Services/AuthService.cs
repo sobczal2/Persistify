@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Persistify.Protos;
 using Persistify.Stores.User;
 
-namespace Persistify.Grpc.Services;
+namespace Persistify.Server.Services;
 
 public class AuthService : Protos.AuthService.AuthServiceBase
 {
