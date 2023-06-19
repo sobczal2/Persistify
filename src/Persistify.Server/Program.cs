@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Persistify.Helpers;
 using Persistify.Server;
 using Serilog;
