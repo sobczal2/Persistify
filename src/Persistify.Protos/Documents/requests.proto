@@ -1,3 +1,28 @@
 syntax = "proto3";
+import "Documents/shared.proto";
+import "Common/pagination.proto";
 
 option csharp_namespace = "Persistify.Protos.Documents";
+
+message AddRequest {
+  string TemplateName = 1;
+  repeated Document Documents = 2;
+}
+
+message SearchRequest {
+  string TemplateName = 1;
+  oneof Node {
+    AndOperator AndOperator = 2;
+    OrOperator OrOperator = 3;
+    NotOperator NotOperator = 4;
+    FtsQuery FtsQuery = 5;
+    NumberQuery NumberQuery = 6;
+    BoolQuery BoolQuery = 7;
+  }
+  Pagination Pagination = 8;
+}
+
+message DeleteRequest {
+  string TemplateName = 1;
+  repeated uint64 Ids = 2;
+}

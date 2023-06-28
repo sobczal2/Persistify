@@ -3,18 +3,18 @@ syntax = "proto3";
 option csharp_namespace = "Persistify.Protos.Templates";
 
 enum FieldType {
-    Text = 0;
-    Number = 1;
-    Bool = 2;
+  Text = 0;
+  Number = 1;
+  Bool = 2;
 }
 
 message Field {
-    string FieldName = 1;
-    FieldType FieldType = 2;
-    bool Required = 3;
+  string FieldName = 1;
+  FieldType FieldType = 2;
+  bool Required = 3;
 }
 
 message Template {
-    string TemplateName = 1;
-    repeated Field Fields = 2;
+  string TemplateName = 1;
+  repeated Field Fields = 2;
 }

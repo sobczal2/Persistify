@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "Documents/requests.proto";
+import "Documents/responses.proto";
+
+option csharp_namespace = "Persistify.Protos.Documents";
+
+service DocumentService {
+  rpc Add(AddRequest) returns (AddResponse);
+  rpc Search(SearchRequest) returns (SearchResponse);
+  rpc Delete(DeleteRequest) returns(DeleteResponse);
+}

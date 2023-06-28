@@ -1,12 +1,5 @@
-using Grpc.Core;
-using Persistify.Protos.Templates;
+﻿namespace Persistify.Server.Services;
 
-namespace Persistify.Server.Services;
-
-public class TemplateService : Persistify.Protos.Templates.TemplateService.TemplateServiceBase
+public class TemplateService : Protos.Templates.TemplateService.TemplateServiceBase
 {
-    public override Task<CreateResponse> Create(CreateRequest request, ServerCallContext context)
-    {
-        return base.Create(request, context);
-    }
 }

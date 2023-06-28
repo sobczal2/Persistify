@@ -1,4 +1,4 @@
-namespace Persistify.Pipelines.Common;
+﻿namespace Persistify.Pipelines.Common;
 
 public abstract class Pipeline<TContext, TRequest, TResponse>
     where TContext : PipelineContext
@@ -11,6 +11,7 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
     {
         _pipelineStages = pipelineStages;
     }
+
     protected abstract TContext CreateContext(TRequest request);
     protected abstract TResponse CreateResponse(TContext context);
 
