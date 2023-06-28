@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-option csharp_namespace = "Persistify.Protos.Events";
-
-import "Events/shared.proto";
-
-message PipelineEventsResponse {
-    PipelineEvent PipelineEvent = 1;
-}

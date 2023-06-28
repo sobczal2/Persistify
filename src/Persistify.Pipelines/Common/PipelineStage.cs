@@ -1,4 +1,4 @@
-namespace Persistify.Pipelines.Common;
+﻿namespace Persistify.Pipelines.Common;
 
 public abstract class PipelineStage<TContext>
     where TContext : PipelineContext
