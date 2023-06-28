@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos.Events";
+
+message EventMetadata {
+    string CorrelationId = 1;
+    string Timestamp = 2;
+    string Code = 3;
+    string message = 4;
+}
+
+message PipelineEvent {
+    EventMetadata Metadata = 1;
+    string PipelineContext = 2;
+    string PipelineStage = 3;
+}

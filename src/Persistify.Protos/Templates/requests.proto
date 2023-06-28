@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos.Templates";
+
+import "Templates/shared.proto";
+import "Common/pagination.proto";
+
+message CreateRequest {
+    Template Template = 1;
+}
+
+message ListRequest {
+    Pagination Pagination = 1;
+}

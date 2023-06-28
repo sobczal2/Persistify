@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos.Events";
+
+message PipelineEventsRequest {
+}
