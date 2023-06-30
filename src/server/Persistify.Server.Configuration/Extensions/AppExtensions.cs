@@ -8,7 +8,6 @@ public static class AppExtensions
 {
     public static void UsePersistify(this WebApplication app, Action<IEndpointRouteBuilder> configureEndpoints)
     {
-        app.UseSerilogRequestLogging();
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();

@@ -24,6 +24,7 @@ try
     app.UsePersistify(erb =>
     {
         erb.MapGrpcService<Persistify.Server.Services.TemplateService>();
+        erb.MapGrpcService<Persistify.Server.Services.DocumentService>();
     });
     
     app.Run();

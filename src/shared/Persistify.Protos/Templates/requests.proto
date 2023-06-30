@@ -4,14 +4,14 @@ import "Common/pagination.proto";
 
 option csharp_namespace = "Persistify.Protos.Templates";
 
-message AddRequest {
+message AddTemplateRequest {
   Template Template = 1;
 }
 
-message ListRequest {
+message ListTemplatesRequest {
   Pagination Pagination = 1;
 }
 
-message DeleteRequest {
+message DeleteTemplateRequest {
   string TemplateName = 1;
 }

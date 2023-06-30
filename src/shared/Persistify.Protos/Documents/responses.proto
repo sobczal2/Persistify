@@ -3,13 +3,13 @@ import "Documents/shared.proto";
 
 option csharp_namespace = "Persistify.Protos.Documents";
 
-message AddResponse {
+message AddDocumentsResponse {
 }
 
-message SearchResponse {
+message SearchDocumentsResponse {
   repeated Document Documents = 1;
   int64 TotalItems = 2;
 }
 
-message DeleteResponse {
+message DeleteDocumentsResponse {
 }

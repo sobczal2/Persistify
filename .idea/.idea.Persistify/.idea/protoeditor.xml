@@ -25,6 +25,9 @@
         <ImportPathEntry>
           <option name="location" value="file://$PROJECT_DIR$/src/Persistify.Protos/Documents" />
         </ImportPathEntry>
+        <ImportPathEntry>
+          <option name="location" value="file://$PROJECT_DIR$/src/shared/Persistify.Protos" />
+        </ImportPathEntry>
       </list>
     </option>
     <option name="descriptorPath" value="google/protobuf/descriptor.proto" />

@@ -5,7 +5,7 @@ import "Documents/responses.proto";
 option csharp_namespace = "Persistify.Protos.Documents";
 
 service DocumentService {
-  rpc Add(AddRequest) returns (AddResponse);
-  rpc Search(SearchRequest) returns (SearchResponse);
-  rpc Delete(DeleteRequest) returns(DeleteResponse);
+  rpc Add(AddDocumentsRequest) returns (AddDocumentsResponse);
+  rpc Search(SearchDocumentsRequest) returns (SearchDocumentsResponse);
+  rpc Delete(DeleteDocumentsRequest) returns(DeleteDocumentsResponse);
 }
