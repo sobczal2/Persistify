@@ -4,12 +4,12 @@ import "Common/pagination.proto";
 
 option csharp_namespace = "Persistify.Protos.Documents";
 
-message AddRequest {
+message AddDocumentsRequest {
   string TemplateName = 1;
   repeated Document Documents = 2;
 }
 
-message SearchRequest {
+message SearchDocumentsRequest {
   string TemplateName = 1;
   oneof Node {
     AndOperator AndOperator = 2;
@@ -22,7 +22,7 @@ message SearchRequest {
   Pagination Pagination = 8;
 }
 
-message DeleteRequest {
+message DeleteDocumentsRequest {
   string TemplateName = 1;
   repeated uint64 Ids = 2;
 }

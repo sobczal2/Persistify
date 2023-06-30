@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "Templates/requests.proto";
+import "Templates/responses.proto";
+
+option csharp_namespace = "Persistify.Protos.Templates";
+
+service TemplateService {
+  rpc Add(AddTemplateRequest) returns (AddTemplateResponse);
+  rpc List(ListTemplatesRequest) returns (ListTemplatesResponse);
+  rpc Delete(DeleteTemplateRequest) returns(DeleteTemplateResponse);
+}

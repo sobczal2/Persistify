@@ -3,13 +3,13 @@ import "Templates/shared.proto";
 
 option csharp_namespace = "Persistify.Protos.Templates";
 
-message AddResponse {
+message AddTemplateResponse {
 }
 
-message ListResponse {
+message ListTemplatesResponse {
   repeated Template Templates = 1;
   int64 TotalItems = 2;
 }
 
-message DeleteResponse {
+message DeleteTemplateResponse {
 }
