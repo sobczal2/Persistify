@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option csharp_namespace = "Persistify.Protos.Events";
+
+import "Events/requests.proto";
+import "Events/responses.proto";
+
+service EventService {
+    rpc PipelineEvents(PipelineEventsRequest) returns (stream PipelineEventsResponse);
+}
