@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Protos", "src\sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Configuration", "src\server\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj", "{0CF9D416-8E85-41B7-A388-4058404D4C73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Helpers", "src\shared\Persistify.Helpers\Persistify.Helpers.csproj", "{0C1372F6-15BE-4A28-B750-046C28D42D3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Validation", "src\server\Persistify.Validation\Persistify.Validation.csproj", "{2D73CC87-EF55-42CF-8401-C7D4321BDD8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +40,14 @@ Global
 		{0CF9D416-8E85-41B7-A388-4058404D4C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CF9D416-8E85-41B7-A388-4058404D4C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CF9D416-8E85-41B7-A388-4058404D4C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C1372F6-15BE-4A28-B750-046C28D42D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C1372F6-15BE-4A28-B750-046C28D42D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C1372F6-15BE-4A28-B750-046C28D42D3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C1372F6-15BE-4A28-B750-046C28D42D3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D73CC87-EF55-42CF-8401-C7D4321BDD8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D73CC87-EF55-42CF-8401-C7D4321BDD8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D73CC87-EF55-42CF-8401-C7D4321BDD8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D73CC87-EF55-42CF-8401-C7D4321BDD8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -44,5 +56,7 @@ Global
 		{BA06F0BD-3911-4F0E-9C13-7E29555BADCF} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{59F2CAB5-FB40-4BBC-A43B-BCF88A18F2B3} = {4FB08BD5-8F08-4B8D-9A5D-083729853CD5}
 		{0CF9D416-8E85-41B7-A388-4058404D4C73} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{0C1372F6-15BE-4A28-B750-046C28D42D3A} = {4FB08BD5-8F08-4B8D-9A5D-083729853CD5}
+		{2D73CC87-EF55-42CF-8401-C7D4321BDD8E} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 	EndGlobalSection
 EndGlobal

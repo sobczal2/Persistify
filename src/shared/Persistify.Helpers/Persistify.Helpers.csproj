@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
+      <PackageReference Include="Grpc.Core.Api" Version="2.54.0" />
     </ItemGroup>
 
 </Project>

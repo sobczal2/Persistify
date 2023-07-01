@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Serilog;
 
-namespace Persistify.Server.Configuration.Settings;
+namespace Persistify.Server.Configuration.Extensions;
 
 public static class HostExtensions
 {

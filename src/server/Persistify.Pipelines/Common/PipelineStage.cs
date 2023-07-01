@@ -1,19 +1,21 @@
-﻿namespace Persistify.Pipelines.Common;
+﻿using Persistify.Helpers.ErrorHandling;
+
+namespace Persistify.Pipelines.Common;
 
 public abstract class PipelineStage<TContext>
     where TContext : PipelineContext
 {
-    public virtual Task BeforeProcess(TContext context)
+    public virtual ValueTask<Result> BeforeProcess(TContext context)
     {
-        // TContextODO: emit start event
-        return Task.CompletedTask;
+        // TODO: emit start event
+        return ValueTask.FromResult(Result.Success);
     }
 
-    public abstract Task Process(TContext context);
+    public abstract ValueTask<Result> Process(TContext context);
 
-    public virtual Task AfterProcess(TContext context)
+    public virtual ValueTask<Result> AfterProcess(TContext context)
     {
         // TODO: emit end event
-        return Task.CompletedTask;
+        return ValueTask.FromResult(Result.Success);
     }
 }
