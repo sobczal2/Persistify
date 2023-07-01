@@ -1,8 +1,9 @@
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistify.Server.Configuration.Settings;
 
-namespace Persistify.Server.Configuration.Settings;
+namespace Persistify.Server.Configuration.Extensions;
 
 public static class SettingsExtensions
 {
