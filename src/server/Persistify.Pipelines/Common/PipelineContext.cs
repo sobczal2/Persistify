@@ -1,4 +1,6 @@
-﻿namespace Persistify.Pipelines.Common;
+﻿using System;
+
+namespace Persistify.Pipelines.Common;
 
 public abstract class PipelineContext
 {

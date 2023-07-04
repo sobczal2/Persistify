@@ -1,6 +1,6 @@
-using Persistify.Protos.Templates;
+using System;
+using Microsoft.AspNetCore.Builder;
 using Persistify.Server.Configuration.Extensions;
-using Persistify.Server.Configuration.Settings;
 using Serilog;
 using Serilog.Events;
 

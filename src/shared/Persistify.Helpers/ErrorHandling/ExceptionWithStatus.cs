@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using System;
+using Grpc.Core;
 
 namespace Persistify.Helpers.ErrorHandling;
 

@@ -1,4 +1,6 @@
-﻿namespace Persistify.Helpers.ErrorHandling;
+﻿using System;
+
+namespace Persistify.Helpers.ErrorHandling;
 
 public readonly struct Result<T>
 {
