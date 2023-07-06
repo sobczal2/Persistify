@@ -1,5 +1,10 @@
-﻿namespace Persistify.DataStructures.IntervalTree;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
+namespace Persistify.DataStructures.IntervalTree;
+
+// switch to AVL tree
 public class IntervalTree<TValue> : IIntervalTree<TValue>
     where TValue : IComparable<TValue>, IComparable<double>
 {
@@ -37,7 +42,7 @@ public class IntervalTree<TValue> : IIntervalTree<TValue>
         {
             _lock.ExitReadLock();
         }
-        
+
         return result;
     }
 
@@ -54,7 +59,7 @@ public class IntervalTree<TValue> : IIntervalTree<TValue>
         }
     }
 
-    
+
     private static IntervalTreeNode<TValue>? Add(IntervalTreeNode<TValue>? node, TValue value)
     {
         if (node == null)
@@ -75,7 +80,7 @@ public class IntervalTree<TValue> : IIntervalTree<TValue>
 
         return node;
     }
-    
+
     private static ICollection<TValue> Search(IntervalTreeNode<TValue>? node, double min, double max)
     {
         if (node == null)
@@ -133,17 +138,5 @@ public class IntervalTree<TValue> : IIntervalTree<TValue>
 
             return node;
         }
-    }
-
-    private static TValue FindMinValue(IntervalTreeNode<TValue>? node)
-    {
-        var current = node;
-
-        while (current?.Left != null)
-        {
-            current = current.Left;
-        }
-
-        return current!.Value;
     }
 }

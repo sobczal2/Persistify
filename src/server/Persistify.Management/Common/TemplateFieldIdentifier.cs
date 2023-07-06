@@ -18,7 +18,8 @@ public struct TemplateFieldIdentifier
     {
         public bool Equals(TemplateFieldIdentifier x, TemplateFieldIdentifier y)
         {
-            return string.Equals(x.TemplateName, y.TemplateName, StringComparison.InvariantCulture) && string.Equals(x.FieldName, y.FieldName, StringComparison.InvariantCulture);
+            return string.Equals(x.TemplateName, y.TemplateName, StringComparison.InvariantCulture) &&
+                   string.Equals(x.FieldName, y.FieldName, StringComparison.InvariantCulture);
         }
 
         public int GetHashCode(TemplateFieldIdentifier obj)
@@ -30,5 +31,6 @@ public struct TemplateFieldIdentifier
         }
     }
 
-    public static IEqualityComparer<TemplateFieldIdentifier> TemplateNameFieldNameComparer { get; } = new TemplateNameFieldNameEqualityComparer();
+    public static IEqualityComparer<TemplateFieldIdentifier> TemplateNameFieldNameComparer { get; } =
+        new TemplateNameFieldNameEqualityComparer();
 }

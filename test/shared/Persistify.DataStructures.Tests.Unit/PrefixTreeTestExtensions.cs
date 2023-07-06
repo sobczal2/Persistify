@@ -13,6 +13,7 @@ public static class PrefixTreeTestExtensions
             .GetField("_root", BindingFlags.NonPublic | BindingFlags.Instance)!
             .GetValue(prefixTree) as PrefixTreeNode<TValue> ?? throw new InvalidOperationException();
     }
+
     public static ICollection<TValue> GetAllValues<TValue>(this PrefixTree<TValue> prefixTree)
     {
         var root = prefixTree.GetRoot();

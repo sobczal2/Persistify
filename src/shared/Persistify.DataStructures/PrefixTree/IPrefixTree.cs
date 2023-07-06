@@ -1,4 +1,7 @@
-﻿namespace Persistify.DataStructures.PrefixTree;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Persistify.DataStructures.PrefixTree;
 
 public interface IPrefixTree<TValue>
 {

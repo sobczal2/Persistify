@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Persistify.Server.Configuration.Extensions;
+using Persistify.Server.Services;
 using Serilog;
 using Serilog.Events;
 
@@ -14,7 +15,7 @@ Log.Logger = new LoggerConfiguration()
 try
 {
     Log.Information("Persistify Server v{Version} starting up...", typeof(Program).Assembly.GetName().Version);
-    
+
     builder.Services.AddSettingsConfiguration(builder.Configuration);
     builder.Services.AddServicesConfiguration(builder.Configuration);
     builder.Host.AddHostConfiguration();
@@ -23,10 +24,10 @@ try
 
     app.UsePersistify(erb =>
     {
-        erb.MapGrpcService<Persistify.Server.Services.TemplateService>();
-        erb.MapGrpcService<Persistify.Server.Services.DocumentService>();
+        erb.MapGrpcService<TemplateService>();
+        erb.MapGrpcService<DocumentService>();
     });
-    
+
     app.Run();
 }
 catch (Exception ex)

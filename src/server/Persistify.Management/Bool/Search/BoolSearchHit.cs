@@ -4,7 +4,7 @@ namespace Persistify.Management.Bool.Search;
 
 public class BoolSearchHit : SearchHit
 {
-    public BoolSearchHit(ulong id, float boost) : base(id, boost)
+    public BoolSearchHit(ulong documentId, float boost) : base(documentId, boost)
     {
     }
 }

@@ -1,12 +1,17 @@
-﻿namespace Persistify.DataStructures.PrefixTree;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+
+namespace Persistify.DataStructures.PrefixTree;
 
 public class PrefixTree<TValue> : IPrefixTree<TValue>
 {
     // ReSharper disable once StaticMemberInGenericType
     private static readonly int[] AllIndexes = Enumerable.Range(0, 62).ToArray();
+    private readonly ReaderWriterLockSlim _lock;
 
     private readonly PrefixTreeNode<TValue> _root;
-    private readonly ReaderWriterLockSlim _lock;
 
     public PrefixTree()
     {
@@ -17,34 +22,6 @@ public class PrefixTree<TValue> : IPrefixTree<TValue>
     public void Add(string key, TValue value)
     {
         Add(key, value, true);
-    }
-
-    private void Add(string key, TValue value, bool useLock)
-    {
-        var indexes = GetIndexes(key, true);
-
-        if (useLock) _lock.EnterWriteLock();
-        try
-        {
-            Add(_root, value, indexes);
-        }
-        finally
-        {
-            if (useLock) _lock.ExitWriteLock();
-        }
-    }
-
-    private static void Add(PrefixTreeNode<TValue> node, TValue value, ReadOnlySpan<int[]> indexes)
-    {
-        if (indexes.Length == 0)
-        {
-            node.Values.Add(value);
-            return;
-        }
-
-        var index = indexes[0];
-        for (var i = 0; i < index.Length; i++)
-            Add(node.Children[index[i]] ??= new PrefixTreeNode<TValue>(), value, indexes[1..]);
     }
 
     public void AddRange(IEnumerable<KeyValuePair<string, TValue>> items)
@@ -82,14 +59,67 @@ public class PrefixTree<TValue> : IPrefixTree<TValue>
         return values;
     }
 
-    private void Search(PrefixTreeNode<TValue> node, ICollection<TValue> values, ReadOnlySpan<int[]> indexes, bool exact)
+    public void Remove(Predicate<TValue> predicate)
+    {
+        _lock.EnterWriteLock();
+        try
+        {
+            Remove(_root, predicate);
+        }
+        finally
+        {
+            _lock.ExitWriteLock();
+        }
+    }
+
+    private void Add(string key, TValue value, bool useLock)
+    {
+        var indexes = GetIndexes(key, true);
+
+        if (useLock)
+        {
+            _lock.EnterWriteLock();
+        }
+
+        try
+        {
+            Add(_root, value, indexes);
+        }
+        finally
+        {
+            if (useLock)
+            {
+                _lock.ExitWriteLock();
+            }
+        }
+    }
+
+    private static void Add(PrefixTreeNode<TValue> node, TValue value, ReadOnlySpan<int[]> indexes)
+    {
+        if (indexes.Length == 0)
+        {
+            node.Values.Add(value);
+            return;
+        }
+
+        var index = indexes[0];
+        for (var i = 0; i < index.Length; i++)
+        {
+            Add(node.Children[index[i]] ??= new PrefixTreeNode<TValue>(), value, indexes[1..]);
+        }
+    }
+
+    private void Search(PrefixTreeNode<TValue> node, ICollection<TValue> values, ReadOnlySpan<int[]> indexes,
+        bool exact)
     {
         if (indexes.Length == 0)
         {
             if (exact)
             {
                 if (node.Values.Count <= 0)
+                {
                     return;
+                }
 
                 foreach (var value in node.Values)
                 {
@@ -132,19 +162,6 @@ public class PrefixTree<TValue> : IPrefixTree<TValue>
         }
     }
 
-    public void Remove(Predicate<TValue> predicate)
-    {
-        _lock.EnterWriteLock();
-        try
-        {
-            Remove(_root, predicate);
-        }
-        finally
-        {
-            _lock.ExitWriteLock();
-        }
-    }
-
     private static void Remove(PrefixTreeNode<TValue> node, Predicate<TValue> predicate)
     {
         for (var i = 0; i < node.Children.Length; i++)
@@ -157,7 +174,7 @@ public class PrefixTree<TValue> : IPrefixTree<TValue>
             }
 
             Remove(child, predicate);
-            
+
             if (child.Values.Count <= 0 && child.Children.All(c => c == null))
             {
                 node.Children[i] = null;

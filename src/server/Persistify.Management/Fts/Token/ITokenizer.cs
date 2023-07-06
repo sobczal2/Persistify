@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Persistify.Management.Fts.Token;
+﻿namespace Persistify.Management.Fts.Token;
 
 public interface ITokenizer
 {
-    ISet<string> Tokenize(string value);
-    ISet<string> TokenizeWithWildcards(string value);
+    (string Term, float TermFrequency)[] Tokenize(string value);
+    string[] TokenizeWithWildcards(string value);
 }

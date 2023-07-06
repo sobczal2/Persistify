@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\shared\Persistify.DataStructures\Persistify.DataStructures.csproj" />
-      <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-      <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.DataStructures\Persistify.DataStructures.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
+  </ItemGroup>
 
 </Project>

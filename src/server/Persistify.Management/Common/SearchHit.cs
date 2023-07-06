@@ -2,12 +2,12 @@
 
 public class SearchHit
 {
-    public ulong Id { get; set; }
-    public float Boost { get; set; }
-
-    public SearchHit(ulong id, float boost)
+    public SearchHit(ulong documentId, float boost)
     {
-        Id = id;
+        DocumentId = documentId;
         Boost = boost;
     }
+
+    public ulong DocumentId { get; set; }
+    public float Boost { get; set; }
 }

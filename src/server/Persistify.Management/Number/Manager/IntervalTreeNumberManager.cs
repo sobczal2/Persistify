@@ -2,8 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Persistify.DataStructures.IntervalTree;
 using Persistify.Management.Common;
 using Persistify.Management.Number.Search;
@@ -16,16 +14,17 @@ namespace Persistify.Management.Number.Manager;
 public class IntervalTreeNumberManager : INumberManager
 {
     private readonly IScoreCalculator _defaultScoreCalculator;
-    private readonly ConcurrentDictionary<TemplateFieldIdentifier, IntervalTree<IntervalTreeNumberValue>> _intervalTrees;
+
+    private readonly ConcurrentDictionary<TemplateFieldIdentifier, IIntervalTree<IntervalTreeNumberValue>>
+        _intervalTrees;
 
     public IntervalTreeNumberManager(IScoreCalculator defaultScoreCalculator)
     {
         _defaultScoreCalculator = defaultScoreCalculator;
-        _intervalTrees = new ConcurrentDictionary<TemplateFieldIdentifier, IntervalTree<IntervalTreeNumberValue>>();
+        _intervalTrees = new ConcurrentDictionary<TemplateFieldIdentifier, IIntervalTree<IntervalTreeNumberValue>>();
     }
-    
-    public ValueTask AddAsync(string templateName, Document document, ulong documentId,
-        CancellationToken cancellationToken = default)
+
+    public void Add(string templateName, Document document, ulong documentId)
     {
         foreach (var field in document.NumberFields)
         {
@@ -33,17 +32,20 @@ public class IntervalTreeNumberManager : INumberManager
                 _ => new IntervalTree<IntervalTreeNumberValue>());
             intervalTree.Add(new IntervalTreeNumberValue(field.Value, documentId));
         }
-        
-        return ValueTask.CompletedTask;
     }
 
-    public ValueTask<ICollection<NumberSearchHit>> SearchAsync(string templateName, NumberQuery query, IScoreCalculator? scoreCalculator = null, CancellationToken cancellationToken = default)
+    public IEnumerable<NumberSearchHit> Search(string templateName, NumberQuery query,
+        IScoreCalculator? scoreCalculator = null)
     {
         scoreCalculator ??= _defaultScoreCalculator;
         var foundIds = new Dictionary<ulong, int>();
-        var intervalTree = _intervalTrees.GetOrAdd(new TemplateFieldIdentifier(templateName, query.FieldName),
-            _ => new IntervalTree<IntervalTreeNumberValue>());
-        
+
+        if (!_intervalTrees.TryGetValue(new TemplateFieldIdentifier(templateName, query.FieldName),
+                out var intervalTree))
+        {
+            return Array.Empty<NumberSearchHit>();
+        }
+
         var hits = intervalTree.Search(query.MinValue, query.MaxValue);
         foreach (var hit in hits)
         {
@@ -56,20 +58,20 @@ public class IntervalTreeNumberManager : INumberManager
                 foundIds.Add(hit.DocumentId, 1);
             }
         }
-        
+
         var result = new NumberSearchHit[foundIds.Count];
-        
+
         var index = 0;
         foreach (var foundId in foundIds)
         {
             result[index] = new NumberSearchHit(foundId.Key, scoreCalculator.Calculate(foundId.Value));
             index++;
         }
-        
-        return ValueTask.FromResult<ICollection<NumberSearchHit>>(result);
+
+        return result;
     }
 
-    public ValueTask DeleteAsync(string templateName, ulong documentId, CancellationToken cancellationToken = default)
+    public void Delete(string templateName, ulong documentId)
     {
         // ReSharper disable once ConvertToLocalFunction
         Predicate<IntervalTreeNumberValue> predicate = value => value.DocumentId == documentId;
@@ -78,7 +80,5 @@ public class IntervalTreeNumberManager : INumberManager
         {
             intervalTree.Value.Remove(predicate);
         }
-
-        return ValueTask.CompletedTask;
     }
 }

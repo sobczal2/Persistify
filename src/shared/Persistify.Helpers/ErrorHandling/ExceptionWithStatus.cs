@@ -5,10 +5,10 @@ namespace Persistify.Helpers.ErrorHandling;
 
 public class ExceptionWithStatus : Exception
 {
-    public Status Status { get; }
-
     public ExceptionWithStatus(Status status)
     {
         Status = status;
     }
+
+    public Status Status { get; }
 }

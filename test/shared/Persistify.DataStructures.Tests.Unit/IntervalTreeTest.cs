@@ -7,38 +7,13 @@ namespace Persistify.DataStructures.Test;
 
 public class IntervalTreeTest
 {
-    private class IntervalTreeValue : IComparable<IntervalTreeValue>, IComparable<double>
-    {
-        public IntervalTreeValue(double value)
-        {
-            Value = value;
-        }
-
-        public double Value { get; }
-
-        public int CompareTo(IntervalTreeValue? other)
-        {
-            if (other is null)
-            {
-                return 1;
-            }
-
-            return Value.CompareTo(other.Value);
-        }
-
-        public int CompareTo(double other)
-        {
-            return Value.CompareTo(other);
-        }
-    }
-
     private readonly IIntervalTree<IntervalTreeValue> _tree;
-    
+
     public IntervalTreeTest()
     {
         _tree = new IntervalTree<IntervalTreeValue>();
     }
-    
+
     [Fact]
     public void Search_SingleItem_Success()
     {
@@ -53,7 +28,7 @@ public class IntervalTreeTest
         Assert.Single(result);
         Assert.Equal(item, result.First());
     }
-    
+
     [Fact]
     public void Search_MultipleItems_Success()
     {
@@ -74,7 +49,7 @@ public class IntervalTreeTest
         Assert.Contains(item2, result);
         Assert.Contains(item3, result);
     }
-    
+
     [Fact]
     public void Search_EmptyTree_Success()
     {
@@ -84,7 +59,7 @@ public class IntervalTreeTest
         // Assert
         Assert.Empty(result);
     }
-    
+
     [Fact]
     public void Search_SingleItemOutOfRange_Success()
     {
@@ -98,7 +73,7 @@ public class IntervalTreeTest
         // Assert
         Assert.Empty(result);
     }
-    
+
     [Fact]
     public void Search_MultipleItemsOutOfRange_Success()
     {
@@ -136,7 +111,7 @@ public class IntervalTreeTest
         Assert.Contains(item2, result);
         Assert.Contains(item3, result);
     }
-    
+
     [Fact]
     public void Search_ExactMatch_Success()
     {
@@ -155,7 +130,7 @@ public class IntervalTreeTest
         Assert.Single(result);
         Assert.Contains(item2, result);
     }
-    
+
     [Fact]
     public void Remove_SingleItem_Success()
     {
@@ -169,7 +144,7 @@ public class IntervalTreeTest
         // Assert
         Assert.Empty(_tree.Search(0.0, 2.0));
     }
-    
+
     [Fact]
     public void Remove_MultipleItems_Success()
     {
@@ -187,5 +162,30 @@ public class IntervalTreeTest
         // Assert
         Assert.Single(_tree.Search(0.0, 4.0));
         Assert.Contains(item1, _tree.Search(0.0, 4.0));
+    }
+
+    private class IntervalTreeValue : IComparable<IntervalTreeValue>, IComparable<double>
+    {
+        public IntervalTreeValue(double value)
+        {
+            Value = value;
+        }
+
+        public double Value { get; }
+
+        public int CompareTo(double other)
+        {
+            return Value.CompareTo(other);
+        }
+
+        public int CompareTo(IntervalTreeValue? other)
+        {
+            if (other is null)
+            {
+                return 1;
+            }
+
+            return Value.CompareTo(other.Value);
+        }
     }
 }

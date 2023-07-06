@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\server\Persistify.Management\Persistify.Management.csproj" />
+      <ProjectReference Include="..\..\shared\Persistify.TestHelpers\Persistify.TestHelpers.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="artifacts\" />
+      <Folder Include="artifacts\results\" />
+    </ItemGroup>
+
+</Project>

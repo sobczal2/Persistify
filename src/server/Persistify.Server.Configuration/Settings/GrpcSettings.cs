@@ -1,11 +1,9 @@
-using System.IO.Compression;
-
 namespace Persistify.Server.Configuration.Settings;
 
 public class GrpcSettings
 {
     public static string SectionName => "Grpc";
-    
+
     public bool EnableDetailedErrors { get; set; }
     public string ResponseCompressionLevel { get; set; } = default!;
     public string ResponseCompressionAlgorithm { get; set; } = default!;

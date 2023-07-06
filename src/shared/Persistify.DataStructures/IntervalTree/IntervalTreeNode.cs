@@ -1,4 +1,6 @@
-﻿namespace Persistify.DataStructures.IntervalTree;
+﻿using System;
+
+namespace Persistify.DataStructures.IntervalTree;
 
 public class IntervalTreeNode<TValue>
     where TValue : IComparable<TValue>, IComparable<double>

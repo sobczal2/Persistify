@@ -5,11 +5,13 @@ namespace Persistify.Management.Fts.Search;
 public struct PrefixTreeFtsValue
 {
     public ulong DocumentId { get; set; }
+    public float TermFrequency { get; set; }
     public PrefixTreeValueFlags Flags { get; set; }
 
-    public PrefixTreeFtsValue(ulong documentId, PrefixTreeValueFlags flags)
+    public PrefixTreeFtsValue(ulong documentId, float termFrequency, PrefixTreeValueFlags flags)
     {
         DocumentId = documentId;
+        TermFrequency = termFrequency;
         Flags = flags;
     }
 }
@@ -18,5 +20,5 @@ public struct PrefixTreeFtsValue
 public enum PrefixTreeValueFlags
 {
     Exact = 0,
-    Suffix = 1,
+    Suffix = 1
 }
