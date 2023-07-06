@@ -8,6 +8,11 @@ message Document {
   repeated BoolField BoolFields = 3;
 }
 
+message DocumentWithId {
+  uint64 Id = 1;
+  Document Document = 2;
+}
+
 message TextField {
   string FieldName = 1;
   string Value = 2;

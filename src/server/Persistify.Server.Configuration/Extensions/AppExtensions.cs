@@ -1,6 +1,6 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-using Serilog;
 
 namespace Persistify.Server.Configuration.Extensions;
 

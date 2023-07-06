@@ -1,3 +1,4 @@
+using System;
 using System.IO.Compression;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,9 +20,11 @@ public static class ServicesExtensions
         services.AddGrpc(opt =>
         {
             var grpcSettings = configuration
-                .GetRequiredSection(GrpcSettings.SectionName)
-                .Get<GrpcSettings>() ?? throw new InvalidOperationException($"Could not load {GrpcSettings.SectionName} from configuration");
-            
+                                   .GetRequiredSection(GrpcSettings.SectionName)
+                                   .Get<GrpcSettings>() ??
+                               throw new InvalidOperationException(
+                                   $"Could not load {GrpcSettings.SectionName} from configuration");
+
             opt.ResponseCompressionLevel = Enum.Parse<CompressionLevel>(grpcSettings.ResponseCompressionLevel);
             opt.ResponseCompressionAlgorithm = grpcSettings.ResponseCompressionAlgorithm;
             opt.EnableDetailedErrors = grpcSettings.EnableDetailedErrors;
@@ -37,9 +40,11 @@ public static class ServicesExtensions
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 var authSettings = configuration
-                    .GetRequiredSection(AuthSettings.SectionName)
-                    .Get<AuthSettings>() ?? throw new InvalidOperationException($"Could not load {AuthSettings.SectionName} from configuration");
-                
+                                       .GetRequiredSection(AuthSettings.SectionName)
+                                       .Get<AuthSettings>() ??
+                                   throw new InvalidOperationException(
+                                       $"Could not load {AuthSettings.SectionName} from configuration");
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = authSettings.ValidateIssuer,
@@ -48,7 +53,8 @@ public static class ServicesExtensions
                     ValidateIssuerSigningKey = authSettings.ValidateIssuerSigningKey,
                     ValidIssuer = authSettings.ValidIssuer,
                     ValidAudience = authSettings.ValidAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.IssuerSigningKey))
+                    IssuerSigningKey =
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.IssuerSigningKey))
                 };
             });
 
@@ -56,7 +62,7 @@ public static class ServicesExtensions
             .AddDataProtection()
             .SetApplicationName("Persistify.Server")
             .UseCryptographicAlgorithms(
-                new AuthenticatedEncryptorConfiguration()
+                new AuthenticatedEncryptorConfiguration
                 {
                     EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
                     ValidationAlgorithm = ValidationAlgorithm.HMACSHA256

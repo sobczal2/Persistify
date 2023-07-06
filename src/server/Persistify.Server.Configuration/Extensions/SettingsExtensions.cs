@@ -1,3 +1,4 @@
+using System;
 using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,10 +14,19 @@ public static class SettingsExtensions
         var grpcSettingsSection = configuration
             .GetRequiredSection(GrpcSettings.SectionName);
         var grpcSettingsValidator = new GrpcSettingsValidator();
-        grpcSettingsValidator.ValidateAndThrow(grpcSettingsSection.Get<GrpcSettings>() ?? throw new InvalidOperationException($"Could not load {GrpcSettings.SectionName} from configuration"));
+        grpcSettingsValidator.ValidateAndThrow(grpcSettingsSection.Get<GrpcSettings>() ??
+                                               throw new InvalidOperationException(
+                                                   $"Could not load {GrpcSettings.SectionName} from configuration"));
         services.Configure<GrpcSettings>(grpcSettingsSection);
-        
-        
+
+        var authSettingsSection = configuration
+            .GetRequiredSection(AuthSettings.SectionName);
+        var authSettingsValidator = new AuthSettingsValidator();
+        authSettingsValidator.ValidateAndThrow(authSettingsSection.Get<AuthSettings>() ??
+                                               throw new InvalidOperationException(
+                                                   $"Could not load {AuthSettings.SectionName} from configuration"));
+        services.Configure<AuthSettings>(authSettingsSection);
+
         return services;
     }
 }

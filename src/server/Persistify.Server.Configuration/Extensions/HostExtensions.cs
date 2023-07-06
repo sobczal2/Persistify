@@ -7,7 +7,6 @@ public static class HostExtensions
 {
     public static ConfigureHostBuilder AddHostConfiguration(this ConfigureHostBuilder host)
     {
-
         host.UseSerilog((context, services, configuration) =>
         {
             configuration
@@ -15,7 +14,7 @@ public static class HostExtensions
                 .ReadFrom.Services(services)
                 .Enrich.FromLogContext();
         });
-        
+
         return host;
     }
 }
