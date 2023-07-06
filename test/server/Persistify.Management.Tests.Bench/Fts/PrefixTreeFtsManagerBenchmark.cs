@@ -14,14 +14,14 @@ public class PrefixTreeFtsManagerBenchmark
     private const uint TextFields = 3;
     private const uint NumberFields = 3;
     private const uint BoolFields = 3;
+    private IFtsManager _100kBoolManager;
+    private IFtsManager _10kBoolManager;
+    private IFtsManager _1kBoolManager;
+    private Document _benchmarkDocument;
 
     private IFtsManager _emptyBoolManager;
-    private IFtsManager _1kBoolManager;
-    private IFtsManager _10kBoolManager;
-    private IFtsManager _100kBoolManager;
-    private Document _benchmarkDocument;
-    private ITokenizer _tokenizer;
     private IScoreCalculator _scoreCalculator;
+    private ITokenizer _tokenizer;
 
 
     [GlobalSetup]
@@ -37,7 +37,8 @@ public class PrefixTreeFtsManagerBenchmark
         _benchmarkDocument = documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields);
     }
 
-    private static IFtsManager GenerateFtsManagerWithItems(int itemsCount, ITokenizer tokenizer, IScoreCalculator scoreCalculator,
+    private static IFtsManager GenerateFtsManagerWithItems(int itemsCount, ITokenizer tokenizer,
+        IScoreCalculator scoreCalculator,
         DocumentGenerator documentGenerator)
     {
         var ftsManager = new PrefixTreeFtsManager(tokenizer, scoreCalculator);
@@ -55,76 +56,52 @@ public class PrefixTreeFtsManagerBenchmark
     {
         _emptyBoolManager.Add("template", _benchmarkDocument, 1);
     }
-    
+
     [Benchmark]
     public void SearchIn1K_CaseSensitive()
     {
-        _1kBoolManager.Search("template", new FtsQuery()
-        {
-            FieldName = "text_field0",
-            Value = "template",
-            Exact = false,
-            CaseSensitive = true
-        }, _scoreCalculator);
+        _1kBoolManager.Search("template",
+            new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = true },
+            _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn1K_CaseInsensitive()
     {
-        _1kBoolManager.Search("template", new FtsQuery()
-        {
-            FieldName = "text_field0",
-            Value = "template",
-            Exact = false,
-            CaseSensitive = false
-        }, _scoreCalculator);
+        _1kBoolManager.Search("template",
+            new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = false },
+            _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn10K_CaseSensitive()
     {
-        _10kBoolManager.Search("template", new FtsQuery()
-        {
-            FieldName = "text_field0",
-            Value = "template",
-            Exact = false,
-            CaseSensitive = true
-        }, _scoreCalculator);
+        _10kBoolManager.Search("template",
+            new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = true },
+            _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn10K_CaseInsensitive()
     {
-        _10kBoolManager.Search("template", new FtsQuery()
-        {
-            FieldName = "text_field0",
-            Value = "template",
-            Exact = false,
-            CaseSensitive = false
-        }, _scoreCalculator);
+        _10kBoolManager.Search("template",
+            new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = false },
+            _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn100K_CaseSensitive()
     {
-        _100kBoolManager.Search("template", new FtsQuery()
-        {
-            FieldName = "text_field0",
-            Value = "template",
-            Exact = false,
-            CaseSensitive = true
-        }, _scoreCalculator);
+        _100kBoolManager.Search("template",
+            new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = true },
+            _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn100K_CaseInsensitive()
     {
-        _100kBoolManager.Search("template", new FtsQuery()
-        {
-            FieldName = "text_field0",
-            Value = "template",
-            Exact = false,
-            CaseSensitive = false
-        }, _scoreCalculator);
+        _100kBoolManager.Search("template",
+            new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = false },
+            _scoreCalculator);
     }
 }

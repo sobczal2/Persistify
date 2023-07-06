@@ -12,6 +12,7 @@ namespace Persistify.Management.Bool.Manager;
 public class HashSetBoolManager : IBoolManager
 {
     private readonly IScoreCalculator _defaultScoreCalculator;
+
     // HashSets are slow, reconsider using a different data structure
     private readonly ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>> _falseHashSets;
     private readonly ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>> _trueHashSets;

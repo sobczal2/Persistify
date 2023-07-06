@@ -13,12 +13,12 @@ public class IntervalTreeNumberManagerBenchmark
     private const uint TextFields = 3;
     private const uint NumberFields = 3;
     private const uint BoolFields = 3;
+    private INumberManager _100kNumberManager;
+    private INumberManager _10kNumberManager;
+    private INumberManager _1kNumberManager;
+    private Document _benchmarkDocument;
 
     private INumberManager _emptyBoolManager;
-    private INumberManager _1kNumberManager;
-    private INumberManager _10kNumberManager;
-    private INumberManager _100kNumberManager;
-    private Document _benchmarkDocument;
     private IScoreCalculator _scoreCalculator;
 
 
@@ -52,37 +52,25 @@ public class IntervalTreeNumberManagerBenchmark
     {
         _emptyBoolManager.Add("template", _benchmarkDocument, 1);
     }
-    
+
     [Benchmark]
     public void SearchIn1K()
     {
-        _1kNumberManager.Search("template", new NumberQuery()
-        {
-            FieldName = "number_field0",
-            MinValue = -10,
-            MaxValue = 10
-        }, _scoreCalculator);
+        _1kNumberManager.Search("template",
+            new NumberQuery { FieldName = "number_field0", MinValue = -10, MaxValue = 10 }, _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn10K()
     {
-        _10kNumberManager.Search("template", new NumberQuery()
-        {
-            FieldName = "number_field0",
-            MinValue = -10,
-            MaxValue = 10
-        }, _scoreCalculator);
+        _10kNumberManager.Search("template",
+            new NumberQuery { FieldName = "number_field0", MinValue = -10, MaxValue = 10 }, _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn100K()
     {
-        _100kNumberManager.Search("template", new NumberQuery()
-        {
-            FieldName = "number_field0",
-            MinValue = -10,
-            MaxValue = 10
-        }, _scoreCalculator);
+        _100kNumberManager.Search("template",
+            new NumberQuery { FieldName = "number_field0", MinValue = -10, MaxValue = 10 }, _scoreCalculator);
     }
 }

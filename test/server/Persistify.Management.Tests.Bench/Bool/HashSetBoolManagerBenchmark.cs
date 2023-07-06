@@ -13,12 +13,12 @@ public class HashSetBoolManagerBenchmark
     private const uint TextFields = 3;
     private const uint NumberFields = 3;
     private const uint BoolFields = 3;
+    private IBoolManager _100kBoolManager;
+    private IBoolManager _10kBoolManager;
+    private IBoolManager _1kBoolManager;
+    private Document _benchmarkDocument;
 
     private IBoolManager _emptyBoolManager;
-    private IBoolManager _1kBoolManager;
-    private IBoolManager _10kBoolManager;
-    private IBoolManager _100kBoolManager;
-    private Document _benchmarkDocument;
     private IScoreCalculator _scoreCalculator;
 
 
@@ -52,34 +52,23 @@ public class HashSetBoolManagerBenchmark
     {
         _emptyBoolManager.Add("template", _benchmarkDocument, 1);
     }
-    
+
     [Benchmark]
     public void SearchIn1K()
     {
-        _1kBoolManager.Search("template", new BoolQuery()
-        {
-            FieldName = "bool_field0",
-            Value = true
-        }, _scoreCalculator);
+        _1kBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true }, _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn10K()
     {
-        _10kBoolManager.Search("template", new BoolQuery()
-        {
-            FieldName = "bool_field0",
-            Value = true
-        }, _scoreCalculator);
+        _10kBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true }, _scoreCalculator);
     }
-    
+
     [Benchmark]
     public void SearchIn100K()
     {
-        _100kBoolManager.Search("template", new BoolQuery()
-        {
-            FieldName = "bool_field0",
-            Value = true
-        }, _scoreCalculator);
+        _100kBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true },
+            _scoreCalculator);
     }
 }

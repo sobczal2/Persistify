@@ -4,7 +4,6 @@ using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Loggers;
 using BenchmarkDotNet.Running;
-using BenchmarkDotNet.Validators;
 
 var config = ManualConfig.CreateEmpty()
     .AddLogger(ConsoleLogger.Default)
