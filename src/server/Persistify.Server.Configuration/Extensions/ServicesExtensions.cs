@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationM
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Server.Configuration.Interceptors;
 using Persistify.Server.Configuration.Settings;
 
 namespace Persistify.Server.Configuration.Extensions;
@@ -31,6 +32,8 @@ public static class ServicesExtensions
             opt.MaxReceiveMessageSize = grpcSettings.MaxReceiveMessageSize;
             opt.MaxSendMessageSize = grpcSettings.MaxSendMessageSize;
             opt.IgnoreUnknownServices = grpcSettings.IgnoreUnknownServices;
+
+            opt.Interceptors.Add<CorrelationIdInterceptor>();
         });
         services.AddGrpcReflection();
 

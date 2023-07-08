@@ -14,14 +14,14 @@ public class PrefixTreeFtsManagerBenchmark
     private const uint TextFields = 3;
     private const uint NumberFields = 3;
     private const uint BoolFields = 3;
-    private IFtsManager _100kBoolManager;
-    private IFtsManager _10kBoolManager;
-    private IFtsManager _1kBoolManager;
-    private Document _benchmarkDocument;
+    private IFtsManager _100KBoolManager = null!;
+    private IFtsManager _10KBoolManager = null!;
+    private IFtsManager _1KBoolManager = null!;
+    private Document _benchmarkDocument = null!;
 
-    private IFtsManager _emptyBoolManager;
-    private IScoreCalculator _scoreCalculator;
-    private ITokenizer _tokenizer;
+    private IFtsManager _emptyBoolManager = null!;
+    private IScoreCalculator _scoreCalculator = null!;
+    private ITokenizer _tokenizer = null!;
 
 
     [GlobalSetup]
@@ -31,9 +31,9 @@ public class PrefixTreeFtsManagerBenchmark
         _scoreCalculator = new LinearScoreCalculator();
         var documentGenerator = new DocumentGenerator();
         _emptyBoolManager = new PrefixTreeFtsManager(_tokenizer, _scoreCalculator);
-        _1kBoolManager = GenerateFtsManagerWithItems(1000, _tokenizer, _scoreCalculator, documentGenerator);
-        _10kBoolManager = GenerateFtsManagerWithItems(10000, _tokenizer, _scoreCalculator, documentGenerator);
-        _100kBoolManager = GenerateFtsManagerWithItems(100000, _tokenizer, _scoreCalculator, documentGenerator);
+        _1KBoolManager = GenerateFtsManagerWithItems(1000, _tokenizer, _scoreCalculator, documentGenerator);
+        _10KBoolManager = GenerateFtsManagerWithItems(10000, _tokenizer, _scoreCalculator, documentGenerator);
+        _100KBoolManager = GenerateFtsManagerWithItems(100000, _tokenizer, _scoreCalculator, documentGenerator);
         _benchmarkDocument = documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields);
     }
 
@@ -60,7 +60,7 @@ public class PrefixTreeFtsManagerBenchmark
     [Benchmark]
     public void SearchIn1K_CaseSensitive()
     {
-        _1kBoolManager.Search("template",
+        _1KBoolManager.Search("template",
             new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = true },
             _scoreCalculator);
     }
@@ -68,7 +68,7 @@ public class PrefixTreeFtsManagerBenchmark
     [Benchmark]
     public void SearchIn1K_CaseInsensitive()
     {
-        _1kBoolManager.Search("template",
+        _1KBoolManager.Search("template",
             new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = false },
             _scoreCalculator);
     }
@@ -76,7 +76,7 @@ public class PrefixTreeFtsManagerBenchmark
     [Benchmark]
     public void SearchIn10K_CaseSensitive()
     {
-        _10kBoolManager.Search("template",
+        _10KBoolManager.Search("template",
             new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = true },
             _scoreCalculator);
     }
@@ -84,7 +84,7 @@ public class PrefixTreeFtsManagerBenchmark
     [Benchmark]
     public void SearchIn10K_CaseInsensitive()
     {
-        _10kBoolManager.Search("template",
+        _10KBoolManager.Search("template",
             new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = false },
             _scoreCalculator);
     }
@@ -92,7 +92,7 @@ public class PrefixTreeFtsManagerBenchmark
     [Benchmark]
     public void SearchIn100K_CaseSensitive()
     {
-        _100kBoolManager.Search("template",
+        _100KBoolManager.Search("template",
             new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = true },
             _scoreCalculator);
     }
@@ -100,7 +100,7 @@ public class PrefixTreeFtsManagerBenchmark
     [Benchmark]
     public void SearchIn100K_CaseInsensitive()
     {
-        _100kBoolManager.Search("template",
+        _100KBoolManager.Search("template",
             new FtsQuery { FieldName = "text_field0", Value = "template", Exact = false, CaseSensitive = false },
             _scoreCalculator);
     }

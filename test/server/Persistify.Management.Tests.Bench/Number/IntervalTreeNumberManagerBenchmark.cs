@@ -13,13 +13,13 @@ public class IntervalTreeNumberManagerBenchmark
     private const uint TextFields = 3;
     private const uint NumberFields = 3;
     private const uint BoolFields = 3;
-    private INumberManager _100kNumberManager;
-    private INumberManager _10kNumberManager;
-    private INumberManager _1kNumberManager;
-    private Document _benchmarkDocument;
+    private INumberManager _100KNumberManager = null!;
+    private INumberManager _10KNumberManager = null!;
+    private INumberManager _1KNumberManager = null!;
+    private Document _benchmarkDocument = null!;
 
-    private INumberManager _emptyBoolManager;
-    private IScoreCalculator _scoreCalculator;
+    private INumberManager _emptyBoolManager = null!;
+    private IScoreCalculator _scoreCalculator = null!;
 
 
     [GlobalSetup]
@@ -28,9 +28,9 @@ public class IntervalTreeNumberManagerBenchmark
         _scoreCalculator = new LinearScoreCalculator();
         var documentGenerator = new DocumentGenerator();
         _emptyBoolManager = new IntervalTreeNumberManager(_scoreCalculator);
-        _1kNumberManager = GenerateNumberManagerWithItems(1000, _scoreCalculator, documentGenerator);
-        _10kNumberManager = GenerateNumberManagerWithItems(10000, _scoreCalculator, documentGenerator);
-        _100kNumberManager = GenerateNumberManagerWithItems(100000, _scoreCalculator, documentGenerator);
+        _1KNumberManager = GenerateNumberManagerWithItems(1000, _scoreCalculator, documentGenerator);
+        _10KNumberManager = GenerateNumberManagerWithItems(10000, _scoreCalculator, documentGenerator);
+        _100KNumberManager = GenerateNumberManagerWithItems(100000, _scoreCalculator, documentGenerator);
         _benchmarkDocument = documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields);
     }
 
@@ -56,21 +56,21 @@ public class IntervalTreeNumberManagerBenchmark
     [Benchmark]
     public void SearchIn1K()
     {
-        _1kNumberManager.Search("template",
+        _1KNumberManager.Search("template",
             new NumberQuery { FieldName = "number_field0", MinValue = -10, MaxValue = 10 }, _scoreCalculator);
     }
 
     [Benchmark]
     public void SearchIn10K()
     {
-        _10kNumberManager.Search("template",
+        _10KNumberManager.Search("template",
             new NumberQuery { FieldName = "number_field0", MinValue = -10, MaxValue = 10 }, _scoreCalculator);
     }
 
     [Benchmark]
     public void SearchIn100K()
     {
-        _100kNumberManager.Search("template",
+        _100KNumberManager.Search("template",
             new NumberQuery { FieldName = "number_field0", MinValue = -10, MaxValue = 10 }, _scoreCalculator);
     }
 }

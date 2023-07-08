@@ -4,7 +4,21 @@
 root = true
 # All files
 [*]
+# Set the indent style to spaces and the size to 4
 indent_style = space
+indent_size = 4
+
+# Set the line ending to LF
+end_of_line = lf
+
+# Set the character encoding to UTF-8
+charset = utf-8
+
+# Trim trailing whitespace
+trim_trailing_whitespace = true
+
+# Insert a final newline
+insert_final_newline = true
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -92,7 +106,6 @@ csharp_preferred_modifier_order = public, private, protected, internal, static, 
 csharp_prefer_braces = true:silent
 csharp_style_deconstructed_variable_declaration = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
-csharp_style_prefer_local_over_anonymous_function = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
 ###############################
 # C# Formatting Rules         #
@@ -124,6 +137,7 @@ csharp_space_between_method_call_empty_parameter_list_parentheses = false
 # Wrapping preferences
 csharp_preserve_single_line_statements = true
 csharp_preserve_single_line_blocks = true
+
 ###############################
 # VB Coding Conventions       #
 ###############################

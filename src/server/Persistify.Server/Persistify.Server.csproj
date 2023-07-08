@@ -11,4 +11,11 @@
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.133">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
