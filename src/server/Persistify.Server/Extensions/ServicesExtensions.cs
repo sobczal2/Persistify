@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationM
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Persistance;
+using Persistify.Serialization;
 using Persistify.Server.Configuration.Interceptors;
 using Persistify.Server.Configuration.Settings;
+using ProtoBuf.Grpc.Server;
 
 namespace Persistify.Server.Configuration.Extensions;
 
@@ -18,6 +21,8 @@ public static class ServicesExtensions
     public static IServiceCollection AddServicesConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddCodeFirstGrpc();
+        services.AddCodeFirstGrpcReflection();
         services.AddGrpc(opt =>
         {
             var grpcSettings = configuration
@@ -35,7 +40,6 @@ public static class ServicesExtensions
 
             opt.Interceptors.Add<CorrelationIdInterceptor>();
         });
-        services.AddGrpcReflection();
 
         services.AddAuthorization();
         services
@@ -70,6 +74,9 @@ public static class ServicesExtensions
                     EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
                     ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
                 });
+
+        services.AddPersistence();
+        services.AddSerialization();
 
         return services;
     }

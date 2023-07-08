@@ -1,19 +1,22 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
+using ProtoBuf.Grpc.Server;
 
 namespace Persistify.Server.Configuration.Extensions;
 
 public static class AppExtensions
 {
-    public static void UsePersistify(this WebApplication app, Action<IEndpointRouteBuilder> configureEndpoints)
+    public static void UsePersistify(this WebApplication app)
     {
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.MapGrpcReflectionService();
-#pragma warning disable ASP0014
-        app.UseEndpoints(configureEndpoints);
-#pragma warning restore ASP0014
+        app.MapCodeFirstGrpcReflectionService();
+    }
+
+    public static void LoadPersistify(this WebApplication app)
+    {
+
     }
 }

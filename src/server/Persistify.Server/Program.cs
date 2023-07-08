@@ -24,11 +24,12 @@ try
 
     var app = builder.Build();
 
-    app.UsePersistify(erb =>
-    {
-        erb.MapGrpcService<TemplateService>();
-        erb.MapGrpcService<DocumentService>();
-    });
+    Log.Information("Persistify Loading...");
+    app.LoadPersistify();
+    Log.Information("Persistify Loaded");
+
+    app.UsePersistify();
+    app.MapGrpcService<DocumentService>();
 
     app.Run();
 }

@@ -36,6 +36,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Management.Tests
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.TestHelpers", "test\shared\Persistify.TestHelpers\Persistify.TestHelpers.csproj", "{AC2DFC8C-D07F-484B-B0C5-63A6D9BAB5E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Persistence", "src\server\Persistify.Persistence\Persistify.Persistence.csproj", "{6E3E627D-C81A-42E6-ABF1-61B58737D504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Serialization", "src\server\Persistify.Serialization\Persistify.Serialization.csproj", "{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -90,6 +94,14 @@ Global
 		{AC2DFC8C-D07F-484B-B0C5-63A6D9BAB5E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC2DFC8C-D07F-484B-B0C5-63A6D9BAB5E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC2DFC8C-D07F-484B-B0C5-63A6D9BAB5E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E3E627D-C81A-42E6-ABF1-61B58737D504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E3E627D-C81A-42E6-ABF1-61B58737D504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E3E627D-C81A-42E6-ABF1-61B58737D504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E3E627D-C81A-42E6-ABF1-61B58737D504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -108,5 +120,7 @@ Global
 		{B29A6CB3-DCD3-47E7-A284-99A48122FEEB} = {A4A48851-1F0E-4013-99D9-688E84160257}
 		{C97BCFFF-6214-45F3-BE93-3DA6F34CFF82} = {A4A48851-1F0E-4013-99D9-688E84160257}
 		{AC2DFC8C-D07F-484B-B0C5-63A6D9BAB5E4} = {54E83F82-5AA4-4BFC-8A9E-5C792D1F6B94}
+		{6E3E627D-C81A-42E6-ABF1-61B58737D504} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 	EndGlobalSection
 EndGlobal

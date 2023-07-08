@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-option csharp_namespace = "Persistify.Protos.Common";
-
-message Pagination {
-    int32 PageNumber = 1;
-    int32 PageSize = 2;
-}

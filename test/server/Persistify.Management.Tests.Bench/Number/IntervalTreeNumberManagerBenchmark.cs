@@ -2,6 +2,7 @@
 using Persistify.Management.Number.Manager;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
 using NumberQuery = Persistify.Management.Number.Search.NumberQuery;
 

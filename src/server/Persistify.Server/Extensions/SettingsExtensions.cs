@@ -27,6 +27,14 @@ public static class SettingsExtensions
                                                    $"Could not load {AuthSettings.SectionName} from configuration"));
         services.Configure<AuthSettings>(authSettingsSection);
 
+        var storageSettingsSection = configuration
+            .GetRequiredSection(StorageSettings.SectionName);
+        var storageSettingsValidator = new StorageSettingsValidator();
+        storageSettingsValidator.ValidateAndThrow(storageSettingsSection.Get<StorageSettings>() ??
+                                                  throw new InvalidOperationException(
+                                                      $"Could not load {StorageSettings.SectionName} from configuration"));
+        services.Configure<StorageSettings>(storageSettingsSection);
+
         return services;
     }
 }

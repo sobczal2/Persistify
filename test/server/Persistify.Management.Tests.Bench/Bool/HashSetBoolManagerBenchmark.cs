@@ -2,6 +2,7 @@
 using Persistify.Management.Bool.Manager;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
 using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
 

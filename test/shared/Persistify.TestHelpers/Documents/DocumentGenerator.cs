@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 
 namespace Persistify.TestHelpers.Documents;
 
@@ -27,19 +28,22 @@ public class DocumentGenerator
     public Document GenerateDocument(uint textFields, uint numberFields, uint boolFields)
     {
         var document = new Document();
+        document.TextFields = new TextField[textFields];
         for (var i = 0; i < textFields; i++)
         {
-            document.TextFields.Add(GenerateTextField($"text_field{i}"));
+            document.TextFields[i] = GenerateTextField($"text_field{i}");
         }
 
+        document.NumberFields = new NumberField[numberFields];
         for (var i = 0; i < numberFields; i++)
         {
-            document.NumberFields.Add(GenerateNumberField($"number_field{i}"));
+            document.NumberFields[i] = GenerateNumberField($"number_field{i}");
         }
 
+        document.BoolFields = new BoolField[boolFields];
         for (var i = 0; i < boolFields; i++)
         {
-            document.BoolFields.Add(GenerateBoolField($"bool_field{i}"));
+            document.BoolFields[i] = GenerateBoolField($"bool_field{i}");
         }
 
         return document;

@@ -7,8 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
+    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj" />
+    <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +18,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

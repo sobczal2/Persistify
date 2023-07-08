@@ -3,6 +3,7 @@ using Persistify.Management.Fts.Manager;
 using Persistify.Management.Fts.Token;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
 using FtsQuery = Persistify.Management.Fts.Search.FtsQuery;
 
