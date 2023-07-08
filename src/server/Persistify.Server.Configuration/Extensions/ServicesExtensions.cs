@@ -32,7 +32,7 @@ public static class ServicesExtensions
             opt.MaxReceiveMessageSize = grpcSettings.MaxReceiveMessageSize;
             opt.MaxSendMessageSize = grpcSettings.MaxSendMessageSize;
             opt.IgnoreUnknownServices = grpcSettings.IgnoreUnknownServices;
-            
+
             opt.Interceptors.Add<CorrelationIdInterceptor>();
         });
         services.AddGrpcReflection();

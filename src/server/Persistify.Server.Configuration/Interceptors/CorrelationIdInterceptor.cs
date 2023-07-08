@@ -11,10 +11,11 @@ public class CorrelationIdInterceptor : Interceptor
         UnaryServerMethod<TRequest, TResponse> continuation)
     {
         var correlationId = context.RequestHeaders.GetValue("X-Correlation-ID");
-        if(string.IsNullOrWhiteSpace(correlationId))
+        if (string.IsNullOrWhiteSpace(correlationId))
         {
             correlationId = Guid.NewGuid().ToString();
         }
+
         context.ResponseTrailers.Add("X-Correlation-ID", correlationId);
         return base.UnaryServerHandler(request, context, continuation);
     }

@@ -14,6 +14,7 @@ public class TemplateService : Protos.Templates.TemplateService.TemplateServiceB
     {
         _logger = logger;
     }
+
     public override Task<AddTemplateResponse> Add(AddTemplateRequest request, ServerCallContext context)
     {
         Console.WriteLine(context.ResponseTrailers.GetValue("X-Correlation-ID"));

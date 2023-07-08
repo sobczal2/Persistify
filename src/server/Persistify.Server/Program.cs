@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Persistify.Server.Configuration.Extensions;
 using Persistify.Server.Services;
 using Serilog;
-using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +13,8 @@ Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
 try
 {
-    var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+    var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+        ?.InformationalVersion;
     Log.Information("Persistify Server v{Version} starting up...", version);
 
     builder.Logging.ClearProviders();

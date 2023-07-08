@@ -8,17 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.5"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\server\Persistify.Management\Persistify.Management.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.TestHelpers\Persistify.TestHelpers.csproj" />
+    <ProjectReference Include="..\..\..\src\server\Persistify.Management\Persistify.Management.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.TestHelpers\Persistify.TestHelpers.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="artifacts\" />
-    <Folder Include="artifacts\results\" />
+    <Folder Include="artifacts\"/>
+    <Folder Include="artifacts\results\"/>
   </ItemGroup>
 
 </Project>
