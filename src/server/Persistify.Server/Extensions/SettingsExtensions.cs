@@ -35,6 +35,16 @@ public static class SettingsExtensions
                                                       $"Could not load {StorageSettings.SectionName} from configuration"));
         services.Configure<StorageSettings>(storageSettingsSection);
 
+        var loggingSettingsSection = configuration
+            .GetRequiredSection(LoggingSettings.SectionName);
+
+        var loggingSettingsValidator = new LoggingSettingsValidator();
+        loggingSettingsValidator.ValidateAndThrow(loggingSettingsSection.Get<LoggingSettings>() ??
+                                                  throw new InvalidOperationException(
+                                                      $"Could not load {LoggingSettings.SectionName} from configuration"));
+
+        services.Configure<LoggingSettings>(loggingSettingsSection);
+
         return services;
     }
 }

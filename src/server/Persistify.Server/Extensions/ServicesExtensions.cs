@@ -2,15 +2,11 @@ using System;
 using System.IO.Compression;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
-using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Persistify.Persistance;
 using Persistify.Serialization;
-using Persistify.Server.Configuration.Interceptors;
 using Persistify.Server.Configuration.Settings;
 using ProtoBuf.Grpc.Server;
 
@@ -37,8 +33,6 @@ public static class ServicesExtensions
             opt.MaxReceiveMessageSize = grpcSettings.MaxReceiveMessageSize;
             opt.MaxSendMessageSize = grpcSettings.MaxSendMessageSize;
             opt.IgnoreUnknownServices = grpcSettings.IgnoreUnknownServices;
-
-            opt.Interceptors.Add<CorrelationIdInterceptor>();
         });
 
         services.AddAuthorization();
@@ -64,16 +58,6 @@ public static class ServicesExtensions
                         new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.IssuerSigningKey))
                 };
             });
-
-        services
-            .AddDataProtection()
-            .SetApplicationName("Persistify.Server")
-            .UseCryptographicAlgorithms(
-                new AuthenticatedEncryptorConfiguration
-                {
-                    EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
-                    ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
-                });
 
         services.AddPersistence();
         services.AddSerialization();
