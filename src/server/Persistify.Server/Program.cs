@@ -1,5 +1,7 @@
 using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Logging;
 using Persistify.Server.Configuration.Extensions;
 using Persistify.Server.Services;
 using Serilog;
@@ -8,14 +10,14 @@ using Serilog.Events;
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-    .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 try
 {
-    Log.Information("Persistify Server v{Version} starting up...", typeof(Program).Assembly.GetName().Version);
+    var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+    Log.Information("Persistify Server v{Version} starting up...", version);
 
+    builder.Logging.ClearProviders();
     builder.Services.AddSettingsConfiguration(builder.Configuration);
     builder.Services.AddServicesConfiguration(builder.Configuration);
     builder.Host.AddHostConfiguration();

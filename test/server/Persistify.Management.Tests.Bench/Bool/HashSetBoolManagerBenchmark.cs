@@ -13,13 +13,13 @@ public class HashSetBoolManagerBenchmark
     private const uint TextFields = 3;
     private const uint NumberFields = 3;
     private const uint BoolFields = 3;
-    private IBoolManager _100kBoolManager;
-    private IBoolManager _10kBoolManager;
-    private IBoolManager _1kBoolManager;
-    private Document _benchmarkDocument;
+    private IBoolManager _100KBoolManager = null!;
+    private IBoolManager _10KBoolManager = null!;
+    private IBoolManager _1KBoolManager = null!;
+    private Document _benchmarkDocument = null!;
 
-    private IBoolManager _emptyBoolManager;
-    private IScoreCalculator _scoreCalculator;
+    private IBoolManager _emptyBoolManager = null!;
+    private IScoreCalculator _scoreCalculator = null!;
 
 
     [GlobalSetup]
@@ -28,9 +28,9 @@ public class HashSetBoolManagerBenchmark
         _scoreCalculator = new LinearScoreCalculator();
         var documentGenerator = new DocumentGenerator();
         _emptyBoolManager = new HashSetBoolManager(_scoreCalculator);
-        _1kBoolManager = GenerateBoolManagerWithItems(1000, _scoreCalculator, documentGenerator);
-        _10kBoolManager = GenerateBoolManagerWithItems(10000, _scoreCalculator, documentGenerator);
-        _100kBoolManager = GenerateBoolManagerWithItems(100000, _scoreCalculator, documentGenerator);
+        _1KBoolManager = GenerateBoolManagerWithItems(1000, _scoreCalculator, documentGenerator);
+        _10KBoolManager = GenerateBoolManagerWithItems(10000, _scoreCalculator, documentGenerator);
+        _100KBoolManager = GenerateBoolManagerWithItems(100000, _scoreCalculator, documentGenerator);
         _benchmarkDocument = documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields);
     }
 
@@ -56,19 +56,19 @@ public class HashSetBoolManagerBenchmark
     [Benchmark]
     public void SearchIn1K()
     {
-        _1kBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true }, _scoreCalculator);
+        _1KBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true }, _scoreCalculator);
     }
 
     [Benchmark]
     public void SearchIn10K()
     {
-        _10kBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true }, _scoreCalculator);
+        _10KBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true }, _scoreCalculator);
     }
 
     [Benchmark]
     public void SearchIn100K()
     {
-        _100kBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true },
+        _100KBoolManager.Search("template", new BoolQuery { FieldName = "bool_field0", Value = true },
             _scoreCalculator);
     }
 }

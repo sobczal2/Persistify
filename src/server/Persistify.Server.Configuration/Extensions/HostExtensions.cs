@@ -11,8 +11,7 @@ public static class HostExtensions
         {
             configuration
                 .ReadFrom.Configuration(context.Configuration)
-                .ReadFrom.Services(services)
-                .Enrich.FromLogContext();
+                .ReadFrom.Services(services);
         });
 
         return host;
