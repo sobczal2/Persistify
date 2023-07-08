@@ -3,6 +3,7 @@ using FluentAssertions;
 using Persistify.Management.Bool.Manager;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using Xunit;
 using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
 
@@ -24,7 +25,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }
@@ -32,7 +33,7 @@ public class HashSetBoolManagerTest
         };
         var document2 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = false },
                 new BoolField { FieldName = "field2", Value = true }
@@ -68,7 +69,7 @@ public class HashSetBoolManagerTest
         const string templateName1 = "template1";
         var document1 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }
@@ -77,7 +78,7 @@ public class HashSetBoolManagerTest
         const string templateName2 = "template2";
         var document2 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = false },
                 new BoolField { FieldName = "field2", Value = true }
@@ -139,7 +140,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }
@@ -162,7 +163,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }
@@ -185,7 +186,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }
@@ -193,7 +194,7 @@ public class HashSetBoolManagerTest
         };
         var document2 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = false },
                 new BoolField { FieldName = "field2", Value = true }
@@ -218,7 +219,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = false },
                 new BoolField { FieldName = "field2", Value = true }
@@ -226,7 +227,7 @@ public class HashSetBoolManagerTest
         };
         var document2 = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = false },
                 new BoolField { FieldName = "field2", Value = true }
@@ -252,7 +253,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }
@@ -284,7 +285,7 @@ public class HashSetBoolManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            BoolFields =
+            BoolFields = new []
             {
                 new BoolField { FieldName = "field1", Value = true },
                 new BoolField { FieldName = "field2", Value = false }

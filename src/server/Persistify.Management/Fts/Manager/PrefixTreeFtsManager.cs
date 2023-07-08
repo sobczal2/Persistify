@@ -9,6 +9,7 @@ using Persistify.Management.Fts.Search;
 using Persistify.Management.Fts.Token;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using FtsQuery = Persistify.Management.Fts.Search.FtsQuery;
 
 namespace Persistify.Management.Fts.Manager;

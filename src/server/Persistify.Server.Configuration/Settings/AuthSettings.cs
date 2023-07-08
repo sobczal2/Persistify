@@ -2,7 +2,7 @@ namespace Persistify.Server.Configuration.Settings;
 
 public class AuthSettings
 {
-    public static string SectionName => "Auth";
+    public const string SectionName = "Auth";
 
     public bool ValidateIssuer { get; set; } = default!;
     public bool ValidateAudience { get; set; } = default!;

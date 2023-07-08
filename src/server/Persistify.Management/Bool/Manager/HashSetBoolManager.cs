@@ -4,7 +4,7 @@ using System.Linq;
 using Persistify.Management.Bool.Search;
 using Persistify.Management.Common;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
 
 namespace Persistify.Management.Bool.Manager;

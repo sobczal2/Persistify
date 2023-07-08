@@ -3,6 +3,7 @@ using Persistify.DataStructures.Test;
 using Persistify.Management.Number.Manager;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using Xunit;
 using NumberQuery = Persistify.Management.Number.Search.NumberQuery;
 
@@ -24,7 +25,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -32,7 +33,7 @@ public class IntervalTreeNumberManagerTest
         };
         var document2 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 3 },
                 new NumberField { FieldName = "field2", Value = 4 }
@@ -67,7 +68,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName2 = "template2";
         var document1 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -75,7 +76,7 @@ public class IntervalTreeNumberManagerTest
         };
         var document2 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 3 },
                 new NumberField { FieldName = "field2", Value = 4 }
@@ -119,7 +120,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -141,7 +142,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -163,7 +164,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -185,7 +186,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -207,7 +208,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -229,7 +230,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 2 }
@@ -252,7 +253,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 3 }
@@ -275,7 +276,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 3 }
@@ -285,7 +286,7 @@ public class IntervalTreeNumberManagerTest
 
         var document2 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 2 },
                 new NumberField { FieldName = "field2", Value = 4 }
@@ -309,7 +310,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 3 }
@@ -319,7 +320,7 @@ public class IntervalTreeNumberManagerTest
 
         var document2 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 2 },
                 new NumberField { FieldName = "field2", Value = 4 }
@@ -345,7 +346,7 @@ public class IntervalTreeNumberManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 1 },
                 new NumberField { FieldName = "field2", Value = 3 }
@@ -355,7 +356,7 @@ public class IntervalTreeNumberManagerTest
 
         var document2 = new Document
         {
-            NumberFields =
+            NumberFields = new []
             {
                 new NumberField { FieldName = "field1", Value = 2 },
                 new NumberField { FieldName = "field2", Value = 4 }

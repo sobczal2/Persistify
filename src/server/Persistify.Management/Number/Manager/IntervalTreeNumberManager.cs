@@ -7,6 +7,7 @@ using Persistify.Management.Common;
 using Persistify.Management.Number.Search;
 using Persistify.Management.Score;
 using Persistify.Protos.Documents;
+using Persistify.Protos.Documents.Shared;
 using NumberQuery = Persistify.Management.Number.Search.NumberQuery;
 
 namespace Persistify.Management.Number.Manager;
