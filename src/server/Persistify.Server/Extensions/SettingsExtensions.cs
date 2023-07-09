@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Configuration.Settings;
 
-namespace Persistify.Server.Configuration.Extensions;
+namespace Persistify.Server.Extensions;
 
 public static class SettingsExtensions
 {

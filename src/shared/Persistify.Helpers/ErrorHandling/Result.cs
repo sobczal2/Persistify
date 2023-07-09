@@ -39,7 +39,7 @@ public readonly struct Result<T>
         return result._exception ?? throw new InvalidOperationException();
     }
 
-    public bool IsSuccess => _value is not null;
+    public bool IsSuccess => _exception is null;
     public bool IsFailure => _exception is not null;
 
     public T Value => _value ?? throw new InvalidOperationException();
@@ -65,7 +65,7 @@ public readonly struct Result<T>
         return this;
     }
 
-    public T Match(Func<T, T> onSuccess, Func<Exception, T> onFailure)
+    public TRes Match<TRes>(Func<T, TRes> onSuccess, Func<Exception, TRes> onFailure)
     {
         return IsSuccess ? onSuccess(Value) : onFailure(Exception);
     }

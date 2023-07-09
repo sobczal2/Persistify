@@ -1,11 +1,9 @@
-using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
 using Persistify.Server.Middlewares;
 using Persistify.Server.Services;
 using ProtoBuf.Grpc.Server;
 
-namespace Persistify.Server.Configuration.Extensions;
+namespace Persistify.Server.Extensions;
 
 public static class AppExtensions
 {
@@ -17,6 +15,7 @@ public static class AppExtensions
         app.UseAuthorization();
         app.MapCodeFirstGrpcReflectionService();
         app.MapGrpcService<DocumentService>();
+        app.MapGrpcService<TemplateService>();
     }
 
     public static void LoadPersistify(this WebApplication app)
