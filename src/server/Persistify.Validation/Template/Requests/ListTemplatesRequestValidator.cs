@@ -13,15 +13,20 @@ public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
     {
         _paginationValidator = paginationValidator;
     }
+
     public Result<Unit> Validate(ListTemplatesRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
+        {
             return new ValidationException("ListTemplatesRequest", "Request is null");
+        }
 
         var result = _paginationValidator.Validate(value.Pagination);
         if (result.IsFailure)
+        {
             return result;
+        }
 
         return new Result<Unit>(Unit.Value);
     }

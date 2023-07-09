@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Persistify.Management.Number.Manager;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
 using NumberQuery = Persistify.Management.Number.Search.NumberQuery;
@@ -42,7 +41,7 @@ public class IntervalTreeNumberManagerBenchmark
         for (var i = 0; i < itemsCount; i++)
         {
             numberManager.Add("template", documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields),
-                (long)i);
+                i);
         }
 
         return numberManager;

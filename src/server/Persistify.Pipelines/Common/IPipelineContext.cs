@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Persistify.Pipelines.Common;
+﻿namespace Persistify.Pipelines.Common;
 
 public interface IPipelineContext<TRequest, TResponse>
 {

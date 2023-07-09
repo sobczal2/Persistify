@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Persistify.Management.Bool.Search;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Shared;
 using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
 

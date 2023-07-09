@@ -1,20 +1,20 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Pipelines.Common;
+using Persistify.Pipelines.Exceptions;
 using Persistify.Pipelines.Shared.Stages;
-using Persistify.Pipelines.Template.Contexts;
-using Persistify.Pipelines.Template.Stages.ListTemplates;
+using Persistify.Pipelines.Template.ListTemplate.Stages;
 using Persistify.Protos.Templates.Requests;
 using Persistify.Protos.Templates.Responses;
 
-namespace Persistify.Pipelines.Template.Pipelines;
+namespace Persistify.Pipelines.Template.ListTemplate;
 
 public class ListTemplatesPipeline : Pipeline<ListTemplatesContext, ListTemplatesRequest, ListTemplatesResponse>
 {
+    private readonly FetchTemplatesFromManagerStage _fetchTemplatesFromManagerStage;
+
     private readonly ValidationStage<ListTemplatesContext, ListTemplatesRequest, ListTemplatesResponse>
         _validationStage;
-
-    private readonly FetchTemplatesFromManagerStage _fetchTemplatesFromManagerStage;
 
     public ListTemplatesPipeline(
         ILogger<ListTemplatesPipeline> logger,
@@ -36,16 +36,15 @@ public class ListTemplatesPipeline : Pipeline<ListTemplatesContext, ListTemplate
 
     protected override ListTemplatesContext CreateContext(ListTemplatesRequest request)
     {
-        return new() { Request = request };
+        return new ListTemplatesContext { Request = request };
     }
 
-    protected override ValueTask WriteResponseAsync(ListTemplatesContext context)
+    protected override ValueTask<ListTemplatesResponse> CreateResonse(ListTemplatesContext context)
     {
-        context.Response = new ListTemplatesResponse()
+        return ValueTask.FromResult(new ListTemplatesResponse
         {
             Templates = context.Templates ?? throw new PipelineException(),
             TotalCount = context.TotalCount ?? throw new PipelineException()
-        };
-        return ValueTask.CompletedTask;
+        });
     }
 }

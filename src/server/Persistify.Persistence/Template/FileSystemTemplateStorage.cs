@@ -10,17 +10,17 @@ namespace Persistify.Persistance.Template;
 
 public class FileSystemTemplateStorage : ITemplateStorage
 {
-    private readonly ISerializer _serializer;
-    private readonly ILogger<FileSystemTemplateStorage> _logger;
     private const string DirectoryName = "Templates";
     private readonly string _fullPath;
+    private readonly ILogger<FileSystemTemplateStorage> _logger;
+    private readonly ISerializer _serializer;
 
 
     public FileSystemTemplateStorage(
         ISerializer serializer,
         IOptions<StorageSettings> storageSettings,
         ILogger<FileSystemTemplateStorage> logger
-        )
+    )
     {
         _serializer = serializer;
         _logger = logger;
@@ -34,11 +34,6 @@ public class FileSystemTemplateStorage : ITemplateStorage
         Directory.CreateDirectory(_fullPath);
 
         _logger.LogInformation("Created directory {Directory}", _fullPath);
-    }
-
-    private string GetFilePath(string templateName)
-    {
-        return Path.Combine(_fullPath, templateName);
     }
 
     public ValueTask AddAsync(Protos.Templates.Shared.Template template)
@@ -61,7 +56,8 @@ public class FileSystemTemplateStorage : ITemplateStorage
         try
         {
             using var fileStream = File.OpenRead(GetFilePath(templateName));
-            return ValueTask.FromResult<Protos.Templates.Shared.Template?>(_serializer.Deserialize<Protos.Templates.Shared.Template>(fileStream));
+            return ValueTask.FromResult<Protos.Templates.Shared.Template?>(
+                _serializer.Deserialize<Protos.Templates.Shared.Template>(fileStream));
         }
         catch (IOException)
         {
@@ -104,5 +100,10 @@ public class FileSystemTemplateStorage : ITemplateStorage
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    private string GetFilePath(string templateName)
+    {
+        return Path.Combine(_fullPath, templateName);
     }
 }

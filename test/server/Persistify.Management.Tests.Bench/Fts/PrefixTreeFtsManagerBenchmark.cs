@@ -2,7 +2,6 @@
 using Persistify.Management.Fts.Manager;
 using Persistify.Management.Fts.Token;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
 using FtsQuery = Persistify.Management.Fts.Search.FtsQuery;
@@ -46,7 +45,7 @@ public class PrefixTreeFtsManagerBenchmark
         for (var i = 0; i < itemsCount; i++)
         {
             ftsManager.Add("template", documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields),
-                (long)i);
+                i);
         }
 
         return ftsManager;

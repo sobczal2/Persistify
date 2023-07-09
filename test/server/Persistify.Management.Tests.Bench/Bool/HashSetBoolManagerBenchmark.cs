@@ -1,7 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Persistify.Management.Bool.Manager;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
 using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
@@ -42,7 +41,7 @@ public class HashSetBoolManagerBenchmark
         for (var i = 0; i < itemsCount; i++)
         {
             boolManager.Add("template", documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields),
-                (long)i);
+                i);
         }
 
         return boolManager;

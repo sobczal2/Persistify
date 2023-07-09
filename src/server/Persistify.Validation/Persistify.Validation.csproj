@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
   </ItemGroup>
 
 </Project>

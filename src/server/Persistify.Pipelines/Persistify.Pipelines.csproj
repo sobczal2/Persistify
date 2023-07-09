@@ -7,14 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    <ProjectReference Include="..\Persistify.Management\Persistify.Management.csproj" />
-    <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
+    <ProjectReference Include="..\Persistify.Management\Persistify.Management.csproj"/>
+    <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1"/>
   </ItemGroup>
 
 </Project>

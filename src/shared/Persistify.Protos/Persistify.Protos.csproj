@@ -11,13 +11,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.1.1" />
+    <PackageReference Include="protobuf-net.Grpc.AspNetCore" Version="1.1.1"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Templates\*" GrpcServices="Server" />
-    <Protobuf Include="Documents\*" GrpcServices="Server" />
-    <Protobuf Include="Common\*" GrpcServices="Server" />
+    <Protobuf Include="Templates\*" GrpcServices="Server"/>
+    <Protobuf Include="Documents\*" GrpcServices="Server"/>
+    <Protobuf Include="Common\*" GrpcServices="Server"/>
   </ItemGroup>
 
 </Project>

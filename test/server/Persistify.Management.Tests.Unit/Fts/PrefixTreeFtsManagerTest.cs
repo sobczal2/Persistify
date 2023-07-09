@@ -5,7 +5,6 @@ using Persistify.Management.Fts.Manager;
 using Persistify.Management.Fts.Search;
 using Persistify.Management.Fts.Token;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Shared;
 using Xunit;
 using FtsQuery = Persistify.Management.Fts.Search.FtsQuery;
@@ -28,7 +27,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -36,7 +35,7 @@ public class PrefixTreeFtsManagerTest
         };
         var document2 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -64,7 +63,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName2 = "template2";
         var document1 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -72,7 +71,7 @@ public class PrefixTreeFtsManagerTest
         };
         var document2 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -104,7 +103,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -112,7 +111,7 @@ public class PrefixTreeFtsManagerTest
         };
         var document2 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -136,7 +135,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document1 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -144,7 +143,7 @@ public class PrefixTreeFtsManagerTest
         };
         var document2 = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -168,7 +167,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -191,7 +190,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -215,7 +214,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -238,7 +237,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -262,7 +261,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -286,7 +285,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -310,7 +309,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "Hello World" },
                 new TextField { FieldName = "field2", Value = "Hello World" }
@@ -334,7 +333,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "Hello World" },
                 new TextField { FieldName = "field2", Value = "Hello World" }
@@ -358,7 +357,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "Hello World" },
                 new TextField { FieldName = "field2", Value = "Hello World" }
@@ -381,7 +380,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "Hello World" },
                 new TextField { FieldName = "field2", Value = "Hello World" }
@@ -405,7 +404,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }
@@ -429,7 +428,7 @@ public class PrefixTreeFtsManagerTest
         const string templateName = "template";
         var document = new Document
         {
-            TextFields = new []
+            TextFields = new[]
             {
                 new TextField { FieldName = "field1", Value = "hello world" },
                 new TextField { FieldName = "field2", Value = "hello world" }

@@ -7,13 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    <ProjectReference Include="..\Persistify.Management\Persistify.Management.csproj" />
-    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj" />
-    <ProjectReference Include="..\Persistify.Pipelines\Persistify.Pipelines.csproj" />
-    <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj" />
-    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
-    <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
+    <ProjectReference Include="..\Persistify.Management\Persistify.Management.csproj"/>
+    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj"/>
+    <ProjectReference Include="..\Persistify.Pipelines\Persistify.Pipelines.csproj"/>
+    <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
+    <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -21,9 +21,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0" />
-    <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0" />
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
+    <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2"/>
+    <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0"/>
   </ItemGroup>
 
 </Project>

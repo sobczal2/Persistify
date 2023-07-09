@@ -17,11 +17,15 @@ public class AddTemplateRequestValidator : IValidator<AddTemplateRequest>
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
+        {
             return new ValidationException("AddTemplateRequest", "Request is null");
+        }
 
         var result = _templateValidator.Validate(value.Template);
         if (result.IsFailure)
+        {
             return result;
+        }
 
         return new Result<Unit>(Unit.Value);
     }

@@ -14,6 +14,7 @@ public class CorrelationIdMiddleware
     {
         _next = next;
     }
+
     public async Task InvokeAsync(HttpContext context)
     {
         var correlationId = context.Request.Headers["X-Correlation-ID"].FirstOrDefault();

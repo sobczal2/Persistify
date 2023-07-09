@@ -1,30 +1,28 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Shared.Stages;
-using Persistify.Pipelines.Template.Contexts;
-using Persistify.Pipelines.Template.Stages.AddTemplates;
+using Persistify.Pipelines.Template.AddTemplate.Stages;
 using Persistify.Protos.Templates.Requests;
 using Persistify.Protos.Templates.Responses;
 
-namespace Persistify.Pipelines.Template.Pipelines;
+namespace Persistify.Pipelines.Template.AddTemplate;
 
 public class AddTemplatePipeline : Pipeline<AddTemplateContext, AddTemplateRequest, AddTemplateResponse>
 {
-    private readonly ValidationStage<AddTemplateContext, AddTemplateRequest, AddTemplateResponse> _validationStage;
-    private readonly ValidateTemplateNameStage _validateTemplateNameStage;
     private readonly AddTemplateToManagerStage _addTemplateToManagerStage;
+    private readonly CheckTemplateNameStage _checkTemplateNameStage;
+    private readonly ValidationStage<AddTemplateContext, AddTemplateRequest, AddTemplateResponse> _validationStage;
 
     public AddTemplatePipeline(
         ILogger<AddTemplatePipeline> logger,
         ValidationStage<AddTemplateContext, AddTemplateRequest, AddTemplateResponse> validationStage,
-        ValidateTemplateNameStage validateTemplateNameStage,
+        CheckTemplateNameStage checkTemplateNameStage,
         AddTemplateToManagerStage addTemplateToManagerStage
     ) : base(logger)
     {
         _validationStage = validationStage;
-        _validateTemplateNameStage = validateTemplateNameStage;
+        _checkTemplateNameStage = checkTemplateNameStage;
         _addTemplateToManagerStage = addTemplateToManagerStage;
     }
 
@@ -32,19 +30,16 @@ public class AddTemplatePipeline : Pipeline<AddTemplateContext, AddTemplateReque
         PipelineStages
         => new PipelineStage<AddTemplateContext, AddTemplateRequest, AddTemplateResponse>[]
         {
-            _validationStage,
-            _validateTemplateNameStage,
-            _addTemplateToManagerStage
+            _validationStage, _checkTemplateNameStage, _addTemplateToManagerStage
         };
 
     protected override AddTemplateContext CreateContext(AddTemplateRequest request)
     {
-        return new() { Request = request };
+        return new AddTemplateContext { Request = request };
     }
 
-    protected override ValueTask WriteResponseAsync(AddTemplateContext context)
+    protected override ValueTask<AddTemplateResponse> CreateResonse(AddTemplateContext context)
     {
-        context.Response = new AddTemplateResponse();
-        return ValueTask.CompletedTask;
+        return ValueTask.FromResult(new AddTemplateResponse());
     }
 }

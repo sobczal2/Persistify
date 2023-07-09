@@ -2,21 +2,23 @@
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Management.Template;
 using Persistify.Pipelines.Common;
-using Persistify.Pipelines.Template.Contexts;
 using Persistify.Protos.Templates.Requests;
 using Persistify.Protos.Templates.Responses;
 
-namespace Persistify.Pipelines.Template.Stages.AddTemplates;
+namespace Persistify.Pipelines.Template.AddTemplate.Stages;
 
 public class AddTemplateToManagerStage : PipelineStage<AddTemplateContext, AddTemplateRequest, AddTemplateResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private const string StageName = "AddTemplateToManager";
+    private readonly ITemplateManager _templateManager;
 
     public AddTemplateToManagerStage(ITemplateManager templateManager)
     {
         _templateManager = templateManager;
     }
+
+    public override string Name => StageName;
+
     public override async ValueTask<Result> ProcessAsync(AddTemplateContext context)
     {
         await _templateManager.AddAsync(context.Request.Template);
@@ -30,6 +32,4 @@ public class AddTemplateToManagerStage : PipelineStage<AddTemplateContext, AddTe
 
         return Result.Success;
     }
-
-    public override string Name => StageName;
 }

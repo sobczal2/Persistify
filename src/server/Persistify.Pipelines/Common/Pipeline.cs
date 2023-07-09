@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
-using Serilog.Context;
 
 namespace Persistify.Pipelines.Common;
 
@@ -14,7 +13,6 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
     where TResponse : class
 {
     private readonly ILogger<Pipeline<TContext, TRequest, TResponse>> _logger;
-    protected abstract PipelineStage<TContext, TRequest, TResponse>[] PipelineStages { get; }
 
     public Pipeline(
         ILogger<Pipeline<TContext, TRequest, TResponse>> logger
@@ -23,34 +21,35 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
         _logger = logger;
     }
 
+    protected abstract PipelineStage<TContext, TRequest, TResponse>[] PipelineStages { get; }
+
     protected abstract TContext CreateContext(TRequest request);
 
-    protected abstract ValueTask WriteResponseAsync(TContext context);
+    protected abstract ValueTask<TResponse> CreateResonse(TContext context);
 
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
         var context = CreateContext(request);
+        var stopwatch = new Stopwatch();
 
         for (var i = 0; i < PipelineStages.Length; i++)
         {
-            using var _ = LogContext.PushProperty("Stage", PipelineStages[i].Name);
-
             var stageNumber = i;
+            var stageName = PipelineStages[i].Name;
+
+            _logger.LogInformation("Processing pipeline stage {StageName}", stageName);
+            stopwatch.Restart();
+
             await (await PipelineStages[i].ProcessAsync(context)).OnFailure(async x =>
                 await Throw(x, context, stageNumber));
+
+            // TODO: Remove when monitoring is implemented
+            stopwatch.Stop();
+            _logger.LogInformation("Pipeline stage {StageName} processed in {ElapsedMilliseconds} μs", stageName,
+                stopwatch.Elapsed.TotalMicroseconds);
         }
 
-        await WriteResponseAsync(context);
-
-        if (context.Response is not null)
-        {
-            return context.Response;
-        }
-
-        _logger.LogError("Response was not set in pipeline");
-        await Throw(new InvalidOperationException("Response is null"), context, PipelineStages.Length - 1);
-
-        throw new PipelineException();
+        return await CreateResonse(context);
     }
 
     private async ValueTask Throw(Exception exception, TContext context, int stageNumber)
@@ -75,9 +74,9 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 
         for (var i = lastStageNumber; i >= 0; i--)
         {
-            using var _ = LogContext.PushProperty("Stage", PipelineStages[i].Name);
-
             var stage = PipelineStages[i];
+            _logger.LogInformation("Rolling back stage {Stage}", stage.Name);
+
             (await stage.RollbackAsync(context)).OnFailure(x =>
                 _logger.LogError(x, "Rollback of stage {Stage} failed", stage.Name));
         }

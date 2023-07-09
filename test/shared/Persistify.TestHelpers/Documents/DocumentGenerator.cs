@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Shared;
 
 namespace Persistify.TestHelpers.Documents;
