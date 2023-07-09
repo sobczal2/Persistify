@@ -8,23 +8,23 @@ namespace Persistify.Management.Tests.Unit.Bool;
 
 public static class HashSetBoolManagerTestExtensions
 {
-    public static ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>> GetTrueHashSets(
+    public static ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>> GetTrueHashSets(
         this IBoolManager boolManager)
     {
-        return (ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>>)typeof(HashSetBoolManager)
+        return (ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>>)typeof(HashSetBoolManager)
             .GetField("_trueHashSets", BindingFlags.NonPublic | BindingFlags.Instance)!
             .GetValue(boolManager)!;
     }
 
-    public static ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>> GetFalseHashSets(
+    public static ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>> GetFalseHashSets(
         this IBoolManager boolManager)
     {
-        return (ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>>)typeof(HashSetBoolManager)
+        return (ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>>)typeof(HashSetBoolManager)
             .GetField("_falseHashSets", BindingFlags.NonPublic | BindingFlags.Instance)!
             .GetValue(boolManager)!;
     }
 
-    public static HashSet<ulong>? GetHashSet(this IBoolManager boolManager, string templateName, string fieldName,
+    public static HashSet<long>? GetHashSet(this IBoolManager boolManager, string templateName, string fieldName,
         bool value)
     {
         var hashSets = value ? boolManager.GetTrueHashSets() : boolManager.GetFalseHashSets();

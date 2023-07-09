@@ -25,7 +25,7 @@ public class IntervalTreeNumberManager : INumberManager
         _intervalTrees = new ConcurrentDictionary<TemplateFieldIdentifier, IIntervalTree<IntervalTreeNumberValue>>();
     }
 
-    public void Add(string templateName, Document document, ulong documentId)
+    public void Add(string templateName, Document document, long documentId)
     {
         foreach (var field in document.NumberFields)
         {
@@ -39,7 +39,7 @@ public class IntervalTreeNumberManager : INumberManager
         IScoreCalculator? scoreCalculator = null)
     {
         scoreCalculator ??= _defaultScoreCalculator;
-        var foundIds = new Dictionary<ulong, int>();
+        var foundIds = new Dictionary<long, int>();
 
         if (!_intervalTrees.TryGetValue(new TemplateFieldIdentifier(templateName, query.FieldName),
                 out var intervalTree))
@@ -72,7 +72,7 @@ public class IntervalTreeNumberManager : INumberManager
         return result;
     }
 
-    public void Delete(string templateName, ulong documentId)
+    public void Delete(string templateName, long documentId)
     {
         // ReSharper disable once ConvertToLocalFunction
         Predicate<IntervalTreeNumberValue> predicate = value => value.DocumentId == documentId;

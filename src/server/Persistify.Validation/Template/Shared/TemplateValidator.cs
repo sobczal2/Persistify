@@ -16,11 +16,15 @@ public class TemplateValidator : IValidator<Protos.Templates.Shared.Template>
 
     public Result<Unit> Validate(Protos.Templates.Shared.Template value)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if(value is null)
+            return new ValidationException("Template", "Template is null");
+
         if (string.IsNullOrEmpty(value.Name))
-            return new Result<Unit>(new ValidationException("Template.Name", "Name is required"));
+            return new ValidationException("Template.Name", "Name is required");
 
         if (value.Name.Length > 64)
-            return new Result<Unit>(new ValidationException("Template.Name", "Name must be less than 50 characters"));
+            return new ValidationException("Template.Name", "Name must be less than 50 characters");
 
         for (var i = 0; i < value.Fields.Length; i++)
         {
@@ -35,8 +39,7 @@ public class TemplateValidator : IValidator<Protos.Templates.Shared.Template>
         {
             var field = value.Fields[i];
             if (fieldNames.Contains(field.Name))
-                return new Result<Unit>(new ValidationException("Template.Fields",
-                    $"Field with name {field.Name} already exists"));
+                return new ValidationException("Template.Fields", $"Field with name {field.Name} already exists");
             fieldNames.Add(field.Name);
         }
 

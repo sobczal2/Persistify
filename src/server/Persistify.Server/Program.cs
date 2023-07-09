@@ -12,7 +12,9 @@ Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
 try
 {
-    var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+    var version = Assembly
+        .GetEntryAssembly()!
+        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         ?.InformationalVersion;
 
     builder.Logging.ClearProviders();

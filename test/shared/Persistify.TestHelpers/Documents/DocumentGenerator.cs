@@ -25,7 +25,7 @@ public class DocumentGenerator
             .RuleFor(x => x.Value, f => f.Lorem.Sentence());
     }
 
-    public Document GenerateDocument(uint textFields, uint numberFields, uint boolFields)
+    public Document GenerateDocument(int textFields, int numberFields, int boolFields)
     {
         var document = new Document();
         document.TextFields = new TextField[textFields];

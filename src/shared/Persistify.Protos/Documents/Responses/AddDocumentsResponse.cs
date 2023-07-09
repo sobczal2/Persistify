@@ -6,5 +6,5 @@ namespace Persistify.Protos.Documents.Responses;
 public class AddDocumentsResponse
 {
     [DataMember(Order = 1)]
-    public ulong[] DocumentIds { get; set; } = default!;
+    public long[] DocumentIds { get; set; } = default!;
 }

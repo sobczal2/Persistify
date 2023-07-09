@@ -9,7 +9,7 @@ namespace Persistify.Management.Bool.Manager;
 
 public interface IBoolManager
 {
-    void Add(string templateName, Document document, ulong documentId);
+    void Add(string templateName, Document document, long documentId);
     IEnumerable<BoolSearchHit> Search(string templateName, BoolQuery query, IScoreCalculator? scoreCalculator = null);
-    void Delete(string templateName, ulong documentId);
+    void Delete(string templateName, long documentId);
 }

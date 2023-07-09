@@ -26,6 +26,11 @@ public class DictionaryTemplateManager : ITemplateManager
         return _templates.TryGetValue(templateName, out var template) ? template : null;
     }
 
+    public bool Exists(string templateName)
+    {
+        return _templates.ContainsKey(templateName);
+    }
+
     public IEnumerable<Protos.Templates.Shared.Template> GetAll()
     {
         return _templates.Values;

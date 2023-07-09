@@ -9,7 +9,7 @@ public class DefaultTokenizer : ITokenizer
 {
     public (string Term, float TermFrequency)[] Tokenize(string value)
     {
-        var tokens = new Dictionary<string, uint>();
+        var tokens = new Dictionary<string, int>();
         var valueSpan = value.AsSpan();
         var token = new StringBuilder();
 

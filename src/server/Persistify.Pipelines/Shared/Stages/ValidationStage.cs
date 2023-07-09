@@ -11,6 +11,7 @@ public class ValidationStage<TContext, TRequest, TResponse> : PipelineStage<TCon
     where TResponse : class
 {
     private readonly IValidator<TRequest> _validator;
+    private const string StageName = "Validation";
 
     public ValidationStage(
         IValidator<TRequest> validator
@@ -19,7 +20,7 @@ public class ValidationStage<TContext, TRequest, TResponse> : PipelineStage<TCon
         _validator = validator;
     }
 
-    public override ValueTask<Result> Process(TContext context)
+    public override ValueTask<Result> ProcessAsync(TContext context)
     {
         var validationResult = _validator.Validate(context.Request);
 
@@ -28,4 +29,11 @@ public class ValidationStage<TContext, TRequest, TResponse> : PipelineStage<TCon
             x => ValueTask.FromResult<Result>(x)
         );
     }
+
+    public override ValueTask<Result> RollbackAsync(TContext context)
+    {
+        return ValueTask.FromResult(Result.Success);
+    }
+
+    public override string Name => StageName;
 }

@@ -9,7 +9,7 @@ namespace Persistify.Management.Fts.Manager;
 
 public interface IFtsManager
 {
-    void Add(string templateName, Document document, ulong documentId);
+    void Add(string templateName, Document document, long documentId);
     IEnumerable<FtsSearchHit> Search(string templateName, FtsQuery query, IScoreCalculator? scoreCalculator = null);
-    void Delete(string templateName, ulong documentId);
+    void Delete(string templateName, long documentId);
 }

@@ -11,9 +11,9 @@ namespace Persistify.Management.Tests.Bench.Number;
 [MemoryDiagnoser]
 public class IntervalTreeNumberManagerBenchmark
 {
-    private const uint TextFields = 3;
-    private const uint NumberFields = 3;
-    private const uint BoolFields = 3;
+    private const int TextFields = 3;
+    private const int NumberFields = 3;
+    private const int BoolFields = 3;
     private INumberManager _100KNumberManager = null!;
     private INumberManager _10KNumberManager = null!;
     private INumberManager _1KNumberManager = null!;
@@ -42,7 +42,7 @@ public class IntervalTreeNumberManagerBenchmark
         for (var i = 0; i < itemsCount; i++)
         {
             numberManager.Add("template", documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields),
-                (ulong)i);
+                (long)i);
         }
 
         return numberManager;

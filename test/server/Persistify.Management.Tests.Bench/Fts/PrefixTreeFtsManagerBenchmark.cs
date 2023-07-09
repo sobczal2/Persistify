@@ -12,9 +12,9 @@ namespace Persistify.Management.Tests.Bench.Fts;
 [MemoryDiagnoser]
 public class PrefixTreeFtsManagerBenchmark
 {
-    private const uint TextFields = 3;
-    private const uint NumberFields = 3;
-    private const uint BoolFields = 3;
+    private const int TextFields = 3;
+    private const int NumberFields = 3;
+    private const int BoolFields = 3;
     private IFtsManager _100KBoolManager = null!;
     private IFtsManager _10KBoolManager = null!;
     private IFtsManager _1KBoolManager = null!;
@@ -46,7 +46,7 @@ public class PrefixTreeFtsManagerBenchmark
         for (var i = 0; i < itemsCount; i++)
         {
             ftsManager.Add("template", documentGenerator.GenerateDocument(TextFields, NumberFields, BoolFields),
-                (ulong)i);
+                (long)i);
         }
 
         return ftsManager;

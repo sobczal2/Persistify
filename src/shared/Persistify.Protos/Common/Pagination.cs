@@ -6,7 +6,7 @@ namespace Persistify.Protos.Common;
 public class Pagination
 {
     [DataMember(Order = 1)]
-    uint PageNumber { get; set; }
+    public int PageNumber { get; set; }
     [DataMember(Order = 2)]
-    uint PageSize { get; set; }
+    public int PageSize { get; set; }
 }

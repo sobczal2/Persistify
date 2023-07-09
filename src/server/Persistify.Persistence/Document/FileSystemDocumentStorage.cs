@@ -35,7 +35,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
         _logger.LogInformation("Created directory {Directory}", _fullPath);
     }
 
-    private string GetFilePath(string templateName, ulong documentId)
+    private string GetFilePath(string templateName, long documentId)
     {
         return Path.Combine(_fullPath, templateName, documentId.ToString("x8"));
     }
@@ -45,7 +45,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
         return Path.Combine(_fullPath, templateName);
     }
 
-    public ValueTask AddAsync(string templateName, ulong documentId, Protos.Documents.Shared.Document document)
+    public ValueTask AddAsync(string templateName, long documentId, Protos.Documents.Shared.Document document)
     {
         try
         {
@@ -62,7 +62,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
     }
 
 
-    public ValueTask<Protos.Documents.Shared.Document?> GetAsync(string templateName, ulong documentId)
+    public ValueTask<Protos.Documents.Shared.Document?> GetAsync(string templateName, long documentId)
     {
         try
         {
@@ -97,7 +97,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
         return ValueTask.FromResult<IEnumerable<Protos.Documents.Shared.Document>>(documents);
     }
 
-    public ValueTask DeleteAsync(string templateName, ulong documentId)
+    public ValueTask DeleteAsync(string templateName, long documentId)
     {
         try
         {

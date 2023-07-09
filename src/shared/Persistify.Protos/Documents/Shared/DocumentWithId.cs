@@ -6,7 +6,7 @@ namespace Persistify.Protos.Documents.Shared;
 public class DocumentWithId
 {
     [DataMember(Order = 1)]
-    public ulong Id { get; set; }
+    public long Id { get; set; }
 
     [DataMember(Order = 2)]
     public Document Document { get; set; } = default!;

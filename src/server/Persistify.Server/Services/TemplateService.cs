@@ -10,19 +10,24 @@ namespace Persistify.Server.Services;
 public class TemplateService : ITemplateService
 {
     private readonly AddTemplatePipeline _addTemplatePipeline;
+    private readonly ListTemplatesPipeline _listTemplatesPipeline;
 
-    public TemplateService(AddTemplatePipeline addTemplatePipeline)
+    public TemplateService(
+        AddTemplatePipeline addTemplatePipeline,
+        ListTemplatesPipeline listTemplatesPipeline
+        )
     {
         _addTemplatePipeline = addTemplatePipeline;
+        _listTemplatesPipeline = listTemplatesPipeline;
     }
     public async ValueTask<AddTemplateResponse> Add(AddTemplateRequest request, CallContext context)
     {
         return await _addTemplatePipeline.ProcessAsync(request);
     }
 
-    public ValueTask<ListTemplatesResponse> List(ListTemplatesRequest request, CallContext context)
+    public async ValueTask<ListTemplatesResponse> List(ListTemplatesRequest request, CallContext context)
     {
-        throw new System.NotImplementedException();
+        return await _listTemplatesPipeline.ProcessAsync(request);
     }
 
     public ValueTask<DeleteTemplateResponse> Delete(DeleteTemplateRequest request, CallContext context)

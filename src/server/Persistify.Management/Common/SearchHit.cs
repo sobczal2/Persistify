@@ -2,12 +2,12 @@
 
 public class SearchHit
 {
-    public SearchHit(ulong documentId, float boost)
+    public SearchHit(long documentId, float boost)
     {
         DocumentId = documentId;
         Boost = boost;
     }
 
-    public ulong DocumentId { get; set; }
+    public long DocumentId { get; set; }
     public float Boost { get; set; }
 }

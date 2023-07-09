@@ -10,5 +10,5 @@ public class SearchDocumentsResponse
     public DocumentWithId[] Documents { get; set; } = default!;
 
     [DataMember(Order = 2)]
-    public ulong TotalCount { get; set; }
+    public long TotalCount { get; set; }
 }

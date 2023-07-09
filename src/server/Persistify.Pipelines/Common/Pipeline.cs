@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
+using Serilog.Context;
 
 namespace Persistify.Pipelines.Common;
 
@@ -13,30 +14,33 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
     where TResponse : class
 {
     private readonly ILogger<Pipeline<TContext, TRequest, TResponse>> _logger;
-    protected abstract IEnumerable<PipelineStage<TContext, TRequest, TResponse>> PipelineStages { get; }
+    protected abstract PipelineStage<TContext, TRequest, TResponse>[] PipelineStages { get; }
 
     public Pipeline(
         ILogger<Pipeline<TContext, TRequest, TResponse>> logger
-        )
+    )
     {
         _logger = logger;
     }
 
     protected abstract TContext CreateContext(TRequest request);
 
+    protected abstract ValueTask WriteResponseAsync(TContext context);
+
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
         var context = CreateContext(request);
 
-        foreach (var stage in PipelineStages)
+        for (var i = 0; i < PipelineStages.Length; i++)
         {
-            // ReSharper disable once ConvertToLocalFunction
-            Action<Exception> onFailure = x => Throw(x, stage);
+            using var _ = LogContext.PushProperty("Stage", PipelineStages[i].Name);
 
-            (await stage.BeforeProcess(context)).OnFailure(onFailure);
-            (await stage.Process(context)).OnFailure(onFailure);
-            (await stage.AfterProcess(context)).OnFailure(onFailure);
+            var stageNumber = i;
+            await (await PipelineStages[i].ProcessAsync(context)).OnFailure(async x =>
+                await Throw(x, context, stageNumber));
         }
+
+        await WriteResponseAsync(context);
 
         if (context.Response is not null)
         {
@@ -44,18 +48,40 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
         }
 
         _logger.LogError("Response was not set in pipeline");
-        throw new InvalidOperationException("Response is null");
+        await Throw(new InvalidOperationException("Response is null"), context, PipelineStages.Length - 1);
+
+        throw new PipelineException();
     }
 
-    private void Throw(Exception exception, PipelineStage<TContext, TRequest, TResponse> stage)
+    private async ValueTask Throw(Exception exception, TContext context, int stageNumber)
     {
+        var stage = PipelineStages[stageNumber];
         if (exception is ExceptionWithStatus exceptionWithStatus)
         {
-            _logger.LogInformation("Pipeline stage {Stage} failed with status {Status}", stage.GetType().Name, exceptionWithStatus.Status);
+            _logger.LogInformation("Pipeline stage {Stage} failed with status {Status}", stage.Name,
+                exceptionWithStatus.Status);
+            await RollbackPreviousStagesAsync(stageNumber - 1, context);
             throw new RpcException(exceptionWithStatus.Status);
         }
 
-        _logger.LogError(exception, "Pipeline stage {Stage} failed with exception", stage.GetType().Name);
+        _logger.LogError(exception, "Pipeline stage {Stage} failed with exception", stage.Name);
+        await RollbackPreviousStagesAsync(stageNumber - 1, context);
         throw new RpcException(new Status(StatusCode.Internal, exception.Message));
+    }
+
+    private async ValueTask RollbackPreviousStagesAsync(int lastStageNumber, TContext context)
+    {
+        _logger.LogInformation("Rolling back pipeline stages");
+
+        for (var i = lastStageNumber; i >= 0; i--)
+        {
+            using var _ = LogContext.PushProperty("Stage", PipelineStages[i].Name);
+
+            var stage = PipelineStages[i];
+            (await stage.RollbackAsync(context)).OnFailure(x =>
+                _logger.LogError(x, "Rollback of stage {Stage} failed", stage.Name));
+        }
+
+        _logger.LogInformation("Pipeline stages rolled back");
     }
 }

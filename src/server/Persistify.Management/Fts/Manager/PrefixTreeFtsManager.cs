@@ -27,7 +27,7 @@ public class PrefixTreeFtsManager : IFtsManager
         _prefixTrees = new ConcurrentDictionary<TemplateFieldIdentifier, IPrefixTree<PrefixTreeFtsValue>>();
     }
 
-    public void Add(string templateName, Document document, ulong documentId)
+    public void Add(string templateName, Document document, long documentId)
     {
         foreach (var field in document.TextFields)
         {
@@ -54,7 +54,7 @@ public class PrefixTreeFtsManager : IFtsManager
         IScoreCalculator? scoreCalculator = null)
     {
         scoreCalculator ??= _defaultScoreCalculator;
-        var foundIds = new Dictionary<ulong, float>();
+        var foundIds = new Dictionary<long, float>();
 
         if (!_prefixTrees.TryGetValue(new TemplateFieldIdentifier(templateName, query.FieldName), out var prefixTree))
         {
@@ -95,7 +95,7 @@ public class PrefixTreeFtsManager : IFtsManager
         return result;
     }
 
-    public void Delete(string templateName, ulong documentId)
+    public void Delete(string templateName, long documentId)
     {
         // ReSharper disable once ConvertToLocalFunction
         Predicate<PrefixTreeFtsValue> predicate = x => x.DocumentId == documentId;
