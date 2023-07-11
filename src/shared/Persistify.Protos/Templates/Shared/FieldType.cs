@@ -5,12 +5,9 @@ namespace Persistify.Protos.Templates.Shared;
 [DataContract]
 public enum FieldType
 {
-    [EnumMember]
-    Text = 0,
+    [EnumMember] Text = 0,
 
-    [EnumMember]
-    Number = 1,
+    [EnumMember] Number = 1,
 
-    [EnumMember]
-    Bool = 2,
+    [EnumMember] Bool = 2
 }

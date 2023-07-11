@@ -2,7 +2,6 @@ using System;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
-using Persistify.Server.Configuration.Extensions;
 using Persistify.Server.Extensions;
 using Serilog;
 
@@ -13,7 +12,9 @@ Log.Logger = new LoggerConfiguration()
     .CreateBootstrapLogger();
 try
 {
-    var version = Assembly.GetEntryAssembly()!.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+    var version = Assembly
+        .GetEntryAssembly()!
+        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
         ?.InformationalVersion;
 
     builder.Logging.ClearProviders();
@@ -21,7 +22,7 @@ try
     builder.Services.AddServicesConfiguration(builder.Configuration);
     builder.Host.AddHostConfiguration();
 
-    Log.Information("Persistify Server v{Version} starting up...", version);
+    Log.Information("Persistify Server {Version} starting up...", version);
 
     var app = builder.Build();
 

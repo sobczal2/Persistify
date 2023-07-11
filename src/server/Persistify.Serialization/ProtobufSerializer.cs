@@ -1,6 +1,4 @@
-﻿using System;
-using System.Buffers;
-using System.IO;
+﻿using System.IO;
 using Persistify.Protos.Documents.Shared;
 using Persistify.Protos.Templates.Shared;
 using ProtoBuf;
@@ -14,6 +12,7 @@ public class ProtobufSerializer : ISerializer
         Serializer.PrepareSerializer<Template>();
         Serializer.PrepareSerializer<Document>();
     }
+
     public void Serialize<T>(Stream stream, T obj)
     {
         Serializer.Serialize(stream, obj);

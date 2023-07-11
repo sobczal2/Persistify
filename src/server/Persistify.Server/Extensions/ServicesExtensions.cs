@@ -5,12 +5,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Management;
 using Persistify.Persistance;
+using Persistify.Pipelines;
 using Persistify.Serialization;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Validation;
 using ProtoBuf.Grpc.Server;
 
-namespace Persistify.Server.Configuration.Extensions;
+namespace Persistify.Server.Extensions;
 
 public static class ServicesExtensions
 {
@@ -61,6 +64,9 @@ public static class ServicesExtensions
 
         services.AddPersistence();
         services.AddSerialization();
+        services.AddManagement();
+        services.AddValidation();
+        services.AddPipelines();
 
         return services;
     }

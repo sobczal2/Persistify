@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="protobuf-net" Version="3.2.26" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="protobuf-net" Version="3.2.26"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
+  </ItemGroup>
 
 </Project>

@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.DataStructures\Persistify.DataStructures.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.DataStructures\Persistify.DataStructures.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
+    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj"/>
   </ItemGroup>
 
 </Project>

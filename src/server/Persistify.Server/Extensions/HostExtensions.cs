@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Persistify.Server.Configuration.Settings;
 using Serilog;
-using Serilog.Context;
 
 namespace Persistify.Server.Extensions;
 
@@ -13,7 +12,8 @@ public static class HostExtensions
     {
         host.UseSerilog((context, services, configuration) =>
         {
-            var loggingSettings = context.Configuration.GetSection("Logging").Get<LoggingSettings>() ?? throw new InvalidOperationException("Logging settings are not configured");
+            var loggingSettings = context.Configuration.GetSection("Logging").Get<LoggingSettings>() ??
+                                  throw new InvalidOperationException("Logging settings are not configured");
             configuration
                 .WriteTo.Logger(lc => lc
                     .MinimumLevel.Is(loggingSettings.Default)
@@ -29,10 +29,12 @@ public static class HostExtensions
                 .Enrich.FromLogContext();
 
             if (loggingSettings.Seq is not null)
+            {
                 configuration
                     .WriteTo.Logger(lc => lc
                         .MinimumLevel.Is(loggingSettings.Default)
                         .WriteTo.Seq(loggingSettings.Seq));
+            }
         });
 
         return host;

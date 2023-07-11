@@ -6,11 +6,11 @@ namespace Persistify.DataStructures.Test;
 
 public class PrefixTreeTest
 {
-    private readonly PrefixTree<ulong> _prefixTree;
+    private readonly PrefixTree<long> _prefixTree;
 
     public PrefixTreeTest()
     {
-        _prefixTree = new PrefixTree<ulong>();
+        _prefixTree = new PrefixTree<long>();
     }
 
     [Fact]
@@ -18,7 +18,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
 
         // Act
         _prefixTree.Add(key, value);
@@ -34,8 +34,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
 
         // Act
         _prefixTree.Add(key, value1);
@@ -54,7 +54,7 @@ public class PrefixTreeTest
         // Arrange
         const string key1 = "test1";
         const string key2 = "test2";
-        const ulong value = 1;
+        const long value = 1;
 
         // Act
         _prefixTree.Add(key1, value);
@@ -75,7 +75,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -91,7 +91,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -107,7 +107,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -123,7 +123,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -139,7 +139,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -155,7 +155,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -171,7 +171,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -186,7 +186,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -201,7 +201,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -216,8 +216,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -235,8 +235,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -254,8 +254,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -273,8 +273,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -292,8 +292,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -311,8 +311,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -330,7 +330,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -345,7 +345,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act
@@ -360,8 +360,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -377,8 +377,8 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value1 = 1;
-        const ulong value2 = 2;
+        const long value1 = 1;
+        const long value2 = 2;
         _prefixTree.Add(key, value1);
         _prefixTree.Add(key, value2);
 
@@ -395,7 +395,7 @@ public class PrefixTreeTest
     {
         // Arrange
         const string key = "test";
-        const ulong value = 1;
+        const long value = 1;
         _prefixTree.Add(key, value);
 
         // Act

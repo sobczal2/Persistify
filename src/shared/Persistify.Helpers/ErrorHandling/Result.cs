@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Persistify.Helpers.ErrorHandling;
 
@@ -39,7 +40,7 @@ public readonly struct Result<T>
         return result._exception ?? throw new InvalidOperationException();
     }
 
-    public bool IsSuccess => _value is not null;
+    public bool IsSuccess => _exception is null;
     public bool IsFailure => _exception is not null;
 
     public T Value => _value ?? throw new InvalidOperationException();
@@ -65,7 +66,27 @@ public readonly struct Result<T>
         return this;
     }
 
-    public T Match(Func<T, T> onSuccess, Func<Exception, T> onFailure)
+    public async ValueTask<Result<T>> OnSuccess(Func<T, ValueTask> action)
+    {
+        if (IsSuccess)
+        {
+            await action(Value);
+        }
+
+        return this;
+    }
+
+    public async ValueTask<Result<T>> OnFailure(Func<Exception, ValueTask> action)
+    {
+        if (IsFailure)
+        {
+            await action(Exception);
+        }
+
+        return this;
+    }
+
+    public TRes Match<TRes>(Func<T, TRes> onSuccess, Func<Exception, TRes> onFailure)
     {
         return IsSuccess ? onSuccess(Value) : onFailure(Exception);
     }
@@ -112,6 +133,26 @@ public readonly struct Result
         if (IsFailure)
         {
             action(Exception);
+        }
+
+        return this;
+    }
+
+    public async ValueTask<Result> OnSuccess(Func<ValueTask> action)
+    {
+        if (IsSuccess)
+        {
+            await action();
+        }
+
+        return this;
+    }
+
+    public async ValueTask<Result> OnFailure(Func<Exception, ValueTask> action)
+    {
+        if (IsFailure)
+        {
+            await action(Exception);
         }
 
         return this;

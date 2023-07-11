@@ -10,10 +10,10 @@ namespace Persistify.Persistance.Document;
 
 public class FileSystemDocumentStorage : IDocumentStorage
 {
-    private readonly ISerializer _serializer;
-    private readonly ILogger<FileSystemDocumentStorage> _logger;
     private const string DirectoryName = "Documents";
     private readonly string _fullPath;
+    private readonly ILogger<FileSystemDocumentStorage> _logger;
+    private readonly ISerializer _serializer;
 
     public FileSystemDocumentStorage(
         ISerializer serializer,
@@ -35,17 +35,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
         _logger.LogInformation("Created directory {Directory}", _fullPath);
     }
 
-    private string GetFilePath(string templateName, ulong documentId)
-    {
-        return Path.Combine(_fullPath, templateName, documentId.ToString("x8"));
-    }
-
-    private string GetDirectoryPath(string templateName)
-    {
-        return Path.Combine(_fullPath, templateName);
-    }
-
-    public ValueTask AddAsync(string templateName, ulong documentId, Protos.Documents.Shared.Document document)
+    public ValueTask AddAsync(string templateName, long documentId, Protos.Documents.Shared.Document document)
     {
         try
         {
@@ -62,7 +52,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
     }
 
 
-    public ValueTask<Protos.Documents.Shared.Document?> GetAsync(string templateName, ulong documentId)
+    public ValueTask<Protos.Documents.Shared.Document?> GetAsync(string templateName, long documentId)
     {
         try
         {
@@ -87,7 +77,8 @@ public class FileSystemDocumentStorage : IDocumentStorage
             {
                 using var fileStream = File.OpenRead(files[i]);
                 documents[i] = _serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream);
-            } catch (IOException)
+            }
+            catch (IOException)
             {
                 _logger.LogWarning("Could not read document {DocumentId} for template {TemplateName}", files[i],
                     templateName);
@@ -97,7 +88,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
         return ValueTask.FromResult<IEnumerable<Protos.Documents.Shared.Document>>(documents);
     }
 
-    public ValueTask DeleteAsync(string templateName, ulong documentId)
+    public ValueTask DeleteAsync(string templateName, long documentId)
     {
         try
         {
@@ -126,5 +117,15 @@ public class FileSystemDocumentStorage : IDocumentStorage
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    private string GetFilePath(string templateName, long documentId)
+    {
+        return Path.Combine(_fullPath, templateName, documentId.ToString("x8"));
+    }
+
+    private string GetDirectoryPath(string templateName)
+    {
+        return Path.Combine(_fullPath, templateName);
     }
 }

@@ -1,11 +1,13 @@
-using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Persistify.Management.Template;
 using Persistify.Server.Middlewares;
 using Persistify.Server.Services;
 using ProtoBuf.Grpc.Server;
+using Serilog;
 
-namespace Persistify.Server.Configuration.Extensions;
+namespace Persistify.Server.Extensions;
 
 public static class AppExtensions
 {
@@ -17,10 +19,16 @@ public static class AppExtensions
         app.UseAuthorization();
         app.MapCodeFirstGrpcReflectionService();
         app.MapGrpcService<DocumentService>();
+        app.MapGrpcService<TemplateService>();
     }
 
-    public static void LoadPersistify(this WebApplication app)
+    public static async ValueTask LoadPersistify(this WebApplication app)
     {
+        using var scope = app.Services.CreateScope();
+        var templateManager = scope.ServiceProvider.GetRequiredService<ITemplateManager>();
 
+        Log.Logger.Information("Loading templates...");
+        await templateManager.LoadAsync();
+        Log.Logger.Information("Templates loaded");
     }
 }

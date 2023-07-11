@@ -7,14 +7,15 @@ namespace Persistify.Management.Template;
 
 public class DictionaryTemplateManager : ITemplateManager
 {
-    private readonly ITemplateStorage _templateStorage;
     private readonly ConcurrentDictionary<string, Protos.Templates.Shared.Template> _templates;
+    private readonly ITemplateStorage _templateStorage;
 
     public DictionaryTemplateManager(ITemplateStorage templateStorage)
     {
         _templateStorage = templateStorage;
         _templates = new ConcurrentDictionary<string, Protos.Templates.Shared.Template>();
     }
+
     public async ValueTask AddAsync(Protos.Templates.Shared.Template template)
     {
         _templates.TryAdd(template.Name, template);
@@ -24,6 +25,11 @@ public class DictionaryTemplateManager : ITemplateManager
     public Protos.Templates.Shared.Template? Get(string templateName)
     {
         return _templates.TryGetValue(templateName, out var template) ? template : null;
+    }
+
+    public bool Exists(string templateName)
+    {
+        return _templates.ContainsKey(templateName);
     }
 
     public IEnumerable<Protos.Templates.Shared.Template> GetAll()

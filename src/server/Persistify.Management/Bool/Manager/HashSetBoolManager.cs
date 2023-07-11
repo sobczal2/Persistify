@@ -14,17 +14,17 @@ public class HashSetBoolManager : IBoolManager
     private readonly IScoreCalculator _defaultScoreCalculator;
 
     // HashSets are slow, reconsider using a different data structure
-    private readonly ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>> _falseHashSets;
-    private readonly ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>> _trueHashSets;
+    private readonly ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>> _falseHashSets;
+    private readonly ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>> _trueHashSets;
 
     public HashSetBoolManager(IScoreCalculator defaultScoreCalculator)
     {
         _defaultScoreCalculator = defaultScoreCalculator;
-        _trueHashSets = new ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>>();
-        _falseHashSets = new ConcurrentDictionary<TemplateFieldIdentifier, HashSet<ulong>>();
+        _trueHashSets = new ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>>();
+        _falseHashSets = new ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>>();
     }
 
-    public void Add(string templateName, Document document, ulong documentId)
+    public void Add(string templateName, Document document, long documentId)
     {
         foreach (var field in document.BoolFields)
         {
@@ -45,7 +45,7 @@ public class HashSetBoolManager : IBoolManager
                Enumerable.Empty<BoolSearchHit>();
     }
 
-    public void Delete(string templateName, ulong documentId)
+    public void Delete(string templateName, long documentId)
     {
         foreach (var hashSet in _trueHashSets.Values)
         {
@@ -60,14 +60,14 @@ public class HashSetBoolManager : IBoolManager
         DropEmptyHashSets();
     }
 
-    private ISet<ulong> GetOrAddHashSet(string templateName, string fieldName, bool value)
+    private ISet<long> GetOrAddHashSet(string templateName, string fieldName, bool value)
     {
         return value
-            ? _trueHashSets.GetOrAdd(new TemplateFieldIdentifier(templateName, fieldName), _ => new HashSet<ulong>())
-            : _falseHashSets.GetOrAdd(new TemplateFieldIdentifier(templateName, fieldName), _ => new HashSet<ulong>());
+            ? _trueHashSets.GetOrAdd(new TemplateFieldIdentifier(templateName, fieldName), _ => new HashSet<long>())
+            : _falseHashSets.GetOrAdd(new TemplateFieldIdentifier(templateName, fieldName), _ => new HashSet<long>());
     }
 
-    private IEnumerable<ulong>? GetHashSet(string templateName, string fieldName, bool value)
+    private IEnumerable<long>? GetHashSet(string templateName, string fieldName, bool value)
     {
         return value
             ? _trueHashSets.TryGetValue(new TemplateFieldIdentifier(templateName, fieldName), out var hashSet)

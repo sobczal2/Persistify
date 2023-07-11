@@ -8,6 +8,7 @@ public class LoggingSettingsValidator : AbstractValidator<LoggingSettings>
     {
         RuleFor(x => x.Default)
             .IsInEnum()
-            .WithMessage("The default log level must be one of the following: Verbose, Debug, Information, Warning, Error, Fatal");
+            .WithMessage(
+                "The default log level must be one of the following: Verbose, Debug, Information, Warning, Error, Fatal");
     }
 }

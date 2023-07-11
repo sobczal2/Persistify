@@ -4,14 +4,14 @@ namespace Persistify.Management.Number.Search;
 
 public class IntervalTreeNumberValue : IComparable<IntervalTreeNumberValue>, IComparable<double>
 {
-    public IntervalTreeNumberValue(double value, ulong documentId)
+    public IntervalTreeNumberValue(double value, long documentId)
     {
         Value = value;
         DocumentId = documentId;
     }
 
     public double Value { get; set; }
-    public ulong DocumentId { get; set; }
+    public long DocumentId { get; set; }
 
     public int CompareTo(double other)
     {

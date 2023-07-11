@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Persistify.Protos.Templates.Shared;
 
 namespace Persistify.Protos.Templates.Responses;
@@ -6,9 +7,7 @@ namespace Persistify.Protos.Templates.Responses;
 [DataContract]
 public class ListTemplatesResponse
 {
-    [DataMember(Order = 1)]
-    public Template[] Templates { get; set; } = default!;
+    [DataMember(Order = 1)] public List<Template> Templates { get; set; } = default!;
 
-    [DataMember(Order = 2)]
-    public ulong TotalCount { get; set; }
+    [DataMember(Order = 2)] public long TotalCount { get; set; }
 }
