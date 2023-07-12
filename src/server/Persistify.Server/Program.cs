@@ -26,10 +26,6 @@ try
 
     var app = builder.Build();
 
-    Log.Information("Persistify Loading...");
-    app.LoadPersistify();
-    Log.Information("Persistify Loaded");
-
     app.UsePersistify();
 
     app.Run();

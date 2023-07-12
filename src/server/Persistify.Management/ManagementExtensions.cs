@@ -19,6 +19,8 @@ public static class ManagementExtensions
         services.AddSingleton<IFtsManager, PrefixTreeFtsManager>();
         services.AddSingleton<ITokenizer, DefaultTokenizer>();
 
+        services.AddHostedService<TemplateManagerHostedService>();
+
         return services;
     }
 }

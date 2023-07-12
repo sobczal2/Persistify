@@ -45,6 +45,16 @@ public static class SettingsExtensions
 
         services.Configure<LoggingSettings>(loggingSettingsSection);
 
+        var hostedServicesSettingsSection = configuration
+            .GetRequiredSection(HostedServicesSettings.SectionName);
+
+        var hostedServicesSettingsValidator = new HostedServicesSettingsValidator();
+        hostedServicesSettingsValidator.ValidateAndThrow(hostedServicesSettingsSection.Get<HostedServicesSettings>() ??
+                                                         throw new InvalidOperationException(
+                                                             $"Could not load {HostedServicesSettings.SectionName} from configuration"));
+
+        services.Configure<HostedServicesSettings>(hostedServicesSettingsSection);
+
         return services;
     }
 }
