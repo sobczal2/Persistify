@@ -5,10 +5,12 @@ namespace Persistify.Management.Template;
 
 public interface ITemplateManager
 {
+    long GetNextId(string templateName);
     ValueTask AddAsync(Protos.Templates.Shared.Template template);
     Protos.Templates.Shared.Template? Get(string templateName);
     bool Exists(string templateName);
     IEnumerable<Protos.Templates.Shared.Template> GetAll();
     ValueTask DeleteAsync(string templateName);
     ValueTask LoadAsync();
+    ValueTask SaveAsync();
 }

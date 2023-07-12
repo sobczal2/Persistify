@@ -27,6 +27,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
 
         if (Directory.Exists(_fullPath))
         {
+            _logger.LogInformation("Found directory {Directory}, skipping creation", _fullPath);
             return;
         }
 
@@ -37,32 +38,17 @@ public class FileSystemDocumentStorage : IDocumentStorage
 
     public ValueTask AddAsync(string templateName, long documentId, Protos.Documents.Shared.Document document)
     {
-        try
-        {
-            using var fileStream = File.Create(GetFilePath(templateName, documentId));
-            _serializer.Serialize(fileStream, document);
-        }
-        catch (IOException)
-        {
-            _logger.LogWarning("Could not write document {DocumentId} for template {TemplateName}", documentId,
-                templateName);
-        }
+        using var fileStream = File.Create(GetFilePath(templateName, documentId));
+        _serializer.Serialize(fileStream, document);
 
         return ValueTask.CompletedTask;
     }
 
 
-    public ValueTask<Protos.Documents.Shared.Document?> GetAsync(string templateName, long documentId)
+    public ValueTask<Protos.Documents.Shared.Document> GetAsync(string templateName, long documentId)
     {
-        try
-        {
-            using var fileStream = File.OpenRead(GetFilePath(templateName, documentId));
-            return ValueTask.FromResult(_serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream))!;
-        }
-        catch (FileNotFoundException)
-        {
-            return ValueTask.FromResult<Protos.Documents.Shared.Document?>(null);
-        }
+        using var fileStream = File.OpenRead(GetFilePath(templateName, documentId));
+        return ValueTask.FromResult(_serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream))!;
     }
 
     public ValueTask<IEnumerable<Protos.Documents.Shared.Document>> GetAllAsync(string templateName)
@@ -73,32 +59,21 @@ public class FileSystemDocumentStorage : IDocumentStorage
 
         for (var i = 0; i < files.Length; i++)
         {
-            try
-            {
-                using var fileStream = File.OpenRead(files[i]);
-                documents[i] = _serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream);
-            }
-            catch (IOException)
-            {
-                _logger.LogWarning("Could not read document {DocumentId} for template {TemplateName}", files[i],
-                    templateName);
-            }
+            using var fileStream = File.OpenRead(files[i]);
+            documents[i] = _serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream);
         }
 
         return ValueTask.FromResult<IEnumerable<Protos.Documents.Shared.Document>>(documents);
     }
 
+    public ValueTask<bool> ExistsAsync(string templateName, long documentId)
+    {
+        return ValueTask.FromResult(File.Exists(GetFilePath(templateName, documentId)));
+    }
+
     public ValueTask DeleteAsync(string templateName, long documentId)
     {
-        try
-        {
-            File.Delete(GetFilePath(templateName, documentId));
-        }
-        catch (IOException)
-        {
-            _logger.LogWarning("Could not delete document {DocumentId} for template {TemplateName}", documentId,
-                templateName);
-        }
+        File.Delete(GetFilePath(templateName, documentId));
 
         return ValueTask.CompletedTask;
     }
@@ -107,14 +82,7 @@ public class FileSystemDocumentStorage : IDocumentStorage
     public ValueTask InitializeForTemplateAsync(string templateName)
     {
         var directoryPath = GetDirectoryPath(templateName);
-        try
-        {
-            Directory.CreateDirectory(directoryPath);
-        }
-        catch (IOException)
-        {
-            _logger.LogWarning("Directory {Directory} already exists", directoryPath);
-        }
+        Directory.CreateDirectory(directoryPath);
 
         return ValueTask.CompletedTask;
     }

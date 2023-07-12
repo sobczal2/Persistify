@@ -84,7 +84,7 @@ public class HashSetBoolManager : IBoolManager
         {
             if (!_trueHashSets.TryRemove(key, out _))
             {
-                throw new ManagerErrorException("Failed to remove empty hash set. This may be a concurrency issue.");
+                throw new ManagerException("Failed to remove empty hash set. This may be a concurrency issue.");
             }
         }
 
@@ -92,7 +92,7 @@ public class HashSetBoolManager : IBoolManager
         {
             if (!_falseHashSets.TryRemove(key, out _))
             {
-                throw new ManagerErrorException("Failed to remove empty hash set. This may be a concurrency issue.");
+                throw new ManagerException("Failed to remove empty hash set. This may be a concurrency issue.");
             }
         }
     }
