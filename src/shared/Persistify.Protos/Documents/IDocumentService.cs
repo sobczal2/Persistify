@@ -13,7 +13,7 @@ public interface IDocumentService
     ValueTask<AddDocumentsResponse> Add(AddDocumentsRequest request, CallContext context);
 
     [OperationContract]
-    ValueTask<GetDocumentsResponse> Get(GetDocumentsRequest request, CallContext context);
+    ValueTask<GetDocumentResponse> Get(GetDocumentRequest request, CallContext context);
 
     [OperationContract]
     ValueTask<SearchDocumentsResponse> Search(SearchDocumentsRequest request, CallContext context);

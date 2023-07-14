@@ -1,9 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Persistify.Management.Bool.Manager;
+using Persistify.Management.Bool.Search;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
-using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
 
 namespace Persistify.Management.Tests.Bench.Bool;
 
@@ -16,7 +15,7 @@ public class HashSetBoolManagerBenchmark
     private IBoolManager _100KBoolManager = null!;
     private IBoolManager _10KBoolManager = null!;
     private IBoolManager _1KBoolManager = null!;
-    private Document _benchmarkDocument = null!;
+    private Protos.Documents.Shared.Document _benchmarkDocument = null!;
 
     private IBoolManager _emptyBoolManager = null!;
     private IScoreCalculator _scoreCalculator = null!;

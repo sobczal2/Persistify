@@ -45,10 +45,16 @@ public class FileSystemDocumentStorage : IDocumentStorage
     }
 
 
-    public ValueTask<Protos.Documents.Shared.Document> GetAsync(string templateName, long documentId)
+    public ValueTask<Protos.Documents.Shared.Document?> GetAsync(string templateName, long documentId)
     {
+        if (!File.Exists(GetFilePath(templateName, documentId)))
+        {
+            return ValueTask.FromResult<Protos.Documents.Shared.Document?>(null);
+        }
+
         using var fileStream = File.OpenRead(GetFilePath(templateName, documentId));
-        return ValueTask.FromResult(_serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream))!;
+        return ValueTask.FromResult<Protos.Documents.Shared.Document?>(
+            _serializer.Deserialize<Protos.Documents.Shared.Document>(fileStream));
     }
 
     public ValueTask<IEnumerable<Protos.Documents.Shared.Document>> GetAllAsync(string templateName)
@@ -78,11 +84,18 @@ public class FileSystemDocumentStorage : IDocumentStorage
         return ValueTask.CompletedTask;
     }
 
-
-    public ValueTask InitializeForTemplateAsync(string templateName)
+    public ValueTask AddSpaceForTemplateAsync(string templateName)
     {
         var directoryPath = GetDirectoryPath(templateName);
         Directory.CreateDirectory(directoryPath);
+
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask DeleteSpaceForTemplateAsync(string templateName)
+    {
+        var directoryPath = GetDirectoryPath(templateName);
+        Directory.Delete(directoryPath, true);
 
         return ValueTask.CompletedTask;
     }

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Exceptions;
 using Persistify.Pipelines.Shared.Stages;
@@ -39,12 +38,9 @@ public class ListTemplatesPipeline : Pipeline<ListTemplatesContext, ListTemplate
         return new ListTemplatesContext { Request = request };
     }
 
-    protected override ValueTask<ListTemplatesResponse> CreateResonse(ListTemplatesContext context)
+    protected override ListTemplatesResponse CreateResponse(ListTemplatesContext context)
     {
-        return ValueTask.FromResult(new ListTemplatesResponse
-        {
-            Templates = context.Templates ?? throw new PipelineException(),
-            TotalCount = context.TotalCount ?? throw new PipelineException()
-        });
+        return new ListTemplatesResponse(context.Templates ?? throw new PipelineException(),
+            context.TotalCount ?? throw new PipelineException());
     }
 }

@@ -25,7 +25,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -33,7 +33,7 @@ public class PrefixTreeFtsManagerTest
                 new TextField { FieldName = "field2", Value = "hello world" }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -61,7 +61,7 @@ public class PrefixTreeFtsManagerTest
         // Arrange
         const string templateName1 = "template1";
         const string templateName2 = "template2";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -69,7 +69,7 @@ public class PrefixTreeFtsManagerTest
                 new TextField { FieldName = "field2", Value = "hello world" }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -101,7 +101,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -109,7 +109,7 @@ public class PrefixTreeFtsManagerTest
                 new TextField { FieldName = "field2", Value = "hello world" }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -133,7 +133,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -141,7 +141,7 @@ public class PrefixTreeFtsManagerTest
                 new TextField { FieldName = "field2", Value = "hello world" }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -165,7 +165,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -188,7 +188,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -212,7 +212,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -235,7 +235,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -259,7 +259,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -283,7 +283,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -307,7 +307,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -331,7 +331,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -355,7 +355,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -378,7 +378,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -402,7 +402,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {
@@ -426,7 +426,7 @@ public class PrefixTreeFtsManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             TextFields = new[]
             {

@@ -25,7 +25,7 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 
     protected abstract TContext CreateContext(TRequest request);
 
-    protected abstract ValueTask<TResponse> CreateResonse(TContext context);
+    protected abstract TResponse CreateResponse(TContext context);
 
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
@@ -49,7 +49,7 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
                 stopwatch.Elapsed.TotalMicroseconds);
         }
 
-        return await CreateResonse(context);
+        return CreateResponse(context);
     }
 
     private async ValueTask Throw(Exception exception, TContext context, int stageNumber)

@@ -5,7 +5,14 @@ namespace Persistify.Protos.Documents.Shared;
 [DataContract]
 public class NumberQuery
 {
-    [DataMember(Order = 1)] public string FieldName { get; set; } = default!;
+    public NumberQuery()
+    {
+        FieldName = null!;
+        MinValue = default;
+        MaxValue = default;
+    }
+
+    [DataMember(Order = 1)] public string FieldName { get; set; }
 
     [DataMember(Order = 2)] public double MinValue { get; set; }
 

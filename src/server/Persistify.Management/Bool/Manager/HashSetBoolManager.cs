@@ -4,8 +4,6 @@ using System.Linq;
 using Persistify.Management.Bool.Search;
 using Persistify.Management.Common;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents.Shared;
-using BoolQuery = Persistify.Management.Bool.Search.BoolQuery;
 
 namespace Persistify.Management.Bool.Manager;
 
@@ -24,7 +22,7 @@ public class HashSetBoolManager : IBoolManager
         _falseHashSets = new ConcurrentDictionary<TemplateFieldIdentifier, HashSet<long>>();
     }
 
-    public void Add(string templateName, Document document, long documentId)
+    public void Add(string templateName, Protos.Documents.Shared.Document document, long documentId)
     {
         foreach (var field in document.BoolFields)
         {

@@ -6,7 +6,13 @@ namespace Persistify.Protos.Documents.Responses;
 [DataContract]
 public class SearchDocumentsResponse
 {
-    [DataMember(Order = 1)] public DocumentWithId[] Documents { get; set; } = default!;
+    public SearchDocumentsResponse(DocumentWithId[] documents, long totalCount)
+    {
+        Documents = documents;
+        TotalCount = totalCount;
+    }
+
+    [DataMember(Order = 1)] public DocumentWithId[] Documents { get; set; }
 
     [DataMember(Order = 2)] public long TotalCount { get; set; }
 }

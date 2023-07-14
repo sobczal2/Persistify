@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Shared.Stages;
 using Persistify.Pipelines.Template.DeleteTemplate.Stages;
@@ -42,8 +41,8 @@ public class DeleteTemplatePipeline : Pipeline<DeleteTemplateContext, DeleteTemp
         return new DeleteTemplateContext { Request = request };
     }
 
-    protected override ValueTask<DeleteTemplateResponse> CreateResonse(DeleteTemplateContext context)
+    protected override DeleteTemplateResponse CreateResponse(DeleteTemplateContext context)
     {
-        return ValueTask.FromResult(new DeleteTemplateResponse());
+        return new DeleteTemplateResponse();
     }
 }

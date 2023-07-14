@@ -22,7 +22,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -30,7 +30,7 @@ public class HashSetBoolManagerTest
                 new BoolField { FieldName = "field2", Value = false }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -66,7 +66,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName1 = "template1";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -75,7 +75,7 @@ public class HashSetBoolManagerTest
             }
         };
         const string templateName2 = "template2";
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -137,7 +137,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -160,7 +160,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -183,7 +183,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -191,7 +191,7 @@ public class HashSetBoolManagerTest
                 new BoolField { FieldName = "field2", Value = false }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -216,7 +216,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -224,7 +224,7 @@ public class HashSetBoolManagerTest
                 new BoolField { FieldName = "field2", Value = true }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -250,7 +250,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {
@@ -282,7 +282,7 @@ public class HashSetBoolManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             BoolFields = new[]
             {

@@ -22,7 +22,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -30,7 +30,7 @@ public class IntervalTreeNumberManagerTest
                 new NumberField { FieldName = "field2", Value = 2 }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -65,7 +65,7 @@ public class IntervalTreeNumberManagerTest
         // Arrange
         const string templateName1 = "template1";
         const string templateName2 = "template2";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -73,7 +73,7 @@ public class IntervalTreeNumberManagerTest
                 new NumberField { FieldName = "field2", Value = 2 }
             }
         };
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -117,7 +117,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -139,7 +139,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -161,7 +161,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -183,7 +183,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -205,7 +205,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -227,7 +227,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -250,7 +250,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document = new Document
+        var document = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -273,7 +273,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -283,7 +283,7 @@ public class IntervalTreeNumberManagerTest
         };
         _sut.Add(templateName, document1, 1);
 
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -307,7 +307,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -317,7 +317,7 @@ public class IntervalTreeNumberManagerTest
         };
         _sut.Add(templateName, document1, 1);
 
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -343,7 +343,7 @@ public class IntervalTreeNumberManagerTest
     {
         // Arrange
         const string templateName = "template";
-        var document1 = new Document
+        var document1 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {
@@ -353,7 +353,7 @@ public class IntervalTreeNumberManagerTest
         };
         _sut.Add(templateName, document1, 1);
 
-        var document2 = new Document
+        var document2 = new Protos.Documents.Shared.Document
         {
             NumberFields = new[]
             {

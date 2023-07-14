@@ -6,17 +6,24 @@ namespace Persistify.Validation.Template.Requests;
 
 public class DeleteTemplateRequestValidator : IValidator<DeleteTemplateRequest>
 {
+    public DeleteTemplateRequestValidator()
+    {
+        ErrorPrefix = "DeleteTemplateRequest";
+    }
+
+    public string ErrorPrefix { get; set; }
+
     public Result<Unit> Validate(DeleteTemplateRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
         {
-            return new ValidationException("DeleteTemplateRequest", "Request is null");
+            return new ValidationException(ErrorPrefix, "Request is null");
         }
 
         if (string.IsNullOrEmpty(value.TemplateName))
         {
-            return new ValidationException("DeleteTemplateRequest", "TemplateName is null or empty");
+            return new ValidationException(ErrorPrefix, "TemplateName is null or empty");
         }
 
         return new Result<Unit>(Unit.Value);

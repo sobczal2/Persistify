@@ -1,9 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Persistify.Management.Number.Manager;
+using Persistify.Management.Number.Search;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
-using NumberQuery = Persistify.Management.Number.Search.NumberQuery;
 
 namespace Persistify.Management.Tests.Bench.Number;
 
@@ -16,7 +15,7 @@ public class IntervalTreeNumberManagerBenchmark
     private INumberManager _100KNumberManager = null!;
     private INumberManager _10KNumberManager = null!;
     private INumberManager _1KNumberManager = null!;
-    private Document _benchmarkDocument = null!;
+    private Protos.Documents.Shared.Document _benchmarkDocument = null!;
 
     private INumberManager _emptyBoolManager = null!;
     private IScoreCalculator _scoreCalculator = null!;

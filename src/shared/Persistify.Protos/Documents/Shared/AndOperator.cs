@@ -1,10 +1,20 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Persistify.Protos.Documents.Shared;
 
 [DataContract]
 public class AndOperator
 {
+    public AndOperator()
+    {
+        OrOperators = Array.Empty<OrOperator>();
+        NotOperators = Array.Empty<NotOperator>();
+        FtsQueries = Array.Empty<FtsQuery>();
+        NumberQueries = Array.Empty<NumberQuery>();
+        BoolQueries = Array.Empty<BoolQuery>();
+    }
+
     [DataMember(Order = 1)] public OrOperator[] OrOperators { get; set; } = default!;
 
     [DataMember(Order = 2)] public NotOperator[] NotOperators { get; set; } = default!;

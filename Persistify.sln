@@ -40,6 +40,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Persistence", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Serialization", "src\server\Persistify.Serialization\Persistify.Serialization.csproj", "{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.HostedServices", "src\server\Persistify.HostedServices\Persistify.HostedServices.csproj", "{5E6B1010-50AA-4E84-B429-C54B14C3EE18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Cache", "src\server\Persistify.Cache\Persistify.Cache.csproj", "{A6C63CD5-6E2B-49A2-9DB1-91040B2E668A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +106,14 @@ Global
 		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E6B1010-50AA-4E84-B429-C54B14C3EE18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E6B1010-50AA-4E84-B429-C54B14C3EE18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E6B1010-50AA-4E84-B429-C54B14C3EE18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E6B1010-50AA-4E84-B429-C54B14C3EE18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6C63CD5-6E2B-49A2-9DB1-91040B2E668A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6C63CD5-6E2B-49A2-9DB1-91040B2E668A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6C63CD5-6E2B-49A2-9DB1-91040B2E668A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6C63CD5-6E2B-49A2-9DB1-91040B2E668A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -122,5 +134,7 @@ Global
 		{AC2DFC8C-D07F-484B-B0C5-63A6D9BAB5E4} = {54E83F82-5AA4-4BFC-8A9E-5C792D1F6B94}
 		{6E3E627D-C81A-42E6-ABF1-61B58737D504} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{B9E1E2DB-80E1-4C7D-91E2-17E0C541CABC} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{5E6B1010-50AA-4E84-B429-C54B14C3EE18} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{A6C63CD5-6E2B-49A2-9DB1-91040B2E668A} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 	EndGlobalSection
 EndGlobal

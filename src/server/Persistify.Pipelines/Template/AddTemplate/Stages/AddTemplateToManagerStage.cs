@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
-using Persistify.Management.Template;
+using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Protos.Templates.Requests;
 using Persistify.Protos.Templates.Responses;

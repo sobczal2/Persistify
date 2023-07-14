@@ -1,10 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
 using Persistify.Management.Fts.Manager;
+using Persistify.Management.Fts.Search;
 using Persistify.Management.Fts.Token;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents.Shared;
 using Persistify.TestHelpers.Documents;
-using FtsQuery = Persistify.Management.Fts.Search.FtsQuery;
 
 namespace Persistify.Management.Tests.Bench.Fts;
 
@@ -17,7 +16,7 @@ public class PrefixTreeFtsManagerBenchmark
     private IFtsManager _100KBoolManager = null!;
     private IFtsManager _10KBoolManager = null!;
     private IFtsManager _1KBoolManager = null!;
-    private Document _benchmarkDocument = null!;
+    private Protos.Documents.Shared.Document _benchmarkDocument = null!;
 
     private IFtsManager _emptyBoolManager = null!;
     private IScoreCalculator _scoreCalculator = null!;

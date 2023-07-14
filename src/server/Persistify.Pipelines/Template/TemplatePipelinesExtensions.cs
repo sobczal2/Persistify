@@ -26,14 +26,4 @@ internal static class TemplatePipelinesExtensions
 
         return services;
     }
-
-    internal static IServiceCollection AddPipeline<TContext, TPipeline>(this IServiceCollection services)
-        where TContext : class
-        where TPipeline : class
-    {
-        services.AddSingleton<TPipeline>();
-        services.AddScoped<TContext>();
-
-        return services;
-    }
 }
