@@ -6,8 +6,8 @@ public class HostedServicesSettingsValidator : AbstractValidator<HostedServicesS
 {
     public HostedServicesSettingsValidator()
     {
-        RuleFor(x => x.TemplateManagerIntervalSeconds)
+        RuleFor(x => x.DocumentManagerIntervalSeconds)
             .GreaterThan(0)
-            .WithMessage("TemplateManagerIntervalSeconds must be greater than 0");
+            .WithMessage("DocumentManagerRecurrentActionIntervalInSeconds must be greater than 0");
     }
 }

@@ -4,5 +4,5 @@ public class HostedServicesSettings
 {
     public const string SectionName = "HostedServices";
 
-    public int TemplateManagerIntervalSeconds { get; set; }
+    public double DocumentManagerIntervalSeconds { get; set; }
 }

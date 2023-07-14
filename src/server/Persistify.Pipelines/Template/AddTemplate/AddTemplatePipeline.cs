@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Shared.Stages;
 using Persistify.Pipelines.Template.AddTemplate.Stages;
@@ -38,8 +37,8 @@ public class AddTemplatePipeline : Pipeline<AddTemplateContext, AddTemplateReque
         return new AddTemplateContext { Request = request };
     }
 
-    protected override ValueTask<AddTemplateResponse> CreateResonse(AddTemplateContext context)
+    protected override AddTemplateResponse CreateResponse(AddTemplateContext context)
     {
-        return ValueTask.FromResult(new AddTemplateResponse());
+        return new AddTemplateResponse();
     }
 }

@@ -4,5 +4,6 @@ namespace Persistify.Validation.Common;
 
 public interface IValidator<in T>
 {
-    public Result<Unit> Validate(T value);
+    public string ErrorPrefix { get; set; }
+    Result<Unit> Validate(T value);
 }

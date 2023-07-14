@@ -1,11 +1,18 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace Persistify.Protos.Documents.Requests;
 
 [DataContract]
 public class DeleteDocumentsRequest
 {
-    [DataMember(Order = 1)] public string TemplateName { get; set; } = default!;
+    public DeleteDocumentsRequest()
+    {
+        TemplateName = null!;
+        DocumentIds = Array.Empty<long>();
+    }
 
-    [DataMember(Order = 2)] public long[] DocumentIds { get; set; } = default!;
+    [DataMember(Order = 1)] public string TemplateName { get; set; }
+
+    [DataMember(Order = 2)] public long[] DocumentIds { get; set; }
 }

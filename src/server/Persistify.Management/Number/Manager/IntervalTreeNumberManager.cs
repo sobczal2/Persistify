@@ -6,8 +6,6 @@ using Persistify.DataStructures.IntervalTree;
 using Persistify.Management.Common;
 using Persistify.Management.Number.Search;
 using Persistify.Management.Score;
-using Persistify.Protos.Documents.Shared;
-using NumberQuery = Persistify.Management.Number.Search.NumberQuery;
 
 namespace Persistify.Management.Number.Manager;
 
@@ -24,7 +22,7 @@ public class IntervalTreeNumberManager : INumberManager
         _intervalTrees = new ConcurrentDictionary<TemplateFieldIdentifier, IIntervalTree<IntervalTreeNumberValue>>();
     }
 
-    public void Add(string templateName, Document document, long documentId)
+    public void Add(string templateName, Protos.Documents.Shared.Document document, long documentId)
     {
         foreach (var field in document.NumberFields)
         {

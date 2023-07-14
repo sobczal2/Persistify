@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
-using Persistify.Management.Template;
+using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Exceptions;
 using Persistify.Protos.Templates.Requests;
@@ -26,10 +26,10 @@ public class
 
     public override string Name => StageName;
 
-    public override ValueTask<Result> ProcessAsync(ListTemplatesContext context)
+    public override async ValueTask<Result> ProcessAsync(ListTemplatesContext context)
     {
         var pagination = context.Request.Pagination ?? throw new PipelineException();
-        var templates = _templateManager.GetAll().ToList();
+        var templates = (await _templateManager.GetAllAsync()).ToList();
         context.TotalCount = templates.Count;
         context.Templates = new List<Protos.Templates.Shared.Template>(Math.Min(templates.Count, pagination.PageSize));
 
@@ -44,7 +44,7 @@ public class
             context.Templates.Add(templates[index]);
         }
 
-        return ValueTask.FromResult(Result.Success);
+        return Result.Success;
     }
 
     public override ValueTask<Result> RollbackAsync(ListTemplatesContext context)

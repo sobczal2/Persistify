@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Persistify.Persistance.Document;
+using Persistify.Persistance.KeyValue;
 using Persistify.Persistance.Template;
 
 namespace Persistify.Persistance;
@@ -10,6 +11,7 @@ public static class PersistenceExtensions
     {
         services.AddSingleton<ITemplateStorage, FileSystemTemplateStorage>();
         services.AddSingleton<IDocumentStorage, FileSystemDocumentStorage>();
+        services.AddSingleton<IKeyValueStorage, FileSystemKeyValueStorage>();
 
         return services;
     }

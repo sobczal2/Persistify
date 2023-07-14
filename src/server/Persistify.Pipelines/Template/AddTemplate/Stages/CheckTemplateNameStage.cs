@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
-using Persistify.Management.Template;
+using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Protos.Templates.Requests;
 using Persistify.Protos.Templates.Responses;
@@ -20,15 +20,15 @@ public class CheckTemplateNameStage : PipelineStage<AddTemplateContext, AddTempl
 
     public override string Name => StageName;
 
-    public override ValueTask<Result> ProcessAsync(AddTemplateContext context)
+    public override async ValueTask<Result> ProcessAsync(AddTemplateContext context)
     {
-        if (_templateManager.Exists(context.Request.Template.Name))
+        if (await _templateManager.ExistsAsync(context.Request.Template.Name))
         {
-            return ValueTask.FromResult<Result>(new ValidationException("Template",
-                "Template with this name already exists"));
+            return new ValidationException("Template",
+                "Template with this name already exists");
         }
 
-        return ValueTask.FromResult(Result.Success);
+        return Result.Success;
     }
 
     public override ValueTask<Result> RollbackAsync(AddTemplateContext context)

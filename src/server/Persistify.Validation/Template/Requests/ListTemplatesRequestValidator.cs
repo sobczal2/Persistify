@@ -12,15 +12,21 @@ public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
     public ListTemplatesRequestValidator(IValidator<Pagination> paginationValidator)
     {
         _paginationValidator = paginationValidator;
+        ErrorPrefix = "ListTemplatesRequest";
     }
+
+    public string ErrorPrefix { get; set; }
+
 
     public Result<Unit> Validate(ListTemplatesRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
         {
-            return new ValidationException("ListTemplatesRequest", "Request is null");
+            return new ValidationException(ErrorPrefix, "Request is null");
         }
+
+        _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
 
         var result = _paginationValidator.Validate(value.Pagination);
         if (result.IsFailure)

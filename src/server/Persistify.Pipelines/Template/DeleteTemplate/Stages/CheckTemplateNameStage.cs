@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
-using Persistify.Management.Template;
+using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Protos.Templates.Requests;
 using Persistify.Protos.Templates.Responses;
@@ -21,15 +21,15 @@ public class
 
     public override string Name => StageName;
 
-    public override ValueTask<Result> ProcessAsync(DeleteTemplateContext context)
+    public override async ValueTask<Result> ProcessAsync(DeleteTemplateContext context)
     {
-        if (!_templateManager.Exists(context.Request.TemplateName))
+        if (!await _templateManager.ExistsAsync(context.Request.TemplateName))
         {
-            return ValueTask.FromResult<Result>(new ValidationException("TemplateName",
-                "Template with this TemplateName does not exist"));
+            return new ValidationException("TemplateName",
+                "Template with this TemplateName does not exist");
         }
 
-        return ValueTask.FromResult(Result.Success);
+        return Result.Success;
     }
 
     public override ValueTask<Result> RollbackAsync(DeleteTemplateContext context)

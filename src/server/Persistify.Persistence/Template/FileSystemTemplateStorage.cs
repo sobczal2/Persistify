@@ -1,11 +1,8 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Persistify.Persistance.Exceptions;
 using Persistify.Serialization;
 using Persistify.Server.Configuration.Settings;
 
@@ -14,11 +11,9 @@ namespace Persistify.Persistance.Template;
 public class FileSystemTemplateStorage : ITemplateStorage
 {
     private const string DirectoryName = "Templates";
-    private const string TemplateIdsFileName = "templateIds.json";
     private readonly string _fullPath;
     private readonly ILogger<FileSystemTemplateStorage> _logger;
     private readonly ISerializer _serializer;
-    private readonly string _templateIdsFilePath;
 
 
     public FileSystemTemplateStorage(
@@ -30,7 +25,6 @@ public class FileSystemTemplateStorage : ITemplateStorage
         _serializer = serializer;
         _logger = logger;
         _fullPath = Path.Combine(storageSettings.Value.DataPath, DirectoryName);
-        _templateIdsFilePath = Path.Combine(storageSettings.Value.DataPath, TemplateIdsFileName);
 
         if (Directory.Exists(_fullPath))
         {
@@ -49,6 +43,24 @@ public class FileSystemTemplateStorage : ITemplateStorage
         _serializer.Serialize(fileStream, template);
 
         return ValueTask.CompletedTask;
+    }
+
+    public ValueTask<Protos.Templates.Shared.Template?> GetAsync(string templateName)
+    {
+        var filePath = GetFilePath(templateName);
+        if (!File.Exists(filePath))
+        {
+            return ValueTask.FromResult<Protos.Templates.Shared.Template?>(null);
+        }
+
+        using var fileStream = File.OpenRead(filePath);
+        return ValueTask.FromResult<Protos.Templates.Shared.Template?>(
+            _serializer.Deserialize<Protos.Templates.Shared.Template>(fileStream));
+    }
+
+    public ValueTask<bool> ExistsAsync(string templateName)
+    {
+        return ValueTask.FromResult(File.Exists(GetFilePath(templateName)));
     }
 
     public ValueTask<IEnumerable<Protos.Templates.Shared.Template>> GetAllAsync()
@@ -70,24 +82,6 @@ public class FileSystemTemplateStorage : ITemplateStorage
         File.Delete(GetFilePath(templateName));
 
         return ValueTask.CompletedTask;
-    }
-
-    public async ValueTask<ConcurrentDictionary<string, long>> GetTemplateIdsAsync()
-    {
-        if (!File.Exists(_templateIdsFilePath))
-        {
-            return new ConcurrentDictionary<string, long>();
-        }
-
-        await using var fileStream = File.OpenRead(_templateIdsFilePath);
-        return await JsonSerializer.DeserializeAsync<ConcurrentDictionary<string, long>>(fileStream)
-               ?? throw new PersistenceException("Could not deserialize template ids");
-    }
-
-    public async ValueTask SaveTemplateIdsAsync(ConcurrentDictionary<string, long> templateIds)
-    {
-        await using var fileStream = File.Create(_templateIdsFilePath);
-        await JsonSerializer.SerializeAsync(fileStream, templateIds);
     }
 
     private string GetFilePath(string templateName)

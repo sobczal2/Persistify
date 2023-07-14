@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
-using Persistify.Management.Template;
+using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Exceptions;
 using Persistify.Protos.Templates.Requests;
@@ -23,7 +23,7 @@ public class
 
     public override async ValueTask<Result> ProcessAsync(DeleteTemplateContext context)
     {
-        context.DeletedTemplate = _templateManager.Get(context.Request.TemplateName);
+        context.DeletedTemplate = await _templateManager.GetAsync(context.Request.TemplateName);
         await _templateManager.DeleteAsync(context.Request.TemplateName);
 
         return Result.Success;

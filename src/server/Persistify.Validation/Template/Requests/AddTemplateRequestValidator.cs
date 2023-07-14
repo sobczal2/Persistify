@@ -11,15 +11,21 @@ public class AddTemplateRequestValidator : IValidator<AddTemplateRequest>
     public AddTemplateRequestValidator(IValidator<Protos.Templates.Shared.Template> templateValidator)
     {
         _templateValidator = templateValidator;
+        ErrorPrefix = "AddTemplateRequest";
     }
+
+    public string ErrorPrefix { get; set; }
+
 
     public Result<Unit> Validate(AddTemplateRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
         {
-            return new ValidationException("AddTemplateRequest", "Request is null");
+            return new ValidationException(ErrorPrefix, "Request is null");
         }
+
+        _templateValidator.ErrorPrefix = $"{ErrorPrefix}.Template";
 
         var result = _templateValidator.Validate(value.Template);
         if (result.IsFailure)

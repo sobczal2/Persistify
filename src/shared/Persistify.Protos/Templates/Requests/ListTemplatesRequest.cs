@@ -6,5 +6,10 @@ namespace Persistify.Protos.Templates.Requests;
 [DataContract]
 public class ListTemplatesRequest
 {
-    [DataMember(Order = 1)] public Pagination Pagination { get; set; } = default!;
+    public ListTemplatesRequest()
+    {
+        Pagination = null!;
+    }
+
+    [DataMember(Order = 1)] public Pagination Pagination { get; set; }
 }

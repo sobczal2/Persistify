@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj"/>
+    <ProjectReference Include="..\Persistify.Cache\Persistify.Cache.csproj"/>
     <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
   </ItemGroup>

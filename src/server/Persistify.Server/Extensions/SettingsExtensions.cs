@@ -55,6 +55,16 @@ public static class SettingsExtensions
 
         services.Configure<HostedServicesSettings>(hostedServicesSettingsSection);
 
+        var cacheSettingsSection = configuration
+            .GetRequiredSection(CacheSettings.SectionName);
+
+        var cacheSettingsValidator = new CacheSettingsValidator();
+        cacheSettingsValidator.ValidateAndThrow(cacheSettingsSection.Get<CacheSettings>() ??
+                                                throw new InvalidOperationException(
+                                                    $"Could not load {CacheSettings.SectionName} from configuration"));
+
+        services.Configure<CacheSettings>(cacheSettingsSection);
+
         return services;
     }
 }

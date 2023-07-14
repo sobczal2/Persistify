@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Persistify.Pipelines.Document.AddDocuments;
 using Persistify.Protos.Documents;
 using Persistify.Protos.Documents.Requests;
 using Persistify.Protos.Documents.Responses;
@@ -9,12 +10,19 @@ namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    public ValueTask<AddDocumentsResponse> Add(AddDocumentsRequest request, CallContext context)
+    private readonly AddDocumentsPipeline _addDocumentsPipeline;
+
+    public DocumentService(AddDocumentsPipeline addDocumentsPipeline)
     {
-        throw new NotImplementedException();
+        _addDocumentsPipeline = addDocumentsPipeline;
     }
 
-    public ValueTask<GetDocumentsResponse> Get(GetDocumentsRequest request, CallContext context)
+    public async ValueTask<AddDocumentsResponse> Add(AddDocumentsRequest request, CallContext context)
+    {
+        return await _addDocumentsPipeline.ProcessAsync(request);
+    }
+
+    public ValueTask<GetDocumentResponse> Get(GetDocumentRequest request, CallContext context)
     {
         throw new NotImplementedException();
     }

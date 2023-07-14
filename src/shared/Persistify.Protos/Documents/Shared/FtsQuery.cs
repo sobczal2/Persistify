@@ -5,9 +5,17 @@ namespace Persistify.Protos.Documents.Shared;
 [DataContract]
 public class FtsQuery
 {
-    [DataMember(Order = 1)] public string FieldName { get; set; } = default!;
+    public FtsQuery()
+    {
+        FieldName = null!;
+        Value = null!;
+        ExactMatch = default;
+        CaseSensitive = default;
+    }
 
-    [DataMember(Order = 2)] public string Value { get; set; } = default!;
+    [DataMember(Order = 1)] public string FieldName { get; set; }
+
+    [DataMember(Order = 2)] public string Value { get; set; }
 
     [DataMember(Order = 3)] public bool ExactMatch { get; set; }
 
