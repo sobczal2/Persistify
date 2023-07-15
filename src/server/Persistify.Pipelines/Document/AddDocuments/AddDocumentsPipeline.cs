@@ -57,7 +57,7 @@ public class AddDocumentsPipeline : Pipeline<AddDocumentsContext, AddDocumentsRe
 
     protected override AddDocumentsContext CreateContext(AddDocumentsRequest request)
     {
-        return new AddDocumentsContext { Request = request, TemplateName = request.TemplateName };
+        return new AddDocumentsContext(request, request.TemplateName);
     }
 
     protected override AddDocumentsResponse CreateResponse(AddDocumentsContext context)

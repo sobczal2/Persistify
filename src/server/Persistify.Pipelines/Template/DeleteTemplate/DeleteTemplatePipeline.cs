@@ -10,7 +10,8 @@ namespace Persistify.Pipelines.Template.DeleteTemplate;
 public class DeleteTemplatePipeline : Pipeline<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
 {
     private readonly CheckTemplateNameStage _checkTemplateNameStage;
-    private readonly DeleteTemplateFromManagerStage _deleteTemplateFromManagerStage;
+    private readonly DeleteTemplateFromTemplateManagerStage _deleteTemplateFromTemplateManagerStage;
+    private readonly DeleteTemplateFromDocumentManagerStage _deleteTemplateFromDocumentManagerStage;
 
     private readonly ValidationStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
         _validationStage;
@@ -19,21 +20,24 @@ public class DeleteTemplatePipeline : Pipeline<DeleteTemplateContext, DeleteTemp
         ILogger<DeleteTemplatePipeline> logger,
         ValidationStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse> validationStage,
         CheckTemplateNameStage checkTemplateNameStage,
-        DeleteTemplateFromManagerStage deleteTemplateFromManagerStage
+        DeleteTemplateFromTemplateManagerStage deleteTemplateFromTemplateManagerStage,
+        DeleteTemplateFromDocumentManagerStage deleteTemplateFromDocumentManagerStage
     ) : base(
         logger
     )
     {
         _validationStage = validationStage;
         _checkTemplateNameStage = checkTemplateNameStage;
-        _deleteTemplateFromManagerStage = deleteTemplateFromManagerStage;
+        _deleteTemplateFromTemplateManagerStage = deleteTemplateFromTemplateManagerStage;
+        _deleteTemplateFromDocumentManagerStage = deleteTemplateFromDocumentManagerStage;
     }
 
     protected override PipelineStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>[]
         PipelineStages
         => new PipelineStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>[]
         {
-            _validationStage, _checkTemplateNameStage, _deleteTemplateFromManagerStage
+            _validationStage, _checkTemplateNameStage, _deleteTemplateFromTemplateManagerStage,
+            _deleteTemplateFromDocumentManagerStage
         };
 
     protected override DeleteTemplateContext CreateContext(DeleteTemplateRequest request)

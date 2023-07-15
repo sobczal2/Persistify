@@ -13,16 +13,17 @@ internal static class TemplatePipelinesExtensions
 {
     internal static IServiceCollection AddTemplatePipelines(this IServiceCollection services)
     {
-        services.AddPipeline<AddTemplateContext, AddTemplatePipeline>();
+        services.AddSingleton<AddTemplatePipeline>();
         services.AddSingleton<CheckTemplateNameStage>();
         services.AddSingleton<AddTemplateToManagerStage>();
 
-        services.AddPipeline<ListTemplatesContext, ListTemplatesPipeline>();
+        services.AddSingleton<ListTemplatesPipeline>();
         services.AddSingleton<FetchTemplatesFromManagerStage>();
 
-        services.AddPipeline<DeleteTemplateContext, DeleteTemplatePipeline>();
+        services.AddSingleton<DeleteTemplatePipeline>();
         services.AddSingleton<DeleteTemplate.Stages.CheckTemplateNameStage>();
-        services.AddSingleton<DeleteTemplateFromManagerStage>();
+        services.AddSingleton<DeleteTemplateFromTemplateManagerStage>();
+        services.AddSingleton<DeleteTemplateFromDocumentManagerStage>();
 
         return services;
     }

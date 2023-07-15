@@ -8,11 +8,14 @@ namespace Persistify.Persistance.KeyValue;
 
 public class FileSystemKeyValueStorage : IKeyValueStorage
 {
+    private const string Extension = ".json";
+    private const string DirectoryName = "KeyValueStorage";
     private readonly string _path;
 
     public FileSystemKeyValueStorage(IOptions<StorageSettings> storageSettings)
     {
-        _path = storageSettings.Value.KeyValueStoragePath;
+        _path = Path.Combine(storageSettings.Value.DataPath, DirectoryName);
+        Directory.CreateDirectory(_path);
     }
 
     public ValueTask SetAsync<TValue>(string key, TValue value)
@@ -48,6 +51,6 @@ public class FileSystemKeyValueStorage : IKeyValueStorage
 
     private string GetFilePath(string key)
     {
-        return Path.Combine(_path, $"{key}.json");
+        return Path.Combine(_path, string.Concat(key, Extension));
     }
 }

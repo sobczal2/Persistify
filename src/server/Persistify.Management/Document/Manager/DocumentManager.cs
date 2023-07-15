@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Persistify.Management.Common;
 using Persistify.Management.Document.Cache;
 using Persistify.Persistance.Document;
 using Persistify.Persistance.KeyValue;
@@ -88,6 +89,21 @@ public class DocumentManager : IDocumentManager
     {
         _documentCache.Remove((templateName, documentId));
         return _documentStorage.DeleteAsync(templateName, documentId);
+    }
+
+    ValueTask<long> IDocumentManager.DeleteTemplateAsync(string templateName)
+    {
+        _documentCache.Remove(x => x.templateName == templateName);
+        if(!_currentDocumentIds.TryRemove(templateName, out var documentId))
+            throw new ManagerException($"Template {templateName} does not exist");
+
+        return ValueTask.FromResult(documentId);
+    }
+
+    public ValueTask AddTemplateAsync(string templateName, long currentDocumentId)
+    {
+        _currentDocumentIds.AddOrUpdate(templateName, currentDocumentId, (_, _) => currentDocumentId);
+        return ValueTask.CompletedTask;
     }
 
     private async ValueTask SaveDocumentIdsAsync()

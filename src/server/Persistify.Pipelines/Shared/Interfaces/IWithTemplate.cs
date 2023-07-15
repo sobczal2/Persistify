@@ -3,5 +3,5 @@
 public interface IWithTemplate
 {
     Protos.Templates.Shared.Template? Template { get; set; }
-    string? TemplateName { get; set; }
+    string TemplateName { get; set; }
 }
