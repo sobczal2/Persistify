@@ -27,7 +27,7 @@ public class ValidationStage<TContext, TRequest, TResponse> : PipelineStage<TCon
         var validationResult = _validator.Validate(context.Request);
 
         return validationResult.Match(
-            _ => ValueTask.FromResult(Result.Success),
+            () => ValueTask.FromResult(Result.Success),
             x => ValueTask.FromResult<Result>(x)
         );
     }

@@ -10,9 +10,9 @@ namespace Persistify.Pipelines.Document.GetDocument;
 
 public class GetDocumentPipeline : Pipeline<GetDocumentContext, GetDocumentRequest, GetDocumentResponse>
 {
+    private readonly FetchDocumentFromDocumentManagerStage _fetchDocumentFromDocumentManagerStage;
     private readonly ValidationStage<GetDocumentContext, GetDocumentRequest, GetDocumentResponse> _validationStage;
     private readonly VerifyTemplateExistsStage _verifyTemplateExistsStage;
-    private readonly FetchDocumentFromDocumentManagerStage _fetchDocumentFromDocumentManagerStage;
 
     public GetDocumentPipeline(
         ILogger<GetDocumentPipeline> logger,

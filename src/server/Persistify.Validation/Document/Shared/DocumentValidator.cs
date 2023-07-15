@@ -24,7 +24,7 @@ public class DocumentValidator : IValidator<Protos.Documents.Shared.Document>
 
     public string ErrorPrefix { get; set; }
 
-    public Result<Unit> Validate(Protos.Documents.Shared.Document value)
+    public Result Validate(Protos.Documents.Shared.Document value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -71,6 +71,6 @@ public class DocumentValidator : IValidator<Protos.Documents.Shared.Document>
             }
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

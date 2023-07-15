@@ -24,7 +24,8 @@ public static class HostedServicesExtensions
     {
         var actOnStartupServices = assemblies
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => typeof(IActOnStartup).IsAssignableFrom(type) && type.IsInterface && type != typeof(IActOnStartup))
+            .Where(type => typeof(IActOnStartup).IsAssignableFrom(type) && type.IsInterface &&
+                           type != typeof(IActOnStartup))
             .ToList();
 
         foreach (var actOnStartupService in actOnStartupServices)
@@ -40,7 +41,8 @@ public static class HostedServicesExtensions
     {
         var actOnShutdownServices = assemblies
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => typeof(IActOnShutdown).IsAssignableFrom(type) && type.IsInterface && type != typeof(IActOnShutdown))
+            .Where(type => typeof(IActOnShutdown).IsAssignableFrom(type) && type.IsInterface &&
+                           type != typeof(IActOnShutdown))
             .ToList();
 
         foreach (var actOnShutdownService in actOnShutdownServices)
@@ -56,7 +58,8 @@ public static class HostedServicesExtensions
     {
         var actRecurrentlyServices = assemblies
             .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => typeof(IActRecurrently).IsAssignableFrom(type) && type.IsInterface && type != typeof(IActRecurrently))
+            .Where(type => typeof(IActRecurrently).IsAssignableFrom(type) && type.IsInterface &&
+                           type != typeof(IActRecurrently))
             .ToList();
 
         foreach (var actRecurrentlyService in actRecurrentlyServices)

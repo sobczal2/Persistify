@@ -10,7 +10,8 @@ using Persistify.Protos.Templates.Responses;
 namespace Persistify.Pipelines.Template.DeleteTemplate.Stages;
 
 public class
-    DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
+    DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTemplateContext, DeleteTemplateRequest,
+        DeleteTemplateResponse>
 {
     private const string StageName = "DeleteTemplateFromTemplateManager";
     private readonly ITemplateManager _templateManager;
@@ -18,7 +19,7 @@ public class
     public DeleteTemplateFromTemplateManagerStage(
         ITemplateManager templateManager,
         IDocumentManager documentManager
-        )
+    )
     {
         _templateManager = templateManager;
     }

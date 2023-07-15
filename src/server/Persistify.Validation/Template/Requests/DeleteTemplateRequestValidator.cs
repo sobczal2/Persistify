@@ -13,7 +13,7 @@ public class DeleteTemplateRequestValidator : IValidator<DeleteTemplateRequest>
 
     public string ErrorPrefix { get; set; }
 
-    public Result<Unit> Validate(DeleteTemplateRequest value)
+    public Result Validate(DeleteTemplateRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -26,6 +26,6 @@ public class DeleteTemplateRequestValidator : IValidator<DeleteTemplateRequest>
             return new ValidationException(ErrorPrefix, "TemplateName is null or empty");
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

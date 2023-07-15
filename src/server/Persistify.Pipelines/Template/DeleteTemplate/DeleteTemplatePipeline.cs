@@ -10,8 +10,8 @@ namespace Persistify.Pipelines.Template.DeleteTemplate;
 public class DeleteTemplatePipeline : Pipeline<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
 {
     private readonly CheckTemplateNameStage _checkTemplateNameStage;
-    private readonly DeleteTemplateFromTemplateManagerStage _deleteTemplateFromTemplateManagerStage;
     private readonly DeleteTemplateFromDocumentManagerStage _deleteTemplateFromDocumentManagerStage;
+    private readonly DeleteTemplateFromTemplateManagerStage _deleteTemplateFromTemplateManagerStage;
 
     private readonly ValidationStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
         _validationStage;

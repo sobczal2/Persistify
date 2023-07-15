@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +30,7 @@ public class ShutdownServicesHostedService : IHostedService
             {
                 await shutdownAction.PerformShutdownActionAsync();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error while performing shutdown action");
             }

@@ -18,7 +18,7 @@ public class TemplateValidator : IValidator<Protos.Templates.Shared.Template>
     public string ErrorPrefix { get; set; }
 
 
-    public Result<Unit> Validate(Protos.Templates.Shared.Template value)
+    public Result Validate(Protos.Templates.Shared.Template value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -61,6 +61,6 @@ public class TemplateValidator : IValidator<Protos.Templates.Shared.Template>
             fieldNames.Add(field.Name);
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

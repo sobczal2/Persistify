@@ -17,7 +17,7 @@ public class AddDocumentRequestValidator : IValidator<AddDocumentsRequest>
     public string ErrorPrefix { get; set; }
 
 
-    public Result<Unit> Validate(AddDocumentsRequest value)
+    public Result Validate(AddDocumentsRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -52,6 +52,6 @@ public class AddDocumentRequestValidator : IValidator<AddDocumentsRequest>
             }
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

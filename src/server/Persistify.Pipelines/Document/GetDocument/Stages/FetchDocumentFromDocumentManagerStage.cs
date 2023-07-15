@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Management.Document.Manager;
 using Persistify.Pipelines.Common;
@@ -9,18 +10,21 @@ using Persistify.Validation.Common;
 
 namespace Persistify.Pipelines.Document.GetDocument.Stages;
 
-public class FetchDocumentFromDocumentManagerStage : PipelineStage<GetDocumentContext, GetDocumentRequest, GetDocumentResponse>
+public class
+    FetchDocumentFromDocumentManagerStage : PipelineStage<GetDocumentContext, GetDocumentRequest, GetDocumentResponse>
 {
-    private readonly IDocumentManager _documentManager;
     private const string StageName = "FetchDocumentFromDocumentManager";
-    public override string Name => StageName;
+    private readonly IDocumentManager _documentManager;
 
     public FetchDocumentFromDocumentManagerStage(
         IDocumentManager documentManager
-        )
+    )
     {
         _documentManager = documentManager;
     }
+
+    public override string Name => StageName;
+
     public override async ValueTask<Result> ProcessAsync(GetDocumentContext context)
     {
         var document = await _documentManager.GetAsync(context.Request.TemplateName, context.Request.DocumentId);
@@ -30,17 +34,13 @@ public class FetchDocumentFromDocumentManagerStage : PipelineStage<GetDocumentCo
             return new ValidationException("GetDocumentRequest.DocumentId", "Document does not exist.");
         }
 
-        context.Document = new DocumentWithId
-        {
-            Id = context.Request.DocumentId,
-            Document = document
-        };
+        context.Document = new DocumentWithId { Id = context.Request.DocumentId, Document = document };
 
         return Result.Success;
     }
 
     public override ValueTask<Result> RollbackAsync(GetDocumentContext context)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

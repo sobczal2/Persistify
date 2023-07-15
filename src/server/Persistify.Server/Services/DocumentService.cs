@@ -17,7 +17,7 @@ public class DocumentService : IDocumentService
     public DocumentService(
         AddDocumentsPipeline addDocumentsPipeline,
         GetDocumentPipeline getDocumentPipeline
-        )
+    )
     {
         _addDocumentsPipeline = addDocumentsPipeline;
         _getDocumentPipeline = getDocumentPipeline;

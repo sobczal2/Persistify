@@ -13,7 +13,7 @@ public class BoolFieldValidator : IValidator<BoolField>
 
     public string ErrorPrefix { get; set; }
 
-    public Result<Unit> Validate(BoolField value)
+    public Result Validate(BoolField value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -33,6 +33,6 @@ public class BoolFieldValidator : IValidator<BoolField>
                 "FieldName's length must be lower than or equal to 64 characters");
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

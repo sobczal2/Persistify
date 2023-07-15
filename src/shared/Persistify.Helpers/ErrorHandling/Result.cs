@@ -158,15 +158,15 @@ public readonly struct Result
         return this;
     }
 
-    public void Match(Action onSuccess, Action<Exception> onFailure)
+    public TRes Match<TRes>(Func<TRes> onSuccess, Func<Exception, TRes> onFailure)
     {
         if (IsSuccess)
         {
-            onSuccess();
+            return onSuccess();
         }
         else
         {
-            onFailure(Exception);
+            return onFailure(Exception);
         }
     }
 }

@@ -17,7 +17,7 @@ public class AddTemplateRequestValidator : IValidator<AddTemplateRequest>
     public string ErrorPrefix { get; set; }
 
 
-    public Result<Unit> Validate(AddTemplateRequest value)
+    public Result Validate(AddTemplateRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -33,6 +33,6 @@ public class AddTemplateRequestValidator : IValidator<AddTemplateRequest>
             return result;
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }
