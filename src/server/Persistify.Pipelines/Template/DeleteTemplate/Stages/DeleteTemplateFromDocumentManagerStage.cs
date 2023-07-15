@@ -12,9 +12,8 @@ public class
     DeleteTemplateFromDocumentManagerStage : PipelineStage<DeleteTemplateContext, DeleteTemplateRequest,
         DeleteTemplateResponse>
 {
-    private readonly IDocumentManager _documentManager;
     private const string StageName = "DeleteTemplateFromDocumentManager";
-    public override string Name => StageName;
+    private readonly IDocumentManager _documentManager;
     private long? _currentDocumentIdOfDeletedTemplate;
 
     public DeleteTemplateFromDocumentManagerStage(
@@ -23,6 +22,8 @@ public class
     {
         _documentManager = documentManager;
     }
+
+    public override string Name => StageName;
 
     public override async ValueTask<Result> ProcessAsync(DeleteTemplateContext context)
     {
@@ -38,7 +39,8 @@ public class
             return new RollbackFailedException();
         }
 
-        await _documentManager.AddTemplateAsync(context.Request.TemplateName, _currentDocumentIdOfDeletedTemplate.Value);
+        await _documentManager.AddTemplateAsync(context.Request.TemplateName,
+            _currentDocumentIdOfDeletedTemplate.Value);
 
         return Result.Success;
     }

@@ -13,7 +13,7 @@ public class FieldValidator : IValidator<Field>
 
     public string ErrorPrefix { get; set; }
 
-    public Result<Unit> Validate(Field value)
+    public Result Validate(Field value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -31,6 +31,6 @@ public class FieldValidator : IValidator<Field>
             return new ValidationException($"{ErrorPrefix}.Name", "Name must be less than 50 characters");
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

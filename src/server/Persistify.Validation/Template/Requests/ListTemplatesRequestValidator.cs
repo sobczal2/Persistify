@@ -18,7 +18,7 @@ public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
     public string ErrorPrefix { get; set; }
 
 
-    public Result<Unit> Validate(ListTemplatesRequest value)
+    public Result Validate(ListTemplatesRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -34,6 +34,6 @@ public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
             return result;
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

@@ -4,13 +4,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Persistify.HostedServices;
+
+namespace Persistify.HostedServices;
 
 public class RecurrentServicesHostedService : IHostedService
 {
+    private readonly CancellationTokenSource _cts = new();
     private readonly ILogger<RecurrentServicesHostedService> _logger;
     private readonly IEnumerable<IActRecurrently> _recurrentActions;
-    private readonly CancellationTokenSource _cts = new();
     private readonly List<Task> _runningTasks = new();
 
     public RecurrentServicesHostedService(
@@ -44,7 +45,8 @@ public class RecurrentServicesHostedService : IHostedService
                     try
                     {
                         await Task.Delay(recurrentAction.RecurrentActionInterval, _cts.Token);
-                    } catch (TaskCanceledException) { }
+                    }
+                    catch (TaskCanceledException) { }
                 }
             }));
         }

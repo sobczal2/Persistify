@@ -1,19 +1,23 @@
 ﻿using Persistify.Helpers.ErrorHandling;
+using Persistify.Protos.Common;
 using Persistify.Protos.Documents.Requests;
 using Persistify.Validation.Common;
 
 namespace Persistify.Validation.Document.Requests;
 
-public class GetDocumentRequestValidator : IValidator<GetDocumentRequest>
+public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest>
 {
-    public GetDocumentRequestValidator()
-    {
-        ErrorPrefix = "GetDocumentRequest";
-    }
-
+    private readonly IValidator<Pagination> _paginationValidator;
     public string ErrorPrefix { get; set; }
 
-    public Result Validate(GetDocumentRequest value)
+    public SearchDocumentsRequestValidator(
+        IValidator<Pagination> paginationValidator
+        )
+    {
+        _paginationValidator = paginationValidator;
+        ErrorPrefix = "SearchDocumentsRequest";
+    }
+    public Result Validate(SearchDocumentsRequest value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -32,9 +36,11 @@ public class GetDocumentRequestValidator : IValidator<GetDocumentRequest>
                 "TemplateName's length must be lower than or equal to 64 characters");
         }
 
-        if (value.DocumentId <= 0)
+        _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
+        var result = _paginationValidator.Validate(value.Pagination);
+        if (result.IsFailure)
         {
-            return new ValidationException($"{ErrorPrefix}.DocumentId", "DocumentId is invalid");
+            return result;
         }
 
         return Result.Success;

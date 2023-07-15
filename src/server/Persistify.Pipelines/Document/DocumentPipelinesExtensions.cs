@@ -6,9 +6,6 @@ using Persistify.Pipelines.Document.AddDocuments;
 using Persistify.Pipelines.Document.AddDocuments.Stages;
 using Persistify.Pipelines.Document.GetDocument;
 using Persistify.Pipelines.Document.GetDocument.Stages;
-using Persistify.Pipelines.Shared.Stages;
-using Persistify.Protos.Documents.Requests;
-using Persistify.Protos.Documents.Responses;
 
 namespace Persistify.Pipelines.Document;
 

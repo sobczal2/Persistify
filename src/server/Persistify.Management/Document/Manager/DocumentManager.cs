@@ -94,8 +94,10 @@ public class DocumentManager : IDocumentManager
     ValueTask<long> IDocumentManager.DeleteTemplateAsync(string templateName)
     {
         _documentCache.Remove(x => x.templateName == templateName);
-        if(!_currentDocumentIds.TryRemove(templateName, out var documentId))
+        if (!_currentDocumentIds.TryRemove(templateName, out var documentId))
+        {
             throw new ManagerException($"Template {templateName} does not exist");
+        }
 
         return ValueTask.FromResult(documentId);
     }

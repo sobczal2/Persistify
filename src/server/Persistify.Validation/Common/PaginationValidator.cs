@@ -12,7 +12,7 @@ public class PaginationValidator : IValidator<Pagination>
 
     public string ErrorPrefix { get; set; }
 
-    public Result<Unit> Validate(Pagination value)
+    public Result Validate(Pagination value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -36,6 +36,6 @@ public class PaginationValidator : IValidator<Pagination>
             return new ValidationException($"{ErrorPrefix}.PageSize", "PageSize must be less than or equal to 10000");
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }

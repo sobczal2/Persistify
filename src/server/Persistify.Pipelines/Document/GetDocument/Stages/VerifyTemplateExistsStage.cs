@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
@@ -10,16 +11,17 @@ namespace Persistify.Pipelines.Document.GetDocument.Stages;
 
 public class VerifyTemplateExistsStage : PipelineStage<GetDocumentContext, GetDocumentRequest, GetDocumentResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private const string StageName = "VerifyTemplateExists";
-    public override string Name => StageName;
+    private readonly ITemplateManager _templateManager;
 
     public VerifyTemplateExistsStage(
         ITemplateManager templateManager
-        )
+    )
     {
         _templateManager = templateManager;
     }
+
+    public override string Name => StageName;
 
     public override async ValueTask<Result> ProcessAsync(GetDocumentContext context)
     {
@@ -35,6 +37,6 @@ public class VerifyTemplateExistsStage : PipelineStage<GetDocumentContext, GetDo
 
     public override ValueTask<Result> RollbackAsync(GetDocumentContext context)
     {
-        throw new System.NotImplementedException();
+        return ValueTask.FromResult(Result.Success);
     }
 }

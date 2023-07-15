@@ -13,7 +13,7 @@ public class TextFieldValidator : IValidator<TextField>
 
     public string ErrorPrefix { get; set; }
 
-    public Result<Unit> Validate(TextField value)
+    public Result Validate(TextField value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value is null)
@@ -33,6 +33,6 @@ public class TextFieldValidator : IValidator<TextField>
                 "FieldName's length must be lower than or equal to 64 characters");
         }
 
-        return new Result<Unit>(Unit.Value);
+        return Result.Success;
     }
 }
