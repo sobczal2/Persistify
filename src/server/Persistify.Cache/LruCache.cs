@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Persistify.Cache;
 
@@ -51,6 +52,23 @@ public class LruCache<TKey, TValue> : ICache<TKey, TValue>
 
         _lruList.Remove(node);
         _cache.Remove(key);
+    }
+
+    public void Remove(Predicate<TKey> predicate)
+    {
+        var keys = new List<TKey>();
+        foreach (var (key, _) in _lruList)
+        {
+            if (predicate(key))
+            {
+                keys.Add(key);
+            }
+        }
+
+        foreach (var key in keys)
+        {
+            Remove(key);
+        }
     }
 
     public void Clear()

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.ErrorHandling;
+using Persistify.Management.Document.Manager;
 using Persistify.Management.Template.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Exceptions;
@@ -9,12 +10,15 @@ using Persistify.Protos.Templates.Responses;
 namespace Persistify.Pipelines.Template.DeleteTemplate.Stages;
 
 public class
-    DeleteTemplateFromManagerStage : PipelineStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
+    DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTemplateContext, DeleteTemplateRequest, DeleteTemplateResponse>
 {
-    private const string StageName = "DeleteTemplateFromManager";
+    private const string StageName = "DeleteTemplateFromTemplateManager";
     private readonly ITemplateManager _templateManager;
 
-    public DeleteTemplateFromManagerStage(ITemplateManager templateManager)
+    public DeleteTemplateFromTemplateManagerStage(
+        ITemplateManager templateManager,
+        IDocumentManager documentManager
+        )
     {
         _templateManager = templateManager;
     }
