@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Analysis;
 using Persistify.HostedServices;
 using Persistify.Management;
 using Persistify.Persistance;
@@ -71,6 +72,7 @@ public static class ServicesExtensions
         services.AddPipelines();
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
+        services.AddAnalysis();
 
         return services;
     }

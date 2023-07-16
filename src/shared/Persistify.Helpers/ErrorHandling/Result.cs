@@ -160,13 +160,6 @@ public readonly struct Result
 
     public TRes Match<TRes>(Func<TRes> onSuccess, Func<Exception, TRes> onFailure)
     {
-        if (IsSuccess)
-        {
-            return onSuccess();
-        }
-        else
-        {
-            return onFailure(Exception);
-        }
+        return IsSuccess ? onSuccess() : onFailure(Exception);
     }
 }
