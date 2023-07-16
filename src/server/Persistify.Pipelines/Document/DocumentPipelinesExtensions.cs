@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Persistify.Management.Bool.Manager;
-using Persistify.Management.Fts.Manager;
-using Persistify.Management.Number.Manager;
 using Persistify.Pipelines.Document.AddDocuments;
 using Persistify.Pipelines.Document.AddDocuments.Stages;
 using Persistify.Pipelines.Document.GetDocument;
@@ -16,9 +13,6 @@ internal static class DocumentPipelinesExtensions
         services.AddSingleton<AddDocumentsPipeline>();
         services.AddSingleton<ValidateDocumentsAgainstTemplateStage>();
         services.AddSingleton<StoreDocumentsStage>();
-        services.AddSingleton<AddDocumentsToManagerStage<IFtsManager>>();
-        services.AddSingleton<AddDocumentsToManagerStage<IBoolManager>>();
-        services.AddSingleton<AddDocumentsToManagerStage<INumberManager>>();
 
         services.AddSingleton<GetDocumentPipeline>();
         services.AddSingleton<VerifyTemplateExistsStage>();

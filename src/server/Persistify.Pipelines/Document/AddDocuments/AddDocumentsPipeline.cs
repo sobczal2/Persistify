@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Persistify.Management.Bool.Manager;
-using Persistify.Management.Fts.Manager;
-using Persistify.Management.Number.Manager;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Document.AddDocuments.Stages;
 using Persistify.Pipelines.Exceptions;
@@ -13,13 +10,9 @@ namespace Persistify.Pipelines.Document.AddDocuments;
 
 public class AddDocumentsPipeline : Pipeline<AddDocumentsContext, AddDocumentsRequest, AddDocumentsResponse>
 {
-    private readonly AddDocumentsToManagerStage<IBoolManager> _boolManagerStage;
-
     private readonly FetchTemplateFromManagerStage<AddDocumentsContext, AddDocumentsRequest, AddDocumentsResponse>
         _fetchTemplateFromManagerStage;
 
-    private readonly AddDocumentsToManagerStage<IFtsManager> _ftsManagerStage;
-    private readonly AddDocumentsToManagerStage<INumberManager> _numberManagerStage;
     private readonly StoreDocumentsStage _storeDocumentsStage;
 
     private readonly ValidateDocumentsAgainstTemplateStage _validateDocumentsAgainstTemplateStage;
@@ -31,10 +24,7 @@ public class AddDocumentsPipeline : Pipeline<AddDocumentsContext, AddDocumentsRe
         FetchTemplateFromManagerStage<AddDocumentsContext, AddDocumentsRequest, AddDocumentsResponse>
             fetchTemplateFromManagerStage,
         ValidateDocumentsAgainstTemplateStage validateDocumentsAgainstTemplateStage,
-        StoreDocumentsStage storeDocumentsStage,
-        AddDocumentsToManagerStage<IFtsManager> ftsManagerStage,
-        AddDocumentsToManagerStage<IBoolManager> boolManagerStage,
-        AddDocumentsToManagerStage<INumberManager> numberManagerStage
+        StoreDocumentsStage storeDocumentsStage
     ) : base(
         logger
     )
@@ -43,16 +33,13 @@ public class AddDocumentsPipeline : Pipeline<AddDocumentsContext, AddDocumentsRe
         _fetchTemplateFromManagerStage = fetchTemplateFromManagerStage;
         _validateDocumentsAgainstTemplateStage = validateDocumentsAgainstTemplateStage;
         _storeDocumentsStage = storeDocumentsStage;
-        _ftsManagerStage = ftsManagerStage;
-        _boolManagerStage = boolManagerStage;
-        _numberManagerStage = numberManagerStage;
     }
 
     protected override PipelineStage<AddDocumentsContext, AddDocumentsRequest, AddDocumentsResponse>[] PipelineStages
         => new PipelineStage<AddDocumentsContext, AddDocumentsRequest, AddDocumentsResponse>[]
         {
             _validationStage, _fetchTemplateFromManagerStage, _validateDocumentsAgainstTemplateStage,
-            _storeDocumentsStage, _ftsManagerStage, _boolManagerStage, _numberManagerStage
+            _storeDocumentsStage
         };
 
     protected override AddDocumentsContext CreateContext(AddDocumentsRequest request)
