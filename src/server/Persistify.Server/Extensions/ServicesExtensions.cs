@@ -65,14 +65,11 @@ public static class ServicesExtensions
                 };
             });
 
-        services.AddPersistence();
         services.AddSerialization();
-        services.AddManagement();
         services.AddValidation();
         services.AddPipelines();
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
-        services.AddAnalysis();
 
         return services;
     }

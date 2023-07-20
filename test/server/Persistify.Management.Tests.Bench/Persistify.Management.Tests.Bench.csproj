@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\server\Persistify.Management\Persistify.Management.csproj" />
     <ProjectReference Include="..\..\shared\Persistify.TestHelpers\Persistify.TestHelpers.csproj" />
   </ItemGroup>
 

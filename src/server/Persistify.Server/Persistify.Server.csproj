@@ -7,10 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    <ProjectReference Include="..\Persistify.Analysis\Persistify.Analysis.csproj" />
-    <ProjectReference Include="..\Persistify.Management\Persistify.Management.csproj" />
-    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj" />
+    <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj" />
     <ProjectReference Include="..\Persistify.Pipelines\Persistify.Pipelines.csproj" />
     <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj" />
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />

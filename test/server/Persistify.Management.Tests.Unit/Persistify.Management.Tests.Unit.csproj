@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\server\Persistify.Management\Persistify.Management.csproj" />
     <ProjectReference Include="..\..\shared\Persistify.DataStructures.Tests.Unit\Persistify.DataStructures.Tests.Unit.csproj" />
   </ItemGroup>
 

@@ -32,7 +32,7 @@ public static class AppExtensions
         {
             Log.Information("Loading {ServiceName}...", loadOnStartupService.GetType().Name);
             await loadOnStartupService.PerformStartupActionAsync();
-            Log.Information("Loaded {ServiceName}.", loadOnStartupService.GetType().Name);
+            Log.Information("Loaded {ServiceName}", loadOnStartupService.GetType().Name);
         }
     }
 }
