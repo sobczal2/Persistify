@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using Microsoft.IO;
-using Persistify.Protos.Documents.Shared;
-using Persistify.Protos.Templates.Shared;
+using Persistify.Domain.Documents;
+using Persistify.Domain.Templates;
 using ProtoBuf;
 
 namespace Persistify.Serialization;

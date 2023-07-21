@@ -1,43 +1,30 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Pipelines.Template.AddTemplate;
-using Persistify.Pipelines.Template.DeleteTemplate;
-using Persistify.Pipelines.Template.ListTemplate;
-using Persistify.Protos.Templates;
-using Persistify.Protos.Templates.Requests;
-using Persistify.Protos.Templates.Responses;
+using Persistify.Requests.Templates;
+using Persistify.Responses.Templates;
+using Persistify.Services;
 using ProtoBuf.Grpc;
 
 namespace Persistify.Server.Services;
 
 public class TemplateService : ITemplateService
 {
-    private readonly AddTemplatePipeline _addTemplatePipeline;
-    private readonly DeleteTemplatePipeline _deleteTemplatePipeline;
-    private readonly ListTemplatesPipeline _listTemplatesPipeline;
-
-    public TemplateService(
-        AddTemplatePipeline addTemplatePipeline,
-        ListTemplatesPipeline listTemplatesPipeline,
-        DeleteTemplatePipeline deleteTemplatePipeline
-    )
+    public ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context)
     {
-        _addTemplatePipeline = addTemplatePipeline;
-        _listTemplatesPipeline = listTemplatesPipeline;
-        _deleteTemplatePipeline = deleteTemplatePipeline;
+        throw new System.NotImplementedException();
     }
 
-    public async ValueTask<AddTemplateResponse> Add(AddTemplateRequest request, CallContext context)
+    public ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext context)
     {
-        return await _addTemplatePipeline.ProcessAsync(request);
+        throw new System.NotImplementedException();
     }
 
-    public async ValueTask<ListTemplatesResponse> List(ListTemplatesRequest request, CallContext context)
+    public ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext context)
     {
-        return await _listTemplatesPipeline.ProcessAsync(request);
+        throw new System.NotImplementedException();
     }
 
-    public async ValueTask<DeleteTemplateResponse> Delete(DeleteTemplateRequest request, CallContext context)
+    public ValueTask<DeleteTemplateRequest> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
     {
-        return await _deleteTemplatePipeline.ProcessAsync(request);
+        throw new System.NotImplementedException();
     }
 }

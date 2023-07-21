@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
+    <ProjectReference Include="..\Persistify.Requests\Persistify.Requests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

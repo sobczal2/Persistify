@@ -1,45 +1,30 @@
-﻿using System;
-using System.Threading.Tasks;
-using Persistify.Pipelines.Document.AddDocuments;
-using Persistify.Pipelines.Document.GetDocument;
-using Persistify.Protos.Documents;
-using Persistify.Protos.Documents.Requests;
-using Persistify.Protos.Documents.Responses;
+﻿using System.Threading.Tasks;
+using Persistify.Requests.Documents;
+using Persistify.Responses.Documents;
+using Persistify.Services;
 using ProtoBuf.Grpc;
 
 namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    private readonly AddDocumentsPipeline _addDocumentsPipeline;
-    private readonly GetDocumentPipeline _getDocumentPipeline;
-
-    public DocumentService(
-        AddDocumentsPipeline addDocumentsPipeline,
-        GetDocumentPipeline getDocumentPipeline
-    )
+    public ValueTask<IndexDocumentResponse> CreateDocumentAsync(IndexDocumentRequest request, CallContext context)
     {
-        _addDocumentsPipeline = addDocumentsPipeline;
-        _getDocumentPipeline = getDocumentPipeline;
+        throw new System.NotImplementedException();
     }
 
-    public async ValueTask<AddDocumentsResponse> Add(AddDocumentsRequest request, CallContext context)
+    public ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
     {
-        return await _addDocumentsPipeline.ProcessAsync(request);
+        throw new System.NotImplementedException();
     }
 
-    public ValueTask<GetDocumentResponse> Get(GetDocumentRequest request, CallContext context)
+    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
     {
-        return _getDocumentPipeline.ProcessAsync(request);
+        throw new System.NotImplementedException();
     }
 
-    public ValueTask<SearchDocumentsResponse> Search(SearchDocumentsRequest request, CallContext context)
+    public ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)
     {
-        throw new NotImplementedException();
-    }
-
-    public ValueTask<DeleteDocumentsResponse> Delete(DeleteDocumentsRequest request, CallContext context)
-    {
-        throw new NotImplementedException();
+        throw new System.NotImplementedException();
     }
 }
