@@ -6,8 +6,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Fts.Analysis;
 using Persistify.HostedServices;
+using Persistify.Management.Domain;
+using Persistify.Persistence.Core;
 using Persistify.Pipelines;
+using Persistify.Pipelines.Templates;
 using Persistify.Serialization;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Validation;
@@ -65,6 +69,10 @@ public static class ServicesExtensions
         services.AddSerialization();
         services.AddValidation();
         services.AddPipelines();
+        services.AddPipelinesTemplates();
+        services.AddFtsAnalysis();
+        services.AddManagementDomain();
+        services.AddPersistenceCore(configuration);
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
 

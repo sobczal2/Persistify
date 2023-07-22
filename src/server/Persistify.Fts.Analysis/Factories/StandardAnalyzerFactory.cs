@@ -19,18 +19,30 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
 
     public Result TryCreate(AnalyzerDescriptor descriptor, out IAnalyzer? analyzer)
     {
+        var result = Validate(descriptor);
+        if (result.IsFailure)
+        {
+            analyzer = null;
+            return result;
+        }
+
+        analyzer = Create(descriptor);
+
+        return Result.Success;
+    }
+
+    public Result Validate(AnalyzerDescriptor descriptor)
+    {
         foreach (var characterFilter in descriptor.CharacterFilterNames)
         {
             if (!SupportedCharacterFilters.Contains(characterFilter))
             {
-                analyzer = null;
                 return new UnsupportedCharacterFilterException(characterFilter, SupportedCharacterFilters);
             }
         }
 
         if (!SupportedTokenizers.Contains(descriptor.TokenizerName))
         {
-            analyzer = null;
             return new UnsupportedTokenizerException(descriptor.TokenizerName, SupportedTokenizers);
         }
 
@@ -38,12 +50,9 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
         {
             if (!SupportedTokenFilters.Contains(tokenFilter))
             {
-                analyzer = null;
                 return new UnsupportedTokenFilterException(tokenFilter, SupportedTokenFilters);
             }
         }
-
-        analyzer = Create(descriptor);
 
         return Result.Success;
     }

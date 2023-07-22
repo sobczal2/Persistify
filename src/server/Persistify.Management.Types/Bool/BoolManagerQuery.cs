@@ -5,12 +5,12 @@ namespace Persistify.Management.Types.Bool;
 
 public class BoolManagerQuery : ITypeManagerQuery
 {
-    public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
-    public bool Value { get; }
-
     public BoolManagerQuery(TemplateFieldIdentifier templateFieldIdentifier, bool value)
     {
         TemplateFieldIdentifier = templateFieldIdentifier;
         Value = value;
     }
+
+    public bool Value { get; }
+    public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
 }

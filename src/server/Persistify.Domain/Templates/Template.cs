@@ -10,11 +10,14 @@ public class Template
     public int Id { get; set; }
 
     [ProtoMember(2)]
-    public List<TextField> TextFields { get; set; } = default!;
+    public string Name { get; set; } = default!;
 
     [ProtoMember(3)]
-    public List<NumberField> NumberFields { get; set; } = default!;
+    public List<TextField> TextFields { get; set; } = default!;
 
     [ProtoMember(4)]
+    public List<NumberField> NumberFields { get; set; } = default!;
+
+    [ProtoMember(5)]
     public List<BoolField> BoolFields { get; set; } = default!;
 }

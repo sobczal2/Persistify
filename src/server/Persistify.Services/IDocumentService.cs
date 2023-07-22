@@ -10,7 +10,7 @@ namespace Persistify.Services;
 public interface IDocumentService
 {
     [OperationContract]
-    ValueTask<IndexDocumentResponse> CreateDocumentAsync(IndexDocumentRequest request, CallContext context);
+    ValueTask<IndexDocumentResponse> IndexDocumentAsync(IndexDocumentRequest request, CallContext context);
 
     [OperationContract]
     ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context);

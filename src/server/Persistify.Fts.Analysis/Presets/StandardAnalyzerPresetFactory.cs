@@ -23,10 +23,11 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
 
     public Result TryCreate(string presetName, out IAnalyzer? analyzer)
     {
-        if (!AvailablePresets.Contains(presetName))
+        var result = Validate(presetName);
+        if (result.IsFailure)
         {
             analyzer = null;
-            return new UnsupportedPresetException(presetName, AvailablePresets);
+            return result;
         }
 
         switch (presetName)
@@ -40,5 +41,15 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
                 analyzer = null;
                 return new UnsupportedPresetException(presetName, AvailablePresets);
         }
+    }
+
+    public Result Validate(string presetName)
+    {
+        if (!AvailablePresets.Contains(presetName))
+        {
+            return new UnsupportedPresetException(presetName, AvailablePresets);
+        }
+
+        return Result.Success;
     }
 }

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj" />
+    <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj"/>
   </ItemGroup>
 
 </Project>

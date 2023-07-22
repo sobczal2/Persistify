@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistify.HostedServices;
 using Persistify.Persistence.Core.Abstractions;
 using Persistify.Persistence.Core.FileSystem;
-using Persistify.Persistence.Core.Sqlite;
 using Persistify.Server.Configuration.Enums;
 using Persistify.Server.Configuration.Settings;
 
@@ -17,13 +17,15 @@ public static class PersistenceCoreExtensions
 
         switch (storageSettings.StorageType)
         {
-            case StorageType.PrimitiveFileSystem:
-                services.AddSingleton<IRepositoryFactory, PrimitiveFileSystemRepositoryFactory>();
+            case StorageType.FileSystem:
+                services.AddSingleton<FileSystemRepositoryFactory>();
+                services.AddSingleton<IRepositoryFactory>(sp => sp.GetRequiredService<FileSystemRepositoryFactory>());
+                services.AddSingleton<IActRecurrently>(sp => sp.GetRequiredService<FileSystemRepositoryFactory>());
+                services.AddSingleton<ILinearRepositoryFactory, FileSystemLinearRepositoryFactory>();
                 break;
-            case StorageType.BinaryFileSystem:
-                throw new NotImplementedException();
-            case StorageType.Sqlite:
-                services.AddSingleton<IRepositoryFactory, SqliteRepositoryFactory>();
+            case StorageType.LegacyFileSystem:
+                services.AddSingleton<IRepositoryFactory, PrimitiveFileSystemRepositoryFactory>();
+                services.AddSingleton<ILinearRepositoryFactory, FileSystemLinearRepositoryFactory>();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

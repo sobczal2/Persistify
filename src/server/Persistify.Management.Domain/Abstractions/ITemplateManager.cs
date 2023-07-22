@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Persistify.Domain.Templates;
 
 namespace Persistify.Management.Domain.Abstractions;
@@ -8,9 +7,7 @@ namespace Persistify.Management.Domain.Abstractions;
 public interface ITemplateManager
 {
     ValueTask CreateAsync(Template template);
-    ValueTask<Template?> GetAsync(int id);
-    ValueTask<IEnumerable<Template>> GetAllAsync();
+    Template? Get(int id);
+    IEnumerable<Template> GetAll();
     ValueTask DeleteAsync(int id);
-    ValueTask AcquireReadLockAsync(int id);
-    ValueTask ReleaseReadLockAsync(int id);
 }

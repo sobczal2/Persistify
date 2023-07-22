@@ -29,6 +29,6 @@ public class PrimitiveFileSystemRepositoryFactory : IRepositoryFactory
         return (IRepository<T>)_repositories.GetOrAdd(repositoryName,
             static (_, args)
                 => new PrimitiveFileSystemRepository<T>(args.directoryPath, args.serializer),
-            (serializer: _serializer, directoryPath));
+            (serializer: _serializer, directoryPath: directoryPath));
     }
 }

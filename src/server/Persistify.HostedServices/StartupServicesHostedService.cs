@@ -9,12 +9,12 @@ namespace Persistify.HostedServices;
 
 public class StartupServicesHostedService : IHostedService
 {
-    private readonly ILogger<RecurrentServicesHostedService> _logger;
+    private readonly ILogger<StartupServicesHostedService> _logger;
     private readonly IEnumerable<IActOnStartup> _startupActions;
 
     public StartupServicesHostedService(
         IEnumerable<IActOnStartup> startupActions,
-        ILogger<RecurrentServicesHostedService> logger
+        ILogger<StartupServicesHostedService> logger
     )
     {
         _startupActions = startupActions;
@@ -23,11 +23,12 @@ public class StartupServicesHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("StartupServicesHostedService is starting.");
+        _logger.LogInformation("StartupServicesHostedService is starting");
         foreach (var startupAction in _startupActions)
         {
             try
             {
+                _logger.LogInformation("Performing startup action {StartupActionName}", startupAction.GetType().Name);
                 await startupAction.PerformStartupActionAsync();
             }
             catch (Exception ex)
@@ -36,7 +37,7 @@ public class StartupServicesHostedService : IHostedService
             }
         }
 
-        _logger.LogInformation("StartupServicesHostedService is stopping.");
+        _logger.LogInformation("StartupServicesHostedService is stopping");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

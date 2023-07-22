@@ -15,9 +15,10 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 {
     private readonly ILogger<Pipeline<TContext, TRequest, TResponse>> _logger;
 
-    public Pipeline(
+    protected Pipeline(
         ILogger<Pipeline<TContext, TRequest, TResponse>> logger
     )
+
     {
         _logger = logger;
     }
@@ -36,8 +37,8 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
         }
 
         var context = CreateContext(request);
-        var stopwatch = new Stopwatch();
 
+        var stopwatch = new Stopwatch();
         for (var i = 0; i < PipelineStages.Length; i++)
         {
             var stageNumber = i;

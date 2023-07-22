@@ -15,7 +15,7 @@ public class CreateTemplateRequest
     }
 
     [ProtoMember(1)]
-    public string Name { get; set; } = default!;
+    public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
     public List<TextField> TextFields { get; set; } = default!;

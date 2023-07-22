@@ -17,7 +17,7 @@ public class PaginationValidator : IValidator<Pagination>
     {
         if (value.PageNumber < 0)
         {
-            return new ValidationException($"{ErrorPrefix}.Page", "Page must be greater than 0");
+            return new ValidationException($"{ErrorPrefix}.PageNumber", "PageNumber must be greater than 0");
         }
 
         if (value.PageSize <= 0)

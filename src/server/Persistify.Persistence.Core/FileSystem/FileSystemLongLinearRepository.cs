@@ -1,154 +1,163 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Persistence.Core.Abstractions;
 
-namespace Persistify.Persistence.Core.FileSystem;
-
-public class FileSystemLongLinearRepository : ILongLinearRepository
+namespace Persistify.Persistence.Core.FileSystem
 {
-    private const long EmptyValue = -1L;
-    private readonly string _filePath;
-    private readonly Mutex _mutex;
-
-    public FileSystemLongLinearRepository(string filePath)
+    public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
     {
-        _filePath = filePath;
-        _mutex = new Mutex();
+        private const long EmptyValue = -1L;
+        private readonly FileStream _fileStream;
+        private readonly SemaphoreSlim _mutex;
 
-        if (!File.Exists(_filePath))
+        public FileSystemLongLinearRepository(string filePath)
         {
-            File.Create(_filePath).Dispose();
-        }
-    }
-
-    public ValueTask WriteAsync(int id, long value)
-    {
-        if (id < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(id));
+            _fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            _mutex = new SemaphoreSlim(1, 1);
         }
 
-        _mutex.WaitOne();
-        try
+        public async ValueTask WriteAsync(long id, long value)
         {
-            return WriteInternalAsync(id, value);
-        }
-        finally
-        {
-            _mutex.ReleaseMutex();
-        }
-    }
+            if (id < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
 
-    private ValueTask WriteInternalAsync(int id, long value)
-    {
-        using var binaryWriter = new BinaryWriter(File.Open(_filePath, FileMode.Open));
-
-        if(binaryWriter.BaseStream.Length < (id + 1) * sizeof(long))
-        {
-            binaryWriter.Seek(0, SeekOrigin.End);
-            binaryWriter.Write(new byte[(id + 1) * sizeof(long) - binaryWriter.BaseStream.Length]);
+            await _mutex.WaitAsync();
+            try
+            {
+                await WriteInternalAsync(id, value);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
 
-        binaryWriter.Seek(id * sizeof(long), SeekOrigin.Begin);
-        binaryWriter.Write(value);
-        return ValueTask.CompletedTask;
-    }
-
-    public ValueTask<long?> ReadAsync(int id)
-    {
-        if (id < 0)
+        public async ValueTask<long?> ReadAsync(long id)
         {
-            throw new ArgumentOutOfRangeException(nameof(id));
+            if (id < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
+            await _mutex.WaitAsync();
+            try
+            {
+                return await ReadInternalAsync(id);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
 
-        _mutex.WaitOne();
-        try
+        public async ValueTask<IEnumerable<(long Id, long Value)>> ReadAllAsync()
         {
-            return ReadInternalAsync(id);
-        }
-        finally
-        {
-            _mutex.ReleaseMutex();
-        }
-    }
-
-    private ValueTask<long?> ReadInternalAsync(int id)
-    {
-        using var binaryReader = new BinaryReader(File.Open(_filePath, FileMode.Open));
-
-        if (binaryReader.BaseStream.Length < (id + 1) * sizeof(long))
-        {
-            return ValueTask.FromResult<long?>(null);
+            await _mutex.WaitAsync();
+            try
+            {
+                return await ReadAllInternalAsync().ToListAsync();
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
 
-        binaryReader.BaseStream.Seek(id * sizeof(long), SeekOrigin.Begin);
-
-        var value = binaryReader.ReadInt64();
-        if (value == EmptyValue)
+        public async ValueTask RemoveAsync(long id)
         {
-            return ValueTask.FromResult<long?>(null);
+            if (id < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(id));
+            }
+
+            await _mutex.WaitAsync();
+            try
+            {
+                await RemoveInternalAsync(id);
+            }
+            finally
+            {
+                _mutex.Release();
+            }
         }
 
-        return ValueTask.FromResult<long?>(value);
-    }
-
-    public ValueTask<IEnumerable<long>> ReadAllAsync()
-    {
-        _mutex.WaitOne();
-        try
+        public ValueTask<long> CountAsync()
         {
-            return ReadAllInternalAsync();
-        }
-        finally
-        {
-            _mutex.ReleaseMutex();
-        }
-    }
-
-    private ValueTask<IEnumerable<long>> ReadAllInternalAsync()
-    {
-        using var binaryReader = new BinaryReader(File.Open(_filePath, FileMode.Open));
-        var values = new List<long>((int)(binaryReader.BaseStream.Length / sizeof(long)));
-        while (binaryReader.BaseStream.Position < binaryReader.BaseStream.Length)
-        {
-            values.Add(binaryReader.ReadInt64());
+            return ValueTask.FromResult<long>(_fileStream.Length / sizeof(long));
         }
 
-        return new ValueTask<IEnumerable<long>>(values);
-    }
-
-    public ValueTask RemoveAsync(int id)
-    {
-        if (id < 0)
+        private async ValueTask WriteInternalAsync(long id, long value)
         {
-            throw new ArgumentOutOfRangeException(nameof(id));
+            if (_fileStream.Length < (id + 1) * sizeof(long))
+            {
+                _fileStream.SetLength((id + 1) * sizeof(long));
+            }
+
+            _fileStream.Position = id * sizeof(long);
+            byte[] bytes = BitConverter.GetBytes(value);
+            await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+            await _fileStream.FlushAsync();
         }
 
-        _mutex.WaitOne();
-        try
+        private async ValueTask<long?> ReadInternalAsync(long id)
         {
-            return RemoveInternalAsync(id);
-        }
-        finally
-        {
-            _mutex.ReleaseMutex();
-        }
-    }
+            if (_fileStream.Length < (id + 1) * sizeof(long))
+            {
+                return null;
+            }
 
-    private ValueTask RemoveInternalAsync(int id)
-    {
-        using var binaryWriter = new BinaryWriter(File.Open(_filePath, FileMode.Open));
+            _fileStream.Position = id * sizeof(long);
+            byte[] buffer = new byte[sizeof(long)];
+            await _fileStream.ReadAsync(buffer, 0, buffer.Length);
 
-        if (binaryWriter.BaseStream.Length < (id + 1) * sizeof(long))
-        {
-            return ValueTask.CompletedTask;
+            long value = BitConverter.ToInt64(buffer, 0);
+            return value == EmptyValue ? null : (long?)value;
         }
 
-        binaryWriter.Seek(id * sizeof(long), SeekOrigin.Begin);
-        binaryWriter.Write(EmptyValue);
-        return ValueTask.CompletedTask;
+        private async IAsyncEnumerable<(long, long)> ReadAllInternalAsync()
+        {
+            _fileStream.Position = 0;
+            byte[] buffer = new byte[sizeof(long)];
+            for (long id = 0; id < _fileStream.Length / sizeof(long); id++)
+            {
+                var read = await _fileStream.ReadAsync(buffer, 0, buffer.Length);
+
+                if (read != buffer.Length)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                long value = BitConverter.ToInt64(buffer, 0);
+                if (value != EmptyValue)
+                {
+                    yield return (id, value);
+                }
+            }
+        }
+
+        private async ValueTask RemoveInternalAsync(long id)
+        {
+            if (_fileStream.Length < (id + 1) * sizeof(long))
+            {
+                return;
+            }
+
+            _fileStream.Position = id * sizeof(long);
+            byte[] bytes = BitConverter.GetBytes(EmptyValue);
+            await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+            await _fileStream.FlushAsync();
+        }
+
+        public void Dispose()
+        {
+            _mutex.Dispose();
+            _fileStream.Dispose();
+        }
     }
 }

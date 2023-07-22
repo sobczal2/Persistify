@@ -9,7 +9,7 @@ namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    public ValueTask<IndexDocumentResponse> CreateDocumentAsync(IndexDocumentRequest request, CallContext context)
+    public ValueTask<IndexDocumentResponse> IndexDocumentAsync(IndexDocumentRequest request, CallContext context)
     {
         throw new NotImplementedException();
     }

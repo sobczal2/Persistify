@@ -22,4 +22,3 @@ public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>
         return ValueTask.CompletedTask;
     }
 }
-

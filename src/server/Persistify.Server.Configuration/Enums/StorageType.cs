@@ -2,7 +2,6 @@
 
 public enum StorageType
 {
-    PrimitiveFileSystem,
-    BinaryFileSystem,
-    Sqlite
+    FileSystem = 1,
+    LegacyFileSystem = 2,
 }

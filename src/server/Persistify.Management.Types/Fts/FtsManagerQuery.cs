@@ -5,11 +5,6 @@ namespace Persistify.Management.Types.Fts;
 
 public class FtsManagerQuery : ITypeManagerQuery
 {
-    public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
-    public string Value { get; }
-    public bool Prefix { get; }
-    public bool Suffix { get; }
-
     public FtsManagerQuery(TemplateFieldIdentifier templateFieldIdentifier, string value, bool prefix, bool suffix)
     {
         TemplateFieldIdentifier = templateFieldIdentifier;
@@ -17,4 +12,9 @@ public class FtsManagerQuery : ITypeManagerQuery
         Prefix = prefix;
         Suffix = suffix;
     }
+
+    public string Value { get; }
+    public bool Prefix { get; }
+    public bool Suffix { get; }
+    public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
 }

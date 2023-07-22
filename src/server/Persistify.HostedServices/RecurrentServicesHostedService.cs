@@ -33,9 +33,8 @@ public class RecurrentServicesHostedService : IHostedService
                 {
                     try
                     {
-                        _logger.LogInformation($"Performing recurrent action {recurrentAction.GetType().Name}");
+                        _logger.LogInformation("Performing recurrent action {RecurrentActionName}", recurrentAction.GetType().Name);
                         await recurrentAction.PerformRecurrentActionAsync();
-                        _logger.LogInformation($"Performed recurrent action {recurrentAction.GetType().Name}");
                     }
                     catch (Exception ex)
                     {
@@ -48,7 +47,7 @@ public class RecurrentServicesHostedService : IHostedService
                     }
                     catch (TaskCanceledException) { }
                 }
-            }));
+            }, cancellationToken));
         }
 
         return Task.CompletedTask;

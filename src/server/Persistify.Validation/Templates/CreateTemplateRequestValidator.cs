@@ -27,14 +27,14 @@ public class CreateTemplateRequestValidator : IValidator<CreateTemplateRequest>
 
     public Result Validate(CreateTemplateRequest value)
     {
-        if (string.IsNullOrEmpty(value.Name))
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            return new ValidationException($"{ErrorPrefix}.Name", "Name is required");
+            return new ValidationException($"{ErrorPrefix}.TemplateName", "TemplateName is required");
         }
 
-        if (value.Name.Length > 64)
+        if (value.TemplateName.Length > 64)
         {
-            return new ValidationException($"{ErrorPrefix}.Name", "Name has a maximum length of 64 characters");
+            return new ValidationException($"{ErrorPrefix}.TemplateName", "TemplateName has a maximum length of 64 characters");
         }
 
         if (value.TextFields.Count + value.NumberFields.Count + value.BoolFields.Count == 0)
