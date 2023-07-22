@@ -2,11 +2,11 @@
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Common.Stages;
 using Persistify.Pipelines.Exceptions;
-using Persistify.Pipelines.Templates.CreateTemplates.Stages;
+using Persistify.Pipelines.Templates.CreateTemplate.Stages;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 
-namespace Persistify.Pipelines.Templates.CreateTemplates;
+namespace Persistify.Pipelines.Templates.CreateTemplate;
 
 public class
     CreateTemplatePipeline : Pipeline<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>

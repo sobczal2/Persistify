@@ -2,7 +2,7 @@
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 
-namespace Persistify.Pipelines.Templates.CreateTemplates;
+namespace Persistify.Pipelines.Templates.CreateTemplate;
 
 public class CreateTemplatePipelineContext : IPipelineContext<CreateTemplateRequest, CreateTemplateResponse>
 {

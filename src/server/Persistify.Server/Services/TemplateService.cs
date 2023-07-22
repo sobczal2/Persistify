@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Pipelines.Templates.CreateTemplates;
-using Persistify.Pipelines.Templates.GetTemplates;
+using Persistify.Pipelines.Templates.CreateTemplate;
+using Persistify.Pipelines.Templates.DeleteTemplate;
+using Persistify.Pipelines.Templates.GetTemplate;
 using Persistify.Pipelines.Templates.ListTemplates;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
@@ -15,16 +16,19 @@ public class TemplateService : ITemplateService
     private readonly CreateTemplatePipeline _createTemplatePipeline;
     private readonly GetTemplatePipeline _getTemplatePipeline;
     private readonly ListTemplatesPipeline _listTemplatesPipeline;
+    private readonly DeleteTemplatePipeline _deleteTemplatePipeline;
 
     public TemplateService(
         CreateTemplatePipeline createTemplatePipeline,
         GetTemplatePipeline getTemplatePipeline,
-        ListTemplatesPipeline listTemplatesPipeline
+        ListTemplatesPipeline listTemplatesPipeline,
+        DeleteTemplatePipeline deleteTemplatePipeline
         )
     {
         _createTemplatePipeline = createTemplatePipeline;
         _getTemplatePipeline = getTemplatePipeline;
         _listTemplatesPipeline = listTemplatesPipeline;
+        _deleteTemplatePipeline = deleteTemplatePipeline;
     }
     public ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context)
     {
@@ -41,8 +45,8 @@ public class TemplateService : ITemplateService
         return _listTemplatesPipeline.ProcessAsync(request);
     }
 
-    public ValueTask<DeleteTemplateRequest> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
+    public ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
     {
-        throw new NotImplementedException();
+        return _deleteTemplatePipeline.ProcessAsync(request);
     }
 }

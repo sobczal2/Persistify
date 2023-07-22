@@ -104,7 +104,7 @@ namespace Persistify.Management.Domain
             {
                 if (!_templates.TryRemove(id, out var template))
                 {
-                    throw new TemplateManagerInternalException();
+                    throw new TemplateNotFoundException(id);
                 }
 
                 await _repository.RemoveAsync(id);

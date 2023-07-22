@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Persistify.Pipelines.Templates.CreateTemplates;
-using Persistify.Pipelines.Templates.CreateTemplates.Stages;
-using Persistify.Pipelines.Templates.GetTemplates;
-using Persistify.Pipelines.Templates.GetTemplates.Stages;
+using Persistify.Pipelines.Templates.CreateTemplate;
+using Persistify.Pipelines.Templates.CreateTemplate.Stages;
+using Persistify.Pipelines.Templates.DeleteTemplate;
+using Persistify.Pipelines.Templates.DeleteTemplate.Stages;
+using Persistify.Pipelines.Templates.GetTemplate;
+using Persistify.Pipelines.Templates.GetTemplate.Stages;
 using Persistify.Pipelines.Templates.ListTemplates;
 using Persistify.Pipelines.Templates.ListTemplates.Stages;
 
@@ -15,6 +17,7 @@ public static class PipelinesTemplatesExtensions
         services.AddSingleton(typeof(CreateTemplatePipeline));
         services.AddSingleton(typeof(GetTemplatePipeline));
         services.AddSingleton(typeof(ListTemplatesPipeline));
+        services.AddSingleton(typeof(DeleteTemplatePipeline));
 
         services.AddSingleton(typeof(CheckAnalyzersAvailabilityStage));
         services.AddSingleton(typeof(AddTemplateToTemplateManagerStage));
@@ -23,6 +26,8 @@ public static class PipelinesTemplatesExtensions
 
         services.AddSingleton(typeof(FetchTemplatesFromTemplateManagerStage));
         services.AddSingleton(typeof(ApplyPaginationStage));
+
+        services.AddSingleton(typeof(DeleteTemplateFromTemplateManagerStage));
 
         return services;
     }

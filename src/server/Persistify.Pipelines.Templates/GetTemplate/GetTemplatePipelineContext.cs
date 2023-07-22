@@ -3,7 +3,7 @@ using Persistify.Pipelines.Common;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 
-namespace Persistify.Pipelines.Templates.GetTemplates;
+namespace Persistify.Pipelines.Templates.GetTemplate;
 
 public class GetTemplatePipelineContext : IPipelineContext<GetTemplateRequest, GetTemplateResponse>
 {

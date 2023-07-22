@@ -5,7 +5,7 @@ using Persistify.Pipelines.Common;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 
-namespace Persistify.Pipelines.Templates.CreateTemplates.Stages;
+namespace Persistify.Pipelines.Templates.CreateTemplate.Stages;
 
 public class
     CheckAnalyzersAvailabilityStage : PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>

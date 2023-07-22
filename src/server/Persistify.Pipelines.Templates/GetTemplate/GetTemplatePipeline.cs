@@ -2,11 +2,11 @@
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Common.Stages;
 using Persistify.Pipelines.Exceptions;
-using Persistify.Pipelines.Templates.GetTemplates.Stages;
+using Persistify.Pipelines.Templates.GetTemplate.Stages;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 
-namespace Persistify.Pipelines.Templates.GetTemplates;
+namespace Persistify.Pipelines.Templates.GetTemplate;
 
 public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
 {

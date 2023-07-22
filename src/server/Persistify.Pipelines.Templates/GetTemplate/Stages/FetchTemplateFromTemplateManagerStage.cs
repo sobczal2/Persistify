@@ -6,7 +6,7 @@ using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Validation.Common;
 
-namespace Persistify.Pipelines.Templates.GetTemplates.Stages;
+namespace Persistify.Pipelines.Templates.GetTemplate.Stages;
 
 public class
     FetchTemplateFromTemplateManagerStage : PipelineStage<GetTemplatePipelineContext, GetTemplateRequest,

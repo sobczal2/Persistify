@@ -8,7 +8,7 @@ using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Validation.Common;
 
-namespace Persistify.Pipelines.Templates.CreateTemplates.Stages;
+namespace Persistify.Pipelines.Templates.CreateTemplate.Stages;
 
 public class AddTemplateToTemplateManagerStage : PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest,
     CreateTemplateResponse>
