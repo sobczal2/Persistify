@@ -20,6 +20,7 @@ namespace Persistify.Management.Domain
         private readonly ConcurrentDictionary<int, SemaphoreSlim> _locks;
         private readonly IRepository<Template> _repository;
         private readonly ConcurrentDictionary<int, Template> _templates;
+        private readonly ConcurrentDictionary<string, int> _templateNameIdMap;
 
         public TemplateManager(
             IRepositoryFactory repositoryFactory,
@@ -31,6 +32,7 @@ namespace Persistify.Management.Domain
             _repository = repositoryFactory.Create<Template>(TemplateRepositoryKey);
             _generalLock = new SemaphoreSlim(1, 1);
             _locks = new ConcurrentDictionary<int, SemaphoreSlim>();
+            _templateNameIdMap = new ConcurrentDictionary<string, int>();
         }
 
         public async ValueTask PerformStartupActionAsync()
@@ -45,6 +47,11 @@ namespace Persistify.Management.Domain
                 await foreach (var template in templates)
                 {
                     if (!_templates.TryAdd(template.Id, template))
+                    {
+                        throw new TemplateManagerInternalException();
+                    }
+
+                    if (!_templateNameIdMap.TryAdd(template.Name, template.Id))
                     {
                         throw new TemplateManagerInternalException();
                     }
@@ -66,7 +73,7 @@ namespace Persistify.Management.Domain
             {
                 template.Id = id;
 
-                if (_templates.Values.Any(t => t.Name == template.Name))
+                if (!_templateNameIdMap.TryAdd(template.Name, id))
                 {
                     throw new TemplateNameAlreadyExistsException();
                 }
@@ -105,6 +112,11 @@ namespace Persistify.Management.Domain
                 if (!_templates.TryRemove(id, out var template))
                 {
                     throw new TemplateNotFoundException(id);
+                }
+
+                if (!_templateNameIdMap.TryRemove(template.Name, out _))
+                {
+                    throw new TemplateManagerInternalException();
                 }
 
                 await _repository.RemoveAsync(id);

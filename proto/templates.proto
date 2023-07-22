@@ -1,0 +1,66 @@
+syntax = "proto3";
+package Persistify.Services;
+
+message AnalyzerDescriptor {
+   repeated string CharacterFilterNames = 1;
+   string TokenizerName = 2;
+   repeated string TokenFilterNames = 3;
+}
+message BoolField {
+   string Name = 1;
+   bool IsRequired = 2;
+}
+message CreateTemplateRequest {
+   string TemplateName = 1;
+   repeated TextField TextFields = 2;
+   repeated NumberField NumberFields = 3;
+   repeated BoolField BoolFields = 4;
+}
+message CreateTemplateResponse {
+   int64 TemplateId = 1;
+}
+message DeleteTemplateRequest {
+   int32 TemplateId = 1;
+}
+message DeleteTemplateResponse {
+}
+message GetTemplateRequest {
+   int32 TemplateId = 1;
+}
+message GetTemplateResponse {
+   Template Template = 1;
+}
+message ListTemplatesRequest {
+   Pagination Pagination = 1;
+}
+message ListTemplatesResponse {
+   repeated Template Templates = 1;
+   int32 TotalCount = 2;
+}
+message NumberField {
+   string Name = 1;
+   bool IsRequired = 2;
+}
+message Pagination {
+   int32 PageNumber = 1;
+   int32 PageSize = 2;
+}
+message Template {
+   int32 Id = 1;
+   string Name = 2;
+   repeated TextField TextFields = 3;
+   repeated NumberField NumberFields = 4;
+   repeated BoolField BoolFields = 5;
+}
+message TextField {
+   string Name = 1;
+   bool IsRequired = 2;
+   string AnalyzerPresetName = 3;
+   AnalyzerDescriptor AnalyzerDescriptor = 4;
+}
+service TemplateService {
+   rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);
+   rpc DeleteTemplate (DeleteTemplateRequest) returns (DeleteTemplateResponse);
+   rpc GetTemplate (GetTemplateRequest) returns (GetTemplateResponse);
+   rpc ListTemplates (ListTemplatesRequest) returns (ListTemplatesResponse);
+}

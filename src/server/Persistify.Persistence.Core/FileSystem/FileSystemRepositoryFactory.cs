@@ -43,7 +43,7 @@ public class FileSystemRepositoryFactory : IRepositoryFactory, IActRecurrently, 
                 lengthsRepository: lengthsRepository));
     }
 
-    public TimeSpan RecurrentActionInterval => TimeSpan.FromSeconds(30);
+    public TimeSpan RecurrentActionInterval => TimeSpan.FromMinutes(15);
     public async ValueTask PerformRecurrentActionAsync()
     {
         foreach (var repository in _repositories.Values)

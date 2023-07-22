@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
-    <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj"/>
     <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj"/>
   </ItemGroup>
 

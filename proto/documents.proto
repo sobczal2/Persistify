@@ -1,0 +1,61 @@
+syntax = "proto3";
+package Persistify.Services;
+
+message BoolFieldValue {
+   bool Value = 1;
+   string FieldName = 2;
+}
+message DeleteDocumentRequest {
+   int32 TemplateId = 1;
+   int64 DocumentId = 2;
+}
+message DeleteDocumentResponse {
+}
+message Document {
+   int64 Id = 1;
+   repeated TextFieldValue TextFieldValues = 2;
+   repeated NumberFieldValue NumberFieldValues = 3;
+   repeated BoolFieldValue BoolFieldValues = 4;
+}
+message GetDocumentRequest {
+   int32 TemplateId = 1;
+   int64 DocumentId = 2;
+}
+message GetDocumentResponse {
+   Document Document = 1;
+}
+message IndexDocumentRequest {
+   int32 TemplateId = 1;
+   repeated TextFieldValue TextFieldValues = 2;
+   repeated NumberFieldValue NumberFieldValues = 3;
+   repeated BoolFieldValue BoolFieldValues = 4;
+}
+message IndexDocumentResponse {
+   int64 Id = 1;
+}
+message NumberFieldValue {
+   double Value = 1;
+   string FieldName = 2;
+}
+message Pagination {
+   int32 PageNumber = 1;
+   int32 PageSize = 2;
+}
+message SearchDocumentsRequest {
+   int32 TemplateId = 1;
+   Pagination Pagination = 2;
+}
+message SearchDocumentsResponse {
+   repeated Document Documents = 1;
+   int64 TotalCount = 2;
+}
+message TextFieldValue {
+   string Value = 1;
+   string FieldName = 2;
+}
+service DocumentService {
+   rpc DeleteDocument (DeleteDocumentRequest) returns (DeleteDocumentResponse);
+   rpc GetDocument (GetDocumentRequest) returns (GetDocumentResponse);
+   rpc IndexDocument (IndexDocumentRequest) returns (IndexDocumentResponse);
+   rpc SearchDocuments (SearchDocumentsRequest) returns (SearchDocumentsResponse);
+}
