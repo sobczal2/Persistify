@@ -11,7 +11,7 @@
     <ProjectReference Include="..\Persistify.Fts.Analysis\Persistify.Fts.Analysis.csproj" />
     <ProjectReference Include="..\Persistify.Management.Domain\Persistify.Management.Domain.csproj" />
     <ProjectReference Include="..\Persistify.Pipelines\Persistify.Pipelines.csproj" />
-    <ProjectReference Include="..\Persistify.Responses\Persistify.Responses.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Responses\Persistify.Responses.csproj" />
   </ItemGroup>
 
 </Project>

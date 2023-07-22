@@ -5,6 +5,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Validation.Common;
+using ProtoBuf;
 
 namespace Persistify.Pipelines.Common;
 

@@ -14,7 +14,7 @@
     <ProjectReference Include="..\Persistify.Pipelines\Persistify.Pipelines.csproj" />
     <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj" />
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
-    <ProjectReference Include="..\Persistify.Services\Persistify.Services.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj" />
     <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj" />
   </ItemGroup>
 
