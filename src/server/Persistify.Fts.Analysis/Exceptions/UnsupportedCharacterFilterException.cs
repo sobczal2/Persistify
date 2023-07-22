@@ -1,4 +1,7 @@
-﻿namespace Persistify.Fts.Analysis.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Persistify.Fts.Analysis.Exceptions;
 
 public class UnsupportedCharacterFilterException : Exception
 {

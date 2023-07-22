@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Linq;
 using Persistify.Fts.Analysis.Abstractions;
 using Persistify.Fts.Analysis.Exceptions;
 using Persistify.Helpers.ErrorHandling;

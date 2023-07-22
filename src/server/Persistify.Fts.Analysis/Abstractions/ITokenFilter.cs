@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Fts;
+﻿using System.Collections.Generic;
+using Persistify.Domain.Fts;
 
 namespace Persistify.Fts.Analysis.Abstractions;
 

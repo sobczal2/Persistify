@@ -11,4 +11,6 @@ public interface ITemplateManager
     ValueTask<Template?> GetAsync(int id);
     ValueTask<IEnumerable<Template>> GetAllAsync();
     ValueTask DeleteAsync(int id);
+    ValueTask AcquireReadLockAsync(int id);
+    ValueTask ReleaseReadLockAsync(int id);
 }

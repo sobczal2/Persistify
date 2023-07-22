@@ -16,7 +16,8 @@ public class TemplateManager : ITemplateManager, IActOnStartup
     private readonly IRepository<Template> _repository;
     private readonly ConcurrentDictionary<int, Template> _templates;
     private const string TemplateRepositoryKey = "TemplateRepository";
-    private readonly Mutex _mutex;
+    private readonly ReaderWriterLockSlim _generalLock;
+    private readonly ConcurrentDictionary<int, ReaderWriterLockSlim> _locks;
 
     public TemplateManager(
         IRepositoryFactory repositoryFactory,
@@ -26,12 +27,13 @@ public class TemplateManager : ITemplateManager, IActOnStartup
         _documentIdManager = documentIdManager;
         _templates = new ConcurrentDictionary<int, Template>();
         _repository = repositoryFactory.Create<Template>(TemplateRepositoryKey);
-        _mutex = new Mutex();
+        _generalLock = new ReaderWriterLockSlim();
+        _locks = new ConcurrentDictionary<int, ReaderWriterLockSlim>();
     }
 
     public async ValueTask CreateAsync(Template template)
     {
-        _mutex.WaitOne();
+        _generalLock.EnterWriteLock();
         try
         {
             var id = _templates.Count + 1;
@@ -41,23 +43,40 @@ public class TemplateManager : ITemplateManager, IActOnStartup
         }
         finally
         {
-            _mutex.ReleaseMutex();
+            _generalLock.ExitWriteLock();
         }
     }
 
     public ValueTask<Template?> GetAsync(int id)
     {
-        return ValueTask.FromResult(_templates.GetValueOrDefault(id));
+        var @lock = _locks.GetOrAdd(id, _ => new ReaderWriterLockSlim());
+        try
+        {
+            return ValueTask.FromResult(_templates.TryGetValue(id, out var template) ? template : null);
+        }
+        finally
+        {
+            @lock.ExitReadLock();
+        }
     }
 
     public ValueTask<IEnumerable<Template>> GetAllAsync()
     {
-        return ValueTask.FromResult(_templates.Values.AsEnumerable());
+        _generalLock.EnterReadLock();
+        try
+        {
+            return ValueTask.FromResult(_templates.Values.AsEnumerable());
+        }
+        finally
+        {
+            _generalLock.ExitReadLock();
+        }
     }
 
     public async ValueTask DeleteAsync(int id)
     {
-        _mutex.WaitOne();
+        _generalLock.EnterWriteLock();
+        var @lock = _locks.GetOrAdd(id, _ => new ReaderWriterLockSlim());
         try
         {
             _templates.TryRemove(id, out _);
@@ -66,8 +85,23 @@ public class TemplateManager : ITemplateManager, IActOnStartup
         }
         finally
         {
-            _mutex.ReleaseMutex();
+            _generalLock.ExitWriteLock();
+            @lock.ExitWriteLock();
         }
+    }
+
+    public ValueTask AcquireReadLockAsync(int id)
+    {
+        var @lock = _locks.GetOrAdd(id, _ => new ReaderWriterLockSlim());
+        @lock.EnterReadLock();
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask ReleaseReadLockAsync(int id)
+    {
+        var @lock = _locks.GetOrAdd(id, _ => new ReaderWriterLockSlim());
+        @lock.ExitReadLock();
+        return ValueTask.CompletedTask;
     }
 
     public async ValueTask PerformStartupActionAsync()

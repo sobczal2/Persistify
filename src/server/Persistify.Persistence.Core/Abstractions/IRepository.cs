@@ -1,4 +1,7 @@
-﻿namespace Persistify.Persistence.Core.Abstractions;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace Persistify.Persistence.Core.Abstractions;
 
 public interface IRepository<T>
 {

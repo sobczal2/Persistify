@@ -1,4 +1,6 @@
-﻿namespace Persistify.Persistence.Cache;
+﻿using System.Collections.Generic;
+
+namespace Persistify.Persistence.Cache;
 
 public interface ICache<T>
 {

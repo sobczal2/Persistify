@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Collections.Generic;
+using Persistify.Domain.Templates;
 using Persistify.Fts.Analysis.Abstractions;
 
 namespace Persistify.Fts.Analysis.Presets;

@@ -1,4 +1,6 @@
-﻿using Persistify.Domain.Fts;
+﻿using System;
+using System.Collections.Generic;
+using Persistify.Domain.Fts;
 using Persistify.Fts.Analysis.Abstractions;
 
 namespace Persistify.Fts.Analysis.Tokenizers;

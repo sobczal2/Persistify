@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Persistify.Domain.Fts;
 using Persistify.Fts.Analysis.Abstractions;
 

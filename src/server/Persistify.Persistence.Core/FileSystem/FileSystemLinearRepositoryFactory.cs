@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.IO;
 using Microsoft.Extensions.Options;
 using Persistify.Persistence.Core.Abstractions;
 using Persistify.Server.Configuration.Settings;
@@ -15,6 +16,7 @@ public class FileSystemLinearRepositoryFactory : ILinearRepositoryFactory
     )
     {
         _storageSettings = storageSettings.Value;
+        _repositories = new ConcurrentDictionary<string, object>();
     }
 
     public ILongLinearRepository CreateLong(string repositoryName)

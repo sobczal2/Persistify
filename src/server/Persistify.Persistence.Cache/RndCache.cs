@@ -1,4 +1,8 @@
-﻿namespace Persistify.Persistence.Cache;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Persistify.Persistence.Cache;
 
 public class RndCache<T> : ICache<T>
 {
