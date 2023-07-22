@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using Persistify.Fts.Analysis.Abstractions;
-using Persistify.Fts.Analysis.Analyzers;
 using Persistify.Fts.Analysis.Exceptions;
 using Persistify.Helpers.ErrorHandling;
 
@@ -8,8 +7,8 @@ namespace Persistify.Fts.Analysis.Presets;
 
 public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
 {
-    private readonly IAnalyzerFactory _analyzerFactory;
     private static readonly ConcurrentBag<string> AvailablePresets = new() { "standard" };
+    private readonly IAnalyzerFactory _analyzerFactory;
 
     private readonly ConcurrentDictionary<string, IAnalyzer> _analyzers;
 

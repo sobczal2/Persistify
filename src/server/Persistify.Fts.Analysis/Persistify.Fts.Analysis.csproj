@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-      <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj" />
-      <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj"/>
+    <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="CharacterFilters\" />
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CharacterFilters\"/>
+  </ItemGroup>
 
 </Project>

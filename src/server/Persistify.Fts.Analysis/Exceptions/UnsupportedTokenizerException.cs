@@ -3,8 +3,8 @@
 public class UnsupportedTokenizerException : Exception
 {
     public UnsupportedTokenizerException(string tokenizerName, IEnumerable<string> supportedTokenizerNames)
-        : base($"Unsupported tokenizer: {tokenizerName}. Supported tokenizers: {string.Join(", ", supportedTokenizerNames)}")
+        : base(
+            $"Unsupported tokenizer: {tokenizerName}. Supported tokenizers: {string.Join(", ", supportedTokenizerNames)}")
     {
-
     }
 }

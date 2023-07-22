@@ -4,10 +4,6 @@ namespace Persistify.Domain.Fts;
 
 public class Token
 {
-    public string Value { get; set; }
-    public int Count { get; set; }
-    public List<int> Positions { get; set; }
-
     public Token(string value, int count, List<int> positions)
     {
         Value = value;
@@ -21,4 +17,8 @@ public class Token
         Count = 1;
         Positions = new List<int>(1) { position };
     }
+
+    public string Value { get; set; }
+    public int Count { get; set; }
+    public List<int> Positions { get; set; }
 }

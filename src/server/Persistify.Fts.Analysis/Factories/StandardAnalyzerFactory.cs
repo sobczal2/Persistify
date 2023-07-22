@@ -6,13 +6,12 @@ using Persistify.Fts.Analysis.Exceptions;
 using Persistify.Fts.Analysis.TokenFilters;
 using Persistify.Fts.Analysis.Tokenizers;
 using Persistify.Helpers.ErrorHandling;
-using Persistify.Validation.Common;
 
-namespace Persistify.Fts.Analysis;
+namespace Persistify.Fts.Analysis.Factories;
 
 public class StandardAnalyzerFactory : IAnalyzerFactory
 {
-    private static readonly ConcurrentBag<string> SupportedCharacterFilters = new() { };
+    private static readonly ConcurrentBag<string> SupportedCharacterFilters = new();
     private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
     private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase" };
 
