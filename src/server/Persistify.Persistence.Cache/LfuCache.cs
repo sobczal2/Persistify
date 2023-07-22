@@ -1,12 +1,10 @@
-﻿using System.Collections.Specialized;
-
-namespace Persistify.Persistence.Cache;
+﻿namespace Persistify.Persistence.Cache;
 
 public class LfuCache<T> : ICache<T>
 {
     private readonly int _capacity;
-    private readonly LinkedList<(long id, T value, int frequency)> _list;
     private readonly Dictionary<long, LinkedListNode<(long id, T value, int frequency)>> _dict;
+    private readonly LinkedList<(long id, T value, int frequency)> _list;
 
     public LfuCache(int capacity)
     {
@@ -35,11 +33,11 @@ public class LfuCache<T> : ICache<T>
 
     public void Set(long id, T value)
     {
-        if(Exists(id))
+        if (Exists(id))
         {
             _list.Remove(_dict[id]);
         }
-        else if(_dict.Count >= _capacity)
+        else if (_dict.Count >= _capacity)
         {
             _dict.Remove(_list.Last!.Value.id);
             _list.RemoveLast();

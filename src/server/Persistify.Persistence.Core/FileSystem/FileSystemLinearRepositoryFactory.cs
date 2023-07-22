@@ -7,12 +7,12 @@ namespace Persistify.Persistence.Core.FileSystem;
 
 public class FileSystemLinearRepositoryFactory : ILinearRepositoryFactory
 {
-    private readonly StorageSettings _storageSettings;
     private readonly ConcurrentDictionary<string, object> _repositories;
+    private readonly StorageSettings _storageSettings;
 
     public FileSystemLinearRepositoryFactory(
         IOptions<StorageSettings> storageSettings
-        )
+    )
     {
         _storageSettings = storageSettings.Value;
     }

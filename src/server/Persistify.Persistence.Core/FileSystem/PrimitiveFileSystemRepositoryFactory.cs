@@ -8,9 +8,9 @@ namespace Persistify.Persistence.Core.FileSystem;
 
 public class PrimitiveFileSystemRepositoryFactory : IRepositoryFactory
 {
-    private readonly StorageSettings _storageSettings;
-    private readonly ISerializer _serializer;
     private readonly ConcurrentDictionary<string, object> _repositories;
+    private readonly ISerializer _serializer;
+    private readonly StorageSettings _storageSettings;
 
     public PrimitiveFileSystemRepositoryFactory(
         IOptions<StorageSettings> storageSettings,

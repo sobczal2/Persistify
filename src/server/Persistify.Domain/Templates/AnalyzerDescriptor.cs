@@ -6,8 +6,18 @@ namespace Persistify.Domain.Templates;
 [ProtoContract]
 public class AnalyzerDescriptor
 {
-    [ProtoMember(1)] public string AnalyzerName { get; set; } = default!;
-    [ProtoMember(2)] public List<string> CharacterFilterNames { get; set; } = default!;
-    [ProtoMember(3)] public string TokenizerName { get; set; } = default!;
-    [ProtoMember(4)] public List<string> TokenFilterNames { get; set; } = default!;
+    public AnalyzerDescriptor()
+    {
+        CharacterFilterNames = new List<string>(0);
+        TokenFilterNames = new List<string>(0);
+    }
+
+    [ProtoMember(1)]
+    public List<string> CharacterFilterNames { get; set; }
+
+    [ProtoMember(2)]
+    public string TokenizerName { get; set; } = default!;
+
+    [ProtoMember(3)]
+    public List<string> TokenFilterNames { get; set; }
 }

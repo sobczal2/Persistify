@@ -8,9 +8,9 @@ namespace Persistify.Persistence.Core.Sqlite;
 
 public class SqliteRepositoryFactory : IRepositoryFactory
 {
-    private readonly IOptions<StorageSettings> _storageSettings;
-    private readonly ISerializer _serializer;
     private readonly ConcurrentDictionary<string, object> _repositories;
+    private readonly ISerializer _serializer;
+    private readonly IOptions<StorageSettings> _storageSettings;
 
     public SqliteRepositoryFactory(
         IOptions<StorageSettings> storageSettings,
@@ -21,6 +21,7 @@ public class SqliteRepositoryFactory : IRepositoryFactory
         _serializer = serializer;
         _repositories = new ConcurrentDictionary<string, object>();
     }
+
     public IRepository<T> Create<T>(string repositoryName)
     {
         var connectionString = $"Data Source={_storageSettings.Value.DataPath}/.db";

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
+using Persistify.Validation.Common;
 
 namespace Persistify.Pipelines.Common;
 
@@ -29,6 +30,11 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
+        if (request is null)
+        {
+            throw new ValidationException(typeof(TRequest).Name, "Request cannot be null");
+        }
+
         var context = CreateContext(request);
         var stopwatch = new Stopwatch();
 

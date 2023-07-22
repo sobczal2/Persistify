@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Responses", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Services", "src\server\Persistify.Services\Persistify.Services.csproj", "{92A85FDC-E8B9-407A-A661-8DD2098F1864}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Fts.Analysis", "src\server\Persistify.Fts.Analysis\Persistify.Fts.Analysis.csproj", "{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +134,10 @@ Global
 		{92A85FDC-E8B9-407A-A661-8DD2098F1864}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92A85FDC-E8B9-407A-A661-8DD2098F1864}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92A85FDC-E8B9-407A-A661-8DD2098F1864}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -157,5 +163,6 @@ Global
 		{6DFBB78D-722F-4C9B-BADD-5E1F621605AE} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{34B6A86A-E621-4B6E-8604-4F899F1082CF} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{92A85FDC-E8B9-407A-A661-8DD2098F1864} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 	EndGlobalSection
 EndGlobal

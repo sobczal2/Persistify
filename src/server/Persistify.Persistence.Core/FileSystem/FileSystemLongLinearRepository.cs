@@ -4,8 +4,8 @@ namespace Persistify.Persistence.Core.FileSystem;
 
 public class FileSystemLongLinearRepository : ILongLinearRepository
 {
-    private readonly string _filePath;
     private const long EmptyValue = -1L;
+    private readonly string _filePath;
 
     public FileSystemLongLinearRepository(string filePath)
     {
@@ -19,7 +19,7 @@ public class FileSystemLongLinearRepository : ILongLinearRepository
 
     public ValueTask WriteAsync(int id, long value)
     {
-        if(id < 0)
+        if (id < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(id));
         }
@@ -33,7 +33,7 @@ public class FileSystemLongLinearRepository : ILongLinearRepository
 
     public ValueTask<long?> ReadAsync(int id)
     {
-        if(id < 0)
+        if (id < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(id));
         }
@@ -70,7 +70,7 @@ public class FileSystemLongLinearRepository : ILongLinearRepository
 
     public ValueTask RemoveAsync(int id)
     {
-        if(id < 0)
+        if (id < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(id));
         }

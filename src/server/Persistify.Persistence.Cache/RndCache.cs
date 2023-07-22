@@ -23,7 +23,7 @@ public class RndCache<T> : ICache<T>
 
     public void Set(long id, T value)
     {
-        if(_dict.Count >= _capacity)
+        if (_dict.Count >= _capacity)
         {
             _dict.Remove(_dict.Keys.ElementAt(Random.Shared.Next(_dict.Count)));
         }

@@ -3,8 +3,8 @@
 public class LruCache<T> : ICache<T>
 {
     private readonly int _capacity;
-    private readonly LinkedList<(long id, T value)> _list;
     private readonly Dictionary<long, LinkedListNode<(long id, T value)>> _dict;
+    private readonly LinkedList<(long id, T value)> _list;
 
     public LruCache(int capacity)
     {
@@ -15,7 +15,7 @@ public class LruCache<T> : ICache<T>
 
     public T? Get(long id)
     {
-        if(!_dict.TryGetValue(id, out var node))
+        if (!_dict.TryGetValue(id, out var node))
         {
             return default;
         }
@@ -32,11 +32,11 @@ public class LruCache<T> : ICache<T>
 
     public void Set(long id, T value)
     {
-        if(Exists(id))
+        if (Exists(id))
         {
             _list.Remove(_dict[id]);
         }
-        else if(_dict.Count >= _capacity)
+        else if (_dict.Count >= _capacity)
         {
             _dict.Remove(_list.Last!.Value.id);
             _list.RemoveLast();

@@ -20,7 +20,7 @@ public static class ValidationExtensions
             var interfaceType = validatorType.GetInterfaces()
                 .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidator<>));
 
-            services.AddSingleton(interfaceType, validatorType);
+            services.AddTransient(interfaceType, validatorType);
         }
 
         return services;

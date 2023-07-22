@@ -7,6 +7,13 @@ namespace Persistify.Requests.Templates;
 [ProtoContract]
 public class CreateTemplateRequest
 {
+    public CreateTemplateRequest()
+    {
+        TextFields = new List<TextField>(0);
+        NumberFields = new List<NumberField>(0);
+        BoolFields = new List<BoolField>(0);
+    }
+
     [ProtoMember(1)]
     public string Name { get; set; } = default!;
 

@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Persistify.Persistence.Core.Abstractions;
 using Persistify.Serialization;
 
@@ -8,14 +7,14 @@ namespace Persistify.Persistence.Core.Sqlite;
 public class SqliteRepository<T> : IRepository<T>
 {
     private readonly string _connectionString;
-    private readonly string _tableName;
     private readonly ISerializer _serializer;
+    private readonly string _tableName;
 
     public SqliteRepository(
         string connectionString,
         string tableName,
         ISerializer serializer
-        )
+    )
     {
         _connectionString = connectionString;
         _tableName = tableName;
@@ -24,13 +23,6 @@ public class SqliteRepository<T> : IRepository<T>
         using var command = connection.CreateCommand();
         command.CommandText = $"CREATE TABLE IF NOT EXISTS {_tableName} (Id INTEGER PRIMARY KEY, Value BLOB)";
         command.ExecuteNonQuery();
-    }
-
-    private SqliteConnection CreateConnection()
-    {
-        var connection = new SqliteConnection(_connectionString);
-        connection.Open();
-        return connection;
     }
 
     public async ValueTask WriteAsync(long id, T value)
@@ -89,5 +81,12 @@ public class SqliteRepository<T> : IRepository<T>
         command.CommandText = $"DELETE FROM {_tableName} WHERE Id = @id";
         command.Parameters.AddWithValue("@id", id);
         await command.ExecuteNonQueryAsync();
+    }
+
+    private SqliteConnection CreateConnection()
+    {
+        var connection = new SqliteConnection(_connectionString);
+        connection.Open();
+        return connection;
     }
 }

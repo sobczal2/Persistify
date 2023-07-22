@@ -11,7 +11,7 @@ public class PrimitiveFileSystemRepository<T> : IRepository<T>
     public PrimitiveFileSystemRepository(
         string directoryPath,
         ISerializer serializer
-        )
+    )
     {
         _directoryPath = directoryPath;
         _serializer = serializer;
@@ -21,8 +21,6 @@ public class PrimitiveFileSystemRepository<T> : IRepository<T>
             Directory.CreateDirectory(_directoryPath);
         }
     }
-
-    private string GetFilePath(long id) => Path.Combine(_directoryPath, $"{id:x8}.bin");
 
     public async ValueTask WriteAsync(long id, T value)
     {
@@ -58,5 +56,10 @@ public class PrimitiveFileSystemRepository<T> : IRepository<T>
     {
         File.Delete(GetFilePath(id));
         return ValueTask.CompletedTask;
+    }
+
+    private string GetFilePath(long id)
+    {
+        return Path.Combine(_directoryPath, $"{id:x8}.bin");
     }
 }
