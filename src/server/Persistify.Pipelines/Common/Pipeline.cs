@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
+using Persistify.Validation.Common;
 
 namespace Persistify.Pipelines.Common;
 
@@ -14,9 +15,10 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 {
     private readonly ILogger<Pipeline<TContext, TRequest, TResponse>> _logger;
 
-    public Pipeline(
+    protected Pipeline(
         ILogger<Pipeline<TContext, TRequest, TResponse>> logger
     )
+
     {
         _logger = logger;
     }
@@ -29,9 +31,14 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
-        var context = CreateContext(request);
-        var stopwatch = new Stopwatch();
+        if (request is null)
+        {
+            throw new ValidationException(typeof(TRequest).Name, "Request cannot be null");
+        }
 
+        var context = CreateContext(request);
+
+        var stopwatch = new Stopwatch();
         for (var i = 0; i < PipelineStages.Length; i++)
         {
             var stageNumber = i;

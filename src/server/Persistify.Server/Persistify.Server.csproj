@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);NU1504</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Protos\Persistify.Protos.csproj" />
-    <ProjectReference Include="..\Persistify.Analysis\Persistify.Analysis.csproj" />
-    <ProjectReference Include="..\Persistify.Management\Persistify.Management.csproj" />
-    <ProjectReference Include="..\Persistify.Persistence\Persistify.Persistence.csproj" />
+    <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj" />
+    <ProjectReference Include="..\Persistify.Pipelines.Templates\Persistify.Pipelines.Templates.csproj" />
     <ProjectReference Include="..\Persistify.Pipelines\Persistify.Pipelines.csproj" />
     <ProjectReference Include="..\Persistify.Serialization\Persistify.Serialization.csproj" />
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
+    <ProjectReference Include="..\Persistify.Services\Persistify.Services.csproj" />
     <ProjectReference Include="..\Persistify.Validation\Persistify.Validation.csproj" />
   </ItemGroup>
 

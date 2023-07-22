@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Persistify.Pipelines.Document;
-using Persistify.Pipelines.Shared;
-using Persistify.Pipelines.Template;
+using Persistify.Pipelines.Common.Stages;
 
 namespace Persistify.Pipelines;
 
@@ -9,10 +7,8 @@ public static class PipelineExtensions
 {
     public static IServiceCollection AddPipelines(this IServiceCollection services)
     {
-        services.AddSharedPipelines();
-        services.AddTemplatePipelines();
-        services.AddDocumentPipelines();
-
+        services.AddSingleton(typeof(StaticValidationStage<,,>));
+        
         return services;
     }
 }

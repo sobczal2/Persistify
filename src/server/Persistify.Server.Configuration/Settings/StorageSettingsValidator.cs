@@ -12,5 +12,9 @@ public class StorageSettingsValidator : AbstractValidator<StorageSettings>
             .WithMessage("The data path must not be empty.")
             .Must(Directory.Exists)
             .WithMessage("The data path must exist.");
+
+        RuleFor(x => x.StorageType)
+            .IsInEnum()
+            .WithMessage("The storage type must be a valid value.");
     }
 }

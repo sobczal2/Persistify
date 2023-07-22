@@ -1,43 +1,52 @@
-﻿using System.Threading.Tasks;
-using Persistify.Pipelines.Template.AddTemplate;
-using Persistify.Pipelines.Template.DeleteTemplate;
-using Persistify.Pipelines.Template.ListTemplate;
-using Persistify.Protos.Templates;
-using Persistify.Protos.Templates.Requests;
-using Persistify.Protos.Templates.Responses;
+﻿using System;
+using System.Threading.Tasks;
+using Persistify.Pipelines.Templates.CreateTemplate;
+using Persistify.Pipelines.Templates.DeleteTemplate;
+using Persistify.Pipelines.Templates.GetTemplate;
+using Persistify.Pipelines.Templates.ListTemplates;
+using Persistify.Requests.Templates;
+using Persistify.Responses.Templates;
+using Persistify.Services;
 using ProtoBuf.Grpc;
 
 namespace Persistify.Server.Services;
 
 public class TemplateService : ITemplateService
 {
-    private readonly AddTemplatePipeline _addTemplatePipeline;
-    private readonly DeleteTemplatePipeline _deleteTemplatePipeline;
+    private readonly CreateTemplatePipeline _createTemplatePipeline;
+    private readonly GetTemplatePipeline _getTemplatePipeline;
     private readonly ListTemplatesPipeline _listTemplatesPipeline;
+    private readonly DeleteTemplatePipeline _deleteTemplatePipeline;
 
     public TemplateService(
-        AddTemplatePipeline addTemplatePipeline,
+        CreateTemplatePipeline createTemplatePipeline,
+        GetTemplatePipeline getTemplatePipeline,
         ListTemplatesPipeline listTemplatesPipeline,
         DeleteTemplatePipeline deleteTemplatePipeline
-    )
+        )
     {
-        _addTemplatePipeline = addTemplatePipeline;
+        _createTemplatePipeline = createTemplatePipeline;
+        _getTemplatePipeline = getTemplatePipeline;
         _listTemplatesPipeline = listTemplatesPipeline;
         _deleteTemplatePipeline = deleteTemplatePipeline;
     }
-
-    public async ValueTask<AddTemplateResponse> Add(AddTemplateRequest request, CallContext context)
+    public ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context)
     {
-        return await _addTemplatePipeline.ProcessAsync(request);
+        return _createTemplatePipeline.ProcessAsync(request);
     }
 
-    public async ValueTask<ListTemplatesResponse> List(ListTemplatesRequest request, CallContext context)
+    public ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext context)
     {
-        return await _listTemplatesPipeline.ProcessAsync(request);
+        return _getTemplatePipeline.ProcessAsync(request);
     }
 
-    public async ValueTask<DeleteTemplateResponse> Delete(DeleteTemplateRequest request, CallContext context)
+    public ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext context)
     {
-        return await _deleteTemplatePipeline.ProcessAsync(request);
+        return _listTemplatesPipeline.ProcessAsync(request);
+    }
+
+    public ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
+    {
+        return _deleteTemplatePipeline.ProcessAsync(request);
     }
 }

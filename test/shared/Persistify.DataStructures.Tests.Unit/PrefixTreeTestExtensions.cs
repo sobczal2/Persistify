@@ -7,18 +7,18 @@ namespace Persistify.DataStructures.Test;
 
 public static class PrefixTreeTestExtensions
 {
-    public static PrefixTreeNode<TValue> GetRoot<TValue>(this PrefixTree<TValue> prefixTree)
+    public static TrieNode<TValue> GetRoot<TValue>(this Trie<TValue> trie)
     {
-        return typeof(PrefixTree<TValue>)
+        return typeof(Trie<TValue>)
             .GetField("_root", BindingFlags.NonPublic | BindingFlags.Instance)!
-            .GetValue(prefixTree) as PrefixTreeNode<TValue> ?? throw new InvalidOperationException();
+            .GetValue(trie) as TrieNode<TValue> ?? throw new InvalidOperationException();
     }
 
-    public static ICollection<TValue> GetAllValues<TValue>(this PrefixTree<TValue> prefixTree)
+    public static ICollection<TValue> GetAllValues<TValue>(this Trie<TValue> trie)
     {
-        var root = prefixTree.GetRoot();
+        var root = trie.GetRoot();
         var values = new List<TValue>();
-        typeof(PrefixTree<TValue>)
+        typeof(Trie<TValue>)
             .GetMethod("CollectAllValues", BindingFlags.NonPublic | BindingFlags.Static)!
             .Invoke(null, new object[] { root, values });
 

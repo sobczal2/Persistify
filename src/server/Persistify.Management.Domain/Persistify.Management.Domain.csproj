@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Persistify.HostedServices\Persistify.HostedServices.csproj" />
+    <ProjectReference Include="..\Persistify.Persistence.Core\Persistify.Persistence.Core.csproj" />
+  </ItemGroup>
+
+</Project>

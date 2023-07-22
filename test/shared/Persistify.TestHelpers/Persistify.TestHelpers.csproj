@@ -10,8 +10,4 @@
     <PackageReference Include="Bogus" Version="34.0.2"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\shared\Persistify.Protos\Persistify.Protos.csproj"/>
-  </ItemGroup>
-
 </Project>

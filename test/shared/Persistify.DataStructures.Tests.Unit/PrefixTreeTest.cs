@@ -6,11 +6,11 @@ namespace Persistify.DataStructures.Test;
 
 public class PrefixTreeTest
 {
-    private readonly PrefixTree<long> _prefixTree;
+    private readonly Trie<long> _trie;
 
     public PrefixTreeTest()
     {
-        _prefixTree = new PrefixTree<long>();
+        _trie = new Trie<long>();
     }
 
     [Fact]
@@ -21,10 +21,10 @@ public class PrefixTreeTest
         const long value = 1;
 
         // Act
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Assert
-        var result = _prefixTree.Search(key, false, true).Distinct().ToArray();
+        var result = _trie.Search(key, false, true).Distinct().ToArray();
         Assert.Single(result);
         Assert.Equal(value, result[0]);
     }
@@ -38,11 +38,11 @@ public class PrefixTreeTest
         const long value2 = 2;
 
         // Act
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Assert
-        var result = _prefixTree.Search(key, false, true).Distinct().ToArray();
+        var result = _trie.Search(key, false, true).Distinct().ToArray();
         Assert.Equal(2, result.Length);
         Assert.Equal(value1, result[0]);
         Assert.Equal(value2, result[1]);
@@ -57,15 +57,15 @@ public class PrefixTreeTest
         const long value = 1;
 
         // Act
-        _prefixTree.Add(key1, value);
-        _prefixTree.Add(key2, value);
+        _trie.Add(key1, value);
+        _trie.Add(key2, value);
 
         // Assert
-        var result1 = _prefixTree.Search(key1, false, true).Distinct().ToArray();
+        var result1 = _trie.Search(key1, false, true).Distinct().ToArray();
         Assert.Single(result1);
         Assert.Equal(value, result1[0]);
 
-        var result2 = _prefixTree.Search(key2, false, true).Distinct().ToArray();
+        var result2 = _trie.Search(key2, false, true).Distinct().ToArray();
         Assert.Single(result2);
         Assert.Equal(value, result2[0]);
     }
@@ -76,10 +76,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search(key, false, true).Distinct().ToArray();
+        var result = _trie.Search(key, false, true).Distinct().ToArray();
 
         // Assert
         Assert.Single(result);
@@ -92,10 +92,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search(key, true, true).Distinct().ToArray();
+        var result = _trie.Search(key, true, true).Distinct().ToArray();
 
         // Assert
         Assert.Single(result);
@@ -108,10 +108,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search(key.ToUpper(), false, true).Distinct().ToArray();
+        var result = _trie.Search(key.ToUpper(), false, true).Distinct().ToArray();
 
         // Assert
         Assert.Single(result);
@@ -124,10 +124,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search(key.Substring(0, 2), false, false).Distinct().ToArray();
+        var result = _trie.Search(key.Substring(0, 2), false, false).Distinct().ToArray();
 
         // Assert
         Assert.Single(result);
@@ -140,10 +140,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search(key.Substring(0, 2), true, false).Distinct().ToArray();
+        var result = _trie.Search(key.Substring(0, 2), true, false).Distinct().ToArray();
 
         // Assert
         Assert.Single(result);
@@ -156,10 +156,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search(key.Substring(0, 2).ToUpper(), false, false).Distinct().ToArray();
+        var result = _trie.Search(key.Substring(0, 2).ToUpper(), false, false).Distinct().ToArray();
 
         // Assert
         Assert.Single(result);
@@ -172,10 +172,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search("nomatch", false, true).Distinct().ToArray();
+        var result = _trie.Search("nomatch", false, true).Distinct().ToArray();
 
         // Assert
         Assert.Empty(result);
@@ -187,10 +187,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search("nomatch", true, true).Distinct().ToArray();
+        var result = _trie.Search("nomatch", true, true).Distinct().ToArray();
 
         // Assert
         Assert.Empty(result);
@@ -202,10 +202,10 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        var result = _prefixTree.Search("nomatch", false, true).Distinct().ToArray();
+        var result = _trie.Search("nomatch", false, true).Distinct().ToArray();
 
         // Assert
         Assert.Empty(result);
@@ -218,11 +218,11 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        var result = _prefixTree.Search(key, false, true).Distinct().ToArray();
+        var result = _trie.Search(key, false, true).Distinct().ToArray();
 
         // Assert
         Assert.Equal(2, result.Length);
@@ -237,11 +237,11 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        var result = _prefixTree.Search(key, true, true).Distinct().ToArray();
+        var result = _trie.Search(key, true, true).Distinct().ToArray();
 
         // Assert
         Assert.Equal(2, result.Length);
@@ -256,11 +256,11 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        var result = _prefixTree.Search(key.ToUpper(), false, true).Distinct().ToArray();
+        var result = _trie.Search(key.ToUpper(), false, true).Distinct().ToArray();
 
         // Assert
         Assert.Equal(2, result.Length);
@@ -275,11 +275,11 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        var result = _prefixTree.Search(key.Substring(0, 2), false, false).Distinct().ToArray();
+        var result = _trie.Search(key.Substring(0, 2), false, false).Distinct().ToArray();
 
         // Assert
         Assert.Equal(2, result.Length);
@@ -294,11 +294,11 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        var result = _prefixTree.Search(key.Substring(0, 2), true, false).Distinct().ToArray();
+        var result = _trie.Search(key.Substring(0, 2), true, false).Distinct().ToArray();
 
         // Assert
         Assert.Equal(2, result.Length);
@@ -313,11 +313,11 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        var result = _prefixTree.Search(key.Substring(0, 2).ToUpper(), false, false).Distinct().ToArray();
+        var result = _trie.Search(key.Substring(0, 2).ToUpper(), false, false).Distinct().ToArray();
 
         // Assert
         Assert.Equal(2, result.Length);
@@ -331,13 +331,13 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        _prefixTree.Remove(x => x == 2);
+        _trie.Remove(x => x == 2);
 
         // Assert
-        Assert.Single(_prefixTree.Search(key, false, true).Distinct().ToArray());
+        Assert.Single(_trie.Search(key, false, true).Distinct().ToArray());
     }
 
     [Fact]
@@ -346,13 +346,13 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        _prefixTree.Remove(x => x == value);
+        _trie.Remove(x => x == value);
 
         // Assert
-        Assert.Empty(_prefixTree.Search(key, false, true));
+        Assert.Empty(_trie.Search(key, false, true));
     }
 
     [Fact]
@@ -362,14 +362,14 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        _prefixTree.Remove(x => x == value1);
+        _trie.Remove(x => x == value1);
 
         // Assert
-        Assert.Single(_prefixTree.Search(key, false, true).Distinct().ToArray());
+        Assert.Single(_trie.Search(key, false, true).Distinct().ToArray());
     }
 
     [Fact]
@@ -379,15 +379,15 @@ public class PrefixTreeTest
         const string key = "test";
         const long value1 = 1;
         const long value2 = 2;
-        _prefixTree.Add(key, value1);
-        _prefixTree.Add(key, value2);
+        _trie.Add(key, value1);
+        _trie.Add(key, value2);
 
         // Act
-        _prefixTree.Remove(x => x == value1);
-        _prefixTree.Remove(x => x == value2);
+        _trie.Remove(x => x == value1);
+        _trie.Remove(x => x == value2);
 
         // Assert
-        Assert.Empty(_prefixTree.Search(key, false, true).Distinct().ToArray());
+        Assert.Empty(_trie.Search(key, false, true).Distinct().ToArray());
     }
 
     [Fact]
@@ -396,12 +396,12 @@ public class PrefixTreeTest
         // Arrange
         const string key = "test";
         const long value = 1;
-        _prefixTree.Add(key, value);
+        _trie.Add(key, value);
 
         // Act
-        _prefixTree.Remove(x => x == value);
+        _trie.Remove(x => x == value);
 
         // Assert
-        Assert.All(_prefixTree.GetRoot().Children, Assert.Null);
+        Assert.All(_trie.GetRoot().Children, Assert.Null);
     }
 }
