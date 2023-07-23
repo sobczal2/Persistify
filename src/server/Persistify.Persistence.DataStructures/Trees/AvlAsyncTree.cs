@@ -10,7 +10,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
     private const long NullId = 0;
     private long _lastId = NullId;
     private long _rootId = NullId;
-    private readonly ISet<Node> _changedNodes;
+    private readonly IDictionary<long, Node> _changedNodes;
     private readonly SemaphoreSlim _semaphore;
 
     public class Node
@@ -49,7 +49,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
     {
         _storageProvider = storageProvider;
         _comparer = comparer;
-        _changedNodes = new HashSet<Node>();
+        _changedNodes = new Dictionary<long, Node>();
         _semaphore = new SemaphoreSlim(1, 1);
     }
 
@@ -99,8 +99,30 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
     {
         foreach (var node in _changedNodes)
         {
-            await _storageProvider.WriteAsync(node.Id, node);
+            if (node.Key == NullId)
+            {
+                continue;
+            }
+
+            await _storageProvider.WriteAsync(node.Key, node.Value);
         }
+
+        _changedNodes.Clear();
+    }
+
+    private async ValueTask<Node?> ReadNodeAsync(long id)
+    {
+        if (_changedNodes.TryGetValue(id, out var node))
+        {
+            return node;
+        }
+
+        return await _storageProvider.ReadAsync(id);
+    }
+
+    private void WriteNode(Node node)
+    {
+        _changedNodes[node.Id] = node;
     }
 
     private async ValueTask InsertInternalAsync(T value)
@@ -108,13 +130,12 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         if (_rootId == NullId)
         {
             _rootId = ++_lastId;
-            var node = new Node(value, _rootId, NullId, NullId, NullId, 1, 0);
-            _changedNodes.Add(node);
+            var node = new Node(value, _rootId, NullId, NullId, NullId, 0, 0);
+            WriteNode(node);
             return;
         }
 
-        var currentNode = await _storageProvider.ReadAsync(_rootId);
-        Node? parentNode;
+        var currentNode = await ReadNodeAsync(_rootId);
 
         while (true)
         {
@@ -128,7 +149,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 throw new InvalidOperationException("Value already exists");
             }
 
-            parentNode = currentNode;
+            var parentNode = currentNode;
 
             var goLeft = _comparer.Compare(currentNode.Value, value) > 0;
             var childId = goLeft ? currentNode.LeftId : currentNode.RightId;
@@ -138,21 +159,22 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 if (goLeft)
                 {
                     currentNode.LeftId = ++_lastId;
+                    WriteNode(currentNode);
                 }
                 else
                 {
                     currentNode.RightId = ++_lastId;
+                    WriteNode(currentNode);
                 }
 
                 var node = new Node(value, _lastId, currentNode.Id);
-                _changedNodes.Add(node);
+                WriteNode(node);
+                await BalanceAsync(parentNode);
                 break;
             }
 
-            currentNode = await _storageProvider.ReadAsync(childId);
+            currentNode = await ReadNodeAsync(childId);
         }
-
-        await BalanceAsync(parentNode);
     }
 
     private async ValueTask<T?> GetInternalAsync(T value)
@@ -162,7 +184,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             return default;
         }
 
-        var currentNode = await _storageProvider.ReadAsync(_rootId);
+        var currentNode = await ReadNodeAsync(_rootId);
 
         while (true)
         {
@@ -184,7 +206,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 return default;
             }
 
-            currentNode = await _storageProvider.ReadAsync(childId);
+            currentNode = await ReadNodeAsync(childId);
         }
     }
 
@@ -195,7 +217,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             return;
         }
 
-        var currentNode = await _storageProvider.ReadAsync(_rootId);
+        var currentNode = await ReadNodeAsync(_rootId);
 
         while (true)
         {
@@ -218,53 +240,65 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 return;
             }
 
-            currentNode = await _storageProvider.ReadAsync(childId);
+            currentNode = await ReadNodeAsync(childId);
         }
     }
 
     private async ValueTask BalanceAsync(Node node)
     {
-        await UpdateHeightBalanceAsync(node);
-
-        if (node.Balance == -2)
+        while (true)
         {
-            var leftNode = await _storageProvider.ReadAsync(node.LeftId) ??
-                           throw new InvalidOperationException("Left node is null");
+            await UpdateHeightBalanceAsync(node);
 
-            if (leftNode.Balance <= 0)
+            if (node.Balance == -2)
             {
-                await RotateRightAsync(node);
-            }
-            else
-            {
-                await RotateLeftRightAsync(node);
-            }
-        }
-        else if (node.Balance == 2)
-        {
-            var rightNode = await _storageProvider.ReadAsync(node.RightId) ??
-                            throw new InvalidOperationException("Right node is null");
+                var leftNode = await ReadNodeAsync(node.LeftId) ??
+                               throw new InvalidOperationException("Left node is null");
 
-            if (rightNode.Balance >= 0)
-            {
-                await RotateLeftAsync(node);
+                if (await GetHeight(leftNode.LeftId) >= await GetHeight(leftNode.RightId))
+                {
+                    var newId = await RotateRightAsync(node);
+                    node = await ReadNodeAsync(newId) ??
+                           throw new InvalidOperationException("New node is null");
+                }
+                else
+                {
+                    var newId = await RotateLeftRightAsync(node);
+                    node = await ReadNodeAsync(newId) ??
+                           throw new InvalidOperationException("New node is null");
+                }
             }
-            else
+            else if (node.Balance == 2)
             {
-                await RotateRightLeftAsync(node);
+                var rightNode = await ReadNodeAsync(node.RightId) ??
+                                throw new InvalidOperationException("Right node is null");
+
+                if (await GetHeight(rightNode.RightId) >= await GetHeight(rightNode.LeftId))
+                {
+                    var newId = await RotateLeftAsync(node);
+                    node = await ReadNodeAsync(newId) ??
+                           throw new InvalidOperationException("New node is null");
+                }
+                else
+                {
+                    var newId = await RotateRightLeftAsync(node);
+                    node = await ReadNodeAsync(newId) ??
+                           throw new InvalidOperationException("New node is null");
+                }
             }
-        }
 
-        if (node.ParentId != NullId)
-        {
-            var parentNode = await _storageProvider.ReadAsync(node.ParentId) ??
-                             throw new InvalidOperationException("Parent node is null");
+            if (node.ParentId != NullId)
+            {
+                var parentNode = await ReadNodeAsync(node.ParentId) ??
+                                 throw new InvalidOperationException("Parent node is null");
 
-            await BalanceAsync(parentNode);
-        }
-        else
-        {
+                node = parentNode;
+                continue;
+            }
+
             _rootId = node.Id;
+
+            break;
         }
     }
 
@@ -280,19 +314,20 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 }
                 else
                 {
-                    var parentNode = await _storageProvider.ReadAsync(node.ParentId) ??
+                    var parentNode = await ReadNodeAsync(node.ParentId) ??
                                      throw new InvalidOperationException("Parent node is null");
 
                     if (parentNode.LeftId == node.Id)
                     {
                         parentNode.LeftId = NullId;
+                        WriteNode(parentNode);
                     }
                     else
                     {
                         parentNode.RightId = NullId;
+                        WriteNode(parentNode);
                     }
 
-                    _changedNodes.Add(parentNode);
                     await BalanceAsync(parentNode);
                 }
 
@@ -302,28 +337,29 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             Node? childNode;
             if (node.LeftId != NullId)
             {
-                childNode = await _storageProvider.ReadAsync(node.LeftId) ??
+                childNode = await ReadNodeAsync(node.LeftId) ??
                             throw new InvalidOperationException("Left node is null");
 
                 while (childNode.RightId != NullId)
                 {
-                    childNode = await _storageProvider.ReadAsync(childNode.RightId) ??
+                    childNode = await ReadNodeAsync(childNode.RightId) ??
                                 throw new InvalidOperationException("Right node is null");
                 }
             }
             else
             {
-                childNode = await _storageProvider.ReadAsync(node.RightId) ??
+                childNode = await ReadNodeAsync(node.RightId) ??
                             throw new InvalidOperationException("Right node is null");
                 while (childNode.LeftId != NullId)
                 {
-                    childNode = await _storageProvider.ReadAsync(childNode.LeftId) ??
+                    childNode = await ReadNodeAsync(childNode.LeftId) ??
                                 throw new InvalidOperationException("Left node is null");
                 }
             }
 
             node.Value = childNode.Value;
             node.Id = childNode.Id;
+            WriteNode(node);
 
             node = childNode;
         }
@@ -331,114 +367,135 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
 
     private async ValueTask UpdateHeightBalanceAsync(Node node)
     {
-        var leftNode = await _storageProvider.ReadAsync(node.LeftId);
-        var rightNode = await _storageProvider.ReadAsync(node.RightId);
+        var leftNode = await ReadNodeAsync(node.LeftId);
+        var rightNode = await ReadNodeAsync(node.RightId);
 
         var leftHeight = leftNode?.Height ?? 0;
         var rightHeight = rightNode?.Height ?? 0;
 
         node.Height = Math.Max(leftHeight, rightHeight) + 1;
-        node.Balance = rightHeight - leftHeight;
+        node.Balance = await GetHeight(rightNode?.Id ?? NullId) - await GetHeight(leftNode?.Id ?? NullId);
+        WriteNode(node);
     }
 
-    private async ValueTask RotateRightAsync(Node node)
+    private async ValueTask<long> RotateRightAsync(Node node)
     {
-        var leftNode = await _storageProvider.ReadAsync(node.LeftId) ??
+        var leftNode = await ReadNodeAsync(node.LeftId) ??
                        throw new InvalidOperationException("Left node is null");
 
-        var leftRightNode = await _storageProvider.ReadAsync(leftNode.RightId);
-
         leftNode.ParentId = node.ParentId;
-        leftNode.RightId = node.Id;
-        node.ParentId = leftNode.Id;
-        node.LeftId = leftRightNode?.Id ?? NullId;
+        WriteNode(leftNode);
 
-        if (leftRightNode != null)
+        node.LeftId = leftNode.RightId;
+        WriteNode(node);
+
+        if(node.LeftId != NullId)
         {
-            leftRightNode.ParentId = node.Id;
+            var nodeLeftNode = await ReadNodeAsync(node.LeftId) ??
+                               throw new InvalidOperationException("Node left node is null");
+
+            nodeLeftNode.ParentId = node.Id;
         }
 
-        if (node.ParentId != NullId)
+        leftNode.RightId = node.Id;
+        WriteNode(leftNode);
+
+        node.ParentId = leftNode.Id;
+        WriteNode(node);
+
+        if (leftNode.ParentId != NullId)
         {
-            var parentNode = await _storageProvider.ReadAsync(node.ParentId) ??
+            var parentNode = await ReadNodeAsync(leftNode.ParentId) ??
                              throw new InvalidOperationException("Parent node is null");
 
-            if (parentNode.LeftId == node.Id)
+            if(parentNode.RightId == node.Id)
             {
-                parentNode.LeftId = leftNode.Id;
+                parentNode.RightId = leftNode.Id;
+                WriteNode(parentNode);
             }
             else
             {
-                parentNode.RightId = leftNode.Id;
+                parentNode.LeftId = leftNode.Id;
+                WriteNode(parentNode);
             }
-        }
-        else
-        {
-            _rootId = leftNode.Id;
         }
 
         await UpdateHeightBalanceAsync(node);
         await UpdateHeightBalanceAsync(leftNode);
 
-        _changedNodes.Add(node);
-        _changedNodes.Add(leftNode);
+        return leftNode.Id;
     }
 
-    private async ValueTask RotateLeftRightAsync(Node node)
+    private async ValueTask<long> RotateLeftRightAsync(Node node)
     {
-        var leftNode = await _storageProvider.ReadAsync(node.LeftId) ??
+        var leftNode = await ReadNodeAsync(node.LeftId) ??
                        throw new InvalidOperationException("Left node is null");
 
         await RotateLeftAsync(leftNode);
-        await RotateRightAsync(node);
+        return await RotateRightAsync(node);
     }
 
-    private async ValueTask RotateLeftAsync(Node node)
+    private async ValueTask<long> RotateLeftAsync(Node node)
     {
-        var rightNode = await _storageProvider.ReadAsync(node.RightId) ??
+        var rightNode = await ReadNodeAsync(node.RightId) ??
                         throw new InvalidOperationException("Right node is null");
 
-        var rightLeftNode = await _storageProvider.ReadAsync(rightNode.LeftId);
-
         rightNode.ParentId = node.ParentId;
-        rightNode.LeftId = node.Id;
-        node.ParentId = rightNode.Id;
-        node.RightId = rightLeftNode?.Id ?? NullId;
+        WriteNode(rightNode);
 
-        if (rightLeftNode != null)
+        node.RightId = rightNode.LeftId;
+        WriteNode(node);
+
+        if(node.RightId != NullId)
         {
-            rightLeftNode.ParentId = node.Id;
+            var nodeRightNode = await ReadNodeAsync(node.RightId) ??
+                                throw new InvalidOperationException("Node right node is null");
+
+            nodeRightNode.ParentId = node.Id;
         }
 
-        if (node.ParentId != NullId)
+        rightNode.LeftId = node.Id;
+        WriteNode(rightNode);
+
+        node.ParentId = rightNode.Id;
+        WriteNode(node);
+
+        if (rightNode.ParentId != NullId)
         {
-            var parentNode = await _storageProvider.ReadAsync(node.ParentId) ??
+            var parentNode = await ReadNodeAsync(rightNode.ParentId) ??
                              throw new InvalidOperationException("Parent node is null");
 
-            if (parentNode.LeftId == node.Id)
+            if(parentNode.RightId == node.Id)
             {
-                parentNode.LeftId = rightNode.Id;
+                parentNode.RightId = rightNode.Id;
+                WriteNode(parentNode);
             }
             else
             {
-                parentNode.RightId = rightNode.Id;
+                parentNode.LeftId = rightNode.Id;
+                WriteNode(parentNode);
             }
-        }
-        else
-        {
-            _rootId = rightNode.Id;
         }
 
         await UpdateHeightBalanceAsync(node);
         await UpdateHeightBalanceAsync(rightNode);
+
+        return rightNode.Id;
     }
 
-    private async Task RotateRightLeftAsync(Node node)
+    private async ValueTask<long> RotateRightLeftAsync(Node node)
     {
-        var rightNode = await _storageProvider.ReadAsync(node.RightId) ??
+        var rightNode = await ReadNodeAsync(node.RightId) ??
                         throw new InvalidOperationException("Right node is null");
 
         await RotateRightAsync(rightNode);
-        await RotateLeftAsync(node);
+        return await RotateLeftAsync(node);
+    }
+
+    private async ValueTask<int> GetHeight(long id)
+    {
+        var node = await ReadNodeAsync(id);
+
+        return node?.Height ?? -1;
     }
 }

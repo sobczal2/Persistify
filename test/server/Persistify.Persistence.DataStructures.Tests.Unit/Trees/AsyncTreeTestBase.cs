@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Persistify.Persistence.DataStructures.Abstractions;
 using Xunit;
 
@@ -47,6 +49,40 @@ public abstract class AsyncTreeTestBase
         Assert.Equal(value1, result1);
         Assert.Equal(value2, result2);
         Assert.Equal(value3, result3);
+    }
+
+    [Fact]
+    public async Task IndexAsync_LotsOfValues_ReturnsValue()
+    {
+        // Arrange
+        const int count = 500;
+        var values = new HashSet<long>();
+        var random = new Random(0);
+        for (var i = 0; i < count; i++)
+        {
+            var value = random.Next();
+            if (!values.Contains(value))
+            {
+                values.Add(value);
+            }
+            else
+            {
+                i--;
+            }
+        }
+
+        // Act
+        foreach (var value in values)
+        {
+            await _tree.InsertAsync(value);
+        }
+
+        // Assert
+        foreach (var value in values)
+        {
+            var result = await _tree.GetAsync(value);
+            Assert.Equal(value, result);
+        }
     }
 
     [Fact]

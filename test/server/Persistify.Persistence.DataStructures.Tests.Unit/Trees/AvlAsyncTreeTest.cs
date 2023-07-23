@@ -12,7 +12,7 @@ public class AvlAsyncTreeTest : AsyncTreeTestBase
             return x.CompareTo(y);
         }
     }
-    public AvlAsyncTreeTest() : base(new AvlAsyncTree<long>(new ArrayStorageProvider<AvlAsyncTree<long>.Node>(100), new LongComparer()))
+    public AvlAsyncTreeTest() : base(new AvlAsyncTree<long>(new ArrayStorageProvider<AvlAsyncTree<long>.Node>(1000), new LongComparer()))
     {
     }
 }
