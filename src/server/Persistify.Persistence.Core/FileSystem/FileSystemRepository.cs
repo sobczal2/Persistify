@@ -34,7 +34,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public async ValueTask WriteAsync(long id, T value)
     {
-        if (id < 0)
+        if (id <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(id));
         }
@@ -52,7 +52,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public async ValueTask<T?> ReadAsync(long id)
     {
-        if (id < 0)
+        if (id <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(id));
         }
@@ -91,6 +91,11 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public async ValueTask<bool> ExistsAsync(long id)
     {
+        if (id <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
+        }
+
         await _semaphore.WaitAsync();
         try
         {
@@ -102,8 +107,13 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         }
     }
 
-    public async ValueTask RemoveAsync(long id)
+    public async ValueTask DeleteAsync(long id)
     {
+        if (id <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
+        }
+
         await _semaphore.WaitAsync();
         try
         {

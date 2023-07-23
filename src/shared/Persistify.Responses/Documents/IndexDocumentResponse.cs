@@ -6,5 +6,5 @@ namespace Persistify.Responses.Documents;
 public class IndexDocumentResponse
 {
     [ProtoMember(1)]
-    public long Id { get; set; }
+    public long DocumentId { get; set; }
 }

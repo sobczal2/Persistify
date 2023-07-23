@@ -48,7 +48,7 @@ public class DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTempla
         }
         else
         {
-            throw new PipelineException();
+            throw new RollbackFailedException();
         }
 
         return Result.Success;

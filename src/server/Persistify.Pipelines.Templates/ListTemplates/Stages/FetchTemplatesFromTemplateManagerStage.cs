@@ -22,8 +22,7 @@ public class FetchTemplatesFromTemplateManagerStage : PipelineStage<ListTemplate
     }
     public override ValueTask<Result> ProcessAsync(ListTemplatesPipelineContext context)
     {
-        var templates = _templateManager.GetAll();
-        context.Templates = templates.ToList();
+        context.Templates = _templateManager.GetAll();
 
         return ValueTask.FromResult(Result.Success);
     }

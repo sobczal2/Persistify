@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.IO.Compression;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using Persistify.Management.Domain;
 using Persistify.Persistence.Core;
 using Persistify.Persistence.DataStructures;
 using Persistify.Pipelines;
+using Persistify.Pipelines.Documents;
 using Persistify.Pipelines.Templates;
 using Persistify.Serialization;
 using Persistify.Server.Configuration.Settings;
@@ -71,6 +73,7 @@ public static class ServicesExtensions
         services.AddValidation();
         services.AddPipelines();
         services.AddPipelinesTemplates();
+        services.AddPipelinesDocuments();
         services.AddFtsAnalysis();
         services.AddManagementDomain();
         services.AddPersistenceCore(configuration);
@@ -78,6 +81,11 @@ public static class ServicesExtensions
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
 
+        return services;
+    }
+
+    private static IServiceCollection AddCommon(this IServiceCollection services)
+    {
         return services;
     }
 }

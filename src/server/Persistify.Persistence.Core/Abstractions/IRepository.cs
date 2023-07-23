@@ -10,5 +10,5 @@ public interface IRepository<T>
     IAsyncEnumerable<T> ReadAllAsync();
     ValueTask<long> CountAsync();
     ValueTask<bool> ExistsAsync(long id);
-    ValueTask RemoveAsync(long id);
+    ValueTask DeleteAsync(long id);
 }

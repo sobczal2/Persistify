@@ -10,7 +10,7 @@ namespace Persistify.Persistence.Core.FileSystem
 {
     public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
     {
-        private const long EmptyValue = 0L;
+        private const long EmptyValue = -1L;
         private readonly FileStream _fileStream;
         private readonly SemaphoreSlim _semaphore;
 

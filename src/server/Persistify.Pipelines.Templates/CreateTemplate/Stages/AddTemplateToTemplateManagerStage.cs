@@ -4,6 +4,7 @@ using Persistify.Helpers.ErrorHandling;
 using Persistify.Management.Domain.Abstractions;
 using Persistify.Management.Domain.Exceptions;
 using Persistify.Pipelines.Common;
+using Persistify.Pipelines.Exceptions;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Validation.Common;
@@ -54,6 +55,10 @@ public class AddTemplateToTemplateManagerStage : PipelineStage<CreateTemplatePip
         if (context.TemplateId.HasValue)
         {
             _templateManager.DeleteAsync(context.TemplateId.Value);
+        }
+        else
+        {
+            throw new RollbackFailedException();
         }
 
         return ValueTask.FromResult(Result.Success);
