@@ -10,6 +10,7 @@ using Persistify.Fts.Analysis;
 using Persistify.HostedServices;
 using Persistify.Management.Domain;
 using Persistify.Persistence.Core;
+using Persistify.Persistence.DataStructures;
 using Persistify.Pipelines;
 using Persistify.Pipelines.Templates;
 using Persistify.Serialization;
@@ -73,6 +74,7 @@ public static class ServicesExtensions
         services.AddFtsAnalysis();
         services.AddManagementDomain();
         services.AddPersistenceCore(configuration);
+        services.AddPersistenceDataStructures();
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
 

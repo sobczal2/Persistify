@@ -34,7 +34,7 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
         {
             case "standard":
                 analyzer = _analyzers.GetOrAdd(presetName,
-                    (_, analyzerFactory) => new StandardAnalyzerPreset().GetAnalyzer(analyzerFactory),
+                    static (_, analyzerFactory) => new StandardAnalyzerPreset().GetAnalyzer(analyzerFactory),
                     _analyzerFactory);
                 return Result.Success;
             default:
