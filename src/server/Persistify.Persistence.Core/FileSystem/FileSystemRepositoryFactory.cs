@@ -14,15 +14,18 @@ public class FileSystemRepositoryFactory : IRepositoryFactory, IActRecurrently, 
 {
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly ISerializer _serializer;
+    private readonly ILinearRepositoryFactory _linearRepositoryFactory;
     private readonly StorageSettings _storageSettings;
 
     public FileSystemRepositoryFactory(
         IOptions<StorageSettings> storageSettings,
-        ISerializer serializer
+        ISerializer serializer,
+        ILinearRepositoryFactory linearRepositoryFactory
     )
     {
         _storageSettings = storageSettings.Value;
         _serializer = serializer;
+        _linearRepositoryFactory = linearRepositoryFactory;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
     }
 
@@ -32,8 +35,8 @@ public class FileSystemRepositoryFactory : IRepositoryFactory, IActRecurrently, 
         var mainFilePath = $"{baseFilesPath}.bin";
         var offsetsFilePath = $"{baseFilesPath}.offsets.bin";
         var lengthsFilePath = $"{baseFilesPath}.lengths.bin";
-        var offsetsRepository = new FileSystemLongLinearRepository(offsetsFilePath);
-        var lengthsRepository = new FileSystemLongLinearRepository(lengthsFilePath);
+        var offsetsRepository = _linearRepositoryFactory.CreateLong(offsetsFilePath);
+        var lengthsRepository = _linearRepositoryFactory.CreateLong(lengthsFilePath);
 
         return (IRepository<T>)_repositories.GetOrAdd(repositoryName,
             static (_, args)

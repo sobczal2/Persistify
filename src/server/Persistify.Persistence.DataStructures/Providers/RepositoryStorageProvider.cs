@@ -24,6 +24,6 @@ public class RepositoryStorageProvider<T> : IStorageProvider<T>
 
     public async ValueTask RemoveAsync(long id)
     {
-        await _repository.RemoveAsync(id);
+        await _repository.DeleteAsync(id);
     }
 }

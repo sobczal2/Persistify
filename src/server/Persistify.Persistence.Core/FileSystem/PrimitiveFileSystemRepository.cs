@@ -65,7 +65,7 @@ public class PrimitiveFileSystemRepository<T> : IRepository<T>
         return ValueTask.FromResult(File.Exists(GetFilePath(id)));
     }
 
-    public ValueTask RemoveAsync(long id)
+    public ValueTask DeleteAsync(long id)
     {
         File.Delete(GetFilePath(id));
         return ValueTask.CompletedTask;

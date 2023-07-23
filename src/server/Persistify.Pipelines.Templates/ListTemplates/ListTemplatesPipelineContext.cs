@@ -10,7 +10,7 @@ public class ListTemplatesPipelineContext : IPipelineContext<ListTemplatesReques
 {
     public ListTemplatesRequest Request { get; set; }
     public ListTemplatesResponse? Response { get; set; }
-    public List<Template>? Templates { get; set; }
+    public IEnumerable<Template>? Templates { get; set; }
     public int TotalCount { get; set; }
 
     public ListTemplatesPipelineContext(ListTemplatesRequest request)

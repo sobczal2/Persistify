@@ -12,6 +12,7 @@ public static class ManagementDomainExtensions
         services.AddSingleton<ITemplateManager>(provider => provider.GetRequiredService<TemplateManager>());
         services.AddSingleton<IActOnStartup>(provider => provider.GetRequiredService<TemplateManager>());
         services.AddSingleton<IDocumentIdManager, DocumentIdManager>();
+        services.AddSingleton<IDocumentManager, DocumentManager>();
 
         return services;
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Templates;
@@ -119,13 +118,36 @@ namespace Persistify.Management.Domain
                     throw new TemplateManagerInternalException();
                 }
 
-                await _repository.RemoveAsync(id);
+                await _repository.DeleteAsync(id);
                 await _documentIdManager.RemoveId(id);
             }
             finally
             {
                 @lock.Release();
                 _generalSemaphore.Release();
+            }
+        }
+
+        public async ValueTask LockTemplateAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var @lock = _semaphores.GetOrAdd(id, _ => new SemaphoreSlim(1, 1));
+            try
+            {
+                await @lock.WaitAsync(cancellationToken);
+            }
+            catch(Exception)
+            {
+                @lock.Release();
+                throw;
+            }
+        }
+
+        public void UnlockTemplate(int id)
+        {
+            var @lock = _semaphores.GetOrAdd(id, _ => new SemaphoreSlim(1, 1));
+            if(@lock.CurrentCount == 0)
+            {
+                @lock.Release();
             }
         }
     }

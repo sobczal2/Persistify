@@ -31,7 +31,7 @@ message IndexDocumentRequest {
    repeated BoolFieldValue BoolFieldValues = 4;
 }
 message IndexDocumentResponse {
-   int64 Id = 1;
+   int64 DocumentId = 1;
 }
 message NumberFieldValue {
    double Value = 1;

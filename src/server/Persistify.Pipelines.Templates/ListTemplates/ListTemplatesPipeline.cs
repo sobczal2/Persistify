@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Linq;
+using Microsoft.Extensions.Logging;
 using Persistify.Pipelines.Common;
 using Persistify.Pipelines.Common.Stages;
 using Persistify.Pipelines.Exceptions;
@@ -47,7 +48,7 @@ public class ListTemplatesPipeline : Pipeline<ListTemplatesPipelineContext, List
     {
         return new ListTemplatesResponse
         {
-            Templates = context.Templates ?? throw new PipelineException(), TotalCount = context.TotalCount
+            Templates = context.Templates?.ToList() ?? throw new PipelineException(), TotalCount = context.TotalCount
         };
     }
 }
