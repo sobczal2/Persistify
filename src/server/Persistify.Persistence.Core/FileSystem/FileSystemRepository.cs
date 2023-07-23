@@ -15,7 +15,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
     private readonly ILongLinearRepository _lengthsRepository;
     private readonly ISerializer _serializer;
     private FileStream _fileStream;
-    private readonly SemaphoreSlim _mutex;
+    private readonly SemaphoreSlim _semaphore;
 
     public FileSystemRepository(
         string mainFilePath,
@@ -29,7 +29,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         _lengthsRepository = lengthsRepository;
         _serializer = serializer;
         _fileStream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-        _mutex = new SemaphoreSlim(1, 1);
+        _semaphore = new SemaphoreSlim(1, 1);
     }
 
     public async ValueTask WriteAsync(long id, T value)
@@ -39,14 +39,14 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
             throw new ArgumentOutOfRangeException(nameof(id));
         }
 
-        await _mutex.WaitAsync();
+        await _semaphore.WaitAsync();
         try
         {
             await WriteInternalAsync(id, value);
         }
         finally
         {
-            _mutex.Release();
+            _semaphore.Release();
         }
     }
 
@@ -57,20 +57,20 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
             throw new ArgumentOutOfRangeException(nameof(id));
         }
 
-        await _mutex.WaitAsync();
+        await _semaphore.WaitAsync();
         try
         {
             return await ReadInternalAsync(id);
         }
         finally
         {
-            _mutex.Release();
+            _semaphore.Release();
         }
     }
 
     public async IAsyncEnumerable<T> ReadAllAsync()
     {
-        await _mutex.WaitAsync();
+        await _semaphore.WaitAsync();
         try
         {
             await foreach (var value in ReadAllInternalAsync())
@@ -80,7 +80,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         }
         finally
         {
-            _mutex.Release();
+            _semaphore.Release();
         }
     }
 
@@ -91,27 +91,27 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public async ValueTask<bool> ExistsAsync(long id)
     {
-        await _mutex.WaitAsync();
+        await _semaphore.WaitAsync();
         try
         {
             return await ExistsInternalAsync(id);
         }
         finally
         {
-            _mutex.Release();
+            _semaphore.Release();
         }
     }
 
     public async ValueTask RemoveAsync(long id)
     {
-        await _mutex.WaitAsync();
+        await _semaphore.WaitAsync();
         try
         {
             await RemoveInternalAsync(id);
         }
         finally
         {
-            _mutex.Release();
+            _semaphore.Release();
         }
     }
 
@@ -231,14 +231,14 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public async ValueTask PurgeAsync()
     {
-        await _mutex.WaitAsync();
+        await _semaphore.WaitAsync();
         try
         {
             await PurgeInternalAsync();
         }
         finally
         {
-            _mutex.Release();
+            _semaphore.Release();
         }
     }
 
