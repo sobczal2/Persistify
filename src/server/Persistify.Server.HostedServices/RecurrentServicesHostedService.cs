@@ -33,7 +33,8 @@ public class RecurrentServicesHostedService : IHostedService
                 {
                     try
                     {
-                        _logger.LogInformation("Performing recurrent action {RecurrentActionName}", recurrentAction.GetType().Name);
+                        _logger.LogInformation("Performing recurrent action {RecurrentActionName}",
+                            recurrentAction.GetType().Name);
                         await recurrentAction.PerformRecurrentActionAsync();
                     }
                     catch (Exception ex)

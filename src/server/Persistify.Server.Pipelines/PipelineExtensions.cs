@@ -8,7 +8,7 @@ public static class PipelineExtensions
     public static IServiceCollection AddPipelines(this IServiceCollection services)
     {
         services.AddSingleton(typeof(StaticValidationStage<,,>));
-        
+
         return services;
     }
 }

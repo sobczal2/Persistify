@@ -11,11 +11,11 @@ namespace Persistify.Server.Management.Domain;
 
 public class DocumentManager : IDocumentManager
 {
-    private readonly ITemplateManager _templateManager;
     private readonly IDocumentIdManager _documentIdManager;
     private readonly IRepositoryFactory _repositoryFactory;
-    private readonly ConcurrentDictionary<int, string> _templateIdRepositoryKeyMap;
     private readonly ConcurrentDictionary<int, SemaphoreSlim> _semaphores;
+    private readonly ConcurrentDictionary<int, string> _templateIdRepositoryKeyMap;
+    private readonly ITemplateManager _templateManager;
 
     public DocumentManager(
         ITemplateManager templateManager,

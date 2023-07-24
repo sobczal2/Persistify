@@ -10,25 +10,28 @@ namespace Persistify.Server.Pipelines.Documents.IndexDocument;
 
 public class IndexDocumentPipeline : Pipeline<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>
 {
-    private readonly StaticValidationStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse> _staticValidationStage;
     private readonly IndexDocumentInDocumentManagerStage _indexDocumentInDocumentManagerStage;
+
+    private readonly StaticValidationStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>
+        _staticValidationStage;
 
     public IndexDocumentPipeline(
         ILogger<IndexDocumentPipeline> logger,
         StaticValidationStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>
             staticValidationStage,
         IndexDocumentInDocumentManagerStage indexDocumentInDocumentManagerStage
-        ) : base(logger)
+    ) : base(logger)
     {
         _staticValidationStage = staticValidationStage;
         _indexDocumentInDocumentManagerStage = indexDocumentInDocumentManagerStage;
     }
 
-    protected override PipelineStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>[] PipelineStages
-    => new PipelineStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>[]
-    {
-        _staticValidationStage, _indexDocumentInDocumentManagerStage
-    };
+    protected override PipelineStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>[]
+        PipelineStages
+        => new PipelineStage<IndexDocumentPipelineContext, IndexDocumentRequest, IndexDocumentResponse>[]
+        {
+            _staticValidationStage, _indexDocumentInDocumentManagerStage
+        };
 
     protected override IndexDocumentPipelineContext CreateContext(IndexDocumentRequest request)
     {
@@ -37,9 +40,6 @@ public class IndexDocumentPipeline : Pipeline<IndexDocumentPipelineContext, Inde
 
     protected override IndexDocumentResponse CreateResponse(IndexDocumentPipelineContext context)
     {
-        return new IndexDocumentResponse
-        {
-            DocumentId = context.DocumentId ?? throw new PipelineException()
-        };
+        return new IndexDocumentResponse { DocumentId = context.DocumentId ?? throw new PipelineException() };
     }
 }

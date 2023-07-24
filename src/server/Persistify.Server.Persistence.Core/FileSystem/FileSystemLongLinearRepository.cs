@@ -6,114 +6,137 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Persistence.Core.FileSystem
+namespace Persistify.Server.Persistence.Core.FileSystem;
+
+public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
 {
-    public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
+    private const long EmptyValue = -1L;
+    private readonly FileStream _fileStream;
+    private readonly SemaphoreSlim _semaphore;
+
+    public FileSystemLongLinearRepository(string filePath)
     {
-        private const long EmptyValue = -1L;
-        private readonly FileStream _fileStream;
-        private readonly SemaphoreSlim _semaphore;
+        _fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        _semaphore = new SemaphoreSlim(1, 1);
+    }
 
-        public FileSystemLongLinearRepository(string filePath)
+    public void Dispose()
+    {
+        _semaphore.Dispose();
+        _fileStream.Dispose();
+    }
+
+    public async ValueTask WriteAsync(long id, long value)
+    {
+        if (id <= 0)
         {
-            _fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-            _semaphore = new SemaphoreSlim(1, 1);
+            throw new ArgumentOutOfRangeException(nameof(id));
         }
 
-        public async ValueTask WriteAsync(long id, long value)
+        await _semaphore.WaitAsync();
+        try
         {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id));
-            }
+            await WriteInternalAsync(id, value);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
 
-            await _semaphore.WaitAsync();
-            try
-            {
-                await WriteInternalAsync(id, value);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+    public async ValueTask<long?> ReadAsync(long id)
+    {
+        if (id <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
         }
 
-        public async ValueTask<long?> ReadAsync(long id)
+        await _semaphore.WaitAsync();
+        try
         {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id));
-            }
+            return await ReadInternalAsync(id);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
 
-            await _semaphore.WaitAsync();
-            try
-            {
-                return await ReadInternalAsync(id);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+    public async ValueTask<IEnumerable<(long Id, long Value)>> ReadAllAsync()
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            return await ReadAllInternalAsync().ToListAsync();
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public async ValueTask RemoveAsync(long id)
+    {
+        if (id <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
         }
 
-        public async ValueTask<IEnumerable<(long Id, long Value)>> ReadAllAsync()
+        await _semaphore.WaitAsync();
+        try
         {
-            await _semaphore.WaitAsync();
-            try
-            {
-                return await ReadAllInternalAsync().ToListAsync();
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            await RemoveInternalAsync(id);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public ValueTask<long> CountAsync()
+    {
+        return ValueTask.FromResult(_fileStream.Length / sizeof(long));
+    }
+
+    private async ValueTask WriteInternalAsync(long id, long value)
+    {
+        if (_fileStream.Length < id * sizeof(long))
+        {
+            _fileStream.SetLength(id * sizeof(long));
         }
 
-        public async ValueTask RemoveAsync(long id)
-        {
-            if (id <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(id));
-            }
+        _fileStream.Position = (id - 1) * sizeof(long);
+        var bytes = BitConverter.GetBytes(value);
+        await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+        await _fileStream.FlushAsync();
+    }
 
-            await _semaphore.WaitAsync();
-            try
-            {
-                await RemoveInternalAsync(id);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+    private async ValueTask<long?> ReadInternalAsync(long id)
+    {
+        if (_fileStream.Length < id * sizeof(long))
+        {
+            return null;
         }
 
-        public ValueTask<long> CountAsync()
+        _fileStream.Position = (id - 1) * sizeof(long);
+        var buffer = new byte[sizeof(long)];
+        var read = await _fileStream.ReadAsync(buffer, 0, buffer.Length);
+
+        if (read != buffer.Length)
         {
-            return ValueTask.FromResult(_fileStream.Length / sizeof(long));
+            throw new InvalidOperationException();
         }
 
-        private async ValueTask WriteInternalAsync(long id, long value)
+        var value = BitConverter.ToInt64(buffer, 0);
+        return value == EmptyValue ? null : value;
+    }
+
+    private async IAsyncEnumerable<(long, long)> ReadAllInternalAsync()
+    {
+        _fileStream.Position = 0;
+        var buffer = new byte[sizeof(long)];
+        for (long id = 1; id <= _fileStream.Length / sizeof(long); id++)
         {
-            if (_fileStream.Length < id * sizeof(long))
-            {
-                _fileStream.SetLength(id * sizeof(long));
-            }
-
-            _fileStream.Position = (id - 1) * sizeof(long);
-            byte[] bytes = BitConverter.GetBytes(value);
-            await _fileStream.WriteAsync(bytes, 0, bytes.Length);
-            await _fileStream.FlushAsync();
-        }
-
-        private async ValueTask<long?> ReadInternalAsync(long id)
-        {
-            if (_fileStream.Length < id * sizeof(long))
-            {
-                return null;
-            }
-
-            _fileStream.Position = (id - 1) * sizeof(long);
-            byte[] buffer = new byte[sizeof(long)];
             var read = await _fileStream.ReadAsync(buffer, 0, buffer.Length);
 
             if (read != buffer.Length)
@@ -121,48 +144,24 @@ namespace Persistify.Server.Persistence.Core.FileSystem
                 throw new InvalidOperationException();
             }
 
-            long value = BitConverter.ToInt64(buffer, 0);
-            return value == EmptyValue ? null : (long?)value;
-        }
-
-        private async IAsyncEnumerable<(long, long)> ReadAllInternalAsync()
-        {
-            _fileStream.Position = 0;
-            byte[] buffer = new byte[sizeof(long)];
-            for (long id = 1; id <= _fileStream.Length / sizeof(long); id++)
+            var value = BitConverter.ToInt64(buffer, 0);
+            if (value != EmptyValue)
             {
-                var read = await _fileStream.ReadAsync(buffer, 0, buffer.Length);
-
-                if (read != buffer.Length)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                long value = BitConverter.ToInt64(buffer, 0);
-                if (value != EmptyValue)
-                {
-                    yield return (id, value);
-                }
+                yield return (id, value);
             }
         }
+    }
 
-        private async ValueTask RemoveInternalAsync(long id)
+    private async ValueTask RemoveInternalAsync(long id)
+    {
+        if (_fileStream.Length < id * sizeof(long))
         {
-            if (_fileStream.Length < id * sizeof(long))
-            {
-                return;
-            }
-
-            _fileStream.Position = (id - 1) * sizeof(long);
-            byte[] bytes = BitConverter.GetBytes(EmptyValue);
-            await _fileStream.WriteAsync(bytes, 0, bytes.Length);
-            await _fileStream.FlushAsync();
+            return;
         }
 
-        public void Dispose()
-        {
-            _semaphore.Dispose();
-            _fileStream.Dispose();
-        }
+        _fileStream.Position = (id - 1) * sizeof(long);
+        var bytes = BitConverter.GetBytes(EmptyValue);
+        await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+        await _fileStream.FlushAsync();
     }
 }

@@ -12,7 +12,7 @@ public static class EnvHelpers
 
         var configuration = builder.Build();
 
-        string? npmArgument = configuration["npm"];
+        var npmArgument = configuration["npm"];
         if (!string.IsNullOrEmpty(npmArgument))
         {
             var path = Environment.GetEnvironmentVariable("PATH");

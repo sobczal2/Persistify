@@ -10,14 +10,17 @@ namespace Persistify.Server.Pipelines.Templates.DeleteTemplate;
 public class
     DeleteTemplatePipeline : Pipeline<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
 {
-    private readonly StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse> _staticValidationStage;
     private readonly DeleteTemplateFromTemplateManagerStage _deleteTemplateFromTemplateManagerStage;
+
+    private readonly StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
+        _staticValidationStage;
 
     public DeleteTemplatePipeline(
         ILogger<DeleteTemplatePipeline> logger,
-        StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse> staticValidationStage,
+        StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
+            staticValidationStage,
         DeleteTemplateFromTemplateManagerStage deleteTemplateFromTemplateManagerStage
-            ) : base(
+    ) : base(
         logger
     )
     {

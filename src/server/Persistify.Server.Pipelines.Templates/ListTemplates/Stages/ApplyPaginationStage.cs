@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.ErrorHandling;
@@ -10,13 +9,15 @@ using Persistify.Server.Pipelines.Exceptions;
 
 namespace Persistify.Server.Pipelines.Templates.ListTemplates.Stages;
 
-public class ApplyPaginationStage : PipelineStage<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>
+public class
+    ApplyPaginationStage : PipelineStage<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>
 {
     private const string StageName = "ApplyPagination";
     public override string Name => StageName;
+
     public override ValueTask<Result> ProcessAsync(ListTemplatesPipelineContext context)
     {
-        var templates = ((IList<Template>?)context.Templates) ?? throw new PipelineException();
+        var templates = (IList<Template>?)context.Templates ?? throw new PipelineException();
         var pagination = context.Request.Pagination ?? throw new PipelineException();
 
         var skip = pagination.PageNumber * pagination.PageSize;
@@ -24,7 +25,7 @@ public class ApplyPaginationStage : PipelineStage<ListTemplatesPipelineContext, 
 
         var templatesTemp = new List<Template>(take);
 
-        for(var i = skip; i < skip + take; i++)
+        for (var i = skip; i < skip + take; i++)
         {
             if (i >= templates.Count)
             {

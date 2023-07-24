@@ -8,13 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj" />
-    <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CharacterFilters\" />
+    <Folder Include="CharacterFilters\"/>
   </ItemGroup>
 
 </Project>

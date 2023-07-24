@@ -10,12 +10,12 @@ namespace Persistify.Server.Persistence.Core.FileSystem;
 
 public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 {
+    private readonly ILongLinearRepository _lengthsRepository;
     private readonly string _mainFilePath;
     private readonly ILongLinearRepository _offsetsRepository;
-    private readonly ILongLinearRepository _lengthsRepository;
+    private readonly SemaphoreSlim _semaphore;
     private readonly ISerializer _serializer;
     private FileStream _fileStream;
-    private readonly SemaphoreSlim _semaphore;
 
     public FileSystemRepository(
         string mainFilePath,
@@ -30,6 +30,24 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         _serializer = serializer;
         _fileStream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         _semaphore = new SemaphoreSlim(1, 1);
+    }
+
+    public void Dispose()
+    {
+        _fileStream.Close();
+    }
+
+    public async ValueTask PurgeAsync()
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            await PurgeInternalAsync();
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     public async ValueTask WriteAsync(long id, T value)
@@ -239,19 +257,6 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         await _lengthsRepository.RemoveAsync(id);
     }
 
-    public async ValueTask PurgeAsync()
-    {
-        await _semaphore.WaitAsync();
-        try
-        {
-            await PurgeInternalAsync();
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
     private async ValueTask PurgeInternalAsync()
     {
         var offsets = await _offsetsRepository.ReadAllAsync();
@@ -305,10 +310,5 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         File.Move(tempFilePath, _mainFilePath);
 
         _fileStream = new FileStream(_mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-    }
-
-    public void Dispose()
-    {
-        _fileStream.Close();
     }
 }

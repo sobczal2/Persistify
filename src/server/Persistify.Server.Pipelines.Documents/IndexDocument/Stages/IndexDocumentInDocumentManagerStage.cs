@@ -15,9 +15,8 @@ public class
     IndexDocumentInDocumentManagerStage : PipelineStage<IndexDocumentPipelineContext, IndexDocumentRequest,
         IndexDocumentResponse>
 {
-    private readonly IDocumentManager _documentManager;
     public const string StageName = "IndexDocumentInDocumentManager";
-    public override string Name => StageName;
+    private readonly IDocumentManager _documentManager;
 
     public IndexDocumentInDocumentManagerStage(
         IDocumentManager documentManager
@@ -26,13 +25,15 @@ public class
         _documentManager = documentManager;
     }
 
+    public override string Name => StageName;
+
     public override async ValueTask<Result> ProcessAsync(IndexDocumentPipelineContext context)
     {
-        var document = new Document()
+        var document = new Document
         {
             TextFieldValues = context.Request.TextFieldValues,
             NumberFieldValues = context.Request.NumberFieldValues,
-            BoolFieldValues = context.Request.BoolFieldValues,
+            BoolFieldValues = context.Request.BoolFieldValues
         };
 
         try

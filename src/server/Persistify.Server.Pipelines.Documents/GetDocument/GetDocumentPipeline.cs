@@ -10,14 +10,15 @@ namespace Persistify.Server.Pipelines.Documents.GetDocument;
 
 public class GetDocumentPipeline : Pipeline<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>
 {
+    private readonly GetDocumentFromDocumentManagerStage _getDocumentFromDocumentManagerStage;
+
     private readonly StaticValidationStage<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>
         _staticValidationStage;
 
-    private readonly GetDocumentFromDocumentManagerStage _getDocumentFromDocumentManagerStage;
-
     public GetDocumentPipeline(
         ILogger<GetDocumentPipeline> logger,
-        StaticValidationStage<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse> staticValidationStage,
+        StaticValidationStage<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>
+            staticValidationStage,
         GetDocumentFromDocumentManagerStage getDocumentFromDocumentManagerStage
     ) : base(
         logger
@@ -41,6 +42,6 @@ public class GetDocumentPipeline : Pipeline<GetDocumentPipelineContext, GetDocum
 
     protected override GetDocumentResponse CreateResponse(GetDocumentPipelineContext context)
     {
-        return new GetDocumentResponse() { Document = context.Document ?? throw new PipelineException() };
+        return new GetDocumentResponse { Document = context.Document ?? throw new PipelineException() };
     }
 }

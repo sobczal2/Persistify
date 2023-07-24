@@ -7,7 +7,7 @@ using Persistify.Server.Serialization;
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
 /// <summary>
-/// Doesn't support id > int.MaxValue
+///     Doesn't support id > int.MaxValue
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class PrimitiveFileSystemRepository<T> : IRepository<T>

@@ -7,12 +7,12 @@ namespace Persistify.Server.Pipelines.Documents.GetDocument;
 
 public class GetDocumentPipelineContext : IPipelineContext<GetDocumentRequest, GetDocumentResponse>
 {
-    public GetDocumentRequest Request { get; set; }
-    public GetDocumentResponse? Response { get; set; }
-    public Document? Document { get; set; }
-
     public GetDocumentPipelineContext(GetDocumentRequest request)
     {
         Request = request;
     }
+
+    public Document? Document { get; set; }
+    public GetDocumentRequest Request { get; set; }
+    public GetDocumentResponse? Response { get; set; }
 }

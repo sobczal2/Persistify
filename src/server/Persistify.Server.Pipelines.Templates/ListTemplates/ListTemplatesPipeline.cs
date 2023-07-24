@@ -11,11 +11,12 @@ namespace Persistify.Server.Pipelines.Templates.ListTemplates;
 
 public class ListTemplatesPipeline : Pipeline<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>
 {
-    private readonly StaticValidationStage<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>
-        _staticValidationStage;
+    private readonly ApplyPaginationStage _applyPaginationStage;
 
     private readonly FetchTemplatesFromTemplateManagerStage _fetchTemplatesFromTemplateManagerStage;
-    private readonly ApplyPaginationStage _applyPaginationStage;
+
+    private readonly StaticValidationStage<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>
+        _staticValidationStage;
 
     public ListTemplatesPipeline(
         ILogger<ListTemplatesPipeline> logger,
@@ -48,7 +49,8 @@ public class ListTemplatesPipeline : Pipeline<ListTemplatesPipelineContext, List
     {
         return new ListTemplatesResponse
         {
-            Templates = context.Templates?.ToList() ?? throw new PipelineException(), TotalCount = context.TotalCount
+            Templates = context.Templates?.ToList() ?? throw new PipelineException(),
+            TotalCount = context.TotalCount
         };
     }
 }

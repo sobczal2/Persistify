@@ -9,42 +9,13 @@ namespace Persistify.Server.Persistence.DataStructures.Trees;
 
 public class AvlAsyncTree<T> : IAsyncTree<T>
 {
-    private readonly IStorageProvider<Node> _storageProvider;
-    private readonly IComparer<T> _comparer;
     private const long NullId = 0;
+    private readonly IDictionary<long, Node> _changedNodes;
+    private readonly IComparer<T> _comparer;
+    private readonly SemaphoreSlim _semaphore;
+    private readonly IStorageProvider<Node> _storageProvider;
     private long _lastId = NullId;
     private long _rootId = NullId;
-    private readonly IDictionary<long, Node> _changedNodes;
-    private readonly SemaphoreSlim _semaphore;
-
-    public class Node
-    {
-        public T Value { get; set; }
-        public long Id { get; set; }
-        public long LeftId { get; set; }
-        public long RightId { get; set; }
-        public long ParentId { get; set; }
-        public int Height { get; set; }
-        public int Balance { get; set; }
-
-        public Node(T value, long id, long leftId, long rightId, long parentId, int height, int balance)
-        {
-            Value = value;
-            Id = id;
-            LeftId = leftId;
-            RightId = rightId;
-            ParentId = parentId;
-            Height = height;
-            Balance = balance;
-        }
-
-        public Node(T value, long id, long parentId)
-        {
-            Value = value;
-            Id = id;
-            ParentId = parentId;
-        }
-    }
 
     public AvlAsyncTree(
         IStorageProvider<Node> storageProvider,
@@ -393,7 +364,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         node.LeftId = leftNode.RightId;
         WriteNode(node);
 
-        if(node.LeftId != NullId)
+        if (node.LeftId != NullId)
         {
             var nodeLeftNode = await ReadNodeAsync(node.LeftId) ??
                                throw new InvalidOperationException("Node left node is null");
@@ -412,7 +383,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             var parentNode = await ReadNodeAsync(leftNode.ParentId) ??
                              throw new InvalidOperationException("Parent node is null");
 
-            if(parentNode.RightId == node.Id)
+            if (parentNode.RightId == node.Id)
             {
                 parentNode.RightId = leftNode.Id;
                 WriteNode(parentNode);
@@ -450,7 +421,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         node.RightId = rightNode.LeftId;
         WriteNode(node);
 
-        if(node.RightId != NullId)
+        if (node.RightId != NullId)
         {
             var nodeRightNode = await ReadNodeAsync(node.RightId) ??
                                 throw new InvalidOperationException("Node right node is null");
@@ -469,7 +440,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             var parentNode = await ReadNodeAsync(rightNode.ParentId) ??
                              throw new InvalidOperationException("Parent node is null");
 
-            if(parentNode.RightId == node.Id)
+            if (parentNode.RightId == node.Id)
             {
                 parentNode.RightId = rightNode.Id;
                 WriteNode(parentNode);
@@ -501,5 +472,34 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         var node = await ReadNodeAsync(id);
 
         return node?.Height ?? -1;
+    }
+
+    public class Node
+    {
+        public Node(T value, long id, long leftId, long rightId, long parentId, int height, int balance)
+        {
+            Value = value;
+            Id = id;
+            LeftId = leftId;
+            RightId = rightId;
+            ParentId = parentId;
+            Height = height;
+            Balance = balance;
+        }
+
+        public Node(T value, long id, long parentId)
+        {
+            Value = value;
+            Id = id;
+            ParentId = parentId;
+        }
+
+        public T Value { get; set; }
+        public long Id { get; set; }
+        public long LeftId { get; set; }
+        public long RightId { get; set; }
+        public long ParentId { get; set; }
+        public int Height { get; set; }
+        public int Balance { get; set; }
     }
 }

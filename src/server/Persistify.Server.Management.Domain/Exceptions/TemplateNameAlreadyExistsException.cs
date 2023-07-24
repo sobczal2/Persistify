@@ -4,5 +4,4 @@ namespace Persistify.Server.Management.Domain.Exceptions;
 
 public class TemplateNameAlreadyExistsException : Exception
 {
-
 }

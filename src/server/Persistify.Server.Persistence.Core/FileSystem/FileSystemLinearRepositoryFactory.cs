@@ -20,6 +20,14 @@ public class FileSystemLinearRepositoryFactory : ILinearRepositoryFactory, IDisp
         _repositories = new ConcurrentDictionary<string, IDisposable>();
     }
 
+    public void Dispose()
+    {
+        foreach (var repository in _repositories.Values)
+        {
+            repository.Dispose();
+        }
+    }
+
     public ILongLinearRepository CreateLong(string repositoryName)
     {
         var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
@@ -28,13 +36,5 @@ public class FileSystemLinearRepositoryFactory : ILinearRepositoryFactory, IDisp
             static (_, mainFilePath)
                 => new FileSystemLongLinearRepository(mainFilePath),
             mainFilePath);
-    }
-
-    public void Dispose()
-    {
-        foreach (var repository in _repositories.Values)
-        {
-            repository.Dispose();
-        }
     }
 }

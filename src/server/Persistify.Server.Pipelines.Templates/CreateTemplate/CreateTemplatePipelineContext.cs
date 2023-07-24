@@ -6,12 +6,12 @@ namespace Persistify.Server.Pipelines.Templates.CreateTemplate;
 
 public class CreateTemplatePipelineContext : IPipelineContext<CreateTemplateRequest, CreateTemplateResponse>
 {
-    public CreateTemplateRequest Request { get; set; }
-    public CreateTemplateResponse? Response { get; set; }
-    public int? TemplateId { get; set; }
-
     public CreateTemplatePipelineContext(CreateTemplateRequest request)
     {
         Request = request;
     }
+
+    public int? TemplateId { get; set; }
+    public CreateTemplateRequest Request { get; set; }
+    public CreateTemplateResponse? Response { get; set; }
 }

@@ -6,8 +6,8 @@ namespace Persistify.Server.Persistence.DataStructures.Factories;
 
 public class RepositoryStorageProviderFactory : IStorageProviderFactory
 {
-    private readonly IRepositoryFactory _repositoryFactory;
     private readonly ConcurrentDictionary<string, object> _providers;
+    private readonly IRepositoryFactory _repositoryFactory;
 
     public RepositoryStorageProviderFactory(
         IRepositoryFactory repositoryFactory
@@ -23,7 +23,7 @@ public class RepositoryStorageProviderFactory : IStorageProviderFactory
             name, static (_, args) => new RepositoryStorageProvider<T>(
                 args.repositoryFactory.Create<T>(args.name)
             ),
-            (name: name, repositoryFactory: _repositoryFactory)
+            (name, repositoryFactory: _repositoryFactory)
         );
     }
 }

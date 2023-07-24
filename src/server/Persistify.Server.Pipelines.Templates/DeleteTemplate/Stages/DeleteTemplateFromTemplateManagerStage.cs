@@ -13,9 +13,8 @@ namespace Persistify.Server.Pipelines.Templates.DeleteTemplate.Stages;
 public class DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTemplatePipelineContext, DeleteTemplateRequest
     , DeleteTemplateResponse>
 {
-    private readonly ITemplateManager _templateManager;
     public const string StageName = "DeleteTemplateFromTemplateManager";
-    public override string Name => StageName;
+    private readonly ITemplateManager _templateManager;
 
     public DeleteTemplateFromTemplateManagerStage(
         ITemplateManager templateManager
@@ -23,6 +22,8 @@ public class DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTempla
     {
         _templateManager = templateManager;
     }
+
+    public override string Name => StageName;
 
     public override async ValueTask<Result> ProcessAsync(DeleteTemplatePipelineContext context)
     {

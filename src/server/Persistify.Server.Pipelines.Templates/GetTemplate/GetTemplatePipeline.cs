@@ -10,10 +10,10 @@ namespace Persistify.Server.Pipelines.Templates.GetTemplate;
 
 public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
 {
+    private readonly FetchTemplateFromTemplateManagerStage _fetchTemplateFromTemplateManagerStage;
+
     private readonly StaticValidationStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
         _staticValidationStage;
-
-    private readonly FetchTemplateFromTemplateManagerStage _fetchTemplateFromTemplateManagerStage;
 
     public GetTemplatePipeline(
         ILogger<GetTemplatePipeline> logger,
@@ -37,11 +37,11 @@ public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTempl
 
     protected override GetTemplatePipelineContext CreateContext(GetTemplateRequest request)
     {
-        return new(request);
+        return new GetTemplatePipelineContext(request);
     }
 
     protected override GetTemplateResponse CreateResponse(GetTemplatePipelineContext context)
     {
-        return new() { Template = context.Template ?? throw new PipelineException() };
+        return new GetTemplateResponse { Template = context.Template ?? throw new PipelineException() };
     }
 }

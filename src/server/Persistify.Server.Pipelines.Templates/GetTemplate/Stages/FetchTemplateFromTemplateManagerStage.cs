@@ -12,9 +12,8 @@ public class
     FetchTemplateFromTemplateManagerStage : PipelineStage<GetTemplatePipelineContext, GetTemplateRequest,
         GetTemplateResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private const string StageName = "FetchTemplatesFromTemplateManager";
-    public override string Name => StageName;
+    private readonly ITemplateManager _templateManager;
 
     public FetchTemplateFromTemplateManagerStage(
         ITemplateManager templateManager
@@ -22,6 +21,8 @@ public class
     {
         _templateManager = templateManager;
     }
+
+    public override string Name => StageName;
 
     public override ValueTask<Result> ProcessAsync(GetTemplatePipelineContext context)
     {

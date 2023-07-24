@@ -26,7 +26,7 @@ public class AvlAsyncTreeFactory : IAsyncTreeFactory
             name, static (_, args) => new AvlAsyncTree<T>(
                 args.storageProviderFactory.Create<AvlAsyncTree<T>.Node>(args.name),
                 args.comparer
-            ), (name: name, comparer: comparer, storageProviderFactory: _storageProviderFactory)
+            ), (name, comparer, storageProviderFactory: _storageProviderFactory)
         );
     }
 }

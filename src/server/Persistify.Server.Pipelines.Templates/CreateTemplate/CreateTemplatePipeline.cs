@@ -11,11 +11,12 @@ namespace Persistify.Server.Pipelines.Templates.CreateTemplate;
 public class
     CreateTemplatePipeline : Pipeline<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
 {
-    private readonly StaticValidationStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
-        _staticValidationStage;
+    private readonly AddTemplateToTemplateManagerStage _addTemplateToTemplateManagerStage;
 
     private readonly CheckAnalyzersAvailabilityStage _checkAnalyzersAvailabilityStage;
-    private readonly AddTemplateToTemplateManagerStage _addTemplateToTemplateManagerStage;
+
+    private readonly StaticValidationStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
+        _staticValidationStage;
 
     public CreateTemplatePipeline(
         ILogger<CreateTemplatePipeline> logger,
@@ -41,11 +42,11 @@ public class
 
     protected override CreateTemplatePipelineContext CreateContext(CreateTemplateRequest request)
     {
-        return new(request);
+        return new CreateTemplatePipelineContext(request);
     }
 
     protected override CreateTemplateResponse CreateResponse(CreateTemplatePipelineContext context)
     {
-        return new() { TemplateId = context.TemplateId ?? throw new PipelineException() };
+        return new CreateTemplateResponse { TemplateId = context.TemplateId ?? throw new PipelineException() };
     }
 }

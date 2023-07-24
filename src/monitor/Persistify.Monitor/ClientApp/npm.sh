@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# This script is used as a way around the issue with running this app in rider
 args="$@"
 
 export NVM_DIR="$HOME/.nvm"

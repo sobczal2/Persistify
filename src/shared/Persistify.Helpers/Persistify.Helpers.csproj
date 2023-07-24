@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Core.Api" Version="2.55.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.55.0"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="7.0.0"/>
   </ItemGroup>
 
 </Project>

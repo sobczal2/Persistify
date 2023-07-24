@@ -9,9 +9,8 @@ public class StaticValidationStage<TContext, TRequest, TResponse> : PipelineStag
     where TRequest : class
     where TResponse : class
 {
-    private readonly IValidator<TRequest> _validator;
     private const string StageName = "StaticValidation";
-    public override string Name => StageName;
+    private readonly IValidator<TRequest> _validator;
 
     public StaticValidationStage(
         IValidator<TRequest> validator
@@ -19,6 +18,8 @@ public class StaticValidationStage<TContext, TRequest, TResponse> : PipelineStag
     {
         _validator = validator;
     }
+
+    public override string Name => StageName;
 
     public override ValueTask<Result> ProcessAsync(TContext context)
     {

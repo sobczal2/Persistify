@@ -6,12 +6,12 @@ namespace Persistify.Server.Pipelines.Documents.IndexDocument;
 
 public class IndexDocumentPipelineContext : IPipelineContext<IndexDocumentRequest, IndexDocumentResponse>
 {
-    public IndexDocumentRequest Request { get; set; }
-    public IndexDocumentResponse? Response { get; set; }
-    public long? DocumentId { get; set; }
-
     public IndexDocumentPipelineContext(IndexDocumentRequest request)
     {
         Request = request;
     }
+
+    public long? DocumentId { get; set; }
+    public IndexDocumentRequest Request { get; set; }
+    public IndexDocumentResponse? Response { get; set; }
 }

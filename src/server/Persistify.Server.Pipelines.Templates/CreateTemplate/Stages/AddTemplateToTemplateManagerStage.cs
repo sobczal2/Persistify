@@ -14,9 +14,8 @@ namespace Persistify.Server.Pipelines.Templates.CreateTemplate.Stages;
 public class AddTemplateToTemplateManagerStage : PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest,
     CreateTemplateResponse>
 {
-    private readonly ITemplateManager _templateManager;
     public const string StageName = "AddTemplateToTemplateManager";
-    public override string Name => StageName;
+    private readonly ITemplateManager _templateManager;
 
     public AddTemplateToTemplateManagerStage(
         ITemplateManager templateManager
@@ -24,6 +23,8 @@ public class AddTemplateToTemplateManagerStage : PipelineStage<CreateTemplatePip
     {
         _templateManager = templateManager;
     }
+
+    public override string Name => StageName;
 
     public override async ValueTask<Result> ProcessAsync(CreateTemplatePipelineContext context)
     {

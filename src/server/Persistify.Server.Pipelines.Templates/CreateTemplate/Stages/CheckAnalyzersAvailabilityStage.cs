@@ -1,19 +1,19 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
+using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Pipelines.Common;
 
 namespace Persistify.Server.Pipelines.Templates.CreateTemplate.Stages;
 
 public class
-    CheckAnalyzersAvailabilityStage : PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
+    CheckAnalyzersAvailabilityStage : PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest,
+        CreateTemplateResponse>
 {
+    private const string StageName = "CheckAnalyzersAvailability";
     private readonly IAnalyzerFactory _analyzerFactory;
     private readonly IAnalyzerPresetFactory _analyzerPresetFactory;
-    private const string StageName = "CheckAnalyzersAvailability";
-    public override string Name => StageName;
 
     public CheckAnalyzersAvailabilityStage(
         IAnalyzerFactory analyzerFactory,
@@ -23,6 +23,8 @@ public class
         _analyzerFactory = analyzerFactory;
         _analyzerPresetFactory = analyzerPresetFactory;
     }
+
+    public override string Name => StageName;
 
     public override ValueTask<Result> ProcessAsync(CreateTemplatePipelineContext context)
     {

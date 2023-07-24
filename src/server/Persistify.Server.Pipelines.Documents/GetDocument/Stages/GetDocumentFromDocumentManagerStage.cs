@@ -13,9 +13,8 @@ public class
     GetDocumentFromDocumentManagerStage : PipelineStage<GetDocumentPipelineContext, GetDocumentRequest,
         GetDocumentResponse>
 {
-    private readonly IDocumentManager _documentManager;
     public const string StageName = "GetDocumentFromDocumentManager";
-    public override string Name => StageName;
+    private readonly IDocumentManager _documentManager;
 
     public GetDocumentFromDocumentManagerStage(
         IDocumentManager documentManager
@@ -23,6 +22,8 @@ public class
     {
         _documentManager = documentManager;
     }
+
+    public override string Name => StageName;
 
     public override async ValueTask<Result> ProcessAsync(GetDocumentPipelineContext context)
     {

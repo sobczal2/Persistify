@@ -34,7 +34,8 @@ public class CreateTemplateRequestValidator : IValidator<CreateTemplateRequest>
 
         if (value.TemplateName.Length > 64)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateName", "TemplateName has a maximum length of 64 characters");
+            return new ValidationException($"{ErrorPrefix}.TemplateName",
+                "TemplateName has a maximum length of 64 characters");
         }
 
         if (value.TextFields.Count + value.NumberFields.Count + value.BoolFields.Count == 0)
