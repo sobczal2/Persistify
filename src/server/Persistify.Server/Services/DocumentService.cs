@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Pipelines.Documents.GetDocument;
-using Persistify.Pipelines.Documents.IndexDocument;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
+using Persistify.Server.Pipelines.Documents.GetDocument;
+using Persistify.Server.Pipelines.Documents.IndexDocument;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 
@@ -11,17 +11,18 @@ namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    private readonly IndexDocumentPipeline _indexDocumentPipeline;
     private readonly GetDocumentPipeline _getDocumentPipeline;
+    private readonly IndexDocumentPipeline _indexDocumentPipeline;
 
     public DocumentService(
         IndexDocumentPipeline indexDocumentPipeline,
         GetDocumentPipeline getDocumentPipeline
-        )
+    )
     {
         _indexDocumentPipeline = indexDocumentPipeline;
         _getDocumentPipeline = getDocumentPipeline;
     }
+
     public ValueTask<IndexDocumentResponse> IndexDocumentAsync(IndexDocumentRequest request, CallContext context)
     {
         return _indexDocumentPipeline.ProcessAsync(request);

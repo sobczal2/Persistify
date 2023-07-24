@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Persistence.DataStructures.Providers;
+using Persistify.Server.Persistence.DataStructures.Providers;
 
 namespace Persistify.Persistence.DataStructures.Tests.Unit;
 
@@ -15,7 +15,7 @@ public class ArrayStorageProvider<T> : IStorageProvider<T> where T : notnull
 
     public ValueTask WriteAsync(long id, T value)
     {
-        if(id >= _items.Length)
+        if (id >= _items.Length)
         {
             throw new IndexOutOfRangeException();
         }
@@ -26,7 +26,7 @@ public class ArrayStorageProvider<T> : IStorageProvider<T> where T : notnull
 
     public ValueTask<T?> ReadAsync(long id)
     {
-        if(id >= _items.Length)
+        if (id >= _items.Length)
         {
             throw new IndexOutOfRangeException();
         }
@@ -36,11 +36,11 @@ public class ArrayStorageProvider<T> : IStorageProvider<T> where T : notnull
 
     public ValueTask RemoveAsync(long id)
     {
-        if(id >= _items.Length)
+        if (id >= _items.Length)
         {
             throw new IndexOutOfRangeException();
         }
-        
+
         _items[id] = default;
         return ValueTask.CompletedTask;
     }
