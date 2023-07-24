@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Pipelines.Documents.GetDocument;
-using Persistify.Pipelines.Documents.IndexDocument;
+using Persistify.Server.Pipelines.Documents.GetDocument;
+using Persistify.Server.Pipelines.Documents.IndexDocument;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Services;

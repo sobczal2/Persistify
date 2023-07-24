@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Persistence.DataStructures.Abstractions;
+using Persistify.Server.Persistence.DataStructures.Abstractions;
 using Xunit;
 
 namespace Persistify.Persistence.DataStructures.Tests.Unit.Trees;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Persistence.DataStructures.Providers;
+using Persistify.Server.Persistence.DataStructures.Providers;
 
 namespace Persistify.Persistence.DataStructures.Tests.Unit;
 

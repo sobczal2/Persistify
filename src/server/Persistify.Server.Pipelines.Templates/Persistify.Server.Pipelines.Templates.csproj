@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Persistify.Server.Fts.Analysis\Persistify.Server.Fts.Analysis.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Management.Domain\Persistify.Server.Management.Domain.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Pipelines\Persistify.Server.Pipelines.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Responses\Persistify.Responses.csproj" />
+  </ItemGroup>
+
+</Project>

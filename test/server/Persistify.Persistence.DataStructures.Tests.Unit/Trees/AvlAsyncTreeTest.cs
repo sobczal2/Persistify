@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Persistify.Persistence.DataStructures.Trees;
+using Persistify.Server.Persistence.DataStructures.Trees;
 
 namespace Persistify.Persistence.DataStructures.Tests.Unit.Trees;
 

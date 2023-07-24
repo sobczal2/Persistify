@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Pipelines.Templates.CreateTemplate;
-using Persistify.Pipelines.Templates.DeleteTemplate;
-using Persistify.Pipelines.Templates.GetTemplate;
-using Persistify.Pipelines.Templates.ListTemplates;
+using Persistify.Server.Pipelines.Templates.CreateTemplate;
+using Persistify.Server.Pipelines.Templates.DeleteTemplate;
+using Persistify.Server.Pipelines.Templates.GetTemplate;
+using Persistify.Server.Pipelines.Templates.ListTemplates;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Services;

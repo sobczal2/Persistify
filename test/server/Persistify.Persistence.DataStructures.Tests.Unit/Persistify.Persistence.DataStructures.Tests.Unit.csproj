@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\server\Persistify.Persistence.DataStructures\Persistify.Persistence.DataStructures.csproj" />
+      <ProjectReference Include="..\..\..\src\server\Persistify.Server.Persistence.DataStructures\Persistify.Server.Persistence.DataStructures.csproj" />
     </ItemGroup>
 
 </Project>
