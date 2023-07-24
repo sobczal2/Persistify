@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Persistence.Core\Persistify.Server.Persistence.Core.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Persistence.Core\Persistify.Server.Persistence.Core.csproj" />
   </ItemGroup>
 
 </Project>

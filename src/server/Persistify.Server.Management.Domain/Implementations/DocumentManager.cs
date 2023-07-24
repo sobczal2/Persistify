@@ -7,7 +7,7 @@ using Persistify.Server.Management.Domain.Abstractions;
 using Persistify.Server.Management.Domain.Exceptions;
 using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Management.Domain;
+namespace Persistify.Server.Management.Domain.Implementations;
 
 public class DocumentManager : IDocumentManager
 {

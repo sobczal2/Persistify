@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.HostedServices;
+using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.Middlewares;
 using Persistify.Server.Services;
 using ProtoBuf.Grpc.Server;

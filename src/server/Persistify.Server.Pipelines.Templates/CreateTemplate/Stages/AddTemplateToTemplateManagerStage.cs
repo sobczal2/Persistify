@@ -5,6 +5,7 @@ using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Management.Domain.Abstractions;
 using Persistify.Server.Management.Domain.Exceptions;
+using Persistify.Server.Management.Domain.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -40,7 +41,7 @@ public class AddTemplateToTemplateManagerStage : PipelineStage<CreateTemplatePip
         {
             await _templateManager.CreateAsync(template);
         }
-        catch (TemplateNameAlreadyExistsException)
+        catch (TemplateWithThatNameAlreadyExistsException)
         {
             return new ValidationException("CreateTemplateRequest.TemplateName",
                 $"Template with name {context.Request.TemplateName} already exists");

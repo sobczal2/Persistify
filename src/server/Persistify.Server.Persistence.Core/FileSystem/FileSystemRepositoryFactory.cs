@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.HostedServices;
+using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Serialization;
 
@@ -51,18 +52,27 @@ public class FileSystemRepositoryFactory : IRepositoryFactory, IActRecurrently, 
 
     public IRepository<T> Create<T>(string repositoryName)
     {
-        var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
-        var mainFilePath = $"{baseFilesPath}.bin";
-        var offsetsFilePath = $"{baseFilesPath}.offsets.bin";
-        var lengthsFilePath = $"{baseFilesPath}.lengths.bin";
-        var offsetsRepository = _linearRepositoryFactory.CreateLong(offsetsFilePath);
-        var lengthsRepository = _linearRepositoryFactory.CreateLong(lengthsFilePath);
-
         return (IRepository<T>)_repositories.GetOrAdd(repositoryName,
             static (_, args)
-                => new FileSystemRepository<T>(args.mainFilePath, args.offsetsRepository, args.lengthsRepository,
-                    args.serializer),
-            (serializer: _serializer, mainFilePath, offsetsRepository,
-                lengthsRepository));
+                =>
+            {
+                var parts = args.repositoryName.Split('/');
+                var directoryPath = Path.Combine(args.dataPath, Path.Combine(parts[..^1]));
+                Directory.CreateDirectory(directoryPath);
+
+                var baseFilesPath = Path.Combine(args.dataPath, args.repositoryName);
+                var mainFilePath = $"{baseFilesPath}.bin";
+
+                var offsetsRepositoryName = $"{args.repositoryName}.offsets";
+                var lengthsRepositoryName = $"{args.repositoryName}.lengths";
+
+                var offsetsRepository = args.linearRepositoryFactory.CreateLong(offsetsRepositoryName);
+                var lengthsRepository = args.linearRepositoryFactory.CreateLong(lengthsRepositoryName);
+
+                return new FileSystemRepository<T>(mainFilePath, offsetsRepository, lengthsRepository,
+                    args.serializer);
+            },
+            (serializer: _serializer, repositoryName, dataPath: _storageSettings.DataPath,
+                linearRepositoryFactory: _linearRepositoryFactory));
     }
 }

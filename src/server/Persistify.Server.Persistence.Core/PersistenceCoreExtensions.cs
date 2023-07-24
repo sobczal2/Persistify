@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Configuration.Enums;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.HostedServices;
+using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.FileSystem;
 

@@ -30,11 +30,19 @@ public class FileSystemLinearRepositoryFactory : ILinearRepositoryFactory, IDisp
 
     public ILongLinearRepository CreateLong(string repositoryName)
     {
-        var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
-        var mainFilePath = $"{filePath}.bin";
         return (ILongLinearRepository)_repositories.GetOrAdd(repositoryName,
-            static (_, mainFilePath)
-                => new FileSystemLongLinearRepository(mainFilePath),
-            mainFilePath);
+            static (_, args)
+                =>
+            {
+                var parts = args.repositoryName.Split('/');
+                var directoryPath = Path.Combine(args.dataPath, Path.Combine(parts[..^1]));
+                Directory.CreateDirectory(directoryPath);
+
+                var filePath = Path.Combine(args.dataPath, args.repositoryName);
+                var mainFilePath = $"{filePath}.bin";
+
+                return new FileSystemLongLinearRepository(mainFilePath);
+            },
+            (dataPath: _storageSettings.DataPath, repositoryName));
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Persistify.Server.HostedServices;
+namespace Persistify.Server.HostedServices.Abstractions;
 
 public interface IActOnStartup
 {
