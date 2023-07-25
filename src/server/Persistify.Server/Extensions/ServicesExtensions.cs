@@ -5,11 +5,13 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Fts.Analysis;
 using Persistify.Server.HostedServices;
 using Persistify.Server.Management.Domain;
+using Persistify.Server.Management.Types;
 using Persistify.Server.Persistence.Core;
 using Persistify.Server.Persistence.DataStructures;
 using Persistify.Server.Pipelines;
@@ -26,6 +28,7 @@ public static class ServicesExtensions
     public static IServiceCollection AddServicesConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.Configure<HostOptions>(opt => opt.ShutdownTimeout = TimeSpan.FromMinutes(1));
         services.AddCodeFirstGrpc();
         services.AddCodeFirstGrpcReflection();
         services.AddGrpc(opt =>
@@ -75,16 +78,12 @@ public static class ServicesExtensions
         services.AddPipelinesDocuments();
         services.AddFtsAnalysis();
         services.AddManagementDomain();
+        services.AddManagementTypes();
         services.AddPersistenceCore(configuration);
         services.AddPersistenceDataStructures();
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
 
-        return services;
-    }
-
-    private static IServiceCollection AddCommon(this IServiceCollection services)
-    {
         return services;
     }
 }

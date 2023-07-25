@@ -10,17 +10,17 @@ namespace Persistify.Server.Persistence.Core.FileSystem;
 
 public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 {
-    private readonly ILongLinearRepository _lengthsRepository;
+    private readonly ILinearRepository _lengthsRepository;
     private readonly string _mainFilePath;
-    private readonly ILongLinearRepository _offsetsRepository;
+    private readonly ILinearRepository _offsetsRepository;
     private readonly SemaphoreSlim _semaphore;
     private readonly ISerializer _serializer;
     private FileStream _fileStream;
 
     public FileSystemRepository(
         string mainFilePath,
-        ILongLinearRepository offsetsRepository,
-        ILongLinearRepository lengthsRepository,
+        ILinearRepository offsetsRepository,
+        ILinearRepository lengthsRepository,
         ISerializer serializer
     )
     {
@@ -34,7 +34,13 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public void Dispose()
     {
-        _fileStream.Close();
+        _fileStream.Dispose();
+        _semaphore.Dispose();
+
+        if(File.Exists(_mainFilePath) && new FileInfo(_mainFilePath).Length == 0)
+        {
+            File.Delete(_mainFilePath);
+        }
     }
 
     public async ValueTask PurgeAsync()

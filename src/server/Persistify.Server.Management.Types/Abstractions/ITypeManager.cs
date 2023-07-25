@@ -6,13 +6,15 @@ namespace Persistify.Server.Management.Types.Abstractions;
 
 public interface ITypeManager
 {
-    ValueTask IndexAsync(Document document);
-    ValueTask DeleteAsync(long documentId);
+    ValueTask IndexAsync(int templateId, Document document);
+    ValueTask DeleteAsync(int templateId, long documentId);
+    ValueTask InitializeForTemplate(int templateId);
+    ValueTask RemoveForTemplate(int templateId);
 }
 
-public interface ITypeManager<TQuery, THit> : ITypeManager
+public interface ITypeManager<in TQuery, THit> : ITypeManager
     where TQuery : ITypeManagerQuery
     where THit : ITypeManagerHit
 {
-    ValueTask<IEnumerable<THit>> SearchAsync(TQuery query);
+    ValueTask<IEnumerable<THit>> SearchAsync(int templateId, TQuery query);
 }

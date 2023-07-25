@@ -8,13 +8,13 @@ using Persistify.Server.Persistence.Core.Abstractions;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
-public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
+public class FileSystemLinearRepository : ILinearRepository, IDisposable
 {
     private const long EmptyValue = -1L;
     private readonly FileStream _fileStream;
     private readonly SemaphoreSlim _semaphore;
 
-    public FileSystemLongLinearRepository(string filePath)
+    public FileSystemLinearRepository(string filePath)
     {
         _fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         _semaphore = new SemaphoreSlim(1, 1);
@@ -24,6 +24,11 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
     {
         _semaphore.Dispose();
         _fileStream.Dispose();
+
+        if(File.Exists(_fileStream.Name) && new FileInfo(_fileStream.Name).Length == 0)
+        {
+            File.Delete(_fileStream.Name);
+        }
     }
 
     public async ValueTask WriteAsync(long id, long value)

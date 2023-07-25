@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Management.Types\Persistify.Server.Management.Types.csproj" />
     <ProjectReference Include="..\Persistify.Server.Persistence.Core\Persistify.Server.Persistence.Core.csproj" />
   </ItemGroup>
 

@@ -29,8 +29,7 @@ public class DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTempla
     {
         try
         {
-            context.Template = _templateManager.Get(context.Request.TemplateId);
-            await _templateManager.DeleteAsync(context.Request.TemplateId);
+            context.Template = await _templateManager.DeleteAsync(context.Request.TemplateId);
             return Result.Success;
         }
         catch (TemplateNotFoundException)

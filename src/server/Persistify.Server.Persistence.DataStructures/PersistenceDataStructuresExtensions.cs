@@ -10,8 +10,7 @@ public static class PersistenceDataStructuresExtensions
     public static IServiceCollection AddPersistenceDataStructures(this IServiceCollection services)
     {
         services.AddSingleton(typeof(IStorageProvider<>), typeof(RepositoryStorageProvider<>));
-        services.AddSingleton<IStorageProviderFactory, RepositoryStorageProviderFactory>();
-        services.AddSingleton<IAsyncTreeFactory, AvlAsyncTreeFactory>();
+        services.AddSingleton<IStorageProviderManager, RepositoryStorageProviderManager>();
 
         return services;
     }

@@ -11,16 +11,17 @@ namespace Persistify.Server.Management.Domain.Implementations;
 
 public class DocumentIdManager : IDocumentIdManager, IActOnStartup
 {
+    private readonly ILinearRepositoryManager _linearRepositoryManager;
     private const string DocumentIdKey = "DocumentId/main";
-    private readonly ILongLinearRepository _linearRepository;
     private readonly SemaphoreSlim _semaphoreSlim;
     private readonly ISet<int> _initializedTemplates;
 
     public DocumentIdManager(
-        ILinearRepositoryFactory linearRepositoryFactory
+        ILinearRepositoryManager linearRepositoryManager
     )
     {
-        _linearRepository = linearRepositoryFactory.CreateLong(DocumentIdKey);
+        _linearRepositoryManager = linearRepositoryManager;
+        linearRepositoryManager.Create(DocumentIdKey);
         _semaphoreSlim = new SemaphoreSlim(1, 1);
         _initializedTemplates = new HashSet<int>();
     }
@@ -30,12 +31,13 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         await _semaphoreSlim.WaitAsync();
         try
         {
+            var repository = _linearRepositoryManager.Get(DocumentIdKey);
             if (!_initializedTemplates.Contains(templateId))
             {
                 throw new TemplateNotInitializedException();
             }
 
-            var currentId = await _linearRepository.ReadAsync(templateId);
+            var currentId = await repository.ReadAsync(templateId);
 
             if (currentId is null)
             {
@@ -43,7 +45,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
             }
 
             var nextId = currentId.Value + 1;
-            await _linearRepository.WriteAsync(templateId, nextId);
+            await repository.WriteAsync(templateId, nextId);
             return nextId;
         }
         finally
@@ -62,7 +64,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
                 throw new TemplateNotInitializedException();
             }
 
-            var currentId = await _linearRepository.ReadAsync(templateId);
+            var currentId = await _linearRepositoryManager.Get(DocumentIdKey).ReadAsync(templateId);
 
             if(currentId is null)
             {
@@ -87,7 +89,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
                 throw new TemplateAlreadyInitializedException();
             }
 
-            await _linearRepository.WriteAsync(templateId, 0);
+            await _linearRepositoryManager.Get(DocumentIdKey).WriteAsync(templateId, 0);
             _initializedTemplates.Add(templateId);
         }
         finally
@@ -106,7 +108,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
                 throw new TemplateNotInitializedException();
             }
 
-            await _linearRepository.RemoveAsync(templateId);
+            await _linearRepositoryManager.Get(DocumentIdKey).RemoveAsync(templateId);
             _initializedTemplates.Remove(templateId);
         }
         finally
@@ -133,7 +135,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         await _semaphoreSlim.WaitAsync();
         try
         {
-            var kv = await _linearRepository.ReadAllAsync();
+            var kv = await _linearRepositoryManager.Get(DocumentIdKey).ReadAllAsync();
             foreach(var (templateId, _) in kv)
             {
                 if(templateId < 1)
