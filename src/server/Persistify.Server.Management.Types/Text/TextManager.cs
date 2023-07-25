@@ -7,17 +7,27 @@ namespace Persistify.Server.Management.Types.Text;
 
 public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>
 {
-    public ValueTask<IEnumerable<TextManagerHit>> SearchAsync(TextManagerQuery query)
+    public ValueTask<IEnumerable<TextManagerHit>> SearchAsync(int templateId, TextManagerQuery query)
     {
-        return ValueTask.FromResult<IEnumerable<TextManagerHit>>(new List<TextManagerHit>());
+        return new ValueTask<IEnumerable<TextManagerHit>>(new List<TextManagerHit>(0));
     }
 
-    public ValueTask IndexAsync(Document document)
+    public ValueTask IndexAsync(int templateId, Document document)
     {
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask DeleteAsync(long documentId)
+    public ValueTask DeleteAsync(int templateId, long documentId)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask InitializeForTemplate(int templateId)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask RemoveForTemplate(int templateId)
     {
         return ValueTask.CompletedTask;
     }

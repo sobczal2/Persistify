@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Configuration.Enums;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.HostedServices;
+using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.FileSystem;
 
@@ -18,14 +19,10 @@ public static class PersistenceCoreExtensions
         switch (storageSettings.StorageType)
         {
             case StorageType.FileSystem:
-                services.AddSingleton<FileSystemRepositoryFactory>();
-                services.AddSingleton<IRepositoryFactory>(sp => sp.GetRequiredService<FileSystemRepositoryFactory>());
-                services.AddSingleton<IActRecurrently>(sp => sp.GetRequiredService<FileSystemRepositoryFactory>());
-                services.AddSingleton<ILinearRepositoryFactory, FileSystemLinearRepositoryFactory>();
-                break;
-            case StorageType.LegacyFileSystem:
-                services.AddSingleton<IRepositoryFactory, PrimitiveFileSystemRepositoryFactory>();
-                services.AddSingleton<ILinearRepositoryFactory, FileSystemLinearRepositoryFactory>();
+                services.AddSingleton<FileSystemRepositoryManager>();
+                services.AddSingleton<IRepositoryManager>(sp => sp.GetRequiredService<FileSystemRepositoryManager>());
+                services.AddSingleton<IActRecurrently>(sp => sp.GetRequiredService<FileSystemRepositoryManager>());
+                services.AddSingleton<ILinearRepositoryManager, FileSystemLinearRepositoryManager>();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

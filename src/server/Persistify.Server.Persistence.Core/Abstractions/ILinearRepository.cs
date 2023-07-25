@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Persistify.Server.Persistence.Core.Abstractions;
 
-public interface ILongLinearRepository
+public interface ILinearRepository
 {
     ValueTask WriteAsync(long id, long value);
     ValueTask<long?> ReadAsync(long id);

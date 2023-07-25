@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Persistify.Server.HostedServices.Abstractions;
+using Persistify.Server.HostedServices.Implementations;
 
 namespace Persistify.Server.HostedServices;
 
@@ -9,11 +11,9 @@ public static class HostedServicesExtensions
     public static IServiceCollection AddHostedServices(this IServiceCollection services, params Assembly[] assemblies)
     {
         services.AddActOnStartupServices(assemblies);
-        services.AddActOnShutdownServices(assemblies);
         services.AddActRecurrentlyServices(assemblies);
 
         services.AddHostedService<StartupServicesHostedService>();
-        services.AddHostedService<ShutdownServicesHostedService>();
         services.AddHostedService<RecurrentServicesHostedService>();
 
         return services;
@@ -31,23 +31,6 @@ public static class HostedServicesExtensions
         foreach (var actOnStartupService in actOnStartupServices)
         {
             services.AddSingleton(typeof(IActOnStartup), s => s.GetRequiredService(actOnStartupService));
-        }
-
-        return services;
-    }
-
-    private static IServiceCollection AddActOnShutdownServices(this IServiceCollection services,
-        params Assembly[] assemblies)
-    {
-        var actOnShutdownServices = assemblies
-            .SelectMany(assembly => assembly.GetTypes())
-            .Where(type => typeof(IActOnShutdown).IsAssignableFrom(type) && type.IsInterface &&
-                           type != typeof(IActOnShutdown))
-            .ToList();
-
-        foreach (var actOnShutdownService in actOnShutdownServices)
-        {
-            services.AddSingleton(typeof(IActOnShutdown), s => s.GetRequiredService(actOnShutdownService));
         }
 
         return services;
