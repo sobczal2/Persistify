@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Documents;
+﻿using System.Collections.Generic;
+using Persistify.Domain.Documents;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
@@ -32,6 +33,11 @@ public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
         }
 
+        if(value.TextFieldValues.Count == 0 && value.NumberFieldValues.Count == 0 && value.BoolFieldValues.Count == 0)
+        {
+            return new ValidationException($"{ErrorPrefix}", "At least one field value is required");
+        }
+
         for (var i = 0; i < value.TextFieldValues.Count; i++)
         {
             _textFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.TextFieldValues[{i}]";
@@ -60,6 +66,41 @@ public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
             {
                 return result;
             }
+        }
+
+        var allFieldNames = new HashSet<string>(value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count);
+
+        for (var i = 0; i < value.TextFieldValues.Count; i++)
+        {
+            var fieldName = value.TextFieldValues[i].FieldName;
+            if (allFieldNames.Contains(fieldName))
+            {
+                return new ValidationException($"{ErrorPrefix}.TextFieldValues[{i}].FieldName", $"Field name '{fieldName}' is not unique");
+            }
+
+            allFieldNames.Add(fieldName);
+        }
+
+        for (var i = 0; i < value.NumberFieldValues.Count; i++)
+        {
+            var fieldName = value.NumberFieldValues[i].FieldName;
+            if (allFieldNames.Contains(fieldName))
+            {
+                return new ValidationException($"{ErrorPrefix}.NumberFieldValues[{i}].FieldName", $"Field name '{fieldName}' is not unique");
+            }
+
+            allFieldNames.Add(fieldName);
+        }
+
+        for (var i = 0; i < value.BoolFieldValues.Count; i++)
+        {
+            var fieldName = value.BoolFieldValues[i].FieldName;
+            if (allFieldNames.Contains(fieldName))
+            {
+                return new ValidationException($"{ErrorPrefix}.BoolFieldValues[{i}].FieldName", $"Field name '{fieldName}' is not unique");
+            }
+
+            allFieldNames.Add(fieldName);
         }
 
         return Result.Success;

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Persistify.Server.Serialization;
 
@@ -8,4 +9,5 @@ public interface ISerializer
     byte[] Serialize<T>(T obj);
     T Deserialize<T>(Stream stream);
     T Deserialize<T>(byte[] bytes);
+    T Deserialize<T>(ReadOnlyMemory<byte> bytes);
 }

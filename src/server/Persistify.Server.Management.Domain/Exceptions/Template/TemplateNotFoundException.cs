@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Management.Domain.Exceptions;
+namespace Persistify.Server.Management.Domain.Exceptions.Template;
 
 public class TemplateNotFoundException : Exception
 {

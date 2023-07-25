@@ -9,66 +9,22 @@ export default () => {
     });
 
     const data = {
-        "BoolFieldValues": [
+        "TextFieldValues": [
             {
-                "FieldName": "occaecat",
-                "Value": true
-            },
-            {
-                "FieldName": "Lorem amet sed consectetur",
-                "Value": false
-            },
-            {
-                "Value": true,
-                "FieldName": "aliqua id"
-            },
-            {
-                "Value": false,
-                "FieldName": "ut Excepteur tempor"
+                "FieldName": "Name",
+                "Value": "Duck"
             }
         ],
         "NumberFieldValues": [
             {
-                "FieldName": "aliquip in cupidatat nostrud",
-                "Value": 86718206.21563268
-            },
-            {
-                "Value": "-Infinity",
-                "FieldName": "ut in pariatur officia"
-            },
-            {
-                "FieldName": "eiusmod",
-                "Value": "-Infinity"
-            },
-            {
-                "Value": "NaN",
-                "FieldName": "in"
-            },
-            {
-                "FieldName": "est minim elit",
-                "Value": "-Infinity"
+                "FieldName": "NumberOfLegs",
+                "Value": 10
             }
         ],
-        "TextFieldValues": [
+        "BoolFieldValues": [
             {
-                "Value": "eu non",
-                "FieldName": "nostrud labore"
-            },
-            {
-                "FieldName": "deserunt veniam laboris ut",
-                "Value": "incididunt aute adipisicing"
-            },
-            {
-                "FieldName": "in deserunt aute",
-                "Value": "elit occaecat ullamco ad enim"
-            },
-            {
-                "FieldName": "sit occaecat ad",
-                "Value": "eu tempor"
-            },
-            {
-                "FieldName": "deserunt",
-                "Value": "culpa"
+                "FieldName": "IsFriendly",
+                "Value": false
             }
         ],
         "TemplateId": 1

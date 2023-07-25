@@ -17,6 +17,8 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
     private readonly ISerializer _serializer;
     private FileStream _fileStream;
 
+    private byte[] _buffer = new byte[1024];
+
     public FileSystemRepository(
         string mainFilePath,
         ILinearRepository offsetsRepository,
@@ -201,14 +203,19 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
         var length = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
         _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-        var bytes = new byte[length];
+        if (_buffer.Length < length)
+        {
+            _buffer = new byte[length];
+        }
+
+        var bytes = _buffer;
         var read = await _fileStream.ReadAsync(bytes, 0, (int)length);
         if (read != length)
         {
             throw new InvalidOperationException();
         }
 
-        return _serializer.Deserialize<T>(bytes);
+        return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
     }
 
     private async IAsyncEnumerable<T> ReadAllInternalAsync()

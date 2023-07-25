@@ -5,6 +5,8 @@ using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Management.Domain.Abstractions;
 using Persistify.Server.Management.Domain.Exceptions;
+using Persistify.Server.Management.Domain.Exceptions.Document;
+using Persistify.Server.Management.Domain.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -43,6 +45,18 @@ public class
         catch (TemplateNotFoundException)
         {
             return new ValidationException("IndexDocumentRequest.TemplateId", "Template not found");
+        }
+        catch (TextFieldMissingException ex)
+        {
+            return new ValidationException("IndexDocumentRequest.TextFieldValues", $"Text field {ex.FieldName} is missing");
+        }
+        catch (NumberFieldMissingException ex)
+        {
+            return new ValidationException("IndexDocumentRequest.NumberFieldValues", $"Number field {ex.FieldName} is missing");
+        }
+        catch (BoolFieldMissingException ex)
+        {
+            return new ValidationException("IndexDocumentRequest.BoolFieldValues", $"Bool field {ex.FieldName} is missing");
         }
 
         return Result.Success;
