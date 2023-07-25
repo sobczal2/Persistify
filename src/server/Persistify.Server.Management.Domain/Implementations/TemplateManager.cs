@@ -113,8 +113,7 @@ public class TemplateManager : ITemplateManager, IActOnStartup
 
     public async ValueTask<Template> DeleteAsync(int id)
     {
-        var semaphore = GetIndividualSemaphore(id);
-        await semaphore.WaitAsync();
+        SemaphoreSlim? semaphore;
         await _generalTemplateLock.WaitAsync();
         try
         {
@@ -127,6 +126,8 @@ public class TemplateManager : ITemplateManager, IActOnStartup
             {
                 throw new ManagerInternalException($"Could not remove template with name {_templates[id].Name}");
             }
+            semaphore = GetIndividualSemaphore(id);
+            await semaphore.WaitAsync();
         }
         finally
         {

@@ -4,6 +4,7 @@ using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Management.Domain.Abstractions;
 using Persistify.Server.Management.Domain.Exceptions;
+using Persistify.Server.Management.Domain.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Validation.Common;
 

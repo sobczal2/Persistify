@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.IO;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
@@ -38,5 +39,10 @@ public class ProtobufSerializer : ISerializer
     {
         using var stream = _recyclableMemoryStreamManager.GetStream(bytes);
         return Serializer.Deserialize<T>(stream);
+    }
+
+    public T Deserialize<T>(ReadOnlyMemory<byte> bytes)
+    {
+        return Serializer.Deserialize<T>(bytes);
     }
 }

@@ -18,11 +18,11 @@ public class IndexDocumentRequest
     public int TemplateId { get; set; }
 
     [ProtoMember(2)]
-    public List<TextFieldValue> TextFieldValues { get; set; } = default!;
+    public List<TextFieldValue> TextFieldValues { get; set; }
 
     [ProtoMember(3)]
-    public List<NumberFieldValue> NumberFieldValues { get; set; } = default!;
+    public List<NumberFieldValue> NumberFieldValues { get; set; }
 
     [ProtoMember(4)]
-    public List<BoolFieldValue> BoolFieldValues { get; set; } = default!;
+    public List<BoolFieldValue> BoolFieldValues { get; set; }
 }

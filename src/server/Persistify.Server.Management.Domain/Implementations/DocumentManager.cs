@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Templates;
 using Persistify.Server.Management.Domain.Abstractions;
 using Persistify.Server.Management.Domain.Exceptions;
+using Persistify.Server.Management.Domain.Exceptions.Document;
 using Persistify.Server.Management.Types.Abstractions;
 using Persistify.Server.Persistence.Core.Abstractions;
 
@@ -29,7 +31,7 @@ public class DocumentManager : IDocumentManager
     {
         return await _templateManager.PerformActionOnLockedTemplateAsync(templateId, async (template, repository) =>
         {
-            // TODO: Validate against template
+            ValidateDocumentAgainstTemplate(template, document);
 
             document.Id = await _documentIdManager.GetNextId(templateId);
             await repository.WriteAsync(document.Id, document);
@@ -41,6 +43,41 @@ public class DocumentManager : IDocumentManager
 
             return document.Id;
         });
+    }
+
+    private void ValidateDocumentAgainstTemplate(Template template, Document document)
+    {
+        var templateTextFieldsByName = template.TextFieldsByName;
+        var templateNumberFieldsByName = template.NumberFieldsByName;
+        var templateBoolFieldsByName = template.BoolFieldsByName;
+
+        var documentTextFieldsByFieldName = document.TextFieldValuesByFieldName;
+        var documentNumberFieldsByFieldName = document.NumberFieldValuesByFieldName;
+        var documentBoolFieldsByFieldName = document.BoolFieldValuesByFieldName;
+
+        foreach (var templateTextField in templateTextFieldsByName)
+        {
+            if (!documentTextFieldsByFieldName.ContainsKey(templateTextField.Key) && templateTextField.Value.IsRequired)
+            {
+                throw new TextFieldMissingException(templateTextField.Key);
+            }
+        }
+
+        foreach (var templateNumberField in templateNumberFieldsByName)
+        {
+            if (!documentNumberFieldsByFieldName.ContainsKey(templateNumberField.Key) && templateNumberField.Value.IsRequired)
+            {
+                throw new NumberFieldMissingException(templateNumberField.Key);
+            }
+        }
+
+        foreach (var templateBoolField in templateBoolFieldsByName)
+        {
+            if (!documentBoolFieldsByFieldName.ContainsKey(templateBoolField.Key) && templateBoolField.Value.IsRequired)
+            {
+                throw new BoolFieldMissingException(templateBoolField.Key);
+            }
+        }
     }
 
     public async ValueTask<Document?> GetAsync(int templateId, long documentId)
