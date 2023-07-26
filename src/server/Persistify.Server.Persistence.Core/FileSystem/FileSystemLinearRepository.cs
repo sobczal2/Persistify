@@ -14,10 +14,15 @@ public class FileSystemLinearRepository : ILinearRepository, IDisposable
     private readonly FileStream _fileStream;
     private readonly SemaphoreSlim _semaphore;
 
+    private readonly byte[] _buffer;
+    private readonly int _bufferSize;
+
     public FileSystemLinearRepository(string filePath)
     {
         _fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         _semaphore = new SemaphoreSlim(1, 1);
+        _bufferSize = sizeof(long);
+        _buffer = new byte[_bufferSize];
     }
 
     public void Dispose()
@@ -111,8 +116,8 @@ public class FileSystemLinearRepository : ILinearRepository, IDisposable
         }
 
         _fileStream.Position = (id - 1) * sizeof(long);
-        var bytes = BitConverter.GetBytes(value);
-        await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+        BitConverter.TryWriteBytes(_buffer, value);
+        await _fileStream.WriteAsync(_buffer, 0, _bufferSize);
         await _fileStream.FlushAsync();
     }
 
@@ -124,15 +129,14 @@ public class FileSystemLinearRepository : ILinearRepository, IDisposable
         }
 
         _fileStream.Position = (id - 1) * sizeof(long);
-        var buffer = new byte[sizeof(long)];
-        var read = await _fileStream.ReadAsync(buffer, 0, buffer.Length);
+        var read = await _fileStream.ReadAsync(_buffer, 0, _bufferSize);
 
-        if (read != buffer.Length)
+        if (read != _bufferSize)
         {
             throw new InvalidOperationException();
         }
 
-        var value = BitConverter.ToInt64(buffer, 0);
+        var value = BitConverter.ToInt64(_buffer, 0);
         return value == EmptyValue ? null : value;
     }
 
