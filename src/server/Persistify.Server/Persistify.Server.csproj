@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Management.Types\Persistify.Server.Management.Types.csproj" />
     <ProjectReference Include="..\Persistify.Server.Persistence.DataStructures\Persistify.Server.Persistence.DataStructures.csproj" />
     <ProjectReference Include="..\Persistify.Server.Pipelines.Documents\Persistify.Server.Pipelines.Documents.csproj" />
     <ProjectReference Include="..\Persistify.Server.Pipelines.Templates\Persistify.Server.Pipelines.Templates.csproj" />

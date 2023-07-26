@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 
-namespace Persistify.Server.Management.Domain.Abstractions;
+namespace Persistify.Server.Management.Abstractions;
 
 public interface IDocumentManager
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Management.Domain.Exceptions.Template;
+namespace Persistify.Server.Management.Abstractions.Exceptions.Template;
 
 public class TemplateWithThatNameAlreadyExistsException : Exception
 {

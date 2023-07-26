@@ -8,21 +8,18 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.HostedServices.Attributes;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Exceptions;
-using Persistify.Server.Management.Domain.Exceptions.DocumentId;
-using Persistify.Server.Management.Domain.Exceptions.Template;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Exceptions;
+using Persistify.Server.Management.Abstractions.Exceptions.Template;
 using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Management.Domain.Implementations;
+namespace Persistify.Server.Management.Domain;
 
-[HasStartupDependencyOn(typeof(DocumentIdManager))]
+[StartupPriority(4)]
 public class TemplateManager : ITemplateManager, IActOnStartup
 {
     private readonly IRepositoryManager _repositoryManager;
     private readonly IDocumentIdManager _documentIdManager;
-    private readonly IEnumerable<ITypeManager> _typeManagers;
     private const string TemplateRepositoryKey = "Template/main";
     private const string DocumentRepositoryPrefix = "Document/template";
 
@@ -36,13 +33,11 @@ public class TemplateManager : ITemplateManager, IActOnStartup
     private IRepository<Template> TemplateRepository => _repositoryManager.Get<Template>(TemplateRepositoryKey);
     public TemplateManager(
         IRepositoryManager repositoryManager,
-        IDocumentIdManager documentIdManager,
-        IEnumerable<ITypeManager> typeManagers
+        IDocumentIdManager documentIdManager
     )
     {
         _repositoryManager = repositoryManager;
         _documentIdManager = documentIdManager;
-        _typeManagers = typeManagers;
         _individualSemaphores = new ConcurrentDictionary<int, SemaphoreSlim>();
         _templates = new ConcurrentDictionary<int, Template>();
         _lastTemplateId = 0;
@@ -86,11 +81,6 @@ public class TemplateManager : ITemplateManager, IActOnStartup
             if (!_templates.TryAdd(newId, template))
             {
                 throw new ManagerInternalException($"Could not add template with id {newId}");
-            }
-
-            foreach (var typeManager in _typeManagers)
-            {
-                await typeManager.InitializeForTemplate(newId);
             }
 
             _repositoryManager.Create<Document>(GetDocumentRepositoryKey(newId));
@@ -143,11 +133,6 @@ public class TemplateManager : ITemplateManager, IActOnStartup
                 throw new ManagerInternalException($"Could not remove template with id {id}");
             }
 
-            foreach (var typeManager in _typeManagers)
-            {
-                await typeManager.RemoveForTemplate(id);
-            }
-
             _repositoryManager.Delete<Document>(GetDocumentRepositoryKey(id));
 
             return template;
@@ -159,7 +144,7 @@ public class TemplateManager : ITemplateManager, IActOnStartup
         }
     }
 
-    public async ValueTask PerformActionOnLockedTemplateAsync(int id, Func<Template, IRepository<Document>, ValueTask> action, CancellationToken cancellationToken = default)
+    public async ValueTask PerformActionOnLockedTemplateAsync<TArgs>(int id, Func<Template, IRepository<Document>, TArgs, ValueTask> action, TArgs args, CancellationToken cancellationToken = default)
     {
         await _generalTemplateLock.WaitAsync(cancellationToken);
         try
@@ -174,7 +159,7 @@ public class TemplateManager : ITemplateManager, IActOnStartup
 
             try
             {
-                await action(_templates[id], _repositoryManager.Get<Document>(GetDocumentRepositoryKey(id)));
+                await action(_templates[id], _repositoryManager.Get<Document>(GetDocumentRepositoryKey(id)), args);
             }
             finally
             {
@@ -187,7 +172,7 @@ public class TemplateManager : ITemplateManager, IActOnStartup
         }
     }
 
-    public async ValueTask<T> PerformActionOnLockedTemplateAsync<T>(int id, Func<Template, IRepository<Document>, ValueTask<T>> action, CancellationToken cancellationToken = default)
+    public async ValueTask<T> PerformActionOnLockedTemplateAsync<T, TArgs>(int id, Func<Template, IRepository<Document>, TArgs, ValueTask<T>> action, TArgs args, CancellationToken cancellationToken = default)
     {
         await _generalTemplateLock.WaitAsync(cancellationToken);
         try
@@ -202,7 +187,7 @@ public class TemplateManager : ITemplateManager, IActOnStartup
 
             try
             {
-                return await action(_templates[id], _repositoryManager.Get<Document>(GetDocumentRepositoryKey(id)));
+                return await action(_templates[id], _repositoryManager.Get<Document>(GetDocumentRepositoryKey(id)), args);
             }
             finally
             {
@@ -213,18 +198,6 @@ public class TemplateManager : ITemplateManager, IActOnStartup
         {
             _generalTemplateLock.Release();
         }
-    }
-
-    public IRepository<Document> GetDocumentRepositoryAsync(int templateId)
-    {
-        if (!_templates.TryGetValue(templateId, out _))
-        {
-            throw new TemplateNotFoundException(templateId);
-        }
-
-        var documentRepositoryKey = $"{DocumentRepositoryPrefix}{templateId:X}";
-
-        return _repositoryManager.Get<Document>(documentRepositoryKey);
     }
 
     // Not thread safe - should only be called once
@@ -256,11 +229,6 @@ public class TemplateManager : ITemplateManager, IActOnStartup
             if (template.Id > _lastTemplateId)
             {
                 _lastTemplateId = template.Id;
-            }
-
-            foreach (var typeManager in _typeManagers)
-            {
-                await typeManager.InitializeForTemplate(templateId);
             }
 
             _repositoryManager.Create<Document>(GetDocumentRepositoryKey(templateId));

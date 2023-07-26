@@ -3,12 +3,15 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.HostedServices.Abstractions;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Exceptions.DocumentId;
+using Persistify.Server.HostedServices.Attributes;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Exceptions;
+using Persistify.Server.Management.Abstractions.Exceptions.DocumentId;
 using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Management.Domain.Implementations;
+namespace Persistify.Server.Management.Domain;
 
+[StartupPriority(5)]
 public class DocumentIdManager : IDocumentIdManager, IActOnStartup
 {
     private readonly ILinearRepositoryManager _linearRepositoryManager;

@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Exceptions;
-using Persistify.Server.Management.Domain.Exceptions.Template;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -18,8 +18,9 @@ public class DeleteTemplateFromTemplateManagerStage : PipelineStage<DeleteTempla
     private readonly ITemplateManager _templateManager;
 
     public DeleteTemplateFromTemplateManagerStage(
+        ILogger<DeleteTemplateFromTemplateManagerStage> logger,
         ITemplateManager templateManager
-    )
+    ) : base(logger)
     {
         _templateManager = templateManager;
     }

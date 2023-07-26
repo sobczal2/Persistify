@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
-using Persistify.Server.Management.Domain.Abstractions;
+using Persistify.Server.Management.Abstractions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Validation.Common;
 
@@ -16,8 +17,9 @@ public class
     private readonly ITemplateManager _templateManager;
 
     public FetchTemplateFromTemplateManagerStage(
+        ILogger<FetchTemplateFromTemplateManagerStage> logger,
         ITemplateManager templateManager
-    )
+    ) : base(logger)
     {
         _templateManager = templateManager;
     }

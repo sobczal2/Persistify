@@ -2,13 +2,11 @@
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Exceptions;
-using Persistify.Server.Management.Domain.Exceptions.Document;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Exceptions.Document;
 using Persistify.Server.Management.Types.Abstractions;
-using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Management.Domain.Implementations;
+namespace Persistify.Server.Management.Domain;
 
 public class DocumentManager : IDocumentManager
 {
@@ -29,20 +27,22 @@ public class DocumentManager : IDocumentManager
 
     public async ValueTask<long> IndexAsync(int templateId, Document document)
     {
-        return await _templateManager.PerformActionOnLockedTemplateAsync(templateId, async (template, repository) =>
-        {
-            ValidateDocumentAgainstTemplate(template, document);
-
-            document.Id = await _documentIdManager.GetNextId(templateId);
-            await repository.WriteAsync(document.Id, document);
-
-            foreach (var typeManager in _typeManagers)
+        return await _templateManager.PerformActionOnLockedTemplateAsync(templateId,
+            async (template, repository, doc) =>
             {
-                await typeManager.IndexAsync(templateId, document);
-            }
+                ValidateDocumentAgainstTemplate(template, doc);
 
-            return document.Id;
-        });
+                doc.Id = await _documentIdManager.GetNextId(template.Id);
+                await repository.WriteAsync(doc.Id, doc);
+
+                foreach (var typeManager in _typeManagers)
+                {
+                    await typeManager.IndexAsync(template.Id, doc);
+                }
+
+                return doc.Id;
+            },
+            document);
     }
 
     private void ValidateDocumentAgainstTemplate(Template template, Document document)
@@ -65,7 +65,8 @@ public class DocumentManager : IDocumentManager
 
         foreach (var templateNumberField in templateNumberFieldsByName)
         {
-            if (!documentNumberFieldsByFieldName.ContainsKey(templateNumberField.Key) && templateNumberField.Value.IsRequired)
+            if (!documentNumberFieldsByFieldName.ContainsKey(templateNumberField.Key) &&
+                templateNumberField.Value.IsRequired)
             {
                 throw new NumberFieldMissingException(templateNumberField.Key);
             }
@@ -83,20 +84,21 @@ public class DocumentManager : IDocumentManager
     public async ValueTask<Document?> GetAsync(int templateId, long documentId)
     {
         return await _templateManager.PerformActionOnLockedTemplateAsync(templateId,
-            async (_, repository) => await repository.ReadAsync(documentId));
+            async (_, repository, docId) => await repository.ReadAsync(docId),
+            documentId);
     }
 
     public async ValueTask DeleteAsync(int templateId, long documentId)
     {
         await _templateManager.PerformActionOnLockedTemplateAsync(templateId,
-            async (_, repository) =>
+            async (template, repository, docId) =>
             {
-                await repository.DeleteAsync(documentId);
+                await repository.DeleteAsync(docId);
 
                 foreach (var typeManager in _typeManagers)
                 {
-                    await typeManager.DeleteAsync(templateId, documentId);
+                    await typeManager.DeleteAsync(template.Id, docId);
                 }
-            });
+            }, documentId);
     }
 }

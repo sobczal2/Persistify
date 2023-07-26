@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
@@ -16,9 +17,10 @@ public class
     private readonly IAnalyzerPresetFactory _analyzerPresetFactory;
 
     public CheckAnalyzersAvailabilityStage(
+        ILogger<CheckAnalyzersAvailabilityStage> logger,
         IAnalyzerFactory analyzerFactory,
         IAnalyzerPresetFactory analyzerPresetFactory
-    )
+    ) : base(logger)
     {
         _analyzerFactory = analyzerFactory;
         _analyzerPresetFactory = analyzerPresetFactory;

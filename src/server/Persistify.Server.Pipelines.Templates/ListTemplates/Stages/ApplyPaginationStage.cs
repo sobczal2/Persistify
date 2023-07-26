@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
@@ -14,6 +15,10 @@ public class
 {
     private const string StageName = "ApplyPagination";
     public override string Name => StageName;
+
+    public ApplyPaginationStage(ILogger<ApplyPaginationStage> logger) : base(logger)
+    {
+    }
 
     public override ValueTask<Result> ProcessAsync(ListTemplatesPipelineContext context)
     {

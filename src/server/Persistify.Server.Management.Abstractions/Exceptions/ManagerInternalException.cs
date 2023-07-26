@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Management.Domain.Exceptions.DocumentId;
+namespace Persistify.Server.Management.Abstractions.Exceptions;
 
 public class ManagerInternalException : Exception
 {

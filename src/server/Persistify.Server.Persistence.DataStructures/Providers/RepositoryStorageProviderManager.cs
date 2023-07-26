@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using Persistify.Server.Persistence.Core.Abstractions;
-using Persistify.Server.Persistence.DataStructures.Providers;
 
-namespace Persistify.Server.Persistence.DataStructures.Factories;
+namespace Persistify.Server.Persistence.DataStructures.Providers;
 
 public class RepositoryStorageProviderManager : IStorageProviderManager
 {
@@ -19,10 +18,10 @@ public class RepositoryStorageProviderManager : IStorageProviderManager
         _providers = new ConcurrentDictionary<string, object>();
         _lock = new object();
     }
-    
+
     public void Create<T>(string name) where T : notnull
     {
-        lock(_lock)
+        lock (_lock)
         {
             if (_providers.ContainsKey(name))
             {
@@ -36,17 +35,20 @@ public class RepositoryStorageProviderManager : IStorageProviderManager
 
     public IStorageProvider<T> Get<T>(string name) where T : notnull
     {
-        if (!_providers.TryGetValue(name, out var provider))
+        lock (_lock)
         {
-            throw new InvalidOperationException($"Storage provider with name {name} does not exist.");
-        }
+            if (!_providers.TryGetValue(name, out var provider))
+            {
+                throw new InvalidOperationException($"Storage provider with name {name} does not exist.");
+            }
 
-        return (IStorageProvider<T>)provider;
+            return (IStorageProvider<T>)provider;
+        }
     }
 
     public void Delete<T>(string name) where T : notnull
     {
-        lock(_lock)
+        lock (_lock)
         {
             if (!_providers.TryRemove(name, out _))
             {

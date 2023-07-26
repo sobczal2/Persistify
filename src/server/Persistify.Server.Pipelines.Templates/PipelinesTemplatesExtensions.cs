@@ -21,6 +21,7 @@ public static class PipelinesTemplatesExtensions
 
         services.AddSingleton(typeof(CheckAnalyzersAvailabilityStage));
         services.AddSingleton(typeof(AddTemplateToTemplateManagerStage));
+        services.AddSingleton(typeof(InitializeTemplateInTypeManagersStage));
 
         services.AddSingleton(typeof(FetchTemplateFromTemplateManagerStage));
 
@@ -28,6 +29,7 @@ public static class PipelinesTemplatesExtensions
         services.AddSingleton(typeof(ApplyPaginationStage));
 
         services.AddSingleton(typeof(DeleteTemplateFromTemplateManagerStage));
+        services.AddSingleton(typeof(RemoveTemplateFromTypeManagersStage));
 
         return services;
     }

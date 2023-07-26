@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Domain.Documents;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Exceptions;
-using Persistify.Server.Management.Domain.Exceptions.Document;
-using Persistify.Server.Management.Domain.Exceptions.Template;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Exceptions.Document;
+using Persistify.Server.Management.Abstractions.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -21,8 +21,9 @@ public class
     private readonly IDocumentManager _documentManager;
 
     public IndexDocumentInDocumentManagerStage(
+        ILogger<IndexDocumentInDocumentManagerStage> logger,
         IDocumentManager documentManager
-    )
+    ) : base(logger)
     {
         _documentManager = documentManager;
     }

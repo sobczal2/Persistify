@@ -29,7 +29,10 @@ public class StartupServicesHostedService : IHostedService
         _logger.LogInformation("StartupServicesHostedService is starting");
 
         _logger.LogInformation("Reordering startup actions by dependency");
-        var orderedStartupActions = ReorderByDependency();
+
+        var orderedStartupActions = _startupActions
+            .OrderByDescending(x => x.GetType().GetStartupPriority())
+            .ToList();
 
         foreach (var startupAction in orderedStartupActions)
         {
@@ -50,46 +53,5 @@ public class StartupServicesHostedService : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
-    }
-
-    private IEnumerable<IActOnStartup> ReorderByDependency()
-    {
-        var orderedStartupActions = new List<IActOnStartup>();
-        var startupActionsToOrder = _startupActions.ToList();
-
-        for(var i = 0; i < startupActionsToOrder.Count; i++)
-        {
-            if(orderedStartupActions.Contains(startupActionsToOrder[i]))
-            {
-                continue;
-            }
-
-            orderedStartupActions = AddDependency(startupActionsToOrder[i], orderedStartupActions);
-        }
-
-        return orderedStartupActions;
-    }
-
-    private List<IActOnStartup> AddDependency(IActOnStartup actionToAdd, List<IActOnStartup> orderedStartupActions)
-    {
-        if(!actionToAdd.GetType().GetStartupDependencies().Any())
-        {
-            orderedStartupActions.Add(actionToAdd);
-            return orderedStartupActions;
-        }
-
-        foreach(var dependency in actionToAdd.GetType().GetStartupDependencies())
-        {
-            var dependencyAction = _startupActions.FirstOrDefault(x => x.GetType() == dependency);
-            if(dependencyAction is null)
-            {
-                throw new Exception($"Startup action {actionToAdd.GetType().Name} has a dependency on {dependency.Name} but {dependency.Name} is not registered as a startup action");
-            }
-
-            orderedStartupActions = AddDependency(dependencyAction, orderedStartupActions);
-        }
-
-        orderedStartupActions.Add(actionToAdd);
-        return orderedStartupActions;
     }
 }

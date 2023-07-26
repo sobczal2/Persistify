@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Management.Domain.Exceptions.Document;
+namespace Persistify.Server.Management.Abstractions.Exceptions.Document;
 
 public class FieldMissingException : Exception
 {

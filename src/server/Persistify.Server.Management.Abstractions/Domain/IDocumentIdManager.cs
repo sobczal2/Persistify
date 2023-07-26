@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Persistify.Server.Management.Domain.Abstractions;
+namespace Persistify.Server.Management.Abstractions;
 
 public interface IDocumentIdManager
 {

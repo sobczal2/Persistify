@@ -1,13 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Templates;
+using Persistify.Server.HostedServices.Abstractions;
+using Persistify.Server.HostedServices.Attributes;
 using Persistify.Server.Management.Types.Abstractions;
 
 namespace Persistify.Server.Management.Types.Bool;
 
-public class BoolManager : ITypeManager<BoolManagerQuery, BoolManagerHit>
+[StartupPriority(3)]
+public class BoolManager : ITypeManager<BoolManagerQuery, BoolManagerHit>, IActOnStartup
 {
-    public ValueTask<IEnumerable<BoolManagerHit>> SearchAsync(int templateId, BoolManagerQuery query)
+    public ValueTask<IEnumerable<BoolManagerHit>> SearchAsync(BoolManagerQuery query)
     {
         return new ValueTask<IEnumerable<BoolManagerHit>>(new List<BoolManagerHit>(0));
     }
@@ -22,12 +26,27 @@ public class BoolManager : ITypeManager<BoolManagerQuery, BoolManagerHit>
         return ValueTask.CompletedTask;
     }
 
+    public ValueTask InitializeForTemplate(Template template)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask RemoveForTemplate(Template template)
+    {
+        return ValueTask.CompletedTask;
+    }
+
     public ValueTask InitializeForTemplate(int templateId)
     {
         return ValueTask.CompletedTask;
     }
 
     public ValueTask RemoveForTemplate(int templateId)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask PerformStartupActionAsync()
     {
         return ValueTask.CompletedTask;
     }
