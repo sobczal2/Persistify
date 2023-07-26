@@ -247,7 +247,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
                     throw new InvalidOperationException();
                 }
 
-                yield return _serializer.Deserialize<T>(bytes);
+                yield return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
             }
         }
         finally

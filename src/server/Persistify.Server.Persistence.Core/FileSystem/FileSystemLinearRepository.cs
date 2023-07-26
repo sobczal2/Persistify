@@ -143,17 +143,16 @@ public class FileSystemLinearRepository : ILinearRepository, IDisposable
     private async IAsyncEnumerable<(long, long)> ReadAllInternalAsync()
     {
         _fileStream.Position = 0;
-        var buffer = new byte[sizeof(long)];
         for (long id = 1; id <= _fileStream.Length / sizeof(long); id++)
         {
-            var read = await _fileStream.ReadAsync(buffer, 0, buffer.Length);
+            var read = await _fileStream.ReadAsync(_buffer, 0, _bufferSize);
 
-            if (read != buffer.Length)
+            if (read != _bufferSize)
             {
                 throw new InvalidOperationException();
             }
 
-            var value = BitConverter.ToInt64(buffer, 0);
+            var value = BitConverter.ToInt64(_buffer, 0);
             if (value != EmptyValue)
             {
                 yield return (id, value);
