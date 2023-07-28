@@ -1,5 +1,6 @@
 ﻿using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
+using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
 
@@ -8,12 +9,15 @@ namespace Persistify.Server.Validation.Documents;
 public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest>
 {
     private readonly IValidator<Pagination> _paginationValidator;
+    private readonly IValidator<SearchNode> _searchNodeValidator;
 
     public SearchDocumentsRequestValidator(
-        IValidator<Pagination> paginationValidator
+        IValidator<Pagination> paginationValidator,
+        IValidator<SearchNode> searchNodeValidator
     )
     {
         _paginationValidator = paginationValidator;
+        _searchNodeValidator = searchNodeValidator;
         ErrorPrefix = "SearchDocumentsRequest";
     }
 
@@ -27,10 +31,23 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
         }
 
         _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
-        var result = _paginationValidator.Validate(value.Pagination);
-        if (!result.IsSuccess)
+        var paginationValidator = _paginationValidator.Validate(value.Pagination);
+        if (paginationValidator.IsFailure)
         {
-            return result;
+            return paginationValidator;
+        }
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if(value.SearchNode == null)
+        {
+            return new ValidationException($"{ErrorPrefix}.SearchNode", "SearchNode is required");
+        }
+        
+        _searchNodeValidator.ErrorPrefix = $"{ErrorPrefix}.SearchNode";
+        var searchNodeValidator = _searchNodeValidator.Validate(value.SearchNode);
+        if (searchNodeValidator.IsFailure)
+        {
+            return searchNodeValidator;
         }
 
         return Result.Success;

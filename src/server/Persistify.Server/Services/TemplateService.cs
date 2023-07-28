@@ -30,23 +30,23 @@ public class TemplateService : ITemplateService
         _deleteTemplatePipeline = deleteTemplatePipeline;
     }
 
-    public ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context)
+    public async ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context)
     {
-        return _createTemplatePipeline.ProcessAsync(request);
+        return await _createTemplatePipeline.ProcessAsync(request);
     }
 
-    public ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext context)
+    public async ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext context)
     {
-        return _getTemplatePipeline.ProcessAsync(request);
+        return await _getTemplatePipeline.ProcessAsync(request);
     }
 
-    public ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext context)
+    public async ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext context)
     {
-        return _listTemplatesPipeline.ProcessAsync(request);
+        return await _listTemplatesPipeline.ProcessAsync(request);
     }
 
-    public ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
+    public async ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
     {
-        return _deleteTemplatePipeline.ProcessAsync(request);
+        return await _deleteTemplatePipeline.ProcessAsync(request);
     }
 }

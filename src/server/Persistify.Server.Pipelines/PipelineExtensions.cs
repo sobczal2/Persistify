@@ -8,6 +8,7 @@ public static class PipelineExtensions
     public static IServiceCollection AddPipelines(this IServiceCollection services)
     {
         services.AddSingleton(typeof(StaticValidationStage<,,>));
+        services.AddSingleton(typeof(FetchTemplateFromTemplateManagerStage<,,>));
 
         return services;
     }

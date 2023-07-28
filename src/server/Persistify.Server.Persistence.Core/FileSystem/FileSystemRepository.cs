@@ -173,7 +173,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         var previousLength = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
 
         // previous length is greater or equal to current length
-        if (previousLength >= bytes.Length)
+        if (previousLength >= bytes.Length || offset.Value + previousLength >= _fileStream.Length)
         {
             _fileStream.Seek(offset.Value, SeekOrigin.Begin);
             await _fileStream.WriteAsync(bytes, 0, bytes.Length);

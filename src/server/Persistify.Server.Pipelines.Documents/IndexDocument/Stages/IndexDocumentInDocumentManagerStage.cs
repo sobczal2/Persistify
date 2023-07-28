@@ -5,6 +5,7 @@ using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Abstractions.Exceptions.Document;
 using Persistify.Server.Management.Abstractions.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;

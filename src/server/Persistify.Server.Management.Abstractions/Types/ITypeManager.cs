@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 
-namespace Persistify.Server.Management.Types.Abstractions;
+namespace Persistify.Server.Management.Abstractions.Types;
 
 public interface ITypeManager
 {
@@ -17,5 +17,5 @@ public interface ITypeManager<in TQuery, THit> : ITypeManager
     where TQuery : ITypeManagerQuery
     where THit : ITypeManagerHit
 {
-    ValueTask<IEnumerable<THit>> SearchAsync(TQuery query);
+    ValueTask<List<THit>> SearchAsync(TQuery query);
 }

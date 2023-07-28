@@ -42,7 +42,7 @@ public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
         {
             _textFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.TextFieldValues[{i}]";
             var result = _textFieldValueValidator.Validate(value.TextFieldValues[i]);
-            if (!result.IsSuccess)
+            if (result.IsFailure)
             {
                 return result;
             }
@@ -52,7 +52,7 @@ public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
         {
             _numberFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.NumberFieldValues[{i}]";
             var result = _numberFieldValueValidator.Validate(value.NumberFieldValues[i]);
-            if (!result.IsSuccess)
+            if (result.IsFailure)
             {
                 return result;
             }
@@ -62,7 +62,7 @@ public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
         {
             _boolFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.BoolFieldValues[{i}]";
             var result = _boolFieldValueValidator.Validate(value.BoolFieldValues[i]);
-            if (!result.IsSuccess)
+            if (result.IsFailure)
             {
                 return result;
             }

@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Abstractions.Exceptions.Document;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Server.Management.Abstractions.Types;
 
 namespace Persistify.Server.Management.Domain;
 
@@ -100,5 +103,31 @@ public class DocumentManager : IDocumentManager
                     await typeManager.DeleteAsync(template.Id, docId);
                 }
             }, documentId);
+    }
+
+    public ValueTask<IEnumerable<long>> AllIdsAsync(int templateId)
+    {
+        return ValueTask.FromResult(Array.Empty<long>().AsEnumerable());
+    }
+
+    public async ValueTask<List<Document>> GetDocumentsAsync(int templateId, List<long> documentIds)
+    {
+        return await _templateManager.PerformActionOnLockedTemplateAsync(templateId,
+            async (_, repository, docIds) =>
+            {
+                var documents = new List<Document>(docIds.Count);
+
+                foreach (var docId in docIds)
+                {
+                    var document = await repository.ReadAsync(docId);
+
+                    if (document != null)
+                    {
+                        documents.Add(document);
+                    }
+                }
+
+                return documents;
+            }, documentIds);
     }
 }

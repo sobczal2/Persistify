@@ -4,16 +4,16 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.HostedServices.Attributes;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Server.Management.Abstractions.Types;
 
 namespace Persistify.Server.Management.Types.Text;
 
 [StartupPriority(3)]
 public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>, IActOnStartup
 {
-    public ValueTask<IEnumerable<TextManagerHit>> SearchAsync(TextManagerQuery query)
+    public ValueTask<List<TextManagerHit>> SearchAsync(TextManagerQuery query)
     {
-        return new ValueTask<IEnumerable<TextManagerHit>>(new List<TextManagerHit>(0));
+        return new ValueTask<List<TextManagerHit>>(new List<TextManagerHit>(0));
     }
 
     public ValueTask IndexAsync(int templateId, Document document)

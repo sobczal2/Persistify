@@ -1,4 +1,5 @@
-﻿using Persistify.Requests.Shared;
+﻿using Persistify.Requests.Search;
+using Persistify.Requests.Shared;
 using ProtoBuf;
 
 namespace Persistify.Requests.Documents;
@@ -12,5 +13,6 @@ public class SearchDocumentsRequest
     [ProtoMember(2)]
     public Pagination Pagination { get; set; } = default!;
 
-    // TODO: Add search parameters
+    [ProtoMember(3)]
+    public SearchNode SearchNode { get; set; } = default!;
 }

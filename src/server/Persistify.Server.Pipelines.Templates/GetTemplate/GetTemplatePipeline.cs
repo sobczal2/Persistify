@@ -4,22 +4,22 @@ using Persistify.Responses.Templates;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Exceptions;
-using Persistify.Server.Pipelines.Templates.GetTemplate.Stages;
 
 namespace Persistify.Server.Pipelines.Templates.GetTemplate;
 
 public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
 {
-    private readonly FetchTemplateFromTemplateManagerStage _fetchTemplateFromTemplateManagerStage;
-
     private readonly StaticValidationStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
         _staticValidationStage;
+
+    private readonly FetchTemplateFromTemplateManagerStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse> _fetchTemplateFromTemplateManagerStage;
 
     public GetTemplatePipeline(
         ILogger<GetTemplatePipeline> logger,
         StaticValidationStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
             staticValidationStage,
-        FetchTemplateFromTemplateManagerStage fetchTemplateFromTemplateManagerStage
+        FetchTemplateFromTemplateManagerStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
+            fetchTemplateFromTemplateManagerStage
     ) : base(
         logger
     )
@@ -37,7 +37,7 @@ public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTempl
 
     protected override GetTemplatePipelineContext CreateContext(GetTemplateRequest request)
     {
-        return new GetTemplatePipelineContext(request);
+        return new GetTemplatePipelineContext(request, request.TemplateId);
     }
 
     protected override GetTemplateResponse CreateResponse(GetTemplatePipelineContext context)

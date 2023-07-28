@@ -13,7 +13,7 @@ public class AvlAsyncRangeTree<T> : AvlAsyncTree<T>, IAsyncRangeTree<T>
     {
     }
 
-    public async ValueTask<IEnumerable<T>> GetRangeAsync(double from, double to)
+    public async ValueTask<List<T>> GetRangeAsync(double from, double to)
     {
         await Semaphore.WaitAsync();
         try
@@ -26,7 +26,7 @@ public class AvlAsyncRangeTree<T> : AvlAsyncTree<T>, IAsyncRangeTree<T>
         }
     }
 
-    private async ValueTask<IEnumerable<T>> GetRangeInternalAsync(long nodeId, double from, double to, List<T> items)
+    private async ValueTask<List<T>> GetRangeInternalAsync(long nodeId, double from, double to, List<T> items)
     {
         if(nodeId == NullId)
         {

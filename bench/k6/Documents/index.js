@@ -18,7 +18,7 @@ export default () => {
         "NumberFieldValues": [
             {
                 "FieldName": "NumberOfLegs",
-                "Value": 10
+                "Value": Math.floor(Math.random() * 100000) + 1
             }
         ],
         "BoolFieldValues": [

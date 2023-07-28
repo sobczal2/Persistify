@@ -1,4 +1,4 @@
-﻿namespace Persistify.Server.Management.Types.Abstractions;
+﻿namespace Persistify.Server.Management.Abstractions.Types;
 
 public struct TemplateFieldIdentifier
 {

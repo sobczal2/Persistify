@@ -116,6 +116,11 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
 
     protected async ValueTask<Node?> ReadNodeAsync(long id)
     {
+        if(id == NullId)
+        {
+            return null;
+        }
+
         if (ChangedNodes.TryGetValue(id, out var node))
         {
             return node;

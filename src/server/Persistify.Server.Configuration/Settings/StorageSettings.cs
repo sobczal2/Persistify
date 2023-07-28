@@ -8,4 +8,5 @@ public class StorageSettings
 
     public string DataPath { get; set; } = default!;
     public StorageType StorageType { get; set; }
+    public SerializerType SerializerType { get; set; }
 }

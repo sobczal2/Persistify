@@ -1,9 +1,16 @@
 syntax = "proto3";
 package Persistify.Services;
 
+message AndSearchNode {
+   repeated SearchNode Nodes = 1;
+}
 message BoolFieldValue {
    bool Value = 1;
    string FieldName = 2;
+}
+message BoolSearchNode {
+   string FieldName = 1;
+   bool Value = 2;
 }
 message DeleteDocumentRequest {
    int32 TemplateId = 1;
@@ -16,6 +23,17 @@ message Document {
    repeated TextFieldValue TextFieldValues = 2;
    repeated NumberFieldValue NumberFieldValues = 3;
    repeated BoolFieldValue BoolFieldValues = 4;
+}
+enum FtsSearchMode {
+   Prefix = 0;
+   Suffix = 1;
+   Exact = 2;
+   Contains = 3;
+}
+message FtsSearchNode {
+   string FieldName = 1;
+   string Value = 2;
+   FtsSearchMode Mode = 3;
 }
 message GetDocumentRequest {
    int32 TemplateId = 1;
@@ -33,9 +51,27 @@ message IndexDocumentRequest {
 message IndexDocumentResponse {
    int64 DocumentId = 1;
 }
+message NotSearchNode {
+}
 message NumberFieldValue {
    double Value = 1;
    string FieldName = 2;
+}
+enum NumberSearchMode {
+   Equal = 0;
+   NotEqual = 1;
+   GreaterThan = 2;
+   GreaterThanOrEqual = 3;
+   LessThan = 4;
+   LessThanOrEqual = 5;
+}
+message NumberSearchNode {
+   string FieldName = 1;
+   double Value = 2;
+   NumberSearchMode Mode = 3;
+}
+message OrSearchNode {
+   repeated SearchNode Nodes = 1;
 }
 message Pagination {
    int32 PageNumber = 1;
@@ -44,14 +80,30 @@ message Pagination {
 message SearchDocumentsRequest {
    int32 TemplateId = 1;
    Pagination Pagination = 2;
+   SearchNode SearchNode = 3;
 }
 message SearchDocumentsResponse {
    repeated Document Documents = 1;
    int64 TotalCount = 2;
 }
+message SearchNode {
+   oneof subtype {
+      AndSearchNode AndSearchNode = 1;
+      OrSearchNode OrSearchNode = 2;
+      NotSearchNode NotSearchNode = 3;
+      TextSearchNode TextSearchNode = 4;
+      FtsSearchNode FtsSearchNode = 5;
+      NumberSearchNode NumberSearchNode = 6;
+      BoolSearchNode BoolSearchNode = 8;
+   }
+}
 message TextFieldValue {
    string Value = 1;
    string FieldName = 2;
+}
+message TextSearchNode {
+   string FieldName = 1;
+   string Value = 2;
 }
 service DocumentService {
    rpc DeleteDocument (DeleteDocumentRequest) returns (DeleteDocumentResponse);

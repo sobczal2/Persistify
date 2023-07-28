@@ -6,7 +6,7 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Management.Abstractions;
+namespace Persistify.Server.Management.Abstractions.Domain;
 
 public interface ITemplateManager
 {

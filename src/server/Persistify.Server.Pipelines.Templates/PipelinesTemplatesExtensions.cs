@@ -4,7 +4,6 @@ using Persistify.Server.Pipelines.Templates.CreateTemplate.Stages;
 using Persistify.Server.Pipelines.Templates.DeleteTemplate;
 using Persistify.Server.Pipelines.Templates.DeleteTemplate.Stages;
 using Persistify.Server.Pipelines.Templates.GetTemplate;
-using Persistify.Server.Pipelines.Templates.GetTemplate.Stages;
 using Persistify.Server.Pipelines.Templates.ListTemplates;
 using Persistify.Server.Pipelines.Templates.ListTemplates.Stages;
 
@@ -22,8 +21,6 @@ public static class PipelinesTemplatesExtensions
         services.AddSingleton(typeof(CheckAnalyzersAvailabilityStage));
         services.AddSingleton(typeof(AddTemplateToTemplateManagerStage));
         services.AddSingleton(typeof(InitializeTemplateInTypeManagersStage));
-
-        services.AddSingleton(typeof(FetchTemplateFromTemplateManagerStage));
 
         services.AddSingleton(typeof(FetchTemplatesFromTemplateManagerStage));
         services.AddSingleton(typeof(ApplyPaginationStage));

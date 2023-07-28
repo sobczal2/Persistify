@@ -1,19 +1,15 @@
-﻿using Persistify.Server.Management.Types.Abstractions;
+﻿using Persistify.Server.Management.Abstractions.Types;
 
 namespace Persistify.Server.Management.Types.Fts;
 
-public class FtsManagerQuery : ITypeManagerQuery
+public abstract class FtsManagerQuery : ITypeManagerQuery
 {
-    public FtsManagerQuery(TemplateFieldIdentifier templateFieldIdentifier, string value, bool prefix, bool suffix)
+    protected FtsManagerQuery(TemplateFieldIdentifier templateFieldIdentifier, string value)
     {
         TemplateFieldIdentifier = templateFieldIdentifier;
         Value = value;
-        Prefix = prefix;
-        Suffix = suffix;
     }
 
     public string Value { get; }
-    public bool Prefix { get; }
-    public bool Suffix { get; }
     public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
 }

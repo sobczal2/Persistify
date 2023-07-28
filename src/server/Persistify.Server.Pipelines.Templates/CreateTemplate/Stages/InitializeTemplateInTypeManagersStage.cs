@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Server.Management.Abstractions.Types;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Exceptions;
 

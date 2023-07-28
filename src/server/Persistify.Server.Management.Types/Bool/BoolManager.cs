@@ -4,16 +4,16 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.HostedServices.Attributes;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Server.Management.Abstractions.Types;
 
 namespace Persistify.Server.Management.Types.Bool;
 
 [StartupPriority(3)]
 public class BoolManager : ITypeManager<BoolManagerQuery, BoolManagerHit>, IActOnStartup
 {
-    public ValueTask<IEnumerable<BoolManagerHit>> SearchAsync(BoolManagerQuery query)
+    public ValueTask<List<BoolManagerHit>> SearchAsync(BoolManagerQuery query)
     {
-        return new ValueTask<IEnumerable<BoolManagerHit>>(new List<BoolManagerHit>(0));
+        return new ValueTask<List<BoolManagerHit>>(new List<BoolManagerHit>(0));
     }
 
     public ValueTask IndexAsync(int templateId, Document document)

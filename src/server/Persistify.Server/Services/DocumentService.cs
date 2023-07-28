@@ -4,6 +4,7 @@ using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Pipelines.Documents.GetDocument;
 using Persistify.Server.Pipelines.Documents.IndexDocument;
+using Persistify.Server.Pipelines.Documents.SearchDocuments;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 
@@ -12,30 +13,33 @@ namespace Persistify.Server.Services;
 public class DocumentService : IDocumentService
 {
     private readonly GetDocumentPipeline _getDocumentPipeline;
+    private readonly SearchDocumentsPipeline _searchDocumentsPipeline;
     private readonly IndexDocumentPipeline _indexDocumentPipeline;
 
     public DocumentService(
         IndexDocumentPipeline indexDocumentPipeline,
-        GetDocumentPipeline getDocumentPipeline
+        GetDocumentPipeline getDocumentPipeline,
+        SearchDocumentsPipeline searchDocumentsPipeline
     )
     {
         _indexDocumentPipeline = indexDocumentPipeline;
         _getDocumentPipeline = getDocumentPipeline;
+        _searchDocumentsPipeline = searchDocumentsPipeline;
     }
 
-    public ValueTask<IndexDocumentResponse> IndexDocumentAsync(IndexDocumentRequest request, CallContext context)
+    public async ValueTask<IndexDocumentResponse> IndexDocumentAsync(IndexDocumentRequest request, CallContext context)
     {
-        return _indexDocumentPipeline.ProcessAsync(request);
+        return await _indexDocumentPipeline.ProcessAsync(request);
     }
 
-    public ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
+    public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
     {
-        return _getDocumentPipeline.ProcessAsync(request);
+        return await _getDocumentPipeline.ProcessAsync(request);
     }
 
-    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
+    public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
     {
-        throw new NotImplementedException();
+        return await _searchDocumentsPipeline.ProcessAsync(request);
     }
 
     public ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)

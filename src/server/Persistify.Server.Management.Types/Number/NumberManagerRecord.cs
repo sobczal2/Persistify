@@ -12,14 +12,14 @@ public class NumberManagerRecord : IComparable<double>
     public double Value { get; set; }
 
     [ProtoMember(2)]
-    public HashSet<long> DocumentIds { get; set; }
+    public SortedSet<long> DocumentIds { get; set; }
 
     public NumberManagerRecord()
     {
-        DocumentIds = new HashSet<long>(0);
+        DocumentIds = new SortedSet<long>();
     }
 
-    public NumberManagerRecord(double value, HashSet<long> documentIds)
+    public NumberManagerRecord(double value, SortedSet<long> documentIds)
     {
         Value = value;
         DocumentIds = documentIds;
@@ -28,7 +28,7 @@ public class NumberManagerRecord : IComparable<double>
     public NumberManagerRecord(double value, long documentId)
     {
         Value = value;
-        DocumentIds = new HashSet<long> { documentId };
+        DocumentIds = new SortedSet<long> { documentId };
     }
 
     public int CompareTo(double other)

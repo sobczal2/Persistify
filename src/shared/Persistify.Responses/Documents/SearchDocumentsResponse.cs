@@ -8,8 +8,14 @@ namespace Persistify.Responses.Documents;
 public class SearchDocumentsResponse
 {
     [ProtoMember(1)]
-    public List<Document> Documents { get; set; } = default!;
+    public List<Document> Documents { get; set; }
 
     [ProtoMember(2)]
     public long TotalCount { get; set; }
+
+    public SearchDocumentsResponse(List<Document> documents, long totalCount)
+    {
+        Documents = documents;
+        TotalCount = totalCount;
+    }
 }
