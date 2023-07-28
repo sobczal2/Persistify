@@ -80,7 +80,6 @@ public static class ServicesExtensions
         services.AddManagementDomain();
         services.AddManagementTypes();
         services.AddPersistenceCore(configuration);
-        services.AddPersistenceDataStructures();
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
 
