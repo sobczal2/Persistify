@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.HostedServices;
 using Persistify.Server.HostedServices.Abstractions;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Implementations;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Domain;
 
 namespace Persistify.Server.Management.Domain;
 

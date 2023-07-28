@@ -17,7 +17,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
     private readonly ISerializer _serializer;
     private FileStream _fileStream;
 
-    private byte[] _buffer = new byte[1024];
+    private byte[] _buffer;
 
     public FileSystemRepository(
         string mainFilePath,
@@ -32,6 +32,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         _serializer = serializer;
         _fileStream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         _semaphore = new SemaphoreSlim(1, 1);
+        _buffer = new byte[1024];
     }
 
     public void Dispose()
@@ -172,7 +173,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         var previousLength = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
 
         // previous length is greater or equal to current length
-        if (previousLength >= bytes.Length)
+        if (previousLength >= bytes.Length || offset.Value + previousLength >= _fileStream.Length)
         {
             _fileStream.Seek(offset.Value, SeekOrigin.Begin);
             await _fileStream.WriteAsync(bytes, 0, bytes.Length);
@@ -203,7 +204,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
         var length = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
         _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-        if (_buffer.Length < length)
+        if (_buffer.LongLength < length)
         {
             _buffer = new byte[length];
         }
@@ -234,14 +235,19 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
                 var length = lengthEnumerator.Current;
 
                 _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-                var bytes = new byte[length.Value];
+                if (_buffer.LongLength < length.Value)
+                {
+                    _buffer = new byte[length.Value];
+                }
+
+                var bytes = _buffer;
                 var read = await _fileStream.ReadAsync(bytes, 0, (int)length.Value);
                 if (read != length.Value)
                 {
                     throw new InvalidOperationException();
                 }
 
-                yield return _serializer.Deserialize<T>(bytes);
+                yield return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
             }
         }
         finally

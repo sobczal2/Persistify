@@ -15,18 +15,10 @@ public static class HostExtensions
             var loggingSettings = context.Configuration.GetSection("Logging").Get<LoggingSettings>() ??
                                   throw new InvalidOperationException("Logging settings are not configured");
             configuration
-                .WriteTo.Logger(lc => lc
-                    .MinimumLevel.Is(loggingSettings.Default)
-                    .Filter.ByIncludingOnly(x => x.Properties.ContainsKey("CorrelationId"))
-                    .WriteTo.Console(
-                        outputTemplate:
-                        "[{Timestamp:HH:mm:ss} {Level:u3}] ({CorrelationId}) {Message:lj}{NewLine}{Exception}"))
-                .WriteTo.Logger(lc => lc
-                    .MinimumLevel.Is(loggingSettings.Default)
-                    .Filter.ByExcluding(x => x.Properties.ContainsKey("CorrelationId"))
-                    .WriteTo.Console(
-                        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}"))
+                .WriteTo.Console()
+                .MinimumLevel.Is(loggingSettings.Default)
                 .Enrich.FromLogContext();
+
 
             if (loggingSettings.Seq is not null)
             {

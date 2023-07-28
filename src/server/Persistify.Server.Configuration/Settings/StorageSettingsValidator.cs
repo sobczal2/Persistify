@@ -16,5 +16,9 @@ public class StorageSettingsValidator : AbstractValidator<StorageSettings>
         RuleFor(x => x.StorageType)
             .IsInEnum()
             .WithMessage("The storage type must be a valid value.");
+
+        RuleFor(x => x.SerializerType)
+            .IsInEnum()
+            .WithMessage("The serializer type must be a valid value.");
     }
 }

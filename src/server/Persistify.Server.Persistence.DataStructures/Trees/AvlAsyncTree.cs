@@ -4,33 +4,34 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.Persistence.DataStructures.Abstractions;
 using Persistify.Server.Persistence.DataStructures.Providers;
+using ProtoBuf;
 
 namespace Persistify.Server.Persistence.DataStructures.Trees;
 
 public class AvlAsyncTree<T> : IAsyncTree<T>
 {
-    private const long NullId = 0;
-    private readonly IDictionary<long, Node> _changedNodes;
-    private readonly IComparer<T> _comparer;
-    private readonly SemaphoreSlim _semaphore;
-    private readonly IStorageProvider<Node> _storageProvider;
-    private long _lastId = NullId;
-    private long _rootId = NullId;
+    protected const long NullId = 0;
+    protected readonly IDictionary<long, Node> ChangedNodes;
+    protected readonly IComparer<T> Comparer;
+    protected readonly SemaphoreSlim Semaphore;
+    protected readonly IStorageProvider<Node> StorageProvider;
+    protected long LastId = NullId;
+    protected long RootId = NullId;
 
     public AvlAsyncTree(
         IStorageProvider<Node> storageProvider,
         IComparer<T> comparer
     )
     {
-        _storageProvider = storageProvider;
-        _comparer = comparer;
-        _changedNodes = new Dictionary<long, Node>();
-        _semaphore = new SemaphoreSlim(1, 1);
+        StorageProvider = storageProvider;
+        Comparer = comparer;
+        ChangedNodes = new Dictionary<long, Node>();
+        Semaphore = new SemaphoreSlim(1, 1);
     }
 
     public async ValueTask InsertAsync(T value)
     {
-        await _semaphore.WaitAsync();
+        await Semaphore.WaitAsync();
         try
         {
             await InsertInternalAsync(value);
@@ -38,13 +39,27 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         finally
         {
             await FlushAsync();
-            _semaphore.Release();
+            Semaphore.Release();
+        }
+    }
+
+    public async ValueTask InsertOrPerformActionOnValueAsync<TArgs>(T value, Action<T, TArgs> action, TArgs args)
+    {
+        await Semaphore.WaitAsync();
+        try
+        {
+            await InsertOrPerformActionOnValueInternalAsync(value, action, args);
+        }
+        finally
+        {
+            await FlushAsync();
+            Semaphore.Release();
         }
     }
 
     public async ValueTask<T?> GetAsync(T value)
     {
-        await _semaphore.WaitAsync();
+        await Semaphore.WaitAsync();
         try
         {
             return await GetInternalAsync(value);
@@ -52,13 +67,13 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         finally
         {
             await FlushAsync();
-            _semaphore.Release();
+            Semaphore.Release();
         }
     }
 
     public async ValueTask RemoveAsync(T value)
     {
-        await _semaphore.WaitAsync();
+        await Semaphore.WaitAsync();
         try
         {
             await RemoveInternalAsync(value);
@@ -66,51 +81,70 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         finally
         {
             await FlushAsync();
-            _semaphore.Release();
+            Semaphore.Release();
+        }
+    }
+
+    public async ValueTask PerformActionByPredicateAndMaybeRemoveAsync<TArgs>(Func<T, TArgs, bool> predicate, Func<T, TArgs, bool> maybeRemoveAction, TArgs args)
+    {
+        await Semaphore.WaitAsync();
+        try
+        {
+            await PerformActionByPredicateAndMaybeRemoveInternalAsync(RootId, predicate, maybeRemoveAction, args);
+        }
+        finally
+        {
+            await FlushAsync();
+            Semaphore.Release();
         }
     }
 
     private async ValueTask FlushAsync()
     {
-        foreach (var node in _changedNodes)
+        foreach (var node in ChangedNodes)
         {
             if (node.Key == NullId)
             {
                 continue;
             }
 
-            await _storageProvider.WriteAsync(node.Key, node.Value);
+            await StorageProvider.WriteAsync(node.Key, node.Value);
         }
 
-        _changedNodes.Clear();
+        ChangedNodes.Clear();
     }
 
-    private async ValueTask<Node?> ReadNodeAsync(long id)
+    protected async ValueTask<Node?> ReadNodeAsync(long id)
     {
-        if (_changedNodes.TryGetValue(id, out var node))
+        if(id == NullId)
+        {
+            return null;
+        }
+
+        if (ChangedNodes.TryGetValue(id, out var node))
         {
             return node;
         }
 
-        return await _storageProvider.ReadAsync(id);
+        return await StorageProvider.ReadAsync(id);
     }
 
-    private void WriteNode(Node node)
+    protected void WriteNode(Node node)
     {
-        _changedNodes[node.Id] = node;
+        ChangedNodes[node.Id] = node;
     }
 
     private async ValueTask InsertInternalAsync(T value)
     {
-        if (_rootId == NullId)
+        if (RootId == NullId)
         {
-            _rootId = ++_lastId;
-            var node = new Node(value, _rootId, NullId, NullId, NullId, 0, 0);
+            RootId = ++LastId;
+            var node = new Node(value, RootId, NullId, NullId, NullId, 0, 0);
             WriteNode(node);
             return;
         }
 
-        var currentNode = await ReadNodeAsync(_rootId);
+        var currentNode = await ReadNodeAsync(RootId);
 
         while (true)
         {
@@ -119,30 +153,84 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 throw new InvalidOperationException("Node is null");
             }
 
-            if (_comparer.Compare(currentNode.Value, value) == 0)
+            if (Comparer.Compare(currentNode.Value, value) == 0)
             {
                 throw new InvalidOperationException("Value already exists");
             }
 
             var parentNode = currentNode;
 
-            var goLeft = _comparer.Compare(currentNode.Value, value) > 0;
+            var goLeft = Comparer.Compare(currentNode.Value, value) > 0;
             var childId = goLeft ? currentNode.LeftId : currentNode.RightId;
 
             if (childId == NullId)
             {
                 if (goLeft)
                 {
-                    currentNode.LeftId = ++_lastId;
+                    currentNode.LeftId = ++LastId;
                     WriteNode(currentNode);
                 }
                 else
                 {
-                    currentNode.RightId = ++_lastId;
+                    currentNode.RightId = ++LastId;
                     WriteNode(currentNode);
                 }
 
-                var node = new Node(value, _lastId, currentNode.Id);
+                var node = new Node(value, LastId, currentNode.Id);
+                WriteNode(node);
+                await BalanceAsync(parentNode);
+                break;
+            }
+
+            currentNode = await ReadNodeAsync(childId);
+        }
+    }
+
+    private async ValueTask InsertOrPerformActionOnValueInternalAsync<TArgs>(T value, Action<T, TArgs> action, TArgs args)
+    {
+        if (RootId == NullId)
+        {
+            RootId = ++LastId;
+            var node = new Node(value, RootId, NullId, NullId, NullId, 0, 0);
+            WriteNode(node);
+            return;
+        }
+
+        var currentNode = await ReadNodeAsync(RootId);
+
+        while (true)
+        {
+            if (currentNode is null)
+            {
+                throw new InvalidOperationException("Node is null");
+            }
+
+            if (Comparer.Compare(currentNode.Value, value) == 0)
+            {
+                action(currentNode.Value, args);
+                WriteNode(currentNode);
+                return;
+            }
+
+            var parentNode = currentNode;
+
+            var goLeft = Comparer.Compare(currentNode.Value, value) > 0;
+            var childId = goLeft ? currentNode.LeftId : currentNode.RightId;
+
+            if (childId == NullId)
+            {
+                if (goLeft)
+                {
+                    currentNode.LeftId = ++LastId;
+                    WriteNode(currentNode);
+                }
+                else
+                {
+                    currentNode.RightId = ++LastId;
+                    WriteNode(currentNode);
+                }
+
+                var node = new Node(value, LastId, currentNode.Id);
                 WriteNode(node);
                 await BalanceAsync(parentNode);
                 break;
@@ -154,12 +242,12 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
 
     private async ValueTask<T?> GetInternalAsync(T value)
     {
-        if (_rootId == NullId)
+        if (RootId == NullId)
         {
             return default;
         }
 
-        var currentNode = await ReadNodeAsync(_rootId);
+        var currentNode = await StorageProvider.ReadAsync(RootId);
 
         while (true)
         {
@@ -168,55 +256,85 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 return default;
             }
 
-            if (_comparer.Compare(currentNode.Value, value) == 0)
+            if (Comparer.Compare(currentNode.Value, value) == 0)
             {
                 return currentNode.Value;
             }
 
-            var goLeft = _comparer.Compare(currentNode.Value, value) > 0;
+            var goLeft = Comparer.Compare(currentNode.Value, value) > 0;
             var childId = goLeft ? currentNode.LeftId : currentNode.RightId;
 
             if (childId == NullId)
             {
                 return default;
+            }
+
+            currentNode = await StorageProvider.ReadAsync(childId);
+        }
+    }
+
+    private async ValueTask RemoveInternalAsync(T value)
+    {
+        if (RootId == NullId)
+        {
+            return;
+        }
+
+        var currentNode = await ReadNodeAsync(RootId);
+
+        while (true)
+        {
+            if (currentNode is null)
+            {
+                return;
+            }
+
+            if (Comparer.Compare(currentNode.Value, value) == 0)
+            {
+                await RemoveNodeAsync(currentNode);
+                return;
+            }
+
+            var goLeft = Comparer.Compare(currentNode.Value, value) > 0;
+            var childId = goLeft ? currentNode.LeftId : currentNode.RightId;
+
+            if (childId == NullId)
+            {
+                return;
             }
 
             currentNode = await ReadNodeAsync(childId);
         }
     }
 
-    private async ValueTask RemoveInternalAsync(T value)
+    private async ValueTask PerformActionByPredicateAndMaybeRemoveInternalAsync<TArgs>(long currentId, Func<T, TArgs, bool> predicate, Func<T, TArgs, bool> maybeRemoveAction, TArgs args)
     {
-        if (_rootId == NullId)
+        if(currentId == NullId)
         {
             return;
         }
 
-        var currentNode = await ReadNodeAsync(_rootId);
+        var currentNode = await ReadNodeAsync(currentId);
 
-        while (true)
+        if(currentNode is null)
         {
-            if (currentNode is null)
-            {
-                return;
-            }
+            throw new InvalidOperationException("Node is null");
+        }
 
-            if (_comparer.Compare(currentNode.Value, value) == 0)
+        if(predicate(currentNode.Value, args))
+        {
+            if(maybeRemoveAction(currentNode.Value, args))
             {
                 await RemoveNodeAsync(currentNode);
-                return;
             }
-
-            var goLeft = _comparer.Compare(currentNode.Value, value) > 0;
-            var childId = goLeft ? currentNode.LeftId : currentNode.RightId;
-
-            if (childId == NullId)
+            else
             {
-                return;
+                WriteNode(currentNode);
             }
-
-            currentNode = await ReadNodeAsync(childId);
         }
+
+        await PerformActionByPredicateAndMaybeRemoveInternalAsync(currentNode.LeftId, predicate, maybeRemoveAction, args);
+        await PerformActionByPredicateAndMaybeRemoveInternalAsync(currentNode.RightId, predicate, maybeRemoveAction, args);
     }
 
     private async ValueTask BalanceAsync(Node node)
@@ -271,7 +389,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
                 continue;
             }
 
-            _rootId = node.Id;
+            RootId = node.Id;
 
             break;
         }
@@ -285,7 +403,7 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             {
                 if (node.ParentId == NullId)
                 {
-                    _rootId = NullId;
+                    RootId = NullId;
                 }
                 else
                 {
@@ -348,8 +466,8 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         var leftHeight = leftNode?.Height ?? 0;
         var rightHeight = rightNode?.Height ?? 0;
 
-        node.Height = Math.Max(leftHeight, rightHeight) + 1;
-        node.Balance = await GetHeight(rightNode?.Id ?? NullId) - await GetHeight(leftNode?.Id ?? NullId);
+        node.Height = (sbyte)(Math.Max(leftHeight, rightHeight) + 1);
+        node.Balance = (sbyte)(await GetHeight(rightNode?.Id ?? NullId) - await GetHeight(leftNode?.Id ?? NullId));
         WriteNode(node);
     }
 
@@ -467,16 +585,17 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
         return await RotateLeftAsync(node);
     }
 
-    private async ValueTask<int> GetHeight(long id)
+    private async ValueTask<sbyte> GetHeight(long id)
     {
         var node = await ReadNodeAsync(id);
 
-        return node?.Height ?? -1;
+        return node?.Height ?? (sbyte)-1;
     }
 
+    [ProtoContract]
     public class Node
     {
-        public Node(T value, long id, long leftId, long rightId, long parentId, int height, int balance)
+        public Node(T value, long id, long leftId, long rightId, long parentId, sbyte height, sbyte balance)
         {
             Value = value;
             Id = id;
@@ -494,12 +613,30 @@ public class AvlAsyncTree<T> : IAsyncTree<T>
             ParentId = parentId;
         }
 
+        public Node()
+        {
+            Value = default!;
+            Id = NullId;
+            LeftId = NullId;
+            RightId = NullId;
+            ParentId = NullId;
+            Height = 0;
+            Balance = 0;
+        }
+
+        [ProtoMember(1)]
         public T Value { get; set; }
+        [ProtoMember(2)]
         public long Id { get; set; }
+        [ProtoMember(3)]
         public long LeftId { get; set; }
+        [ProtoMember(4)]
         public long RightId { get; set; }
+        [ProtoMember(5)]
         public long ParentId { get; set; }
-        public int Height { get; set; }
-        public int Balance { get; set; }
+        [ProtoMember(6)]
+        public sbyte Height { get; set; }
+        [ProtoMember(7)]
+        public sbyte Balance { get; set; }
     }
 }

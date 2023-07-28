@@ -1,9 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Persistify.Server.HostedServices;
 using Persistify.Server.HostedServices.Abstractions;
-using Persistify.Server.Middlewares;
 using Persistify.Server.Services;
 using ProtoBuf.Grpc.Server;
 using Serilog;
@@ -14,7 +12,6 @@ public static class AppExtensions
 {
     public static void UsePersistify(this WebApplication app)
     {
-        app.UseMiddleware<CorrelationIdMiddleware>();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();

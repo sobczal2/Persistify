@@ -1,4 +1,5 @@
-﻿using Persistify.Requests.Templates;
+﻿using Persistify.Domain.Templates;
+using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Pipelines.Common;
 
@@ -11,7 +12,7 @@ public class CreateTemplatePipelineContext : IPipelineContext<CreateTemplateRequ
         Request = request;
     }
 
-    public int? TemplateId { get; set; }
+    public Template? Template { get; set; }
     public CreateTemplateRequest Request { get; set; }
     public CreateTemplateResponse? Response { get; set; }
 }

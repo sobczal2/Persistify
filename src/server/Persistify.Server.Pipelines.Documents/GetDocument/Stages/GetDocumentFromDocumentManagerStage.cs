@@ -1,10 +1,11 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Management.Domain.Abstractions;
-using Persistify.Server.Management.Domain.Exceptions;
-using Persistify.Server.Management.Domain.Exceptions.Template;
+using Persistify.Server.Management.Abstractions;
+using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Management.Abstractions.Exceptions.Template;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Validation.Common;
 
@@ -18,8 +19,9 @@ public class
     private readonly IDocumentManager _documentManager;
 
     public GetDocumentFromDocumentManagerStage(
+        ILogger<GetDocumentFromDocumentManagerStage> logger,
         IDocumentManager documentManager
-    )
+    ) : base(logger)
     {
         _documentManager = documentManager;
     }

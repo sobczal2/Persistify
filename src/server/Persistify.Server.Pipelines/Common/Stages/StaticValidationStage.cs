@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Validation.Common;
 
@@ -13,8 +14,9 @@ public class StaticValidationStage<TContext, TRequest, TResponse> : PipelineStag
     private readonly IValidator<TRequest> _validator;
 
     public StaticValidationStage(
+        ILogger<StaticValidationStage<TContext, TRequest, TResponse>> logger,
         IValidator<TRequest> validator
-    )
+    ) : base(logger)
     {
         _validator = validator;
     }

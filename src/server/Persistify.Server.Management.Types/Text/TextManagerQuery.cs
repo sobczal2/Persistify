@@ -1,5 +1,4 @@
-﻿using Persistify.Server.Management.Types.Abstractions;
-using Persistify.Server.Management.Types.Shared;
+﻿using Persistify.Server.Management.Abstractions.Types;
 
 namespace Persistify.Server.Management.Types.Text;
 

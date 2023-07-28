@@ -1,15 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Domain.Templates;
+using Persistify.Server.HostedServices.Abstractions;
+using Persistify.Server.HostedServices.Attributes;
+using Persistify.Server.Management.Abstractions.Types;
 
 namespace Persistify.Server.Management.Types.Text;
 
-public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>
+[StartupPriority(3)]
+public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>, IActOnStartup
 {
-    public ValueTask<IEnumerable<TextManagerHit>> SearchAsync(int templateId, TextManagerQuery query)
+    public ValueTask<List<TextManagerHit>> SearchAsync(TextManagerQuery query)
     {
-        return new ValueTask<IEnumerable<TextManagerHit>>(new List<TextManagerHit>(0));
+        return new ValueTask<List<TextManagerHit>>(new List<TextManagerHit>(0));
     }
 
     public ValueTask IndexAsync(int templateId, Document document)
@@ -22,12 +26,17 @@ public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask InitializeForTemplate(int templateId)
+    public ValueTask InitializeForTemplate(Template template)
     {
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask RemoveForTemplate(int templateId)
+    public ValueTask RemoveForTemplate(Template template)
+    {
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask PerformStartupActionAsync()
     {
         return ValueTask.CompletedTask;
     }

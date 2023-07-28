@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Persistence.DataStructures.Abstractions;
-using Persistify.Server.Persistence.DataStructures.Factories;
 using Persistify.Server.Persistence.DataStructures.Providers;
 
 namespace Persistify.Server.Persistence.DataStructures;

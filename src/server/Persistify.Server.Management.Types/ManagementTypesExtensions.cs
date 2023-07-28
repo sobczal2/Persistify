@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Persistify.Server.Management.Types.Abstractions;
+using Persistify.Server.HostedServices.Abstractions;
+using Persistify.Server.Management.Abstractions.Types;
 using Persistify.Server.Management.Types.Bool;
 using Persistify.Server.Management.Types.Fts;
 using Persistify.Server.Management.Types.Number;
+using Persistify.Server.Management.Types.Number.Queries;
 using Persistify.Server.Management.Types.Text;
 
 namespace Persistify.Server.Management.Types;
@@ -25,6 +27,11 @@ public static class ManagementTypesExtensions
         services.AddSingleton<ITypeManager<FtsManagerQuery, FtsManagerHit>>(sp => sp.GetRequiredService<FtsManager>());
         services.AddSingleton<ITypeManager<NumberManagerQuery, NumberManagerHit>>(sp => sp.GetRequiredService<NumberManager>());
         services.AddSingleton<ITypeManager<TextManagerQuery, TextManagerHit>>(sp => sp.GetRequiredService<TextManager>());
+
+        services.AddSingleton<IActOnStartup>(sp => sp.GetRequiredService<BoolManager>());
+        services.AddSingleton<IActOnStartup>(sp => sp.GetRequiredService<FtsManager>());
+        services.AddSingleton<IActOnStartup>(sp => sp.GetRequiredService<NumberManager>());
+        services.AddSingleton<IActOnStartup>(sp => sp.GetRequiredService<TextManager>());
 
 
         return services;

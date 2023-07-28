@@ -71,7 +71,7 @@ public static class ServicesExtensions
                 };
             });
 
-        services.AddSerialization();
+        services.AddSerialization(configuration);
         services.AddValidation();
         services.AddPipelines();
         services.AddPipelinesTemplates();
