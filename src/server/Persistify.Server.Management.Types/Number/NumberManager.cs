@@ -41,70 +41,14 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
         _lookups = new ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, long>>();
     }
 
-    public ValueTask<List<NumberManagerHit>> SearchAsync(NumberManagerQuery query)
+    public async ValueTask<List<NumberManagerHit>> SearchAsync(NumberManagerQuery query)
     {
-        // if (!_trees.TryGetValue(query.TemplateFieldIdentifier, out var tree))
-        // {
-        //     throw new ManagerInternalException();
-        // }
-        //
-        // // TODO: Evaluate inside *NumberManagerQuery classes
-        // switch (query)
-        // {
-        //     case RangeNumberManagerQuery rangeNumberManagerQuery:
-        //         // ReSharper disable once CompareOfFloatsByEqualityOperator
-        //         if(rangeNumberManagerQuery.MinValue == rangeNumberManagerQuery.MaxValue)
-        //         {
-        //             var rangeRecord = await tree.GetAsync(new NumberManagerRecord(rangeNumberManagerQuery.MinValue, 0));
-        //             if(rangeRecord == null)
-        //             {
-        //                 return new List<NumberManagerHit>(0);
-        //             }
-        //             var rangeResult = new List<NumberManagerHit>(rangeRecord.DocumentIds.Count);
-        //             foreach (var documentId in rangeRecord.DocumentIds)
-        //             {
-        //                 rangeResult.Add(new NumberManagerHit(documentId));
-        //             }
-        //             return rangeResult;
-        //         }
-        //         if(rangeNumberManagerQuery.MinValue > rangeNumberManagerQuery.MaxValue)
-        //         {
-        //             var rangeRecords2 = await tree.GetRangeAsync(double.MinValue, rangeNumberManagerQuery.MaxValue);
-        //             rangeRecords2.AddRange(await tree.GetRangeAsync(rangeNumberManagerQuery.MinValue, double.MaxValue));
-        //             return GetHits(rangeRecords2);
-        //         }
-        //         return GetHits(await tree.GetRangeAsync(rangeNumberManagerQuery.MinValue,
-        //             rangeNumberManagerQuery.MaxValue));
-        //     case EqualNumberManagerQuery equalNumberManagerQuery:
-        //         var record = await tree.GetAsync(new NumberManagerRecord(equalNumberManagerQuery.Value, 0));
-        //         if(record == null)
-        //         {
-        //             return new List<NumberManagerHit>(0);
-        //         }
-        //         var result = new List<NumberManagerHit>(record.DocumentIds.Count);
-        //         foreach (var documentId in record.DocumentIds)
-        //         {
-        //             result.Add(new NumberManagerHit(documentId));
-        //         }
-        //         return result;
-        //     case NotEqualNumberManagerQuery notEqualNumberManagerQuery:
-        //         // TODO: Optimize
-        //         var records = await tree.GetRangeAsync(double.MinValue, notEqualNumberManagerQuery.Value);
-        //         records.AddRange(await tree.GetRangeAsync(notEqualNumberManagerQuery.Value, double.MaxValue));
-        //         return GetHits(records);
-        //     case GreaterThanNumberManagerQuery greaterThanNumberManagerQuery:
-        //         return GetHits(await tree.GetRangeAsync(greaterThanNumberManagerQuery.Value + double.Epsilon, double.MaxValue));
-        //     case GreaterThanOrEqualNumberManagerQuery greaterThanOrEqualNumberManagerQuery:
-        //         return GetHits(await tree.GetRangeAsync(greaterThanOrEqualNumberManagerQuery.Value, double.MaxValue));
-        //     case LessThanNumberManagerQuery lessThanNumberManagerQuery:
-        //         return GetHits(await tree.GetRangeAsync(double.MinValue, lessThanNumberManagerQuery.Value - double.Epsilon));
-        //     case LessThanOrEqualNumberManagerQuery lessThanOrEqualNumberManagerQuery:
-        //         return GetHits(await tree.GetRangeAsync(double.MinValue, lessThanOrEqualNumberManagerQuery.Value));
-        //     default:
-        //         throw new ManagerInternalException();
-        // }
+        if (!_lookups.TryGetValue(query.TemplateFieldIdentifier, out var tree))
+        {
+            throw new ManagerInternalException();
+        }
 
-        throw new NotImplementedException();
+        return await query.Evaluate(tree);
     }
 
     // No lock needed - template is locked by the caller

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.Persistence.Core.Abstractions;
@@ -144,9 +145,58 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         }
     }
 
-    public ValueTask<TItem> GetAsync(TKey key)
+    public async ValueTask<List<TItem>> GetAsync(TKey key)
     {
-        return default;
+        await _semaphoreSlim.WaitAsync();
+        try
+        {
+            var node = await FindLeafNodeAsync(key);
+
+            if (node.Items.TryGetValue(key, out var items))
+            {
+                // TODO: Sort items more efficiently
+                items.Sort();
+                return items;
+            }
+
+            return Enumerable.Empty<TItem>().ToList();
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
+    }
+
+    public async ValueTask<List<TItem>> GetRangeAsync(TKey from, TKey to)
+    {
+        await _semaphoreSlim.WaitAsync();
+        try
+        {
+            BTreeLeafNode<TKey, TItem>? node = await FindLeafNodeAsync(from);
+
+            var result = new List<TItem>();
+
+            while (node != null)
+            {
+                foreach (var (key, items) in node.Items)
+                {
+                    if (_comparer.Compare(key, from) >= 0 && _comparer.Compare(key, to) <= 0)
+                    {
+                        result.AddRange(items);
+                    }
+                }
+
+                node = await ReadNodeAsync(node.RightSiblingId, true) as BTreeLeafNode<TKey, TItem>;
+            }
+
+            // TODO: Sort items more efficiently
+            result.Sort();
+            return result;
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
     }
 
     private async ValueTask AddInternalAsync(TKey key, TItem item)

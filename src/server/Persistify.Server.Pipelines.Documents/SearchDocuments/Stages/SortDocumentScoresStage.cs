@@ -22,7 +22,16 @@ public class SortDocumentScoresStage : PipelineStage<SearchDocumentsPipelineCont
     public override ValueTask<Result> ProcessAsync(SearchDocumentsPipelineContext context)
     {
         var documentScores = context.DocumentScores ?? throw new PipelineException();
-        documentScores.Sort((x, y) => y.Score.CompareTo(x.Score));
+        documentScores.Sort((x, y) =>
+        {
+            var cmpResult = y.Score.CompareTo(x.Score);
+            if (cmpResult == 0)
+            {
+                cmpResult = x.DocumentId.CompareTo(y.DocumentId);
+            }
+
+            return cmpResult;
+        });
 
         return ValueTask.FromResult(Result.Success);
     }

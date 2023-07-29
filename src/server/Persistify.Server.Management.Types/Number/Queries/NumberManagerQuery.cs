@@ -1,4 +1,7 @@
-﻿using Persistify.Server.Management.Abstractions.Types;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Persistify.Server.Management.Abstractions.Types;
+using Persistify.Server.Persistence.DataStructures.Abstractions;
 
 namespace Persistify.Server.Management.Types.Number.Queries;
 
@@ -9,4 +12,6 @@ public abstract class NumberManagerQuery : ITypeManagerQuery
         TemplateFieldIdentifier = templateFieldIdentifier;
     }
     public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
+
+    public abstract ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, long> lookup);
 }

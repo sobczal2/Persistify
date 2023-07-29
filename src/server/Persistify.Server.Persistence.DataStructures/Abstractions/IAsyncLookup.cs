@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Persistify.Server.Persistence.DataStructures.Abstractions;
@@ -7,5 +8,6 @@ public interface IAsyncLookup<TKey, TItem>
 {
     ValueTask InitializeAsync();
     ValueTask AddAsync(TKey key, TItem item);
-    ValueTask<TItem> GetAsync(TKey key);
+    ValueTask<List<TItem>> GetAsync(TKey key);
+    ValueTask<List<TItem>> GetRangeAsync(TKey from, TKey to);
 }

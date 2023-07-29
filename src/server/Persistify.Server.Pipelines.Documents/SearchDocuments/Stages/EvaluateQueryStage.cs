@@ -181,7 +181,7 @@ public class EvaluateQueryStage : PipelineStage<SearchDocumentsPipelineContext, 
         int templateId)
     {
         var query = new RangeNumberManagerQuery(new TemplateFieldIdentifier(templateId, node.FieldName), node.Min,
-            node.Max);
+            node.Max, node.IncludeMin, node.IncludeMax);
         var hits = await _numberManager.SearchAsync(query);
         var documentIds = new List<DocumentScore>(hits.Count);
         foreach (var hit in hits)
@@ -314,11 +314,15 @@ public class EvaluateQueryStage : PipelineStage<SearchDocumentsPipelineContext, 
     public static List<DocumentScore> MergeSortedLists(List<DocumentScore>[] lists)
     {
         var union = new List<DocumentScore>();
-        var enumerators = new List<IEnumerator<DocumentScore>>(lists.Length);
+        var enumerators = new List<List<DocumentScore>.Enumerator>(lists.Length);
 
         foreach (var list in lists)
         {
-            enumerators.Add(list.GetEnumerator());
+            var enumerator = list.GetEnumerator();
+            if (enumerator.MoveNext())
+            {
+                enumerators.Add(enumerator);
+            }
         }
 
         foreach (var enumerator in enumerators)
@@ -342,13 +346,14 @@ public class EvaluateQueryStage : PipelineStage<SearchDocumentsPipelineContext, 
             if (minIndex == -1)
                 break;
 
-            if (union.Count == 0 || union[^1].DocumentId != enumerators[minIndex].Current.DocumentId)
+            if (union.Count == 0 || union[^1].DocumentId != enumerators[minIndex].Current.DocumentId )
             {
                 union.Add(enumerators[minIndex].Current);
             }
             else if (union[^1].DocumentId == enumerators[minIndex].Current.DocumentId)
             {
-                union[^1] = new DocumentScore(union[^1].DocumentId, union[^1].Score + enumerators[minIndex].Current.Score);
+                union[^1] = new DocumentScore(union[^1].DocumentId,
+                    union[^1].Score + enumerators[minIndex].Current.Score);
             }
 
             if (!enumerators[minIndex].MoveNext())
