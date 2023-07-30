@@ -57,6 +57,13 @@ message NumberFieldValue {
    double Value = 1;
    string FieldName = 2;
 }
+message NumberRangeSearchNode {
+   string FieldName = 1;
+   double Min = 2;
+   double Max = 3;
+   bool IncludeMin = 4;
+   bool IncludeMax = 5;
+}
 enum NumberSearchMode {
    Equal = 0;
    NotEqual = 1;
@@ -94,6 +101,7 @@ message SearchNode {
       TextSearchNode TextSearchNode = 4;
       FtsSearchNode FtsSearchNode = 5;
       NumberSearchNode NumberSearchNode = 6;
+      NumberRangeSearchNode NumberRangeSearchNode = 7;
       BoolSearchNode BoolSearchNode = 8;
    }
 }

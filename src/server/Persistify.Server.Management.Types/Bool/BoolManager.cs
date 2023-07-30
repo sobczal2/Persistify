@@ -21,6 +21,11 @@ public class BoolManager : ITypeManager<BoolManagerQuery, BoolManagerHit>, IActO
         return ValueTask.CompletedTask;
     }
 
+    public ValueTask DeleteAsync(int templateId, Document document)
+    {
+        return ValueTask.CompletedTask;
+    }
+
     public ValueTask DeleteAsync(int templateId, long documentId)
     {
         return ValueTask.CompletedTask;

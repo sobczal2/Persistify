@@ -65,6 +65,16 @@ public static class SettingsExtensions
 
         services.Configure<CacheSettings>(cacheSettingsSection);
 
+        var dataStructuresSettingsSection = configuration
+            .GetRequiredSection(DataStructuresSettings.SectionName);
+
+        var dataStructuresSettingsValidator = new DataStructuresSettingsValidator();
+        dataStructuresSettingsValidator.ValidateAndThrow(dataStructuresSettingsSection.Get<DataStructuresSettings>() ??
+                                                         throw new InvalidOperationException(
+                                                             $"Could not load {DataStructuresSettings.SectionName} from configuration"));
+
+        services.Configure<DataStructuresSettings>(dataStructuresSettingsSection);
+
         return services;
     }
 }

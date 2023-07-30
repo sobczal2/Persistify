@@ -14,23 +14,12 @@ export default () => {
             "PageSize": 10
         },
         "SearchNode": {
-            "OrSearchNode": {
-                "Nodes":[
-                    {
-                        "NumberSearchNode": {
-                            "FieldName": "NumberOfLegs",
-                            "Mode": "Equal",
-                            "Value": 0
-                        }
-                    },
-                    {
-                        "NumberSearchNode": {
-                            "FieldName": "NumberOfLegs",
-                            "Mode": "Equal",
-                            "Value": 10
-                        }
-                    }
-                ]
+            "NumberRangeSearchNode": {
+                "FieldName": "NumberOfLegs",
+                "Min": 0,
+                "Max": 100,
+                "IncludeMax": true,
+                "IncludeMin":false
             }
         },
         "TemplateId": 1

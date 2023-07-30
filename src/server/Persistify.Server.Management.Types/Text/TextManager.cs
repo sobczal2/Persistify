@@ -21,7 +21,7 @@ public class TextManager : ITypeManager<TextManagerQuery, TextManagerHit>, IActO
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask DeleteAsync(int templateId, long documentId)
+    public ValueTask DeleteAsync(int templateId, Document document)
     {
         return ValueTask.CompletedTask;
     }
