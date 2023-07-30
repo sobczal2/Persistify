@@ -23,9 +23,9 @@ public class ProtobufSerializer : ISerializer
         Serializer.Serialize(stream, obj);
     }
 
-    public byte[] Serialize<T>(T obj)
+    public ReadOnlyMemory<byte> Serialize<T>(T obj)
     {
-        using var stream = _recyclableMemoryStreamManager.GetStream();
+        var stream = _recyclableMemoryStreamManager.GetStream();
         Serializer.Serialize(stream, obj);
         return stream.ToArray();
     }

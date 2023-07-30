@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
-using Persistify.Server.Management.Abstractions;
 using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Abstractions.Exceptions.Document;
 using Persistify.Server.Management.Abstractions.Types;
@@ -94,15 +93,15 @@ public class DocumentManager : IDocumentManager
     public async ValueTask DeleteAsync(int templateId, long documentId)
     {
         await _templateManager.PerformActionOnLockedTemplateAsync(templateId,
-            async (template, repository, docId) =>
+            async (template, repository, args) =>
             {
-                await repository.DeleteAsync(docId);
+                var document = await repository.DeleteAsync(args.documentId) ?? throw new DocumentNotFoundException(args.documentId);
 
-                foreach (var typeManager in _typeManagers)
+                foreach (var typeManager in args.typeManagers)
                 {
-                    await typeManager.DeleteAsync(template.Id, docId);
+                    await typeManager.DeleteAsync(template.Id, document);
                 }
-            }, documentId);
+            }, (documentId, typeManagers: _typeManagers));
     }
 
     public ValueTask<IEnumerable<long>> AllIdsAsync(int templateId)

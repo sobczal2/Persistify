@@ -12,7 +12,7 @@ public class JsonSerializer : ISerializer
         throw new NotImplementedException();
     }
 
-    public byte[] Serialize<T>(T obj)
+    public ReadOnlyMemory<byte> Serialize<T>(T obj)
     {
         return System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(obj);
     }

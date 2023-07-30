@@ -134,7 +134,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         }
     }
 
-    public async ValueTask DeleteAsync(long id)
+    public async ValueTask<T?> DeleteAsync(long id)
     {
         if (id <= 0)
         {
@@ -144,7 +144,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         await _semaphore.WaitAsync();
         try
         {
-            await RemoveInternalAsync(id);
+            return await RemoveInternalAsync(id);
         }
         finally
         {
@@ -164,7 +164,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
             await _lengthsRepository.WriteAsync(id, bytes.Length);
 
             _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-            await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+            await _fileStream.WriteAsync(bytes);
             await _fileStream.FlushAsync();
 
             return;
@@ -176,7 +176,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         if (previousLength >= bytes.Length || offset.Value + previousLength >= _fileStream.Length)
         {
             _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-            await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+            await _fileStream.WriteAsync(bytes);
             await _fileStream.FlushAsync();
             await _lengthsRepository.WriteAsync(id, bytes.Length);
 
@@ -190,7 +190,7 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         await _lengthsRepository.WriteAsync(id, bytes.Length);
 
         _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-        await _fileStream.WriteAsync(bytes, 0, bytes.Length);
+        await _fileStream.WriteAsync(bytes);
         await _fileStream.FlushAsync();
     }
 
@@ -264,16 +264,32 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         return offset is not null;
     }
 
-    private async ValueTask RemoveInternalAsync(long id)
+    private async ValueTask<T?> RemoveInternalAsync(long id)
     {
         var offset = await _offsetsRepository.ReadAsync(id);
         if (offset is null)
         {
-            return;
+            return default;
+        }
+
+        var length = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
+        _fileStream.Seek(offset.Value, SeekOrigin.Begin);
+        if (_buffer.LongLength < length)
+        {
+            _buffer = new byte[length];
+        }
+
+        var bytes = _buffer;
+        var read = await _fileStream.ReadAsync(bytes, 0, (int)length);
+        if (read != length)
+        {
+            throw new InvalidOperationException();
         }
 
         await _offsetsRepository.RemoveAsync(id);
         await _lengthsRepository.RemoveAsync(id);
+
+        return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
     }
 
     private async ValueTask PurgeInternalAsync()

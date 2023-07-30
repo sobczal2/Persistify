@@ -21,7 +21,7 @@ public class FtsManager : ITypeManager<FtsManagerQuery, FtsManagerHit>, IActOnSt
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask DeleteAsync(int templateId, long documentId)
+    public ValueTask DeleteAsync(int templateId, Document document)
     {
         return ValueTask.CompletedTask;
     }

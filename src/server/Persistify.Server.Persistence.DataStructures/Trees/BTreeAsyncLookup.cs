@@ -88,7 +88,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
 
         if (isRootLeaf)
         {
-            if(_leafNodeBuffer.TryGetValue(rootId, out var leafNode))
+            if (_leafNodeBuffer.TryGetValue(rootId, out var leafNode))
             {
                 return leafNode;
             }
@@ -109,11 +109,25 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         switch (node)
         {
             case BTreeInternalNode<TKey> internalNode:
-
                 _internalNodeBuffer[internalNode.Id] = internalNode;
                 break;
             case BTreeLeafNode<TKey, TItem> leafNode:
                 _leafNodeBuffer[leafNode.Id] = leafNode;
+                break;
+        }
+    }
+
+    private async ValueTask RemoveNodeAsync(IBTreeNode node)
+    {
+        switch (node)
+        {
+            case BTreeInternalNode<TKey> internalNode:
+                _internalNodeBuffer.Remove(internalNode.Id);
+                await _internalNodeStorageProvider.DeleteAsync(internalNode.Id);
+                break;
+            case BTreeLeafNode<TKey, TItem> leafNode:
+                _leafNodeBuffer.Remove(leafNode.Id);
+                await _leafNodeStorageProvider.DeleteAsync(leafNode.Id);
                 break;
         }
     }
@@ -150,16 +164,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         await _semaphoreSlim.WaitAsync();
         try
         {
-            var node = await FindLeafNodeAsync(key);
-
-            if (node.Items.TryGetValue(key, out var items))
-            {
-                // TODO: Sort items more efficiently
-                items.Sort();
-                return items;
-            }
-
-            return Enumerable.Empty<TItem>().ToList();
+            return await GetInternalAsync(key);
         }
         finally
         {
@@ -172,26 +177,21 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         await _semaphoreSlim.WaitAsync();
         try
         {
-            BTreeLeafNode<TKey, TItem>? node = await FindLeafNodeAsync(from);
+            return await GetRangeInternalAsync(from, to);
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
+    }
 
-            var result = new List<TItem>();
-
-            while (node != null)
-            {
-                foreach (var (key, items) in node.Items)
-                {
-                    if (_comparer.Compare(key, from) >= 0 && _comparer.Compare(key, to) <= 0)
-                    {
-                        result.AddRange(items);
-                    }
-                }
-
-                node = await ReadNodeAsync(node.RightSiblingId, true) as BTreeLeafNode<TKey, TItem>;
-            }
-
-            // TODO: Sort items more efficiently
-            result.Sort();
-            return result;
+    public async ValueTask RemoveAsync(TKey key, TItem item)
+    {
+        await _semaphoreSlim.WaitAsync();
+        try
+        {
+            await RemoveInternalAsync(key, item);
+            await FlushBuffersAsync();
         }
         finally
         {
@@ -203,7 +203,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
     {
         var node = await FindLeafNodeAsync(key);
 
-        if(node.Items.TryGetValue(key, out var existingItem))
+        if (node.Items.TryGetValue(key, out var existingItem))
         {
             existingItem.Add(item);
         }
@@ -217,6 +217,71 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         if (node.Items.Count > (2 * _degree - 1))
         {
             await SplitLeafNodeAsync(node);
+        }
+    }
+
+    private async ValueTask<List<TItem>> GetInternalAsync(TKey key)
+    {
+        var node = await FindLeafNodeAsync(key);
+
+        if (node.Items.TryGetValue(key, out var items))
+        {
+            // TODO: Sort items more efficiently
+            items.Sort();
+            return items;
+        }
+
+        return Enumerable.Empty<TItem>().ToList();
+    }
+
+    private async ValueTask<List<TItem>> GetRangeInternalAsync(TKey from, TKey to)
+    {
+        BTreeLeafNode<TKey, TItem>? node = await FindLeafNodeAsync(from);
+
+        var result = new List<TItem>();
+
+        while (node != null)
+        {
+            foreach (var (key, items) in node.Items)
+            {
+                if (_comparer.Compare(key, from) >= 0 && _comparer.Compare(key, to) <= 0)
+                {
+                    result.AddRange(items);
+                }
+            }
+
+            node = await ReadNodeAsync(node.RightSiblingId, true) as BTreeLeafNode<TKey, TItem>;
+        }
+
+        // TODO: Sort items more efficiently
+        result.Sort();
+        return result;
+    }
+
+    private async ValueTask RemoveInternalAsync(TKey key, TItem item)
+    {
+        var node = await FindLeafNodeAsync(key);
+
+        if (node.Items.TryGetValue(key, out var items))
+        {
+            items.Remove(item);
+
+            if (items.Count == 0)
+            {
+                node.Items.Remove(key);
+            }
+        }
+
+        WriteNodeAsync(node);
+
+        if (node.Items.Count < _degree - 1)
+        {
+            if (await TryBorrowFromSiblingAsync(node))
+            {
+                return;
+            }
+
+            await MergeLeafNodeAsync(node);
         }
     }
 
@@ -331,11 +396,9 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
                          throw new ProviderDataCorruptedException();
 
             var newKey = newNode.Items.Keys[0];
-            int index = parent.ChildrenIds.FindIndex(x => x.id == node.Id);
-            if (index == -1)
-            {
-                Debugger.Break();
-            }
+
+            var nodeId = node.Id;
+            int index = parent.ChildrenIds.FindIndex(x => x.id == nodeId);
 
             parent.ChildrenIds.Insert(index + 1, (newNode.Id, true));
             parent.Keys.Insert(index, newKey);
@@ -416,7 +479,8 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
             var parent = await _internalNodeStorageProvider.ReadAsync(node.ParentId) ??
                          throw new ProviderDataCorruptedException();
 
-            int index = parent.ChildrenIds.FindIndex(x => x.id == node.Id);
+            var nodeId = node.Id;
+            int index = parent.ChildrenIds.FindIndex(x => x.id == nodeId);
             parent.ChildrenIds.Insert(index + 1, (newNode.Id, false));
             parent.Keys.Insert(index, middleKey);
 
@@ -430,5 +494,20 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
                 await SplitInternalNodeAsync(parent);
             }
         }
+    }
+
+    private ValueTask<bool> TryBorrowFromSiblingAsync(BTreeLeafNode<TKey, TItem> node)
+    {
+        throw new NotImplementedException();
+    }
+
+    private ValueTask MergeLeafNodeAsync(BTreeLeafNode<TKey, TItem> node)
+    {
+        throw new NotImplementedException();
+    }
+
+    private ValueTask MergeInternalNodeAsync(BTreeInternalNode<TKey> node)
+    {
+        throw new NotImplementedException();
     }
 }

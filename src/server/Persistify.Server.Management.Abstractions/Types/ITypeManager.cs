@@ -8,7 +8,7 @@ namespace Persistify.Server.Management.Abstractions.Types;
 public interface ITypeManager
 {
     ValueTask IndexAsync(int templateId, Document document);
-    ValueTask DeleteAsync(int templateId, long documentId);
+    ValueTask DeleteAsync(int templateId, Document document);
     ValueTask InitializeForTemplate(Template template);
     ValueTask RemoveForTemplate(Template template);
 }

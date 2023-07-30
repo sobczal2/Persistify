@@ -10,33 +10,36 @@ namespace Persistify.Persistence.DataStructures.Tests.Unit;
 
 public class BTreeAsyncLookupTests
 {
-    [ProtoContract]
-    private class TestItem
-    {
-        [ProtoMember(1)]
-        public double Value { get; set; }
-    }
-
-    private readonly BTreeAsyncLookup<double, TestItem> _sut;
+    private readonly BTreeAsyncLookup<double, long> _sut;
 
     public BTreeAsyncLookupTests()
     {
-        _sut = new BTreeAsyncLookup<double, TestItem>(new DictionaryRepository<BTreeInternalNode<double>>(),
-            new DictionaryRepository<BTreeLeafNode<double, TestItem>>(), new DictionaryLinearRepository(), 100,
+        _sut = new BTreeAsyncLookup<double, long>(new DictionaryRepository<BTreeInternalNode<double>>(),
+            new DictionaryRepository<BTreeLeafNode<double, long>>(), new DictionaryLinearRepository(), 100,
             Comparer<double>.Default);
     }
 
     [Fact]
     public async Task AddAsync_ShouldAddItem_WhenItemIsNotPresent()
     {
-        // Arrange
-        var random = new Random(1);
-        var item = new TestItem { Value = 1.0 };
-
-        for (var i = 0; i < 100; i++)
-        {
-            var value = random.NextDouble();
-            await _sut.AddAsync(value, item);
-        }
+        // // Arrange
+        // var items = new List<(double, long)>();
+        // for (var i = 0; i < 10000; i++)
+        // {
+        //     items.Add((Random.Shared.NextDouble(), Random.Shared.Next()));
+        // }
+        //
+        // // Act
+        // foreach (var (key, value) in items)
+        // {
+        //     await _sut.AddAsync(key, value);
+        // }
+        //
+        // foreach (var (key, value) in items)
+        // {
+        //     await _sut.RemoveAsync(key, value);
+        // }
+        //
+        // Console.WriteLine("Done");
     }
 }

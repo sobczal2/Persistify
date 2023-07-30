@@ -35,10 +35,15 @@ public class DictionaryRepository<T> : IRepository<T>
         return ValueTask.FromResult(_data.ContainsKey(id));
     }
 
-    public ValueTask DeleteAsync(long id)
+    public ValueTask<T?> DeleteAsync(long id)
     {
-        _data.Remove(id);
-        return ValueTask.CompletedTask;
+        if (_data.TryGetValue(id, out var value))
+        {
+            _data.Remove(id);
+            return ValueTask.FromResult<T?>(DeepCopy(value));
+        }
+
+        return ValueTask.FromResult(default(T?));
     }
 
     private T DeepCopy(T value)

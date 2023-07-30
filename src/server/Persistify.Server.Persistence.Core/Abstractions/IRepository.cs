@@ -9,5 +9,5 @@ public interface IRepository<T>
     ValueTask<T?> ReadAsync(long id);
     IAsyncEnumerable<T> ReadAllAsync();
     ValueTask<bool> ExistsAsync(long id);
-    ValueTask DeleteAsync(long id);
+    ValueTask<T?> DeleteAsync(long id);
 }
