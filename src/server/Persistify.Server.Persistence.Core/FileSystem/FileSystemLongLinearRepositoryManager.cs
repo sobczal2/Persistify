@@ -8,13 +8,13 @@ using Persistify.Server.Persistence.Core.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
-public class FileSystemLinearRepositoryManager : ILinearRepositoryManager, IDisposable
+public class FileSystemLongLinearRepositoryManager : ILongLinearRepositoryManager, IDisposable
 {
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly StorageSettings _storageSettings;
     private readonly object _lock;
 
-    public FileSystemLinearRepositoryManager(
+    public FileSystemLongLinearRepositoryManager(
         IOptions<StorageSettings> storageSettings
     )
     {
@@ -47,18 +47,18 @@ public class FileSystemLinearRepositoryManager : ILinearRepositoryManager, IDisp
             var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
             var mainFilePath = $"{filePath}.bin";
 
-            _repositories.TryAdd(repositoryName, new FileSystemLinearRepository(mainFilePath));
+            _repositories.TryAdd(repositoryName, new FileSystemLongLinearRepository(mainFilePath));
         }
     }
 
-    public ILinearRepository Get(string repositoryName)
+    public ILongLinearRepository Get(string repositoryName)
     {
         if (!_repositories.TryGetValue(repositoryName, out var repository))
         {
             throw new RepositoryNotFoundException(repositoryName);
         }
 
-        return (ILinearRepository)repository;
+        return (ILongLinearRepository)repository;
     }
 
     public void Delete(string repositoryName)

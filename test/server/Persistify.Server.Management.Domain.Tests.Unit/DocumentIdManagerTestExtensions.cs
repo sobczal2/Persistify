@@ -19,10 +19,10 @@ public static class DocumentIdManagerTestExtensions
         return (SemaphoreSlim)field!.GetValue(documentIdManager)!;
     }
 
-    public static ILinearRepositoryManager GetLinearRepositoryManager(this DocumentIdManager documentIdManager)
+    public static IIntLinearRepositoryManager GetLinearRepositoryManager(this DocumentIdManager documentIdManager)
     {
         var field = typeof(DocumentIdManager).GetField("_linearRepositoryManager", BindingFlags.NonPublic | BindingFlags.Instance);
-        return (ILinearRepositoryManager)field!.GetValue(documentIdManager)!;
+        return (IIntLinearRepositoryManager)field!.GetValue(documentIdManager)!;
     }
 
     public static void SetInitializedTemplates(this DocumentIdManager documentIdManager, ISet<int> initializedTemplates)
@@ -37,15 +37,15 @@ public static class DocumentIdManagerTestExtensions
         field!.SetValue(documentIdManager, semaphoreSlim);
     }
 
-    public static void SetLinearRepositoryManager(this DocumentIdManager documentIdManager, ILinearRepositoryManager linearRepositoryManager)
+    public static void SetLinearRepositoryManager(this DocumentIdManager documentIdManager, IIntLinearRepositoryManager intLinearRepositoryManager)
     {
         var field = typeof(DocumentIdManager).GetField("_linearRepositoryManager", BindingFlags.NonPublic | BindingFlags.Instance);
-        field!.SetValue(documentIdManager, linearRepositoryManager);
+        field!.SetValue(documentIdManager, intLinearRepositoryManager);
     }
 
-    public static void SetLinearRepository(this DocumentIdManager documentIdManager, ILinearRepository linearRepository)
+    public static void SetLinearRepository(this DocumentIdManager documentIdManager, IIntLinearRepository intLinearRepository)
     {
         var field = typeof(DocumentIdManager).GetField("_linearRepository", BindingFlags.NonPublic | BindingFlags.Instance);
-        field!.SetValue(documentIdManager, linearRepository);
+        field!.SetValue(documentIdManager, intLinearRepository);
     }
 }

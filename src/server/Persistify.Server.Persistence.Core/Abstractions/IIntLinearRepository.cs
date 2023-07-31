@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Persistify.Server.Persistence.Core.Abstractions;
+
+public interface IIntLinearRepository
+{
+    ValueTask<int?> ReadAsync(int id, bool useLock = true);
+    ValueTask<IDictionary<int, int>> ReadAllAsync(bool useLock = true);
+    ValueTask WriteAsync(int id, int value, bool useLock = true);
+    ValueTask DeleteAsync(int id, bool useLock = true);
+    void ClearAsync(bool useLock = true);
+}

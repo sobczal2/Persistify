@@ -15,17 +15,17 @@ namespace Persistify.Server.Management.Domain;
 [StartupPriority(5)]
 public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
 {
-    private readonly ILinearRepositoryManager _linearRepositoryManager;
+    private readonly IIntLinearRepositoryManager _intLinearRepositoryManager;
     private const string DocumentIdKey = "DocumentId/main";
     private readonly SemaphoreSlim _semaphoreSlim;
     private readonly ISet<int> _initializedTemplates;
 
     public DocumentIdManager(
-        ILinearRepositoryManager linearRepositoryManager
+        IIntLinearRepositoryManager intLinearRepositoryManager
     )
     {
-        _linearRepositoryManager = linearRepositoryManager;
-        linearRepositoryManager.Create(DocumentIdKey);
+        _intLinearRepositoryManager = intLinearRepositoryManager;
+        intLinearRepositoryManager.Create(DocumentIdKey);
         _semaphoreSlim = new SemaphoreSlim(1, 1);
         _initializedTemplates = new HashSet<int>();
     }
@@ -40,7 +40,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
                 throw new TemplateNotInitializedException();
             }
 
-            var repository = _linearRepositoryManager.Get(DocumentIdKey);
+            var repository = _intLinearRepositoryManager.Get(DocumentIdKey);
             var currentId = await repository.ReadAsync(templateId);
 
             if (currentId is null)
@@ -68,7 +68,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
                 throw new TemplateNotInitializedException();
             }
 
-            var currentId = await _linearRepositoryManager.Get(DocumentIdKey).ReadAsync(templateId);
+            var currentId = await _intLinearRepositoryManager.Get(DocumentIdKey).ReadAsync(templateId);
 
             if(currentId is null)
             {
@@ -93,7 +93,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
                 throw new TemplateAlreadyInitializedException();
             }
 
-            await _linearRepositoryManager.Get(DocumentIdKey).WriteAsync(templateId, 0);
+            await _intLinearRepositoryManager.Get(DocumentIdKey).WriteAsync(templateId, 0);
             _initializedTemplates.Add(templateId);
         }
         finally
@@ -112,7 +112,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
                 throw new TemplateNotInitializedException();
             }
 
-            await _linearRepositoryManager.Get(DocumentIdKey).RemoveAsync(templateId);
+            await _intLinearRepositoryManager.Get(DocumentIdKey).RemoveAsync(templateId);
             _initializedTemplates.Remove(templateId);
         }
         finally
@@ -152,7 +152,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
         await _semaphoreSlim.WaitAsync();
         try
         {
-            var kv = await _linearRepositoryManager.Get(DocumentIdKey).ReadAllAsync();
+            var kv = await _intLinearRepositoryManager.Get(DocumentIdKey).ReadAllAsync();
             foreach(var (templateId, _) in kv)
             {
                 if(templateId < 1)

@@ -13,7 +13,7 @@ namespace Persistify.Server.Persistence.Core.FileSystem;
 
 public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, IDisposable
 {
-    private readonly ILinearRepositoryManager _linearRepositoryManager;
+    private readonly IIntLinearRepositoryManager _intLinearRepositoryManager;
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly ISerializer _serializer;
     private readonly StorageSettings _storageSettings;
@@ -22,12 +22,12 @@ public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, 
     public FileSystemRepositoryManager(
         IOptions<StorageSettings> storageSettings,
         ISerializer serializer,
-        ILinearRepositoryManager linearRepositoryManager
+        IIntLinearRepositoryManager intLinearRepositoryManager
     )
     {
         _storageSettings = storageSettings.Value;
         _serializer = serializer;
-        _linearRepositoryManager = linearRepositoryManager;
+        _intLinearRepositoryManager = intLinearRepositoryManager;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
         _lock = new object();
     }
@@ -71,10 +71,10 @@ public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, 
             var offsetsRepositoryName = $"{repositoryName}.offsets";
             var lengthsRepositoryName = $"{repositoryName}.lengths";
 
-            _linearRepositoryManager.Create(offsetsRepositoryName);
-            _linearRepositoryManager.Create(lengthsRepositoryName);
-            var offsetsRepository = _linearRepositoryManager.Get(offsetsRepositoryName);
-            var lengthsRepository = _linearRepositoryManager.Get(lengthsRepositoryName);
+            _intLinearRepositoryManager.Create(offsetsRepositoryName);
+            _intLinearRepositoryManager.Create(lengthsRepositoryName);
+            var offsetsRepository = _intLinearRepositoryManager.Get(offsetsRepositoryName);
+            var lengthsRepository = _intLinearRepositoryManager.Get(lengthsRepositoryName);
 
             if(!_repositories.TryAdd(repositoryName, new FileSystemRepository<T>(mainFilePath, offsetsRepository, lengthsRepository, _serializer)))
             {

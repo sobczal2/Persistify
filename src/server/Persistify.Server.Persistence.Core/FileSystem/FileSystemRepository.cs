@@ -4,43 +4,255 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.Persistence.Core.Abstractions;
+using Persistify.Server.Persistence.Core.Exceptions;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
 public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
+where T : class
 {
-    private readonly ILinearRepository _lengthsRepository;
     private readonly string _mainFilePath;
-    private readonly ILinearRepository _offsetsRepository;
-    private readonly SemaphoreSlim _semaphore;
+    private readonly ILongLinearRepository _longLinearRepository;
+    private readonly Stream _stream;
     private readonly ISerializer _serializer;
-    private FileStream _fileStream;
-
+    private readonly SemaphoreSlim _semaphore;
+    private const int SectorSize = 1024;
     private byte[] _buffer;
 
     public FileSystemRepository(
         string mainFilePath,
-        ILinearRepository offsetsRepository,
-        ILinearRepository lengthsRepository,
+        ILongLinearRepository longLinearRepository,
         ISerializer serializer
     )
     {
         _mainFilePath = mainFilePath;
-        _offsetsRepository = offsetsRepository;
-        _lengthsRepository = lengthsRepository;
+        _longLinearRepository = longLinearRepository;
+        _stream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         _serializer = serializer;
-        _fileStream = new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
         _semaphore = new SemaphoreSlim(1, 1);
-        _buffer = new byte[1024];
+        _buffer = new byte[SectorSize];
+    }
+
+    private async ValueTask<(int offset, int length)?> GetOffsetAndLength(int id)
+    {
+        var combined = await _longLinearRepository.ReadAsync(id, false);
+        if (combined == null)
+        {
+            return null;
+        }
+
+        return ConvertToOffsetAndLength(combined.Value);
+    }
+    private async ValueTask SetOffsetAndLength(int id, int offset, int length)
+    {
+        var combined = ConvertToCombined(offset, length);
+        await _longLinearRepository.WriteAsync(id, combined, false);
+    }
+
+    private (int offset, int length) ConvertToOffsetAndLength(long combined)
+    {
+        var offset = (int)(combined >> 32);
+        var length = (int)(combined & 0xFFFFFFFF);
+        return (offset, length);
+    }
+
+    private long ConvertToCombined(int offset, int length)
+    {
+        var combined = ((long)offset << 32) | (uint)length;
+        return combined;
+    }
+
+    private long OffsetToBytes(int offset)
+    {
+        return offset * SectorSize;
+    }
+
+    private int BytesToOffset(long bytes)
+    {
+        return Math.DivRem((int)bytes, SectorSize, out var remainder) + (remainder > 0 ? 1 : 0);
+    }
+
+    private void EnsureBufferCapacity(int length)
+    {
+        if (_buffer.Length < length)
+        {
+            _buffer = new byte[length * 2];
+        }
+    }
+
+    private int CalculateSectorCount(int length)
+    {
+        return Math.DivRem(length, SectorSize, out var remainder) + (remainder > 0 ? 1 : 0);
+    }
+
+    public async ValueTask<T?> ReadAsync(int id)
+    {
+        if (id < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
+        }
+
+        await _semaphore.WaitAsync();
+        try
+        {
+            var offsetAndLength = await GetOffsetAndLength(id);
+            if (offsetAndLength == null)
+            {
+                return null;
+            }
+
+            var (offset, length) = offsetAndLength.Value;
+            var byteOffset = OffsetToBytes(offset);
+            _stream.Seek(byteOffset, SeekOrigin.Begin);
+            EnsureBufferCapacity(length);
+            var read = await _stream.ReadAsync(_buffer, 0, length);
+            if (read != length)
+            {
+                throw new RepositoryCorruptedException();
+            }
+
+            return _serializer.Deserialize<T>(_buffer.AsMemory()[..length]);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public async ValueTask<IDictionary<int, T>> ReadAllAsync()
+    {
+        await _semaphore.WaitAsync();
+        try
+        {
+            var result = new Dictionary<int, T>();
+            var ids = await _longLinearRepository.ReadAllAsync(false);
+
+            foreach (var (id, combined) in ids)
+            {
+                var (offset, length) = ConvertToOffsetAndLength(combined);
+                var byteOffset = OffsetToBytes(offset);
+                _stream.Seek(byteOffset, SeekOrigin.Begin);
+                EnsureBufferCapacity(length);
+                var read = await _stream.ReadAsync(_buffer, 0, length);
+                if (read != length)
+                {
+                    throw new RepositoryCorruptedException();
+                }
+
+                result.Add(id, _serializer.Deserialize<T>(_buffer.AsMemory()[..length]));
+            }
+
+            return result;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public async ValueTask WriteAsync(int id, T value)
+    {
+        if(id < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
+        }
+        await _semaphore.WaitAsync();
+        try
+        {
+            var currentOffsetAndLength = await GetOffsetAndLength(id);
+            var serialized = _serializer.Serialize(value);
+            if (currentOffsetAndLength == null)
+            {
+                await WriteAtEnd(id, serialized);
+            }
+            else
+            {
+                var (currentOffset, currentLength) = currentOffsetAndLength.Value;
+                if (CalculateSectorCount(currentLength) >= CalculateSectorCount(serialized.Length))
+                {
+                    await WriteAtOffset(id, currentOffset, serialized);
+                }
+                else
+                {
+                    await WriteAtEnd(id, serialized);
+                }
+            }
+        } catch
+        {
+            _semaphore.Release();
+            throw;
+        }
+    }
+
+    private async ValueTask WriteAtEnd(int id, ReadOnlyMemory<byte> serialized)
+    {
+        _stream.Seek(0, SeekOrigin.End);
+        var offset = BytesToOffset(_stream.Position);
+        var length = serialized.Length;
+        await SetOffsetAndLength(id, offset, length);
+        await _stream.WriteAsync(serialized);
+        await _stream.FlushAsync();
+    }
+
+    private async ValueTask WriteAtOffset(int id, int offset, ReadOnlyMemory<byte> serialized)
+    {
+        var byteOffset = OffsetToBytes(offset);
+        _stream.Seek(byteOffset, SeekOrigin.Begin);
+        await SetOffsetAndLength(id, offset, serialized.Length);
+        await _stream.WriteAsync(serialized);
+        await _stream.FlushAsync();
+    }
+
+    public async ValueTask<bool> DeleteAsync(int id)
+    {
+        if (id < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id));
+        }
+
+        await _semaphore.WaitAsync();
+        try
+        {
+            var offsetAndLength = await GetOffsetAndLength(id);
+            if (offsetAndLength == null)
+            {
+                return false;
+            }
+            var (offset, length) = offsetAndLength.Value;
+            var byteOffset = OffsetToBytes(offset);
+            if(byteOffset + length == _stream.Length)
+            {
+                _stream.SetLength(byteOffset);
+            }
+            await _longLinearRepository.DeleteAsync(id, false);
+            return true;
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
+    }
+
+    public void ClearAsync()
+    {
+        _semaphore.Wait();
+        try
+        {
+            _stream.SetLength(0);
+            _longLinearRepository.ClearAsync(false);
+        }
+        finally
+        {
+            _semaphore.Release();
+        }
     }
 
     public void Dispose()
     {
-        _fileStream.Dispose();
         _semaphore.Dispose();
-
-        if(File.Exists(_mainFilePath) && new FileInfo(_mainFilePath).Length == 0)
+        _stream.Dispose();
+        if (File.Exists(_mainFilePath) && new FileInfo(_mainFilePath).Length == 0)
         {
             File.Delete(_mainFilePath);
         }
@@ -48,303 +260,6 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
 
     public async ValueTask PurgeAsync()
     {
-        await _semaphore.WaitAsync();
-        try
-        {
-            await PurgeInternalAsync();
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public async ValueTask WriteAsync(long id, T value)
-    {
-        if (id <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(id));
-        }
-
-        await _semaphore.WaitAsync();
-        try
-        {
-            await WriteInternalAsync(id, value);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public async ValueTask<T?> ReadAsync(long id)
-    {
-        if (id <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(id));
-        }
-
-        await _semaphore.WaitAsync();
-        try
-        {
-            return await ReadInternalAsync(id);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public async ValueTask<IEnumerable<T>> ReadAllAsync()
-    {
-        await _semaphore.WaitAsync();
-        try
-        {
-            return await ReadAllInternalAsync();
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public async ValueTask<long> CountAsync()
-    {
-        return await _offsetsRepository.CountAsync();
-    }
-
-    public async ValueTask<bool> ExistsAsync(long id)
-    {
-        if (id <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(id));
-        }
-
-        await _semaphore.WaitAsync();
-        try
-        {
-            return await ExistsInternalAsync(id);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    public async ValueTask<T?> DeleteAsync(long id)
-    {
-        if (id <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(id));
-        }
-
-        await _semaphore.WaitAsync();
-        try
-        {
-            return await RemoveInternalAsync(id);
-        }
-        finally
-        {
-            _semaphore.Release();
-        }
-    }
-
-    private async ValueTask WriteInternalAsync(long id, T value)
-    {
-        var offset = await _offsetsRepository.ReadAsync(id);
-        var bytes = _serializer.Serialize(value);
-
-        if (offset is null)
-        {
-            offset = _fileStream.Length;
-            await _offsetsRepository.WriteAsync(id, offset.Value);
-            await _lengthsRepository.WriteAsync(id, bytes.Length);
-
-            _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-            await _fileStream.WriteAsync(bytes);
-            await _fileStream.FlushAsync();
-
-            return;
-        }
-
-        var previousLength = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
-
-        // previous length is greater or equal to current length
-        if (previousLength >= bytes.Length || offset.Value + previousLength >= _fileStream.Length)
-        {
-            _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-            await _fileStream.WriteAsync(bytes);
-            await _fileStream.FlushAsync();
-            await _lengthsRepository.WriteAsync(id, bytes.Length);
-
-            return;
-        }
-
-        // previous length is less than current length so we need to write to the end of the file
-        _fileStream.Seek(0, SeekOrigin.End);
-        offset = _fileStream.Position;
-        await _offsetsRepository.WriteAsync(id, offset.Value);
-        await _lengthsRepository.WriteAsync(id, bytes.Length);
-
-        _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-        await _fileStream.WriteAsync(bytes);
-        await _fileStream.FlushAsync();
-    }
-
-    private async ValueTask<T?> ReadInternalAsync(long id)
-    {
-        var offset = await _offsetsRepository.ReadAsync(id);
-        if (offset is null)
-        {
-            return default;
-        }
-
-        var length = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
-        _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-        if (_buffer.LongLength < length)
-        {
-            _buffer = new byte[length];
-        }
-
-        var bytes = _buffer;
-        var read = await _fileStream.ReadAsync(bytes, 0, (int)length);
-        if (read != length)
-        {
-            throw new InvalidOperationException();
-        }
-
-        return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
-    }
-
-    private async ValueTask<IEnumerable<T>> ReadAllInternalAsync()
-    {
-        var offsets = await _offsetsRepository.ReadAllAsync();
-        var lengths = await _lengthsRepository.ReadAllAsync();
-
-        var offsetEnumerator = offsets.GetEnumerator();
-        var lengthEnumerator = lengths.GetEnumerator();
-
-        var result = new List<T>();
-
-        try
-        {
-            while (offsetEnumerator.MoveNext() && lengthEnumerator.MoveNext())
-            {
-                var offset = offsetEnumerator.Current;
-                var length = lengthEnumerator.Current;
-
-                _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-                if (_buffer.LongLength < length.Value)
-                {
-                    _buffer = new byte[length.Value];
-                }
-
-                var bytes = _buffer;
-                var read = await _fileStream.ReadAsync(bytes, 0, (int)length.Value);
-                if (read != length.Value)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                result.Add(_serializer.Deserialize<T>(bytes.AsMemory()[..read]));
-            }
-
-            return result;
-        }
-        finally
-        {
-            offsetEnumerator.Dispose();
-            lengthEnumerator.Dispose();
-        }
-    }
-
-
-    private async ValueTask<bool> ExistsInternalAsync(long id)
-    {
-        var offset = await _offsetsRepository.ReadAsync(id);
-        return offset is not null;
-    }
-
-    private async ValueTask<T?> RemoveInternalAsync(long id)
-    {
-        var offset = await _offsetsRepository.ReadAsync(id);
-        if (offset is null)
-        {
-            return default;
-        }
-
-        var length = await _lengthsRepository.ReadAsync(id) ?? throw new InvalidOperationException();
-        _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-        if (_buffer.LongLength < length)
-        {
-            _buffer = new byte[length];
-        }
-
-        var bytes = _buffer;
-        var read = await _fileStream.ReadAsync(bytes, 0, (int)length);
-        if (read != length)
-        {
-            throw new InvalidOperationException();
-        }
-
-        await _offsetsRepository.RemoveAsync(id);
-        await _lengthsRepository.RemoveAsync(id);
-
-        return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
-    }
-
-    private async ValueTask PurgeInternalAsync()
-    {
-        var offsets = await _offsetsRepository.ReadAllAsync();
-        var lengths = await _lengthsRepository.ReadAllAsync();
-
-        var offsetEnumerator = offsets.GetEnumerator();
-        var lengthEnumerator = lengths.GetEnumerator();
-
-        var tempFilePath = _mainFilePath + ".tmp";
-        await using var tempFileStream =
-            new FileStream(tempFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
-
-        try
-        {
-            while (offsetEnumerator.MoveNext() && lengthEnumerator.MoveNext())
-            {
-                var offset = offsetEnumerator.Current;
-                var length = lengthEnumerator.Current;
-
-                _fileStream.Seek(offset.Value, SeekOrigin.Begin);
-                var bytes = new byte[length.Value];
-                var read = await _fileStream.ReadAsync(bytes, 0, (int)length.Value);
-                if (read != length.Value)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                await tempFileStream.WriteAsync(bytes, 0, read);
-
-                await _offsetsRepository.WriteAsync(offset.Id, tempFileStream.Position - read);
-            }
-        }
-        catch (Exception)
-        {
-            tempFileStream.Close();
-            File.Delete(tempFilePath);
-            throw;
-        }
-        finally
-        {
-            offsetEnumerator.Dispose();
-            lengthEnumerator.Dispose();
-        }
-
-
-        await tempFileStream.FlushAsync();
-        tempFileStream.Close();
-
-        _fileStream.Close();
-        File.Delete(_mainFilePath);
-        File.Move(tempFilePath, _mainFilePath);
-
-        _fileStream = new FileStream(_mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        throw new NotImplementedException();
     }
 }

@@ -14,7 +14,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
     where TKey : notnull
 {
     private readonly IRepository<BTreeInternalNode<TKey>> _internalNodeStorageProvider;
-    private readonly ILinearRepository _linearRepository;
+    private readonly IIntLinearRepository _intLinearRepository;
     private readonly int _degree;
     private readonly IRepository<BTreeLeafNode<TKey, TItem>> _leafNodeStorageProvider;
     private const long NullId = 0;
@@ -30,14 +30,14 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
     public BTreeAsyncLookup(
         IRepository<BTreeInternalNode<TKey>> internalNodeStorageProvider,
         IRepository<BTreeLeafNode<TKey, TItem>> leafNodeStorageProvider,
-        ILinearRepository linearRepository,
+        IIntLinearRepository intLinearRepository,
         int degree,
         IComparer<TKey> comparer
     )
     {
         _leafNodeStorageProvider = leafNodeStorageProvider;
         _internalNodeStorageProvider = internalNodeStorageProvider;
-        _linearRepository = linearRepository;
+        _intLinearRepository = intLinearRepository;
         _degree = degree;
         _rootId = NullId;
         _isRootLeaf = true;
@@ -51,32 +51,32 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
 
     public async ValueTask InitializeAsync()
     {
-        _rootId = await _linearRepository.ReadAsync(1) ?? NullId;
-        _isRootLeaf = (await _linearRepository.ReadAsync(2) ?? 1) == 1;
-        _maxInternalNodeId = await _linearRepository.ReadAsync(3) ?? NullId;
-        _maxLeafNodeId = await _linearRepository.ReadAsync(4) ?? NullId;
+        _rootId = await _intLinearRepository.ReadAsync(1) ?? NullId;
+        _isRootLeaf = (await _intLinearRepository.ReadAsync(2) ?? 1) == 1;
+        _maxInternalNodeId = await _intLinearRepository.ReadAsync(3) ?? NullId;
+        _maxLeafNodeId = await _intLinearRepository.ReadAsync(4) ?? NullId;
     }
 
     private async ValueTask IncrementMaxInternalNodeIdAsync()
     {
         _maxInternalNodeId++;
-        await _linearRepository.WriteAsync(3, _maxInternalNodeId);
+        await _intLinearRepository.WriteAsync(3, _maxInternalNodeId);
     }
 
     private async ValueTask IncrementMaxLeafNodeIdAsync()
     {
         _maxLeafNodeId++;
-        await _linearRepository.WriteAsync(4, _maxLeafNodeId);
+        await _intLinearRepository.WriteAsync(4, _maxLeafNodeId);
     }
 
     private async ValueTask WriteRootIdAsync()
     {
-        await _linearRepository.WriteAsync(1, _rootId);
+        await _intLinearRepository.WriteAsync(1, _rootId);
     }
 
     private async ValueTask WriteIsRootLeafAsync()
     {
-        await _linearRepository.WriteAsync(2, _isRootLeaf ? 1 : 0);
+        await _intLinearRepository.WriteAsync(2, _isRootLeaf ? 1 : 0);
     }
 
     private async ValueTask<IBTreeNode?> ReadNodeAsync(long rootId, bool isRootLeaf)

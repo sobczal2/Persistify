@@ -15,14 +15,14 @@ namespace Persistify.Server.Management.Domain.Tests.Unit;
 public class DocumentIdManagerTests
 {
     private readonly DocumentIdManager _sut;
-    private readonly ILinearRepositoryManager _linearRepositoryManager;
+    private readonly IIntLinearRepositoryManager _intLinearRepositoryManager;
     private readonly ISet<int> _initializedTemplates;
 
     public DocumentIdManagerTests()
     {
-        _linearRepositoryManager = Substitute.For<ILinearRepositoryManager>();
+        _intLinearRepositoryManager = Substitute.For<IIntLinearRepositoryManager>();
         _initializedTemplates = Substitute.For<ISet<int>>();
-        _sut = new DocumentIdManager(_linearRepositoryManager);
+        _sut = new DocumentIdManager(_intLinearRepositoryManager);
         _sut.SetInitializedTemplates(_initializedTemplates);
     }
 
@@ -37,7 +37,7 @@ public class DocumentIdManagerTests
 
         // Assert
         await action.Should().ThrowAsync<TemplateNotInitializedException>();
-        _linearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
+        _intLinearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
     }
 
     [Fact]
@@ -45,9 +45,9 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAsync(Arg.Any<long>()).Returns(ValueTask.FromResult<long?>(null));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var action = new Func<Task>(async () => await _sut.GetNextIdAsync(1));
@@ -63,9 +63,9 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAsync(Arg.Any<long>()).Returns(ValueTask.FromResult<long?>(1));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var result = await _sut.GetNextIdAsync(1);
@@ -81,9 +81,9 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAsync(Arg.Any<long>()).Returns(ValueTask.FromResult<long?>(0));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var result = await _sut.GetNextIdAsync(1);
@@ -105,7 +105,7 @@ public class DocumentIdManagerTests
 
         // Assert
         await action.Should().ThrowAsync<TemplateNotInitializedException>();
-        _linearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
+        _intLinearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
     }
 
     [Fact]
@@ -113,9 +113,9 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAsync(Arg.Any<long>()).Returns(ValueTask.FromResult<long?>(null));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var action = new Func<Task>(async () => await _sut.GetCurrentIdAsync(1));
@@ -130,9 +130,9 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAsync(Arg.Any<long>()).Returns(ValueTask.FromResult<long?>(1));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var result = await _sut.GetCurrentIdAsync(1);
@@ -147,9 +147,9 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAsync(Arg.Any<long>()).Returns(ValueTask.FromResult<long?>(0));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var result = await _sut.GetCurrentIdAsync(1);
@@ -171,7 +171,7 @@ public class DocumentIdManagerTests
 
         // Assert
         await action.Should().ThrowAsync<TemplateAlreadyInitializedException>();
-        _linearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
+        _intLinearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
     }
 
     [Fact]
@@ -180,8 +180,8 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(false);
-        var repository = Substitute.For<ILinearRepository>();
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        var repository = Substitute.For<IIntLinearRepository>();
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         await _sut.InitializeForTemplateAsync(1);
@@ -202,8 +202,8 @@ public class DocumentIdManagerTests
 
         // Assert
         await action.Should().ThrowAsync<TemplateNotInitializedException>();
-        _linearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
-        _linearRepositoryManager.DidNotReceive().Delete(Arg.Any<string>());
+        _intLinearRepositoryManager.DidNotReceive().Get(Arg.Any<string>());
+        _intLinearRepositoryManager.DidNotReceive().Delete(Arg.Any<string>());
     }
 
     [Fact]
@@ -212,8 +212,8 @@ public class DocumentIdManagerTests
     {
         // Arrange
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
-        var repository = Substitute.For<ILinearRepository>();
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        var repository = Substitute.For<IIntLinearRepository>();
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         await _sut.RemoveForTemplateAsync(1);
@@ -278,44 +278,44 @@ public class DocumentIdManagerTests
     public async Task PerformStartupActionAsync_ThrowsManagerInternalException_WhenTemplateIdIsLessThanOne()
     {
         // Arrange
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAllAsync()
             .Returns(ValueTask.FromResult<IEnumerable<(long, long)>>(new List<(long, long)> { (0, 0) }));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var action = new Func<Task>(async () => await _sut.PerformStartupActionAsync());
 
         // Assert
         await action.Should().ThrowAsync<ManagerInternalException>();
-        _linearRepositoryManager.Received(1).Get(Arg.Any<string>());
+        _intLinearRepositoryManager.Received(1).Get(Arg.Any<string>());
     }
 
     [Fact]
     public async Task PerformStartupActionAsync_ThrowsManagerInternalException_WhenTemplateIdIsGreaterThanMaxInt()
     {
         // Arrange
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAllAsync()
             .Returns(ValueTask.FromResult<IEnumerable<(long, long)>>(new List<(long, long)> { ((long)int.MaxValue + 1, 0) }));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
 
         // Act
         var action = new Func<Task>(async () => await _sut.PerformStartupActionAsync());
 
         // Assert
         await action.Should().ThrowAsync<ManagerInternalException>();
-        _linearRepositoryManager.Received(1).Get(Arg.Any<string>());
+        _intLinearRepositoryManager.Received(1).Get(Arg.Any<string>());
     }
 
     [Fact]
     public async Task PerformStartupActionAsync_ThrowsManagerInternalException_WhenTemplateAlreadyInitialized()
     {
         // Arrange
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAllAsync()
             .Returns(ValueTask.FromResult<IEnumerable<(long, long)>>(new List<(long, long)> { (1, 0) }));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(true);
 
         // Act
@@ -323,17 +323,17 @@ public class DocumentIdManagerTests
 
         // Assert
         await action.Should().ThrowAsync<ManagerInternalException>();
-        _linearRepositoryManager.Received(1).Get(Arg.Any<string>());
+        _intLinearRepositoryManager.Received(1).Get(Arg.Any<string>());
     }
 
     [Fact]
     public async Task PerformStartupActionAsync_AddsTemplateIdToInitializedTemplates_WhenTemplateIsNotInitialized()
     {
         // Arrange
-        var repository = Substitute.For<ILinearRepository>();
+        var repository = Substitute.For<IIntLinearRepository>();
         repository.ReadAllAsync()
             .Returns(ValueTask.FromResult<IEnumerable<(long, long)>>(new List<(long, long)> { (1, 0) }));
-        _linearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
+        _intLinearRepositoryManager.Get(Arg.Any<string>()).Returns(repository);
         _initializedTemplates.Contains(Arg.Any<int>()).Returns(false);
 
         // Act

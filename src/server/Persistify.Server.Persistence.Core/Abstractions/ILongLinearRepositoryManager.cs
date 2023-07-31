@@ -1,8 +1,8 @@
 ﻿namespace Persistify.Server.Persistence.Core.Abstractions;
 
-public interface ILinearRepositoryManager
+public interface ILongLinearRepositoryManager
 {
     void Create(string repositoryName);
-    ILinearRepository Get(string repositoryName);
+    ILongLinearRepository Get(string repositoryName);
     void Delete(string repositoryName);
 }

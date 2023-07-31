@@ -5,10 +5,10 @@ using Persistify.Server.Persistence.Core.Abstractions;
 
 namespace Persistify.Server.Persistence.Core.Tests.Unit;
 
-public class LinearRepositoryFake : ILinearRepository
+public class IntLinearRepositoryFake : IIntLinearRepository
 {
     private readonly Dictionary<long, long> _data;
-    public LinearRepositoryFake()
+    public IntLinearRepositoryFake()
     {
         _data = new Dictionary<long, long>();
     }

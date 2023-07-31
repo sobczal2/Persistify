@@ -22,7 +22,7 @@ public static class PersistenceCoreExtensions
                 services.AddSingleton<FileSystemRepositoryManager>();
                 services.AddSingleton<IRepositoryManager>(sp => sp.GetRequiredService<FileSystemRepositoryManager>());
                 services.AddSingleton<IActRecurrently>(sp => sp.GetRequiredService<FileSystemRepositoryManager>());
-                services.AddSingleton<ILinearRepositoryManager, FileSystemLinearRepositoryManager>();
+                services.AddSingleton<IIntLinearRepositoryManager, FileSystemIntLinearRepositoryManager>();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

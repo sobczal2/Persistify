@@ -2,8 +2,8 @@
 
 public interface IRepositoryManager
 {
-    void Create<T>(string repositoryName);
-    IRepository<T> Get<T>(string repositoryName);
-    bool Exists<T>(string repositoryName);
-    void Delete<T>(string repositoryName);
+    void Create<T>(string repositoryName) where T : class;
+    IRepository<T> Get<T>(string repositoryName) where T : class;
+    bool Exists<T>(string repositoryName) where T : class;
+    void Delete<T>(string repositoryName) where T : class;
 }

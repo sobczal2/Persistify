@@ -15,7 +15,7 @@ public class BTreeAsyncLookupTests
     public BTreeAsyncLookupTests()
     {
         _sut = new BTreeAsyncLookup<double, long>(new RepositoryFake<BTreeInternalNode<double>>(),
-            new RepositoryFake<BTreeLeafNode<double, long>>(), new LinearRepositoryFake(), 100,
+            new RepositoryFake<BTreeLeafNode<double, long>>(), new IntLinearRepositoryFake(), 100,
             Comparer<double>.Default);
     }
 

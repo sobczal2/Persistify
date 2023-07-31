@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 namespace Persistify.Server.Persistence.Core.Abstractions;
 
 public interface IRepository<T>
+    where T : class
 {
-    ValueTask WriteAsync(long id, T value);
-    ValueTask<T?> ReadAsync(long id);
-    ValueTask<IEnumerable<T>> ReadAllAsync();
-    ValueTask<bool> ExistsAsync(long id);
-    ValueTask<T?> DeleteAsync(long id);
+    ValueTask<T?> ReadAsync(int id);
+    ValueTask<IDictionary<int, T>> ReadAllAsync();
+    ValueTask WriteAsync(int id, T value);
+    ValueTask<bool> DeleteAsync(int id);
+    void ClearAsync();
 }

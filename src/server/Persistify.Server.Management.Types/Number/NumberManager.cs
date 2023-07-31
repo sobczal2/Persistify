@@ -22,20 +22,20 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
 {
     private readonly ITemplateManager _templateManager;
     private readonly IRepositoryManager _repositoryManager;
-    private readonly ILinearRepositoryManager _linearRepositoryManager;
+    private readonly IIntLinearRepositoryManager _intLinearRepositoryManager;
     private readonly DataStructuresSettings _dataStructuresSettings;
     private readonly ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, long>> _lookups;
 
     public NumberManager(
         ITemplateManager templateManager,
         IRepositoryManager repositoryManager,
-        ILinearRepositoryManager linearRepositoryManager,
+        IIntLinearRepositoryManager intLinearRepositoryManager,
         IOptions<DataStructuresSettings> dataStructuresSettingsOptions
     )
     {
         _templateManager = templateManager;
         _repositoryManager = repositoryManager;
-        _linearRepositoryManager = linearRepositoryManager;
+        _intLinearRepositoryManager = intLinearRepositoryManager;
         _dataStructuresSettings = dataStructuresSettingsOptions.Value;
         _lookups = new ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, long>>();
     }
@@ -104,7 +104,7 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
                 "BTreeInternalNode"));
             _repositoryManager.Create<BTreeLeafNode<double, long>>(GetRepositoryName(template.Id, numberField.Name,
                 "BTreeLeafNode"));
-            _linearRepositoryManager.Create(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
+            _intLinearRepositoryManager.Create(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
             var internalNodeRepository =
                 _repositoryManager.Get<BTreeInternalNode<double>>(GetRepositoryName(template.Id, numberField.Name,
                     "BTreeInternalNode"));
@@ -112,7 +112,7 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
                 _repositoryManager.Get<BTreeLeafNode<double, long>>(GetRepositoryName(template.Id, numberField.Name,
                     "BTreeLeafNode"));
             var linearRepository =
-                _linearRepositoryManager.Get(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
+                _intLinearRepositoryManager.Get(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
             var tree = (IAsyncLookup<double, long>)new BTreeAsyncLookup<double, long>(internalNodeRepository,
                 leafNodeRepository,
                 linearRepository, _dataStructuresSettings.BTreeDegree, Comparer<double>.Default);
@@ -130,7 +130,7 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
                 "BTreeInternalNode"));
             _repositoryManager.Delete<BTreeLeafNode<double, long>>(GetRepositoryName(template.Id, numberField.Name,
                 "BTreeLeafNode"));
-            _linearRepositoryManager.Delete(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
+            _intLinearRepositoryManager.Delete(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
             var identifier = new TemplateFieldIdentifier(template.Id, numberField.Name);
             _lookups.TryRemove(identifier, out _);
         }
