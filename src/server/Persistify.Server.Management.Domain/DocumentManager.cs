@@ -34,7 +34,7 @@ public class DocumentManager : IDocumentManager
             {
                 ValidateDocumentAgainstTemplate(template, doc);
 
-                doc.Id = await _documentIdManager.GetNextId(template.Id);
+                doc.Id = await _documentIdManager.GetNextIdAsync(template.Id);
                 await repository.WriteAsync(doc.Id, doc);
 
                 foreach (var typeManager in _typeManagers)

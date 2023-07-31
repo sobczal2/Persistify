@@ -3,12 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Persistence.Core.Tests.Unit;
+namespace Persistify.Server.Persistence.Core.Tests.Unit;
 
-public class DictionaryLinearRepository : ILinearRepository
+public class LinearRepositoryFake : ILinearRepository
 {
     private readonly Dictionary<long, long> _data;
-    public DictionaryLinearRepository()
+    public LinearRepositoryFake()
     {
         _data = new Dictionary<long, long>();
     }

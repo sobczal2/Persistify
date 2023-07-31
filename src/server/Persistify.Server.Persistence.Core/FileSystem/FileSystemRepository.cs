@@ -95,15 +95,12 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         }
     }
 
-    public async IAsyncEnumerable<T> ReadAllAsync()
+    public async ValueTask<IEnumerable<T>> ReadAllAsync()
     {
         await _semaphore.WaitAsync();
         try
         {
-            await foreach (var value in ReadAllInternalAsync())
-            {
-                yield return value;
-            }
+            return await ReadAllInternalAsync();
         }
         finally
         {
@@ -219,13 +216,15 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
         return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
     }
 
-    private async IAsyncEnumerable<T> ReadAllInternalAsync()
+    private async ValueTask<IEnumerable<T>> ReadAllInternalAsync()
     {
         var offsets = await _offsetsRepository.ReadAllAsync();
         var lengths = await _lengthsRepository.ReadAllAsync();
 
         var offsetEnumerator = offsets.GetEnumerator();
         var lengthEnumerator = lengths.GetEnumerator();
+
+        var result = new List<T>();
 
         try
         {
@@ -247,8 +246,10 @@ public class FileSystemRepository<T> : IRepository<T>, IDisposable, IPurgable
                     throw new InvalidOperationException();
                 }
 
-                yield return _serializer.Deserialize<T>(bytes.AsMemory()[..read]);
+                result.Add(_serializer.Deserialize<T>(bytes.AsMemory()[..read]));
             }
+
+            return result;
         }
         finally
         {

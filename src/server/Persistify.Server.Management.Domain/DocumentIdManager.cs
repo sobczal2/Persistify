@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.HostedServices.Attributes;
-using Persistify.Server.Management.Abstractions;
 using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Abstractions.Exceptions;
 using Persistify.Server.Management.Abstractions.Exceptions.DocumentId;
@@ -13,7 +13,7 @@ using Persistify.Server.Persistence.Core.Abstractions;
 namespace Persistify.Server.Management.Domain;
 
 [StartupPriority(5)]
-public class DocumentIdManager : IDocumentIdManager, IActOnStartup
+public class DocumentIdManager : IDocumentIdManager, IActOnStartup, IDisposable
 {
     private readonly ILinearRepositoryManager _linearRepositoryManager;
     private const string DocumentIdKey = "DocumentId/main";
@@ -30,17 +30,17 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         _initializedTemplates = new HashSet<int>();
     }
 
-    public async ValueTask<long> GetNextId(int templateId)
+    public async ValueTask<long> GetNextIdAsync(int templateId)
     {
         await _semaphoreSlim.WaitAsync();
         try
         {
-            var repository = _linearRepositoryManager.Get(DocumentIdKey);
             if (!_initializedTemplates.Contains(templateId))
             {
                 throw new TemplateNotInitializedException();
             }
 
+            var repository = _linearRepositoryManager.Get(DocumentIdKey);
             var currentId = await repository.ReadAsync(templateId);
 
             if (currentId is null)
@@ -58,7 +58,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         }
     }
 
-    public async ValueTask<long> GetCurrentId(int templateId)
+    public async ValueTask<long> GetCurrentIdAsync(int templateId)
     {
         await _semaphoreSlim.WaitAsync();
         try
@@ -83,7 +83,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         }
     }
 
-    public async ValueTask InitializeForTemplate(int templateId)
+    public async ValueTask InitializeForTemplateAsync(int templateId)
     {
         await _semaphoreSlim.WaitAsync();
         try
@@ -102,7 +102,7 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         }
     }
 
-    public async ValueTask RemoveForTemplate(int templateId)
+    public async ValueTask RemoveForTemplateAsync(int templateId)
     {
         await _semaphoreSlim.WaitAsync();
         try
@@ -121,12 +121,25 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         }
     }
 
-    public async ValueTask<IEnumerable<int>> GetInitializedTemplates()
+    public async ValueTask<IEnumerable<int>> GetInitializedTemplatesAsync()
     {
         await _semaphoreSlim.WaitAsync();
         try
         {
             return _initializedTemplates.ToList();
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
+    }
+
+    public async ValueTask<bool> ExistsForTemplateAsync(int templateId)
+    {
+        await _semaphoreSlim.WaitAsync();
+        try
+        {
+            return _initializedTemplates.Contains(templateId);
         }
         finally
         {
@@ -166,5 +179,10 @@ public class DocumentIdManager : IDocumentIdManager, IActOnStartup
         {
             _semaphoreSlim.Release();
         }
+    }
+
+    public void Dispose()
+    {
+        _semaphoreSlim.Dispose();
     }
 }

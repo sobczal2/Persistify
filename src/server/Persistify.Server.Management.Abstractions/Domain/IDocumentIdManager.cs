@@ -5,9 +5,10 @@ namespace Persistify.Server.Management.Abstractions.Domain;
 
 public interface IDocumentIdManager
 {
-    ValueTask<long> GetNextId(int templateId);
-    ValueTask<long> GetCurrentId(int templateId);
-    ValueTask InitializeForTemplate(int templateId);
-    ValueTask RemoveForTemplate(int templateId);
-    ValueTask<IEnumerable<int>> GetInitializedTemplates();
+    ValueTask<long> GetNextIdAsync(int templateId);
+    ValueTask<long> GetCurrentIdAsync(int templateId);
+    ValueTask InitializeForTemplateAsync(int templateId);
+    ValueTask RemoveForTemplateAsync(int templateId);
+    ValueTask<IEnumerable<int>> GetInitializedTemplatesAsync();
+    ValueTask<bool> ExistsForTemplateAsync(int templateId);
 }

@@ -54,7 +54,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.GenerateProtos",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Persistence.DataStructures", "src\server\Persistify.Server.Persistence.DataStructures\Persistify.Server.Persistence.DataStructures.csproj", "{AE14C20E-0DF9-482A-9D2B-F71121F9B58D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Persistence.DataStructures.Tests.Unit", "test\server\Persistify.Persistence.DataStructures.Tests.Unit\Persistify.Persistence.DataStructures.Tests.Unit.csproj", "{599346B7-A4DC-484A-A857-9F01808A3F8A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Persistence.DataStructures.Tests.Unit", "test\server\Persistify.Server.Persistence.DataStructures.Tests.Unit\Persistify.Server.Persistence.DataStructures.Tests.Unit.csproj", "{599346B7-A4DC-484A-A857-9F01808A3F8A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Pipelines.Documents", "src\server\Persistify.Server.Pipelines.Documents\Persistify.Server.Pipelines.Documents.csproj", "{42875823-5F84-48B2-BBF6-F3A93EE50F9E}"
 EndProject
@@ -68,7 +68,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Monitor", "src\m
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Management.Abstractions", "src\server\Persistify.Server.Management.Abstractions\Persistify.Server.Management.Abstractions.csproj", "{3AA68ECF-062A-4E29-AC20-733744611C01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Persistence.Core.Tests.Unit", "test\server\Persistify.Persistence.Core.Tests.Unit\Persistify.Persistence.Core.Tests.Unit.csproj", "{52919350-65F9-4A46-8C68-51328EF691B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Persistence.Core.Tests.Unit", "test\server\Persistify.Server.Persistence.Core.Tests.Unit\Persistify.Server.Persistence.Core.Tests.Unit.csproj", "{52919350-65F9-4A46-8C68-51328EF691B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Management.Domain.Tests.Unit", "test\server\Persistify.Server.Management.Domain.Tests.Unit\Persistify.Server.Management.Domain.Tests.Unit.csproj", "{CCFB955A-9C42-482A-A7C7-6A011496C4B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -184,6 +186,10 @@ Global
 		{52919350-65F9-4A46-8C68-51328EF691B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52919350-65F9-4A46-8C68-51328EF691B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52919350-65F9-4A46-8C68-51328EF691B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCFB955A-9C42-482A-A7C7-6A011496C4B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCFB955A-9C42-482A-A7C7-6A011496C4B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCFB955A-9C42-482A-A7C7-6A011496C4B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCFB955A-9C42-482A-A7C7-6A011496C4B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -218,5 +224,6 @@ Global
 		{6CF0C591-BE41-42F8-B8BF-E0EE17AB2AEC} = {9303A1F9-EED0-4042-8BE5-0CF75BD85949}
 		{3AA68ECF-062A-4E29-AC20-733744611C01} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{52919350-65F9-4A46-8C68-51328EF691B8} = {A4A48851-1F0E-4013-99D9-688E84160257}
+		{CCFB955A-9C42-482A-A7C7-6A011496C4B6} = {A4A48851-1F0E-4013-99D9-688E84160257}
 	EndGlobalSection
 EndGlobal

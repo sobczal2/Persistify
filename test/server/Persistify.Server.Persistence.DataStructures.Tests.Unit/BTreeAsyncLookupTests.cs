@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Persistence.Core.Tests.Unit;
+using Persistify.Server.Persistence.Core.Tests.Unit;
 using Persistify.Server.Persistence.DataStructures.Trees;
 using ProtoBuf;
 using Xunit;
 
-namespace Persistify.Persistence.DataStructures.Tests.Unit;
+namespace Persistify.Server.Persistence.DataStructures.Tests.Unit;
 
 public class BTreeAsyncLookupTests
 {
@@ -14,8 +14,8 @@ public class BTreeAsyncLookupTests
 
     public BTreeAsyncLookupTests()
     {
-        _sut = new BTreeAsyncLookup<double, long>(new DictionaryRepository<BTreeInternalNode<double>>(),
-            new DictionaryRepository<BTreeLeafNode<double, long>>(), new DictionaryLinearRepository(), 100,
+        _sut = new BTreeAsyncLookup<double, long>(new RepositoryFake<BTreeInternalNode<double>>(),
+            new RepositoryFake<BTreeLeafNode<double, long>>(), new LinearRepositoryFake(), 100,
             Comparer<double>.Default);
     }
 

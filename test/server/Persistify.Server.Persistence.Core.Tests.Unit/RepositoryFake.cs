@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 using Persistify.Server.Persistence.Core.Abstractions;
 using ProtoBuf;
 
-namespace Persistify.Persistence.Core.Tests.Unit;
+namespace Persistify.Server.Persistence.Core.Tests.Unit;
 
-public class DictionaryRepository<T> : IRepository<T>
+public class RepositoryFake<T> : IRepository<T>
 {
     private readonly Dictionary<long, T> _data;
-    public DictionaryRepository()
+    public RepositoryFake()
     {
         _data = new Dictionary<long, T>();
     }
@@ -25,9 +25,9 @@ public class DictionaryRepository<T> : IRepository<T>
         return ValueTask.FromResult(_data.TryGetValue(id, out var value) ? DeepCopy(value) : default(T?));
     }
 
-    public IAsyncEnumerable<T> ReadAllAsync()
+    public ValueTask<IEnumerable<T>> ReadAllAsync()
     {
-        return _data.Values.Select(DeepCopy).ToAsyncEnumerable();
+        return ValueTask.FromResult(_data.Values.Select(DeepCopy));
     }
 
     public ValueTask<bool> ExistsAsync(long id)
@@ -46,7 +46,7 @@ public class DictionaryRepository<T> : IRepository<T>
         return ValueTask.FromResult(default(T?));
     }
 
-    private T DeepCopy(T value)
+    private static T DeepCopy(T value)
     {
         using var stream = new MemoryStream();
         Serializer.Serialize(stream, value);

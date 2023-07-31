@@ -93,6 +93,11 @@ public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, 
         return (IRepository<T>)repository;
     }
 
+    public bool Exists<T>(string repositoryName)
+    {
+        return _repositories.ContainsKey(repositoryName);
+    }
+
     public void Delete<T>(string repositoryName)
     {
         if (!_repositories.TryRemove(repositoryName, out var repository))
