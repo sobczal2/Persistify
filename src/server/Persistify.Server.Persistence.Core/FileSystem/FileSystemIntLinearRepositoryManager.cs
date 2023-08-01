@@ -12,7 +12,6 @@ public class FileSystemIntLinearRepositoryManager : IIntLinearRepositoryManager,
 {
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly StorageSettings _storageSettings;
-    private readonly object _lock;
 
     public FileSystemIntLinearRepositoryManager(
         IOptions<StorageSettings> storageSettings
@@ -20,7 +19,6 @@ public class FileSystemIntLinearRepositoryManager : IIntLinearRepositoryManager,
     {
         _storageSettings = storageSettings.Value;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
-        _lock = new object();
     }
 
     public void Dispose()
@@ -33,22 +31,21 @@ public class FileSystemIntLinearRepositoryManager : IIntLinearRepositoryManager,
 
     public void Create(string repositoryName)
     {
-        lock (_lock)
+        if (_repositories.ContainsKey(repositoryName))
         {
-            if (_repositories.ContainsKey(repositoryName))
-            {
-                throw new RepositoryAlreadyExistsException(repositoryName);
-            }
-
-            var parts = repositoryName.Split('/');
-            var directoryPath = Path.Combine(_storageSettings.DataPath, Path.Combine(parts[..^1]));
-            Directory.CreateDirectory(directoryPath);
-
-            var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
-            var mainFilePath = $"{filePath}.bin";
-
-            _repositories.TryAdd(repositoryName, new FileSystemIntLinearRepository(mainFilePath));
+            throw new RepositoryAlreadyExistsException(repositoryName);
         }
+
+        var parts = repositoryName.Split('/');
+        var directoryPath = Path.Combine(_storageSettings.DataPath, Path.Combine(parts[..^1]));
+        Directory.CreateDirectory(directoryPath);
+
+        var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
+        var mainFilePath = $"{filePath}.bin";
+
+        _repositories.TryAdd(repositoryName, new StreamIntLinearRepository(
+            new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+        ));
     }
 
     public IIntLinearRepository Get(string repositoryName)
@@ -63,14 +60,16 @@ public class FileSystemIntLinearRepositoryManager : IIntLinearRepositoryManager,
 
     public void Delete(string repositoryName)
     {
-        lock (_lock)
+        if (!_repositories.TryRemove(repositoryName, out var repository))
         {
-            if (!_repositories.TryRemove(repositoryName, out var repository))
-            {
-                throw new RepositoryNotFoundException(repositoryName);
-            }
-
-            repository.Dispose();
+            throw new RepositoryNotFoundException(repositoryName);
         }
+
+        repository.Dispose();
+
+        var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
+        var mainFilePath = $"{filePath}.bin";
+
+        File.Delete(mainFilePath);
     }
 }

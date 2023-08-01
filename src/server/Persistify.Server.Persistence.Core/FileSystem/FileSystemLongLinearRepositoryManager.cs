@@ -12,7 +12,6 @@ public class FileSystemLongLinearRepositoryManager : ILongLinearRepositoryManage
 {
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly StorageSettings _storageSettings;
-    private readonly object _lock;
 
     public FileSystemLongLinearRepositoryManager(
         IOptions<StorageSettings> storageSettings
@@ -20,7 +19,6 @@ public class FileSystemLongLinearRepositoryManager : ILongLinearRepositoryManage
     {
         _storageSettings = storageSettings.Value;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
-        _lock = new object();
     }
 
     public void Dispose()
@@ -33,21 +31,18 @@ public class FileSystemLongLinearRepositoryManager : ILongLinearRepositoryManage
 
     public void Create(string repositoryName)
     {
-        lock (_lock)
+        var parts = repositoryName.Split('/');
+        var directoryPath = Path.Combine(_storageSettings.DataPath, Path.Combine(parts[..^1]));
+        Directory.CreateDirectory(directoryPath);
+
+        var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
+        var mainFilePath = $"{filePath}.bin";
+
+        if (!_repositories.TryAdd(repositoryName, new StreamLongLinearRepository(
+                new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+            )))
         {
-            if (_repositories.ContainsKey(repositoryName))
-            {
-                throw new RepositoryAlreadyExistsException(repositoryName);
-            }
-
-            var parts = repositoryName.Split('/');
-            var directoryPath = Path.Combine(_storageSettings.DataPath, Path.Combine(parts[..^1]));
-            Directory.CreateDirectory(directoryPath);
-
-            var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
-            var mainFilePath = $"{filePath}.bin";
-
-            _repositories.TryAdd(repositoryName, new FileSystemLongLinearRepository(mainFilePath));
+            throw new RepositoryAlreadyExistsException(repositoryName);
         }
     }
 
@@ -63,14 +58,16 @@ public class FileSystemLongLinearRepositoryManager : ILongLinearRepositoryManage
 
     public void Delete(string repositoryName)
     {
-        lock (_lock)
+        if (!_repositories.TryRemove(repositoryName, out var repository))
         {
-            if (!_repositories.TryRemove(repositoryName, out var repository))
-            {
-                throw new RepositoryNotFoundException(repositoryName);
-            }
-
-            repository.Dispose();
+            throw new RepositoryNotFoundException(repositoryName);
         }
+
+        repository.Dispose();
+
+        var filePath = Path.Combine(_storageSettings.DataPath, repositoryName);
+        var mainFilePath = $"{filePath}.bin";
+
+        File.Delete(mainFilePath);
     }
 }

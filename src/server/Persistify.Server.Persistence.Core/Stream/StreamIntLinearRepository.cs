@@ -9,24 +9,22 @@ using Persistify.Server.Persistence.Core.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
-public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
+public class StreamIntLinearRepository : IIntLinearRepository, IDisposable
 {
-    private readonly string _filePath;
-    private readonly FileStream _fileStream;
+    private readonly Stream _stream;
     private readonly SemaphoreSlim _semaphore;
-    private const long EmptyValue = -1L;
-    private const int BufferSize = sizeof(long);
+    private const int EmptyValue = -1;
+    private const int BufferSize = sizeof(int);
     private readonly byte[] _buffer;
 
-    public FileSystemLongLinearRepository(string filePath)
+    public StreamIntLinearRepository(Stream stream)
     {
-        _filePath = filePath;
-        _fileStream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        _stream = stream;
         _semaphore = new SemaphoreSlim(1, 1);
         _buffer = new byte[BufferSize];
     }
 
-    public async ValueTask<long?> ReadAsync(int id, bool useLock = true)
+    public async ValueTask<int?> ReadAsync(int id, bool useLock = true)
     {
         if (id < 0)
         {
@@ -36,42 +34,43 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
         return useLock ? await _semaphore.WrapAsync(() => ReadWithoutLockAsync(id)) : await ReadWithoutLockAsync(id);
     }
 
-    private async ValueTask<long?> ReadWithoutLockAsync(int key)
+    private async ValueTask<int?> ReadWithoutLockAsync(int key)
     {
-        if (key >= _fileStream.Length / BufferSize)
+        if (key * (long)BufferSize >= _stream.Length)
         {
             return null;
         }
 
-        _fileStream.Seek(key * BufferSize, SeekOrigin.Begin);
-        var readBytes = await _fileStream.ReadAsync(_buffer, 0, BufferSize);
+        _stream.Seek(key * (long)BufferSize, SeekOrigin.Begin);
+        var readBytes = await _stream.ReadAsync(_buffer, 0, BufferSize);
         if (readBytes != BufferSize)
         {
             throw new InvalidOperationException();
         }
 
-        return BitConverter.ToInt64(_buffer);
+        var value = BitConverter.ToInt32(_buffer);
+        return value == EmptyValue ? null : value;
     }
 
-    public async ValueTask<IDictionary<int, long>> ReadAllAsync(bool useLock = true)
+    public async ValueTask<IDictionary<int, int>> ReadAllAsync(bool useLock = true)
     {
         return useLock ? await _semaphore.WrapAsync(ReadAllWithoutLockAsync) : await ReadAllWithoutLockAsync();
     }
 
-    private async ValueTask<IDictionary<int, long>> ReadAllWithoutLockAsync()
+    private async ValueTask<IDictionary<int, int>> ReadAllWithoutLockAsync()
     {
-        var length = _fileStream.Length;
-        _fileStream.Seek(0, SeekOrigin.Begin);
-        var result = new Dictionary<int, long>((int)(length / BufferSize));
+        var length = _stream.Length;
+        _stream.Seek(0, SeekOrigin.Begin);
+        var result = new Dictionary<int, int>((int)(length / BufferSize));
         for (var i = 0; i < length; i += BufferSize)
         {
-            var readBytes = await _fileStream.ReadAsync(_buffer, 0, BufferSize);
+            var readBytes = await _stream.ReadAsync(_buffer, 0, BufferSize);
             if (readBytes != BufferSize)
             {
                 throw new InvalidOperationException();
             }
 
-            var value = BitConverter.ToInt64(_buffer);
+            var value = BitConverter.ToInt32(_buffer);
             if (value != EmptyValue)
             {
                 result.Add(i / BufferSize, value);
@@ -81,7 +80,7 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
         return result;
     }
 
-    public async ValueTask WriteAsync(int id, long value, bool useLock = true)
+    public async ValueTask WriteAsync(int id, int value, bool useLock = true)
     {
         if (id < 0)
         {
@@ -93,16 +92,18 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
             throw new ArgumentOutOfRangeException(nameof(value));
         }
 
-        await (useLock ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(id, value)) : WriteWithoutLockAsync(id, value));
+        await (useLock
+            ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(id, value))
+            : WriteWithoutLockAsync(id, value));
     }
 
-    private async ValueTask WriteWithoutLockAsync(int key, long value)
+    private async ValueTask WriteWithoutLockAsync(int key, int value)
     {
-        var length = _fileStream.Length;
-        if (key >= length / BufferSize)
+        var length = _stream.Length;
+        if (key * (long)BufferSize > length)
         {
-            _fileStream.Seek(0, SeekOrigin.End);
-            var bytesToWrite = new byte[(key - length / BufferSize + 1) * BufferSize];
+            _stream.Seek(0, SeekOrigin.End);
+            var bytesToWrite = new byte[(key - length / BufferSize) * BufferSize];
             for (var i = 0; i < bytesToWrite.Length; i += BufferSize)
             {
                 if (!BitConverter.TryWriteBytes(bytesToWrite.AsSpan(i), EmptyValue))
@@ -111,19 +112,20 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
                 }
             }
 
-            await _fileStream.WriteAsync(bytesToWrite);
+            await _stream.WriteAsync(bytesToWrite);
         }
         else
         {
-            _fileStream.Seek(key * BufferSize, SeekOrigin.Begin);
+            _stream.Seek(key * (long)BufferSize, SeekOrigin.Begin);
         }
 
         if (!BitConverter.TryWriteBytes(_buffer, value))
         {
             throw new RepositoryCorruptedException();
         }
-        await _fileStream.WriteAsync(_buffer, 0, BufferSize);
-        await _fileStream.FlushAsync();
+
+        await _stream.WriteAsync(_buffer, 0, BufferSize);
+        await _stream.FlushAsync();
     }
 
     public async ValueTask DeleteAsync(int id, bool useLock = true)
@@ -138,35 +140,43 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
 
     private async ValueTask DeleteWithoutLockAsync(int key)
     {
-        var length = _fileStream.Length;
-        if (key >= length / BufferSize)
+        var length = _stream.Length;
+        if (key * (long)BufferSize >= length)
         {
             throw new InvalidOperationException();
         }
 
-        _fileStream.Seek(key * BufferSize, SeekOrigin.Begin);
-        var readBytes = await _fileStream.ReadAsync(_buffer, 0, BufferSize);
+        _stream.Seek(key * (long)BufferSize, SeekOrigin.Begin);
+        var readBytes = await _stream.ReadAsync(_buffer, 0, BufferSize);
         if (readBytes != BufferSize)
         {
             throw new InvalidOperationException();
         }
 
-        var value = BitConverter.ToInt64(_buffer);
+        var value = BitConverter.ToInt32(_buffer);
         if (value == EmptyValue)
         {
             throw new InvalidOperationException();
         }
 
-        _fileStream.Seek(key * BufferSize, SeekOrigin.Begin);
-        if (!BitConverter.TryWriteBytes(_buffer, EmptyValue))
+        if ((key + 1) * (long)BufferSize == length)
         {
-            throw new RepositoryCorruptedException();
+            _stream.SetLength(length - BufferSize);
         }
-        await _fileStream.WriteAsync(_buffer, 0, BufferSize);
-        await _fileStream.FlushAsync();
+        else
+        {
+            _stream.Seek(key * (long)BufferSize, SeekOrigin.Begin);
+            if (!BitConverter.TryWriteBytes(_buffer, EmptyValue))
+            {
+                throw new RepositoryCorruptedException();
+            }
+
+            await _stream.WriteAsync(_buffer, 0, BufferSize);
+            await _stream.FlushAsync();
+        }
     }
 
-    public void ClearAsync(bool useLock = true)
+    public void Clear(bool useLock = true)
     {
         if (useLock)
         {
@@ -180,16 +190,12 @@ public class FileSystemLongLinearRepository : ILongLinearRepository, IDisposable
 
     private void ClearWithoutLockAsync()
     {
-        _fileStream.SetLength(0);
+        _stream.SetLength(0);
     }
 
     public void Dispose()
     {
-        _fileStream.Dispose();
+        _stream.Dispose();
         _semaphore.Dispose();
-        if (File.Exists(_filePath) && new FileInfo(_filePath).Length == 0)
-        {
-            File.Delete(_filePath);
-        }
     }
 }

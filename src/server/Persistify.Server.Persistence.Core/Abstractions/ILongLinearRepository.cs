@@ -5,9 +5,9 @@ namespace Persistify.Server.Persistence.Core.Abstractions;
 
 public interface ILongLinearRepository
 {
-    ValueTask<long?> ReadAsync(int id, bool useLock = true);
+    ValueTask<long?> ReadAsync(int key, bool useLock = true);
     ValueTask<IDictionary<int, long>> ReadAllAsync(bool useLock = true);
-    ValueTask WriteAsync(int id, long value, bool useLock = true);
-    ValueTask DeleteAsync(int id, bool useLock = true);
-    void ClearAsync(bool useLock = true);
+    ValueTask WriteAsync(int key, long value, bool useLock = true);
+    ValueTask DeleteAsync(int key, bool useLock = true);
+    void Clear(bool useLock = true);
 }

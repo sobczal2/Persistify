@@ -1,47 +1,31 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.HostedServices.Abstractions;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
-public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, IDisposable
+public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
 {
-    private readonly IIntLinearRepositoryManager _intLinearRepositoryManager;
+    private readonly ILongLinearRepositoryManager _longLinearRepositoryManager;
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly ISerializer _serializer;
     private readonly StorageSettings _storageSettings;
-    private readonly object _lock;
 
     public FileSystemRepositoryManager(
         IOptions<StorageSettings> storageSettings,
         ISerializer serializer,
-        IIntLinearRepositoryManager intLinearRepositoryManager
+        ILongLinearRepositoryManager longLinearRepositoryManager
     )
     {
         _storageSettings = storageSettings.Value;
         _serializer = serializer;
-        _intLinearRepositoryManager = intLinearRepositoryManager;
+        _longLinearRepositoryManager = longLinearRepositoryManager;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
-        _lock = new object();
-    }
-
-    public TimeSpan RecurrentActionInterval => TimeSpan.FromMinutes(15);
-
-    public async ValueTask PerformRecurrentActionAsync()
-    {
-        foreach (var repository in _repositories.Values)
-        {
-            await ((IPurgable)repository).PurgeAsync();
-        }
-
-        await Task.CompletedTask;
     }
 
     public void Dispose()
@@ -52,38 +36,35 @@ public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, 
         }
     }
 
-    public void Create<T>(string repositoryName)
+    public void Create<T>(string repositoryName) where T : class
     {
-        lock (_lock)
+        if (_repositories.ContainsKey(repositoryName))
         {
-            if (_repositories.ContainsKey(repositoryName))
-            {
-                throw new RepositoryAlreadyExistsException(repositoryName);
-            }
+            throw new RepositoryAlreadyExistsException(repositoryName);
+        }
 
-            var parts = repositoryName.Split('/');
-            var directoryPath = Path.Combine(_storageSettings.DataPath, Path.Combine(parts[..^1]));
-            Directory.CreateDirectory(directoryPath);
+        var parts = repositoryName.Split('/');
+        var directoryPath = Path.Combine(_storageSettings.DataPath, Path.Combine(parts[..^1]));
+        Directory.CreateDirectory(directoryPath);
 
-            var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
-            var mainFilePath = $"{baseFilesPath}.bin";
+        var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
+        var mainFilePath = $"{baseFilesPath}.bin";
+        var indexFilePath = $"{baseFilesPath}.idx";
 
-            var offsetsRepositoryName = $"{repositoryName}.offsets";
-            var lengthsRepositoryName = $"{repositoryName}.lengths";
+        _longLinearRepositoryManager.Create(indexFilePath);
 
-            _intLinearRepositoryManager.Create(offsetsRepositoryName);
-            _intLinearRepositoryManager.Create(lengthsRepositoryName);
-            var offsetsRepository = _intLinearRepositoryManager.Get(offsetsRepositoryName);
-            var lengthsRepository = _intLinearRepositoryManager.Get(lengthsRepositoryName);
-
-            if(!_repositories.TryAdd(repositoryName, new FileSystemRepository<T>(mainFilePath, offsetsRepository, lengthsRepository, _serializer)))
-            {
-                throw new RepositoryFactoryInternalException();
-            }
+        if (!_repositories.TryAdd(repositoryName, new StreamRepository<T>(
+                _longLinearRepositoryManager.Get(indexFilePath),
+                _serializer,
+                new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None),
+                _storageSettings.RepositorySectorSize
+            )))
+        {
+            throw new RepositoryAlreadyExistsException(repositoryName);
         }
     }
 
-    public IRepository<T> Get<T>(string repositoryName)
+    public IRepository<T> Get<T>(string repositoryName) where T : class
     {
         if (!_repositories.TryGetValue(repositoryName, out var repository))
         {
@@ -93,12 +74,12 @@ public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, 
         return (IRepository<T>)repository;
     }
 
-    public bool Exists<T>(string repositoryName)
+    public bool Exists<T>(string repositoryName) where T : class
     {
         return _repositories.ContainsKey(repositoryName);
     }
 
-    public void Delete<T>(string repositoryName)
+    public void Delete<T>(string repositoryName) where T : class
     {
         if (!_repositories.TryRemove(repositoryName, out var repository))
         {
@@ -106,5 +87,12 @@ public class FileSystemRepositoryManager : IRepositoryManager, IActRecurrently, 
         }
 
         repository.Dispose();
+
+        var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
+        var mainFilePath = $"{baseFilesPath}.bin";
+        var indexFilePath = $"{baseFilesPath}.idx";
+
+        File.Delete(mainFilePath);
+        _longLinearRepositoryManager.Delete(indexFilePath);
     }
 }
