@@ -16,15 +16,15 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
     private readonly IIntLinearRepository _intLinearRepository;
     private readonly int _degree;
     private readonly IRepository<BTreeLeafNode<TKey, TItem>> _leafNodeStorageProvider;
-    private const long NullId = 0;
-    private long _rootId;
+    private const int NullId = 0;
+    private int _rootId;
     private bool _isRootLeaf;
-    private long _maxInternalNodeId;
-    private long _maxLeafNodeId;
+    private int _maxInternalNodeId;
+    private int _maxLeafNodeId;
     private readonly SemaphoreSlim _semaphoreSlim;
     private readonly IComparer<TKey> _comparer;
-    private readonly Dictionary<long, BTreeInternalNode<TKey>> _internalNodeBuffer;
-    private readonly Dictionary<long, BTreeLeafNode<TKey, TItem>> _leafNodeBuffer;
+    private readonly Dictionary<int, BTreeInternalNode<TKey>> _internalNodeBuffer;
+    private readonly Dictionary<int, BTreeLeafNode<TKey, TItem>> _leafNodeBuffer;
 
     public BTreeAsyncLookup(
         IRepository<BTreeInternalNode<TKey>> internalNodeStorageProvider,
@@ -44,8 +44,8 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         _maxLeafNodeId = NullId;
         _semaphoreSlim = new SemaphoreSlim(1, 1);
         _comparer = comparer;
-        _internalNodeBuffer = new Dictionary<long, BTreeInternalNode<TKey>>();
-        _leafNodeBuffer = new Dictionary<long, BTreeLeafNode<TKey, TItem>>();
+        _internalNodeBuffer = new Dictionary<int, BTreeInternalNode<TKey>>();
+        _leafNodeBuffer = new Dictionary<int, BTreeLeafNode<TKey, TItem>>();
     }
 
     public async ValueTask InitializeAsync()
@@ -78,7 +78,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
         await _intLinearRepository.WriteAsync(2, _isRootLeaf ? 1 : 0);
     }
 
-    private async ValueTask<IBTreeNode?> ReadNodeAsync(long rootId, bool isRootLeaf)
+    private async ValueTask<IBTreeNode?> ReadNodeAsync(int rootId, bool isRootLeaf)
     {
         if (rootId == NullId)
         {
@@ -370,7 +370,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
             {
                 Id = _maxInternalNodeId,
                 ParentId = NullId,
-                ChildrenIds = new List<(long id, bool leaf)>(2) { (node.Id, true), (newNode.Id, true) },
+                ChildrenIds = new List<(int id, bool leaf)>(2) { (node.Id, true), (newNode.Id, true) },
                 LeftSiblingId = NullId,
                 RightSiblingId = NullId,
             };
@@ -462,7 +462,7 @@ public class BTreeAsyncLookup<TKey, TItem> : IAsyncLookup<TKey, TItem>
             {
                 Id = _maxInternalNodeId,
                 ParentId = NullId,
-                ChildrenIds = new List<(long id, bool leaf)> { (node.Id, false), (newNode.Id, false) },
+                ChildrenIds = new List<(int id, bool leaf)> { (node.Id, false), (newNode.Id, false) },
                 Keys = new List<TKey> { middleKey }
             };
             node.ParentId = newRoot.Id;

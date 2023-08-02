@@ -2,5 +2,5 @@
 
 public interface IBTreeNode
 {
-    long ParentId { get; set; }
+    int ParentId { get; set; }
 }

@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Persistify.Server.Fts.Analysis\Persistify.Server.Fts.Analysis.csproj" />
-    <ProjectReference Include="..\Persistify.Server.Management.Domain\Persistify.Server.Management.Domain.csproj" />
     <ProjectReference Include="..\Persistify.Server.Pipelines\Persistify.Server.Pipelines.csproj" />
     <ProjectReference Include="..\..\shared\Persistify.Responses\Persistify.Responses.csproj" />
   </ItemGroup>

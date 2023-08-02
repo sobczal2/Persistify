@@ -3,7 +3,7 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Management.Types.Shared;
+using Persistify.Server.Management.Shared;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Contexts;
 

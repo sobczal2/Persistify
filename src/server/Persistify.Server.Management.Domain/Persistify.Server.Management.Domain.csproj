@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Persistify.Server.Persistence.Core\Persistify.Server.Persistence.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Managers\" />
+  </ItemGroup>
+
 </Project>

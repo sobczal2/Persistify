@@ -9,31 +9,31 @@ namespace Persistify.Server.Persistence.DataStructures.Trees;
 public class BTreeInternalNode<TKey> : IBTreeNode
 {
     [ProtoMember(1)]
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     [ProtoMember(2)]
-    public long ParentId { get; set; }
+    public int ParentId { get; set; }
 
     [ProtoMember(3)]
-    public long LeftSiblingId { get; set; }
+    public int LeftSiblingId { get; set; }
 
     [ProtoMember(4)]
-    public long RightSiblingId { get; set; }
+    public int RightSiblingId { get; set; }
 
     [ProtoMember(5)]
     public List<TKey> Keys { get; set; }
 
     [ProtoMember(6)]
-    public List<(long id, bool leaf)> ChildrenIds { get; set; }
+    public List<(int id, bool leaf)> ChildrenIds { get; set; }
 
 
     public BTreeInternalNode()
     {
         Keys = new List<TKey>();
-        ChildrenIds = new List<(long id, bool leaf)>();
+        ChildrenIds = new List<(int id, bool leaf)>();
     }
 
-    public (long id, bool leaf) GetChildId(TKey key, IComparer<TKey> comparer)
+    public (int id, bool leaf) GetChildId(TKey key, IComparer<TKey> comparer)
     {
         if (Keys.Count == 0)
         {
@@ -62,27 +62,5 @@ public class BTreeInternalNode<TKey> : IBTreeNode
         }
 
         return ChildrenIds[start];
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj is BTreeInternalNode<TKey> other)
-        {
-            return Equals(other);
-        }
-
-        return false;
-    }
-
-    protected bool Equals(BTreeInternalNode<TKey> other)
-    {
-        return Id == other.Id && ParentId == other.ParentId && LeftSiblingId == other.LeftSiblingId &&
-               RightSiblingId == other.RightSiblingId && Keys.Equals(other.Keys) &&
-               ChildrenIds.Equals(other.ChildrenIds);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(Id, ParentId, LeftSiblingId, RightSiblingId, Keys, ChildrenIds);
     }
 }

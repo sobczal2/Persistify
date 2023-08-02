@@ -14,7 +14,7 @@ public class Document
         BoolFieldValuesByFieldName = new Dictionary<string, BoolFieldValue>();
     }
     [ProtoMember(1)]
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     [ProtoMember(2)]
     public List<TextFieldValue> TextFieldValues
