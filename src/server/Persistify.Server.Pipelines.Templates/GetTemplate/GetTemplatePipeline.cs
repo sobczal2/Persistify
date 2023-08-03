@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Exceptions;
@@ -9,31 +11,26 @@ namespace Persistify.Server.Pipelines.Templates.GetTemplate;
 
 public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
 {
-    private readonly StaticValidationStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
-        _staticValidationStage;
-
-    private readonly FetchTemplateFromTemplateManagerStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse> _fetchTemplateFromTemplateManagerStage;
-
     public GetTemplatePipeline(
         ILogger<GetTemplatePipeline> logger,
+        ITransactionManager transactionManager,
         StaticValidationStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
             staticValidationStage,
         FetchTemplateFromTemplateManagerStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
-            fetchTemplateFromTemplateManagerStage
-    ) : base(
-        logger
-    )
+            fetchTemplateFromTemplateManagerStage) : base(logger, transactionManager)
     {
-        _staticValidationStage = staticValidationStage;
-        _fetchTemplateFromTemplateManagerStage = fetchTemplateFromTemplateManagerStage;
+        PipelineStages = new PipelineStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>[]
+        {
+            staticValidationStage,
+            fetchTemplateFromTemplateManagerStage
+        };
     }
 
-    protected override PipelineStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>[]
+    protected override IEnumerable<PipelineStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>>
         PipelineStages
-        => new PipelineStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>[]
-        {
-            _staticValidationStage, _fetchTemplateFromTemplateManagerStage
-        };
+    {
+        get;
+    }
 
     protected override GetTemplatePipelineContext CreateContext(GetTemplateRequest request)
     {
@@ -42,6 +39,12 @@ public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTempl
 
     protected override GetTemplateResponse CreateResponse(GetTemplatePipelineContext context)
     {
-        return new GetTemplateResponse { Template = context.Template ?? throw new PipelineException() };
+        return new GetTemplateResponse(context.Template ?? throw new PipelineException());
+    }
+
+    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
+        GetTemplatePipelineContext context)
+    {
+        return (false, true, new []{ context.TemplateId });
     }
 }

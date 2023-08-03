@@ -19,9 +19,9 @@ public static class PersistenceCoreExtensions
         switch (storageSettings.StorageType)
         {
             case StorageType.FileSystem:
-                services.AddSingleton<FileSystemRepositoryManager>();
-                services.AddSingleton<IRepositoryManager>(sp => sp.GetRequiredService<FileSystemRepositoryManager>());
+                services.AddSingleton<IRepositoryManager, FileSystemRepositoryManager>();
                 services.AddSingleton<IIntLinearRepositoryManager, FileSystemIntLinearRepositoryManager>();
+                services.AddSingleton<ILongLinearRepositoryManager, FileSystemLongLinearRepositoryManager>();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

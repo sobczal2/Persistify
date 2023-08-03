@@ -25,7 +25,7 @@ public class InitializeTemplateInTypeManagersStage : PipelineStage<CreateTemplat
         _typeManagers = typeManagers;
     }
 
-    public override async ValueTask<Result> ProcessAsync(CreateTemplatePipelineContext context)
+    public override async ValueTask ProcessAsync(CreateTemplatePipelineContext context)
     {
         var template = context.Template ?? throw new PipelineException();
 
@@ -33,19 +33,5 @@ public class InitializeTemplateInTypeManagersStage : PipelineStage<CreateTemplat
         {
             await typeManager.InitializeForTemplate(template);
         }
-
-        return Result.Success;
-    }
-
-    public override async ValueTask<Result> RollbackAsync(CreateTemplatePipelineContext context)
-    {
-        var template = context.Template ?? throw new PipelineException();
-
-        foreach (var typeManager in _typeManagers)
-        {
-            await typeManager.RemoveForTemplate(template);
-        }
-
-        return Result.Success;
     }
 }

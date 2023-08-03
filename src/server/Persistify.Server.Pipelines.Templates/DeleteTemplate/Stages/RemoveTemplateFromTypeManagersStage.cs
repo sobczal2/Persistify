@@ -25,7 +25,7 @@ public class RemoveTemplateFromTypeManagersStage : PipelineStage<DeleteTemplateP
         _typeManagers = typeManagers;
     }
 
-    public override async ValueTask<Result> ProcessAsync(DeleteTemplatePipelineContext context)
+    public override async ValueTask ProcessAsync(DeleteTemplatePipelineContext context)
     {
         var template = context.Template ?? throw new PipelineException();
 
@@ -33,19 +33,5 @@ public class RemoveTemplateFromTypeManagersStage : PipelineStage<DeleteTemplateP
         {
             await typeManager.RemoveForTemplate(template);
         }
-
-        return Result.Success;
-    }
-
-    public override async ValueTask<Result> RollbackAsync(DeleteTemplatePipelineContext context)
-    {
-        var template = context.Template ?? throw new PipelineException();
-
-        foreach (var typeManager in _typeManagers)
-        {
-            await typeManager.InitializeForTemplate(template);
-        }
-
-        return Result.Success;
     }
 }

@@ -2,11 +2,11 @@
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Persistify.Server.Persistence.Core.FileSystem;
+using Persistify.Server.Persistence.Core.Stream;
 using Persistify.Server.Serialization;
 using Xunit;
 
-namespace Persistify.Server.Persistence.Core.Tests.Unit;
+namespace Persistify.Server.Persistence.Core.Tests.Unit.Stream;
 
 public class StreamRepositoryTests
 {
@@ -17,9 +17,9 @@ public class StreamRepositoryTests
     }
 
     private StreamRepository<TestClass> _sut;
-    private Stream _mainStream;
+    private System.IO.Stream _mainStream;
     private StreamLongLinearRepository _indexRepository;
-    private Stream _indexStream;
+    private System.IO.Stream _indexStream;
     private int _sectorSize;
 
     public StreamRepositoryTests()

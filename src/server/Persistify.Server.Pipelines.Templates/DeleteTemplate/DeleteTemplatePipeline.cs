@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Templates.DeleteTemplate.Stages;
@@ -10,30 +12,27 @@ namespace Persistify.Server.Pipelines.Templates.DeleteTemplate;
 public class
     DeleteTemplatePipeline : Pipeline<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
 {
-    private readonly DeleteTemplateFromTemplateManagerStage _deleteTemplateFromTemplateManagerStage;
-
-    private readonly StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
-        _staticValidationStage;
-
     public DeleteTemplatePipeline(
         ILogger<DeleteTemplatePipeline> logger,
+        ITransactionManager transactionManager,
         StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
             staticValidationStage,
-        DeleteTemplateFromTemplateManagerStage deleteTemplateFromTemplateManagerStage
-    ) : base(
-        logger
-    )
+        DeleteTemplateFromTemplateManagerStage deleteTemplateFromTemplateManagerStage) : base(logger,
+        transactionManager)
     {
-        _staticValidationStage = staticValidationStage;
-        _deleteTemplateFromTemplateManagerStage = deleteTemplateFromTemplateManagerStage;
+        PipelineStages =
+            new PipelineStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>[]
+            {
+                staticValidationStage, deleteTemplateFromTemplateManagerStage
+            };
     }
 
-    protected override PipelineStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>[]
+    protected override
+        IEnumerable<PipelineStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>>
         PipelineStages
-        => new PipelineStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>[]
-        {
-            _staticValidationStage, _deleteTemplateFromTemplateManagerStage
-        };
+    {
+        get;
+    }
 
     protected override DeleteTemplatePipelineContext CreateContext(DeleteTemplateRequest request)
     {
@@ -43,5 +42,11 @@ public class
     protected override DeleteTemplateResponse CreateResponse(DeleteTemplatePipelineContext context)
     {
         return new DeleteTemplateResponse();
+    }
+
+    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
+        DeleteTemplatePipelineContext context)
+    {
+        return (true, true, new[] { context.Request.TemplateId });
     }
 }

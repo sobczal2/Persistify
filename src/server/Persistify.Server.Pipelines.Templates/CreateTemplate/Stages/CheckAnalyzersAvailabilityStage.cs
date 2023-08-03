@@ -28,7 +28,7 @@ public class
 
     public override string Name => StageName;
 
-    public override ValueTask<Result> ProcessAsync(CreateTemplatePipelineContext context)
+    public override ValueTask ProcessAsync(CreateTemplatePipelineContext context)
     {
         var textFields = context.Request.TextFields;
 
@@ -39,7 +39,7 @@ public class
                 var result = _analyzerFactory.Validate(textField.AnalyzerDescriptor);
                 if (result.IsFailure)
                 {
-                    return ValueTask.FromResult(result);
+                    throw result.Exception;
                 }
             }
             else if (textField.AnalyzerPresetName is not null)
@@ -47,16 +47,11 @@ public class
                 var result = _analyzerPresetFactory.Validate(textField.AnalyzerPresetName);
                 if (result.IsFailure)
                 {
-                    return ValueTask.FromResult(result);
+                    throw result.Exception;
                 }
             }
         }
 
-        return ValueTask.FromResult(Result.Success);
-    }
-
-    public override ValueTask<Result> RollbackAsync(CreateTemplatePipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
+        return ValueTask.CompletedTask;
     }
 }

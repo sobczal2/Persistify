@@ -24,7 +24,7 @@ public class ApplyPaginationStage : PipelineStage<SearchDocumentsPipelineContext
     {
     }
 
-    public override async ValueTask<Result> ProcessAsync(SearchDocumentsPipelineContext context)
+    public override ValueTask ProcessAsync(SearchDocumentsPipelineContext context)
     {
         var documentScores = context.DocumentScores ?? throw new PipelineException();
         var pagination = context.Request.Pagination;
@@ -32,7 +32,7 @@ public class ApplyPaginationStage : PipelineStage<SearchDocumentsPipelineContext
         var take = pagination.PageSize;
         var skip = pagination.PageSize * pagination.PageNumber;
 
-        context.DocumentIds = new List<long>(take);
+        context.DocumentIds = new List<int>(take);
 
         for(var i = skip; i < skip + take; i++)
         {
@@ -45,12 +45,6 @@ public class ApplyPaginationStage : PipelineStage<SearchDocumentsPipelineContext
         }
 
         context.TotalCount = documentScores.Count;
-
-        return await Task.FromResult(Result.Success);
-    }
-
-    public override async ValueTask<Result> RollbackAsync(SearchDocumentsPipelineContext context)
-    {
-        return await Task.FromResult(Result.Success);
+        return ValueTask.CompletedTask;
     }
 }

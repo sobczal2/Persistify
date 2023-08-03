@@ -30,21 +30,15 @@ public class
     }
 
     public override string Name => StageName;
-    public override ValueTask<Result> ProcessAsync(TContext context)
+    public override async ValueTask ProcessAsync(TContext context)
     {
-        var template = _templateManager.Get(context.TemplateId);
+        var template = await _templateManager.GetAsync(context.TemplateId);
         if (template is null)
         {
-            return ValueTask.FromResult<Result>(new ValidationException("GetTemplateRequest.TemplateId",
-                "Template not found"));
+            throw new ValidationException("GetTemplateRequest.TemplateId",
+                "Template not found");
         }
 
         context.Template = template;
-        return ValueTask.FromResult(Result.Success);
-    }
-
-    public override ValueTask<Result> RollbackAsync(TContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
     }
 }

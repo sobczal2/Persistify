@@ -22,75 +22,64 @@ public class ValidateQueryAgainstTemplateStage : PipelineStage<SearchDocumentsPi
     {
     }
 
-    public override ValueTask<Result> ProcessAsync(SearchDocumentsPipelineContext context)
+    public override ValueTask ProcessAsync(SearchDocumentsPipelineContext context)
     {
-        return ValueTask.FromResult(ValidateSearchNode(
+        ValidateSearchNode(
             context.Request.SearchNode,
             context.Template ?? throw new PipelineException(),
-            "SearchDocumentsRequest.SearchNode"));
+            "SearchDocumentsRequest.SearchNode");
+
+        return ValueTask.CompletedTask;
     }
 
-    private Result ValidateSearchNode(SearchNode searchNode, Template template, string errorPrefix)
+    private void ValidateSearchNode(SearchNode searchNode, Template template, string errorPrefix)
     {
         switch (searchNode)
         {
             case TextSearchNode node:
                 if (!template.TextFieldsByName.ContainsKey(node.FieldName))
-                    return new ValidationException(errorPrefix,
+                    throw new ValidationException(errorPrefix,
                         $"Field {node.FieldName} is not defined in template {template.Name}");
                 break;
             case FtsSearchNode node:
                 if (!template.TextFieldsByName.ContainsKey(node.FieldName))
-                    return new ValidationException(errorPrefix,
+                    throw new ValidationException(errorPrefix,
                         $"Field {node.FieldName} is not defined in template {template.Name}");
                 break;
             case NumberSearchNode node:
                 if (!template.NumberFieldsByName.ContainsKey(node.FieldName))
-                    return new ValidationException(errorPrefix,
+                    throw new ValidationException(errorPrefix,
                         $"Field {node.FieldName} is not defined in template {template.Name}");
                 break;
             case NumberRangeSearchNode node:
                 if (!template.NumberFieldsByName.ContainsKey(node.FieldName))
-                    return new ValidationException(errorPrefix,
+                    throw new ValidationException(errorPrefix,
                         $"Field {node.FieldName} is not defined in template {template.Name}");
                 break;
             case BoolSearchNode node:
                 if (!template.BoolFieldsByName.ContainsKey(node.FieldName))
-                    return new ValidationException(errorPrefix,
+                    throw new ValidationException(errorPrefix,
                         $"Field {node.FieldName} is not defined in template {template.Name}");
                 break;
             case AndSearchNode node:
                 for (var i = 0; i < node.Nodes.Count; i++)
                 {
-                    var result = ValidateSearchNode(node.Nodes[i], template, $"{errorPrefix}.Nodes[{i}]");
-                    if (result.IsFailure)
-                        return result;
+                    ValidateSearchNode(node.Nodes[i], template, $"{errorPrefix}.Nodes[{i}]");
                 }
 
                 break;
             case OrSearchNode node:
                 for (var i = 0; i < node.Nodes.Count; i++)
                 {
-                    var result = ValidateSearchNode(node.Nodes[i], template, $"{errorPrefix}.Nodes[{i}]");
-                    if (result.IsFailure)
-                        return result;
+                    ValidateSearchNode(node.Nodes[i], template, $"{errorPrefix}.Nodes[{i}]");
                 }
 
                 break;
             case NotSearchNode node:
-                var notSearchNodeResult = ValidateSearchNode(node.Node, template, $"{errorPrefix}.Node");
-                if (notSearchNodeResult.IsFailure)
-                    return notSearchNodeResult;
+                ValidateSearchNode(node.Node, template, $"{errorPrefix}.Node");
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(searchNode));
         }
-
-        return Result.Success;
-    }
-
-    public override ValueTask<Result> RollbackAsync(SearchDocumentsPipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
     }
 }

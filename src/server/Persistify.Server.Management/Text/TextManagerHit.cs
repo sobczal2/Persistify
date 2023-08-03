@@ -4,10 +4,10 @@ namespace Persistify.Server.Management.Text;
 
 public class TextManagerHit : ITypeManagerHit
 {
-    public TextManagerHit(long documentId)
+    public TextManagerHit(int documentId)
     {
         DocumentId = documentId;
     }
 
-    public long DocumentId { get; }
+    public int DocumentId { get; }
 }

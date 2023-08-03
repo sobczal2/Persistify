@@ -20,5 +20,9 @@ public class StorageSettingsValidator : AbstractValidator<StorageSettings>
         RuleFor(x => x.SerializerType)
             .IsInEnum()
             .WithMessage("The serializer type must be a valid value.");
+
+        RuleFor(x => x.RepositorySectorSize)
+            .GreaterThanOrEqualTo(64)
+            .WithMessage("The repository sector size must be greater than or equal to 64.");
     }
 }

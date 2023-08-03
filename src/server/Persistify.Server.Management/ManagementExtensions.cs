@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.HostedServices.Abstractions;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Abstractions.Types;
 using Persistify.Server.Management.Bool;
+using Persistify.Server.Management.Domain;
+using Persistify.Server.Management.Domain.Transactions;
 using Persistify.Server.Management.Fts;
 using Persistify.Server.Management.Number;
 using Persistify.Server.Management.Number.Queries;
@@ -9,10 +12,15 @@ using Persistify.Server.Management.Text;
 
 namespace Persistify.Server.Management;
 
-public static class ManagementTypesExtensions
+public static class ManagementExtensions
 {
-    public static IServiceCollection AddManagementTypes(this IServiceCollection services)
+    public static IServiceCollection AddManagement(this IServiceCollection services)
     {
+        services.AddSingleton<IIdentifierManager, IdentifierManager>();
+        services.AddSingleton<ITemplateManager, TemplateManager>();
+        services.AddSingleton<IDocumentManager, DocumentManager>();
+        services.AddSingleton<ITransactionManager, TransactionManager>();
+
         services.AddSingleton<BoolManager>();
         services.AddSingleton<FtsManager>();
         services.AddSingleton<NumberManager>();

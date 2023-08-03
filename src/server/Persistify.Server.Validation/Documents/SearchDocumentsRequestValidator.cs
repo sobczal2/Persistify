@@ -25,9 +25,9 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
 
     public Result Validate(SearchDocumentsRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (value.TemplateId < 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than or equal to 0");
         }
 
         _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
@@ -42,7 +42,7 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
         {
             return new ValidationException($"{ErrorPrefix}.SearchNode", "SearchNode is required");
         }
-        
+
         _searchNodeValidator.ErrorPrefix = $"{ErrorPrefix}.SearchNode";
         var searchNodeValidator = _searchNodeValidator.Validate(value.SearchNode);
         if (searchNodeValidator.IsFailure)

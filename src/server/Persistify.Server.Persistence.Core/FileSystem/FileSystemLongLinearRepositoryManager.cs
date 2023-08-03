@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
+using Persistify.Server.Persistence.Core.Stream;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 

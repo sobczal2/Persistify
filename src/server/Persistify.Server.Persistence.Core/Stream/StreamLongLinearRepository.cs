@@ -7,17 +7,17 @@ using Persistify.Helpers.Locking;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
 
-namespace Persistify.Server.Persistence.Core.FileSystem;
+namespace Persistify.Server.Persistence.Core.Stream;
 
 public class StreamLongLinearRepository : ILongLinearRepository, IDisposable
 {
-    private readonly Stream _stream;
+    private readonly System.IO.Stream _stream;
     private readonly SemaphoreSlim _semaphore;
     private const long EmptyValue = -1L;
     private const int BufferSize = sizeof(long);
     private readonly byte[] _buffer;
 
-    public StreamLongLinearRepository(Stream stream)
+    public StreamLongLinearRepository(System.IO.Stream stream)
     {
         _stream = stream;
         _semaphore = new SemaphoreSlim(1, 1);

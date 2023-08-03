@@ -13,5 +13,5 @@ public abstract class NumberManagerQuery : ITypeManagerQuery
     }
     public TemplateFieldIdentifier TemplateFieldIdentifier { get; }
 
-    public abstract ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, long> lookup);
+    public abstract ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, int> lookup);
 }

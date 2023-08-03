@@ -77,8 +77,7 @@ public static class ServicesExtensions
         services.AddPipelinesTemplates();
         services.AddPipelinesDocuments();
         services.AddFtsAnalysis();
-        services.AddManagementDomain();
-        services.AddManagementTypes();
+        services.AddManagement();
         services.AddPersistenceCore(configuration);
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());

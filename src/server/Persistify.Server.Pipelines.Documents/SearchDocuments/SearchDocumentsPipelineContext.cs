@@ -22,7 +22,7 @@ public class SearchDocumentsPipelineContext : IPipelineContext<SearchDocumentsRe
     public int TemplateId { get; set; }
     public Template? Template { get; set; }
     public List<DocumentScore>? DocumentScores { get; set; }
-    public List<long>? DocumentIds { get; set; }
+    public List<int>? DocumentIds { get; set; }
     public int? TotalCount { get; set; }
     public List<Document>? Documents { get; set; }
 }

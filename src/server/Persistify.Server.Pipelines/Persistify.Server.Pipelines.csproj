@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
     <ProjectReference Include="..\Persistify.Server.Management.Abstractions\Persistify.Server.Management.Abstractions.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj" />
     <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj" />
   </ItemGroup>
 

@@ -2,5 +2,5 @@
 
 public interface ITypeManagerHit
 {
-    long DocumentId { get; }
+    int DocumentId { get; }
 }

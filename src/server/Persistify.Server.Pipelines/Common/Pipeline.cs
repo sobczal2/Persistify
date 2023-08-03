@@ -1,9 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
+using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Management.Domain;
+using Persistify.Server.Management.Domain.Transactions;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Pipelines.Common;
@@ -14,20 +17,24 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
     where TResponse : class
 {
     private readonly ILogger<Pipeline<TContext, TRequest, TResponse>> _logger;
+    private readonly ITransactionManager _transactionManager;
 
     protected Pipeline(
-        ILogger<Pipeline<TContext, TRequest, TResponse>> logger
+        ILogger<Pipeline<TContext, TRequest, TResponse>> logger,
+        ITransactionManager transactionManager
     )
 
     {
         _logger = logger;
+        _transactionManager = transactionManager;
     }
 
-    protected abstract PipelineStage<TContext, TRequest, TResponse>[] PipelineStages { get; }
+    protected abstract IEnumerable<PipelineStage<TContext, TRequest, TResponse>> PipelineStages { get; }
 
     protected abstract TContext CreateContext(TRequest request);
 
     protected abstract TResponse CreateResponse(TContext context);
+    protected abstract (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(TContext context);
 
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
@@ -38,56 +45,37 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 
         var context = CreateContext(request);
 
-        var stopwatch = new Stopwatch();
-        for (var i = 0; i < PipelineStages.Length; i++)
+        TransactionState.Current = new Transaction();
+        var (write, global, templateIds) = GetTransactionInfo(context);
+        await _transactionManager.BeginAsync(templateIds, write, global);
+
+        try
         {
-            var stageNumber = i;
-            var stageName = PipelineStages[i].Name;
+            foreach (var pipelineStage in PipelineStages)
+            {
+                _logger.LogInformation("Processing pipeline stage {StageName}", pipelineStage.Name);
 
-            _logger.LogInformation("Processing pipeline stage {StageName}", stageName);
-            stopwatch.Restart();
+                await pipelineStage.ProcessAsync(context);
+            }
 
-            await (await PipelineStages[i].ProcessAsync(context)).OnFailure(async x =>
-                await Throw(x, context, stageNumber));
+            await _transactionManager.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await _transactionManager.RollbackAsync();
 
-            // TODO: Remove when monitoring is implemented
-            stopwatch.Stop();
-            _logger.LogInformation("Pipeline stage {StageName} processed in {ElapsedMilliseconds} μs", stageName,
-                stopwatch.Elapsed.TotalMicroseconds);
+            if (ex is ExceptionWithStatus exceptionWithStatus)
+            {
+                throw new RpcException(exceptionWithStatus.Status);
+            }
+            _logger.LogError(ex, "Error while processing pipeline");
+            throw new RpcException(new Status(StatusCode.Internal, "Internal server error"));
+        }
+        finally
+        {
+            TransactionState.Current = null;
         }
 
         return CreateResponse(context);
-    }
-
-    private async ValueTask Throw(Exception exception, TContext context, int stageNumber)
-    {
-        var stage = PipelineStages[stageNumber];
-        if (exception is ExceptionWithStatus exceptionWithStatus)
-        {
-            _logger.LogInformation("Pipeline stage {Stage} failed with status {Status}", stage.Name,
-                exceptionWithStatus.Status);
-            await RollbackPreviousStagesAsync(stageNumber - 1, context);
-            throw new RpcException(exceptionWithStatus.Status);
-        }
-
-        _logger.LogError(exception, "Pipeline stage {Stage} failed with exception", stage.Name);
-        await RollbackPreviousStagesAsync(stageNumber - 1, context);
-        throw new RpcException(new Status(StatusCode.Internal, exception.Message));
-    }
-
-    private async ValueTask RollbackPreviousStagesAsync(int lastStageNumber, TContext context)
-    {
-        _logger.LogInformation("Rolling back pipeline stages");
-
-        for (var i = lastStageNumber; i >= 0; i--)
-        {
-            var stage = PipelineStages[i];
-            _logger.LogInformation("Rolling back stage {Stage}", stage.Name);
-
-            (await stage.RollbackAsync(context)).OnFailure(x =>
-                _logger.LogError(x, "Rollback of stage {Stage} failed", stage.Name));
-        }
-
-        _logger.LogInformation("Pipeline stages rolled back");
     }
 }

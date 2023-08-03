@@ -6,5 +6,10 @@ namespace Persistify.Responses.Templates;
 public class CreateTemplateResponse
 {
     [ProtoMember(1)]
-    public long TemplateId { get; set; }
+    public int TemplateId { get; set; }
+
+    public CreateTemplateResponse(int templateId)
+    {
+        TemplateId = templateId;
+    }
 }

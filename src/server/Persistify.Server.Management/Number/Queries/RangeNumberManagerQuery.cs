@@ -21,7 +21,7 @@ public class RangeNumberManagerQuery : NumberManagerQuery
         MaxValue = maxValue;
     }
 
-    public override async ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, long> lookup)
+    public override async ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, int> lookup)
     {
         var minValue = _isMinInclusive ? MinValue : MinValue + double.Epsilon;
         var maxValue = _isMaxInclusive ? MaxValue : MaxValue - double.Epsilon;

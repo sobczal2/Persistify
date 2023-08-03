@@ -9,6 +9,6 @@ public interface ITemplateManager
 {
     ValueTask AddAsync(Template template);
     ValueTask<Template?> GetAsync(int id);
-    ValueTask DeleteAsync(int id);
+    ValueTask<bool> DeleteAsync(int id);
     IRepository<Document> GetDocumentRepository(int templateId);
 }

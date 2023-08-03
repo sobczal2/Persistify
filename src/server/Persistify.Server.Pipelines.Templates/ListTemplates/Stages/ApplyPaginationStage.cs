@@ -20,7 +20,7 @@ public class
     {
     }
 
-    public override ValueTask<Result> ProcessAsync(ListTemplatesPipelineContext context)
+    public override ValueTask ProcessAsync(ListTemplatesPipelineContext context)
     {
         var templates = (IList<Template>?)context.Templates ?? throw new PipelineException();
         var pagination = context.Request.Pagination ?? throw new PipelineException();
@@ -43,11 +43,6 @@ public class
         context.Templates = templatesTemp;
         context.TotalCount = templates.Count;
 
-        return ValueTask.FromResult(Result.Success);
-    }
-
-    public override ValueTask<Result> RollbackAsync(ListTemplatesPipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
+        return ValueTask.CompletedTask;
     }
 }

@@ -17,7 +17,7 @@ public class LessThanNumberManagerQuery : NumberManagerQuery
         Value = value;
     }
 
-    public override async ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, long> lookup)
+    public override async ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, int> lookup)
     {
         var documentIds = await lookup.GetRangeAsync(double.MinValue, Value - double.Epsilon);
         var hits = new List<NumberManagerHit>(documentIds.Count);

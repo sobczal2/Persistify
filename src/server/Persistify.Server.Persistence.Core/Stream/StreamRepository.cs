@@ -8,13 +8,13 @@ using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
 using Persistify.Server.Serialization;
 
-namespace Persistify.Server.Persistence.Core.FileSystem;
+namespace Persistify.Server.Persistence.Core.Stream;
 
 public class StreamRepository<T> : IRepository<T>, IDisposable, IPurgable
     where T : class
 {
     private readonly ILongLinearRepository _indexRepository;
-    private readonly Stream _stream;
+    private readonly System.IO.Stream _stream;
     private readonly ISerializer _serializer;
     private readonly SemaphoreSlim _semaphore;
     private readonly int _sectorSize;
@@ -23,7 +23,7 @@ public class StreamRepository<T> : IRepository<T>, IDisposable, IPurgable
     public StreamRepository(
         ILongLinearRepository indexRepository,
         ISerializer serializer,
-        Stream stream,
+        System.IO.Stream stream,
         int sectorSize
     )
     {

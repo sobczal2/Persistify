@@ -19,7 +19,7 @@ public class SortDocumentScoresStage : PipelineStage<SearchDocumentsPipelineCont
     {
     }
 
-    public override ValueTask<Result> ProcessAsync(SearchDocumentsPipelineContext context)
+    public override ValueTask ProcessAsync(SearchDocumentsPipelineContext context)
     {
         var documentScores = context.DocumentScores ?? throw new PipelineException();
         documentScores.Sort((x, y) =>
@@ -33,11 +33,6 @@ public class SortDocumentScoresStage : PipelineStage<SearchDocumentsPipelineCont
             return cmpResult;
         });
 
-        return ValueTask.FromResult(Result.Success);
-    }
-
-    public override async ValueTask<Result> RollbackAsync(SearchDocumentsPipelineContext context)
-    {
-        return await Task.FromResult(Result.Success);
+        return ValueTask.CompletedTask;
     }
 }

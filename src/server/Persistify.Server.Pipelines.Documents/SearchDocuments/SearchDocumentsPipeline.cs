@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Documents.SearchDocuments.Stages;
@@ -11,56 +13,38 @@ namespace Persistify.Server.Pipelines.Documents.SearchDocuments;
 public class
     SearchDocumentsPipeline : Pipeline<SearchDocumentsPipelineContext, SearchDocumentsRequest, SearchDocumentsResponse>
 {
-    private readonly
+    public SearchDocumentsPipeline(ILogger<SearchDocumentsPipeline> logger, ITransactionManager transactionManager,
         StaticValidationStage<SearchDocumentsPipelineContext, SearchDocumentsRequest, SearchDocumentsResponse>
-        _staticValidationStage;
-
-    private readonly
+        staticValidationStage,
         FetchTemplateFromTemplateManagerStage<SearchDocumentsPipelineContext, SearchDocumentsRequest,
-            SearchDocumentsResponse> _fetchTemplateFromTemplateManagerStage;
-
-    private readonly ValidateQueryAgainstTemplateStage _validateQueryAgainstTemplateStage;
-    private readonly EvaluateQueryStage _evaluateQueryStage;
-    private readonly SortDocumentScoresStage _sortDocumentScoresStage;
-    private readonly ApplyPaginationStage _applyPaginationStage;
-    private readonly FetchDocumentsFromDocumentStoreStage _fetchDocumentsFromDocumentStoreStage;
-
-    public SearchDocumentsPipeline(
-        ILogger<SearchDocumentsPipeline> logger,
-        StaticValidationStage<SearchDocumentsPipelineContext, SearchDocumentsRequest, SearchDocumentsResponse>
-            staticValidationStage,
-        FetchTemplateFromTemplateManagerStage<SearchDocumentsPipelineContext, SearchDocumentsRequest,
-            SearchDocumentsResponse> fetchTemplateFromTemplateManagerStage,
-        ValidateQueryAgainstTemplateStage validateQueryAgainstTemplateStage,
+    SearchDocumentsResponse> fetchTemplateFromTemplateManagerStage,
+    ValidateQueryAgainstTemplateStage validateQueryAgainstTemplateStage,
         EvaluateQueryStage evaluateQueryStage,
-        SortDocumentScoresStage sortDocumentScoresStage,
+    SortDocumentScoresStage sortDocumentScoresStage,
         ApplyPaginationStage applyPaginationStage,
-        FetchDocumentsFromDocumentStoreStage fetchDocumentsFromDocumentStoreStage
-    ) : base(
-        logger
-    )
+    FetchDocumentsFromDocumentStoreStage fetchDocumentsFromDocumentStoreStage
+        ) : base(
+        logger,
+        transactionManager
+        )
     {
-        _staticValidationStage = staticValidationStage;
-        _fetchTemplateFromTemplateManagerStage = fetchTemplateFromTemplateManagerStage;
-        _validateQueryAgainstTemplateStage = validateQueryAgainstTemplateStage;
-        _evaluateQueryStage = evaluateQueryStage;
-        _sortDocumentScoresStage = sortDocumentScoresStage;
-        _applyPaginationStage = applyPaginationStage;
-        _fetchDocumentsFromDocumentStoreStage = fetchDocumentsFromDocumentStoreStage;
+        PipelineStages = new PipelineStage<SearchDocumentsPipelineContext, SearchDocumentsRequest,
+            SearchDocumentsResponse>[]
+        {
+            staticValidationStage,
+            fetchTemplateFromTemplateManagerStage,
+            validateQueryAgainstTemplateStage,
+            evaluateQueryStage,
+            sortDocumentScoresStage,
+            applyPaginationStage,
+            fetchDocumentsFromDocumentStoreStage
+        };
     }
 
-    protected override PipelineStage<SearchDocumentsPipelineContext, SearchDocumentsRequest, SearchDocumentsResponse>[]
-        PipelineStages
-        => new PipelineStage<SearchDocumentsPipelineContext, SearchDocumentsRequest, SearchDocumentsResponse>[]
-        {
-            _staticValidationStage,
-            _fetchTemplateFromTemplateManagerStage,
-            _validateQueryAgainstTemplateStage,
-            _evaluateQueryStage,
-            _sortDocumentScoresStage,
-            _applyPaginationStage,
-            _fetchDocumentsFromDocumentStoreStage
-        };
+    protected override IEnumerable<PipelineStage<SearchDocumentsPipelineContext, SearchDocumentsRequest, SearchDocumentsResponse>> PipelineStages
+    {
+        get;
+    }
 
     protected override SearchDocumentsPipelineContext CreateContext(SearchDocumentsRequest request)
     {
@@ -71,5 +55,10 @@ public class
     {
         return new SearchDocumentsResponse(context.Documents ?? throw new PipelineException(),
             context.TotalCount ?? throw new PipelineException());
+    }
+
+    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(SearchDocumentsPipelineContext context)
+    {
+        return (false, false, new[] {context.TemplateId});
     }
 }

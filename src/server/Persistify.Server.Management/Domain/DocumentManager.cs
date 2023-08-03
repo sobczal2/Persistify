@@ -10,11 +10,11 @@ namespace Persistify.Server.Management.Domain;
 public class DocumentManager : IDocumentManager
 {
     private readonly ITemplateManager _templateManager;
-    private readonly IdentifierManager _identifierManager;
+    private readonly IIdentifierManager _identifierManager;
 
     public DocumentManager(
         ITemplateManager templateManager,
-        IdentifierManager identifierManager
+        IIdentifierManager identifierManager
         )
     {
         _templateManager = templateManager;

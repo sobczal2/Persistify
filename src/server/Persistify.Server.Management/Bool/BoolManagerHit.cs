@@ -4,10 +4,10 @@ namespace Persistify.Server.Management.Bool;
 
 public class BoolManagerHit : ITypeManagerHit
 {
-    public BoolManagerHit(long documentId)
+    public BoolManagerHit(int documentId)
     {
         DocumentId = documentId;
     }
 
-    public long DocumentId { get; }
+    public int DocumentId { get; }
 }

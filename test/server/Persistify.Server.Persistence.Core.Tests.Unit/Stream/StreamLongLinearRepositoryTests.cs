@@ -2,15 +2,15 @@
 using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Persistify.Server.Persistence.Core.FileSystem;
+using Persistify.Server.Persistence.Core.Stream;
 using Xunit;
 
-namespace Persistify.Server.Persistence.Core.Tests.Unit;
+namespace Persistify.Server.Persistence.Core.Tests.Unit.Stream;
 
 public class StreamLongLinearRepositoryTests
 {
     private StreamLongLinearRepository _sut;
-    private Stream _stream;
+    private System.IO.Stream _stream;
 
     public StreamLongLinearRepositoryTests()
     {

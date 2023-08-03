@@ -52,16 +52,9 @@ public class EvaluateQueryStage : PipelineStage<SearchDocumentsPipelineContext, 
         _documentManager = documentManager;
     }
 
-    public override async ValueTask<Result> ProcessAsync(SearchDocumentsPipelineContext context)
+    public override async ValueTask ProcessAsync(SearchDocumentsPipelineContext context)
     {
         context.DocumentScores = await EvaluateSearchNode(context.Request.SearchNode, context.TemplateId);
-
-        return Result.Success;
-    }
-
-    public override ValueTask<Result> RollbackAsync(SearchDocumentsPipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
     }
 
     private async ValueTask<List<DocumentScore>> EvaluateSearchNode(SearchNode searchNode, int templateId)

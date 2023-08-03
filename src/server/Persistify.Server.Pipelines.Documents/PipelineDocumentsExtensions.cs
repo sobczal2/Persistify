@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Persistify.Server.Pipelines.Documents.AddDocument;
+using Persistify.Server.Pipelines.Documents.AddDocument.Stages;
 using Persistify.Server.Pipelines.Documents.GetDocument;
 using Persistify.Server.Pipelines.Documents.GetDocument.Stages;
-using Persistify.Server.Pipelines.Documents.IndexDocument;
-using Persistify.Server.Pipelines.Documents.IndexDocument.Stages;
 using Persistify.Server.Pipelines.Documents.SearchDocuments;
 using Persistify.Server.Pipelines.Documents.SearchDocuments.Stages;
 
@@ -12,11 +12,11 @@ public static class PipelineDocumentsExtensions
 {
     public static IServiceCollection AddPipelinesDocuments(this IServiceCollection services)
     {
-        services.AddSingleton(typeof(IndexDocumentPipeline));
+        services.AddSingleton(typeof(AddDocumentPipeline));
         services.AddSingleton(typeof(GetDocumentPipeline));
         services.AddSingleton(typeof(SearchDocumentsPipeline));
 
-        services.AddSingleton(typeof(IndexDocumentInDocumentManagerStage));
+        services.AddSingleton(typeof(AddDocumentToDocumentManagerStage));
 
         services.AddSingleton(typeof(GetDocumentFromDocumentManagerStage));
 

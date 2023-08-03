@@ -10,7 +10,7 @@ export default () => {
 
     const data = {
         "DocumentId": Math.floor(Math.random() * 100000) + 1,
-        "TemplateId": 1
+        "TemplateId": 0
     };
     const response = client.invoke('/Persistify.Services.DocumentService/GetDocument', data);
 

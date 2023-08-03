@@ -24,7 +24,7 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
     private readonly IRepositoryManager _repositoryManager;
     private readonly IIntLinearRepositoryManager _intLinearRepositoryManager;
     private readonly DataStructuresSettings _dataStructuresSettings;
-    private readonly ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, long>> _lookups;
+    private readonly ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, int>> _lookups;
 
     public NumberManager(
         ITemplateManager templateManager,
@@ -37,7 +37,7 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
         _repositoryManager = repositoryManager;
         _intLinearRepositoryManager = intLinearRepositoryManager;
         _dataStructuresSettings = dataStructuresSettingsOptions.Value;
-        _lookups = new ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, long>>();
+        _lookups = new ConcurrentDictionary<TemplateFieldIdentifier, IAsyncLookup<double, int>>();
     }
 
     public async ValueTask<List<NumberManagerHit>> SearchAsync(NumberManagerQuery query)
@@ -68,30 +68,30 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
 
     public ValueTask DeleteAsync(int templateId, Document document)
     {
-        var template = _templateManager.Get(templateId);
-        if (template == null)
-        {
-            throw new ManagerInternalException();
-        }
-
-        foreach (var numberField in template.NumberFields)
-        {
-            var identifier = new TemplateFieldIdentifier(templateId, numberField.Name);
-            if (!_lookups.TryGetValue(identifier, out var tree))
-            {
-                throw new ManagerInternalException();
-            }
-
-            foreach (var numberFieldValue in document.NumberFieldValues)
-            {
-                if (numberFieldValue.FieldName != numberField.Name)
-                {
-                    continue;
-                }
-
-                tree.RemoveAsync(numberFieldValue.Value, document.Id);
-            }
-        }
+        // var template = _templateManager.Get(templateId);
+        // if (template == null)
+        // {
+        //     throw new ManagerInternalException();
+        // }
+        //
+        // foreach (var numberField in template.NumberFields)
+        // {
+        //     var identifier = new TemplateFieldIdentifier(templateId, numberField.Name);
+        //     if (!_lookups.TryGetValue(identifier, out var tree))
+        //     {
+        //         throw new ManagerInternalException();
+        //     }
+        //
+        //     foreach (var numberFieldValue in document.NumberFieldValues)
+        //     {
+        //         if (numberFieldValue.FieldName != numberField.Name)
+        //         {
+        //             continue;
+        //         }
+        //
+        //         tree.RemoveAsync(numberFieldValue.Value, document.Id);
+        //     }
+        // }
 
         return ValueTask.CompletedTask;
     }
@@ -102,18 +102,18 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
         {
             _repositoryManager.Create<BTreeInternalNode<double>>(GetRepositoryName(template.Id, numberField.Name,
                 "BTreeInternalNode"));
-            _repositoryManager.Create<BTreeLeafNode<double, long>>(GetRepositoryName(template.Id, numberField.Name,
+            _repositoryManager.Create<BTreeLeafNode<double, int>>(GetRepositoryName(template.Id, numberField.Name,
                 "BTreeLeafNode"));
             _intLinearRepositoryManager.Create(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
             var internalNodeRepository =
                 _repositoryManager.Get<BTreeInternalNode<double>>(GetRepositoryName(template.Id, numberField.Name,
                     "BTreeInternalNode"));
             var leafNodeRepository =
-                _repositoryManager.Get<BTreeLeafNode<double, long>>(GetRepositoryName(template.Id, numberField.Name,
+                _repositoryManager.Get<BTreeLeafNode<double, int>>(GetRepositoryName(template.Id, numberField.Name,
                     "BTreeLeafNode"));
             var linearRepository =
                 _intLinearRepositoryManager.Get(GetRepositoryName(template.Id, numberField.Name, "BTreeLinear"));
-            var tree = (IAsyncLookup<double, long>)new BTreeAsyncLookup<double, long>(internalNodeRepository,
+            var tree = (IAsyncLookup<double, int>)new BTreeAsyncLookup<double, int>(internalNodeRepository,
                 leafNodeRepository,
                 linearRepository, _dataStructuresSettings.BTreeDegree, Comparer<double>.Default);
             await tree.InitializeAsync();
@@ -143,12 +143,14 @@ public class NumberManager : ITypeManager<NumberManagerQuery, NumberManagerHit>,
         return $"Types/Number/{templateId}_{fieldName}.{subtype}";
     }
 
-    public async ValueTask PerformStartupActionAsync()
+    public ValueTask PerformStartupActionAsync()
     {
-        var templates = _templateManager.GetAll();
-        foreach (var template in templates)
-        {
-            await InitializeForTemplate(template);
-        }
+        // var templates = _templateManager.GetAll();
+        // foreach (var template in templates)
+        // {
+        //     await InitializeForTemplate(template);
+        // }
+
+        return ValueTask.CompletedTask;
     }
 }

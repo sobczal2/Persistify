@@ -18,7 +18,7 @@ public class NotEqualNumberManagerQuery : NumberManagerQuery
     }
 
     // TODO: Refactor this to use some all documents lookup instead of two range lookups
-    public override async ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, long> lookup)
+    public override async ValueTask<List<NumberManagerHit>> Evaluate(IAsyncLookup<double, int> lookup)
     {
         var documentLeftIds = await lookup.GetRangeAsync(double.MinValue, Value - double.Epsilon);
         var documentRightIds = await lookup.GetRangeAsync(Value + double.Epsilon, double.MaxValue);

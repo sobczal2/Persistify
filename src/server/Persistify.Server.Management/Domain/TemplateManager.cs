@@ -38,9 +38,15 @@ public class TemplateManager : ITemplateManager
         return await _templateRepository.ReadAsync(id);
     }
 
-    public async ValueTask DeleteAsync(int id)
+    public async ValueTask<bool> DeleteAsync(int id)
     {
-        await _templateRepository.DeleteAsync(id);
+        if(!await _templateRepository.DeleteAsync(id))
+        {
+            return false;
+        }
+        _repositoryManager.Delete<Document>(GetRepositoryName(id));
+
+        return true;
     }
 
     public IRepository<Document> GetDocumentRepository(int templateId)

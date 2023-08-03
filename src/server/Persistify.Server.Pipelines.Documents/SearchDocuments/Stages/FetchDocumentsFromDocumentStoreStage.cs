@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Documents;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
@@ -25,16 +27,19 @@ public class FetchDocumentsFromDocumentStoreStage : PipelineStage<SearchDocument
         _documentManager = documentManager;
     }
 
-    public override async ValueTask<Result> ProcessAsync(SearchDocumentsPipelineContext context)
+    public override async ValueTask ProcessAsync(SearchDocumentsPipelineContext context)
     {
         var documentIds = context.DocumentIds ?? throw new PipelineException();
-        context.Documents = await _documentManager.GetDocumentsAsync(context.TemplateId, documentIds);
+        context.Documents = new List<Document>(documentIds.Count);
 
-        return Result.Success;
-    }
-
-    public override ValueTask<Result> RollbackAsync(SearchDocumentsPipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
+        foreach (var documentId in documentIds)
+        {
+            var document = await _documentManager.GetAsync(context.TemplateId, documentId);
+            if (document == null)
+            {
+                throw new PipelineException();
+            }
+            context.Documents.Add(document);
+        }
     }
 }

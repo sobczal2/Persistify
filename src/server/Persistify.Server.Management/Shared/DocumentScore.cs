@@ -2,10 +2,10 @@
 
 public struct DocumentScore
 {
-    public long DocumentId { get; set; }
+    public int DocumentId { get; set; }
     public float Score { get; set; }
 
-    public DocumentScore(long documentId, float score)
+    public DocumentScore(int documentId, float score)
     {
         DocumentId = documentId;
         Score = score;

@@ -5,7 +5,7 @@ namespace Persistify.Server.Management.Fts;
 
 public class FtsManagerHit : ITypeManagerHit
 {
-    public FtsManagerHit(long documentId, float score, List<int> positions)
+    public FtsManagerHit(int documentId, float score, List<int> positions)
     {
         DocumentId = documentId;
         Score = score;
@@ -14,5 +14,5 @@ public class FtsManagerHit : ITypeManagerHit
 
     public float Score { get; }
     public List<int> Positions { get; }
-    public long DocumentId { get; }
+    public int DocumentId { get; }
 }

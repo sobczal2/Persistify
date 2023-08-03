@@ -23,20 +23,15 @@ public class StaticValidationStage<TContext, TRequest, TResponse> : PipelineStag
 
     public override string Name => StageName;
 
-    public override ValueTask<Result> ProcessAsync(TContext context)
+    public override ValueTask ProcessAsync(TContext context)
     {
         var validationResult = _validator.Validate(context.Request);
 
         if (validationResult.IsFailure)
         {
-            return ValueTask.FromResult(validationResult);
+            throw validationResult.Exception;
         }
 
-        return ValueTask.FromResult(Result.Success);
-    }
-
-    public override ValueTask<Result> RollbackAsync(TContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
+        return ValueTask.CompletedTask;
     }
 }

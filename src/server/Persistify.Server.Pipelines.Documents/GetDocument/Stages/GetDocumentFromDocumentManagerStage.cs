@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Management.Abstractions;
 using Persistify.Server.Management.Abstractions.Domain;
-using Persistify.Server.Management.Abstractions.Exceptions.Template;
+using Persistify.Server.Management.Abstractions.Exceptions.Templates;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Validation.Common;
 
@@ -28,7 +26,7 @@ public class
 
     public override string Name => StageName;
 
-    public override async ValueTask<Result> ProcessAsync(GetDocumentPipelineContext context)
+    public override async ValueTask ProcessAsync(GetDocumentPipelineContext context)
     {
         try
         {
@@ -36,19 +34,12 @@ public class
         }
         catch (TemplateNotFoundException)
         {
-            return new ValidationException("GetDocumentRequest.TemplateId", "Template not found");
+            throw new ValidationException("GetDocumentRequest.TemplateId", "Template not found");
         }
 
         if (context.Document == null)
         {
-            return new ValidationException("GetDocumentRequest.DocumentId", "Document not found");
+            throw new ValidationException("GetDocumentRequest.DocumentId", "Document not found");
         }
-
-        return Result.Success;
-    }
-
-    public override ValueTask<Result> RollbackAsync(GetDocumentPipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
     }
 }

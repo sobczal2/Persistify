@@ -26,15 +26,10 @@ public class
 
     public override string Name => StageName;
 
-    public override ValueTask<Result> ProcessAsync(ListTemplatesPipelineContext context)
+    public override ValueTask ProcessAsync(ListTemplatesPipelineContext context)
     {
-        context.Templates = _templateManager.GetAll();
+        // TODO: Implement
 
-        return ValueTask.FromResult(Result.Success);
-    }
-
-    public override ValueTask<Result> RollbackAsync(ListTemplatesPipelineContext context)
-    {
-        return ValueTask.FromResult(Result.Success);
+        return ValueTask.CompletedTask;
     }
 }

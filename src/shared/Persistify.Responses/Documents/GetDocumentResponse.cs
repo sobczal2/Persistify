@@ -7,5 +7,10 @@ namespace Persistify.Responses.Documents;
 public class GetDocumentResponse
 {
     [ProtoMember(1)]
-    public Document Document { get; set; } = default!;
+    public Document Document { get; set; }
+
+    public GetDocumentResponse(Document document)
+    {
+        Document = document;
+    }
 }

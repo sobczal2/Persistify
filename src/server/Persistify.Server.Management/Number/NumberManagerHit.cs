@@ -4,10 +4,10 @@ namespace Persistify.Server.Management.Number;
 
 public class NumberManagerHit : ITypeManagerHit
 {
-    public NumberManagerHit(long documentId)
+    public NumberManagerHit(int documentId)
     {
         DocumentId = documentId;
     }
 
-    public long DocumentId { get; }
+    public int DocumentId { get; }
 }

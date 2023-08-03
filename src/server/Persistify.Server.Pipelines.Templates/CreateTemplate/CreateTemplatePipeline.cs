@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
+using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Exceptions;
@@ -11,37 +14,30 @@ namespace Persistify.Server.Pipelines.Templates.CreateTemplate;
 public class
     CreateTemplatePipeline : Pipeline<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
 {
-    private readonly AddTemplateToTemplateManagerStage _addTemplateToTemplateManagerStage;
-    private readonly InitializeTemplateInTypeManagersStage _initializeTemplateInTypeManagersStage;
-
-    private readonly CheckAnalyzersAvailabilityStage _checkAnalyzersAvailabilityStage;
-
-    private readonly StaticValidationStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
-        _staticValidationStage;
-
     public CreateTemplatePipeline(
         ILogger<CreateTemplatePipeline> logger,
+        ITransactionManager transactionManager,
         StaticValidationStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
             staticValidationStage,
         CheckAnalyzersAvailabilityStage checkAnalyzersAvailabilityStage,
         AddTemplateToTemplateManagerStage addTemplateToTemplateManagerStage,
-        InitializeTemplateInTypeManagersStage initializeTemplateInTypeManagersStage
-    ) : base(
-        logger
-    )
+        InitializeTemplateInTypeManagersStage initializeTemplateInTypeManagersStage) : base(logger, transactionManager)
     {
-        _staticValidationStage = staticValidationStage;
-        _checkAnalyzersAvailabilityStage = checkAnalyzersAvailabilityStage;
-        _addTemplateToTemplateManagerStage = addTemplateToTemplateManagerStage;
-        _initializeTemplateInTypeManagersStage = initializeTemplateInTypeManagersStage;
+        PipelineStages = new PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>[]
+        {
+            staticValidationStage,
+            checkAnalyzersAvailabilityStage,
+            addTemplateToTemplateManagerStage,
+            initializeTemplateInTypeManagersStage
+        };
     }
 
-    protected override PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>[]
+    protected override
+        IEnumerable<PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>>
         PipelineStages
-        => new PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>[]
-        {
-            _staticValidationStage, _checkAnalyzersAvailabilityStage, _addTemplateToTemplateManagerStage, _initializeTemplateInTypeManagersStage
-        };
+    {
+        get;
+    }
 
     protected override CreateTemplatePipelineContext CreateContext(CreateTemplateRequest request)
     {
@@ -50,6 +46,12 @@ public class
 
     protected override CreateTemplateResponse CreateResponse(CreateTemplatePipelineContext context)
     {
-        return new CreateTemplateResponse { TemplateId = context.Template?.Id ?? throw new PipelineException() };
+        return new CreateTemplateResponse(context.Template?.Id ?? throw new PipelineException());
+    }
+
+    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
+        CreateTemplatePipelineContext context)
+    {
+        return (true, true, Array.Empty<int>());
     }
 }

@@ -17,7 +17,7 @@ message CreateTemplateRequest {
    repeated BoolField BoolFields = 4;
 }
 message CreateTemplateResponse {
-   int64 TemplateId = 1;
+   int32 TemplateId = 1;
 }
 message DeleteTemplateRequest {
    int32 TemplateId = 1;

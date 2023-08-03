@@ -35,7 +35,7 @@ public class ReadWriteSemaphoreSlim : IDisposable
 
         if (Interlocked.Decrement(ref _readersCount) == 0)
         {
-            _readSemaphoreSlim.Release();
+            _writeSemaphoreSlim.Release();
         }
 
         _readSemaphoreSlim.Release();
@@ -50,6 +50,9 @@ public class ReadWriteSemaphoreSlim : IDisposable
     {
         _writeSemaphoreSlim.Release();
     }
+
+    public bool IsReadLockHeld => _readersCount > 0;
+    public bool IsWriteLockHeld => _writeSemaphoreSlim.CurrentCount == 0;
 
     public void Dispose()
     {

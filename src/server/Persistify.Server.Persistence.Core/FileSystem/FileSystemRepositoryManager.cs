@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
+using Persistify.Server.Persistence.Core.Stream;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
@@ -49,12 +50,12 @@ public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
 
         var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
         var mainFilePath = $"{baseFilesPath}.bin";
-        var indexFilePath = $"{baseFilesPath}.idx";
+        var indexRepositoryName = $"{repositoryName}.idx";
 
-        _longLinearRepositoryManager.Create(indexFilePath);
+        _longLinearRepositoryManager.Create(indexRepositoryName);
 
         if (!_repositories.TryAdd(repositoryName, new StreamRepository<T>(
-                _longLinearRepositoryManager.Get(indexFilePath),
+                _longLinearRepositoryManager.Get(indexRepositoryName),
                 _serializer,
                 new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None),
                 _storageSettings.RepositorySectorSize
@@ -90,9 +91,9 @@ public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
 
         var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
         var mainFilePath = $"{baseFilesPath}.bin";
-        var indexFilePath = $"{baseFilesPath}.idx";
+        var indexRepositoryName = $"{repositoryName}.idx";
 
         File.Delete(mainFilePath);
-        _longLinearRepositoryManager.Delete(indexFilePath);
+        _longLinearRepositoryManager.Delete(indexRepositoryName);
     }
 }

@@ -7,5 +7,10 @@ namespace Persistify.Responses.Templates;
 public class GetTemplateResponse
 {
     [ProtoMember(1)]
-    public Template Template { get; set; } = default!;
+    public Template Template { get; set; }
+
+    public GetTemplateResponse(Template template)
+    {
+        Template = template;
+    }
 }

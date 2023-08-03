@@ -6,7 +6,7 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Documents;
 
-public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
+public class IndexDocumentRequestValidator : IValidator<AddDocumentRequest>
 {
     private readonly IValidator<BoolFieldValue> _boolFieldValueValidator;
     private readonly IValidator<NumberFieldValue> _numberFieldValueValidator;
@@ -26,9 +26,9 @@ public class IndexDocumentRequestValidator : IValidator<IndexDocumentRequest>
 
     public string ErrorPrefix { get; set; }
 
-    public Result Validate(IndexDocumentRequest value)
+    public Result Validate(AddDocumentRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (value.TemplateId < 0)
         {
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
         }
