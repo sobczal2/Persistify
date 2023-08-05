@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
 using Persistify.Server.Persistence.Core.Stream;
+using Persistify.Server.Persistence.Core.Transactions;
+using Persistify.Server.Persistence.Core.Transactions.RepositoryWrappers;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
 public class FileSystemIntLinearRepositoryManager : IIntLinearRepositoryManager, IDisposable
 {
+    private readonly ISystemClock _systemClock;
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly StorageSettings _storageSettings;
 
     public FileSystemIntLinearRepositoryManager(
-        IOptions<StorageSettings> storageSettings
+        IOptions<StorageSettings> storageSettings,
+        ISystemClock systemClock
     )
     {
+        _systemClock = systemClock;
         _storageSettings = storageSettings.Value;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
     }
@@ -54,6 +60,15 @@ public class FileSystemIntLinearRepositoryManager : IIntLinearRepositoryManager,
         if (!_repositories.TryGetValue(repositoryName, out var repository))
         {
             throw new RepositoryNotFoundException(repositoryName);
+        }
+
+        if (TransactionState.Current is not null)
+        {
+            return new IntLinearRepositoryTransactionWrapper(
+                (IIntLinearRepository)repository,
+                TransactionState.RequiredCurrent,
+                _systemClock
+            );
         }
 
         return (IIntLinearRepository)repository;

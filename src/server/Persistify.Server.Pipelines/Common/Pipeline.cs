@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Grpc.Core;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Domain;
-using Persistify.Server.Management.Domain.Transactions;
+using Persistify.Server.Persistence.Core.Transactions;
+using Persistify.Server.Persistence.Core.Transactions.TLogs;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Pipelines.Common;
@@ -18,15 +20,18 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 {
     private readonly ILogger<Pipeline<TContext, TRequest, TResponse>> _logger;
     private readonly ITransactionManager _transactionManager;
+    private readonly ISystemClock _systemClock;
 
     protected Pipeline(
         ILogger<Pipeline<TContext, TRequest, TResponse>> logger,
-        ITransactionManager transactionManager
+        ITransactionManager transactionManager,
+        ISystemClock systemClock
     )
 
     {
         _logger = logger;
         _transactionManager = transactionManager;
+        _systemClock = systemClock;
     }
 
     protected abstract IEnumerable<PipelineStage<TContext, TRequest, TResponse>> PipelineStages { get; }
@@ -49,25 +54,49 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
         var (write, global, templateIds) = GetTransactionInfo(context);
         await _transactionManager.BeginAsync(templateIds, write, global);
 
+        string pipelineStageName = "Unknown";
         try
         {
             foreach (var pipelineStage in PipelineStages)
             {
-                _logger.LogInformation("Processing pipeline stage {StageName}", pipelineStage.Name);
+                pipelineStageName = pipelineStage.Name;
+                TransactionState.RequiredCurrent.TransactionLogs.Add(
+                    new PipelineStageLog(
+                        pipelineStageName,
+                        PipelineStageState.Started,
+                        _systemClock.UtcNow.UtcDateTime
+                    )
+                );
 
                 await pipelineStage.ProcessAsync(context);
+
+                TransactionState.RequiredCurrent.TransactionLogs.Add(
+                    new PipelineStageLog(
+                        pipelineStageName,
+                        PipelineStageState.Completed,
+                        _systemClock.UtcNow.UtcDateTime
+                    )
+                );
             }
 
             await _transactionManager.CommitAsync();
         }
         catch (Exception ex)
         {
+            TransactionState.RequiredCurrent.TransactionLogs.Add(
+                new PipelineStageLog(
+                    pipelineStageName,
+                    PipelineStageState.Failed,
+                    _systemClock.UtcNow.UtcDateTime
+                )
+            );
             await _transactionManager.RollbackAsync();
 
             if (ex is ExceptionWithStatus exceptionWithStatus)
             {
                 throw new RpcException(exceptionWithStatus.Status);
             }
+
             _logger.LogError(ex, "Error while processing pipeline");
             throw new RpcException(new Status(StatusCode.Internal, "Internal server error"));
         }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Transactions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Exceptions;
@@ -17,19 +19,20 @@ public class
     public CreateTemplatePipeline(
         ILogger<CreateTemplatePipeline> logger,
         ITransactionManager transactionManager,
+        ISystemClock systemClock,
         StaticValidationStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
             staticValidationStage,
         CheckAnalyzersAvailabilityStage checkAnalyzersAvailabilityStage,
         AddTemplateToTemplateManagerStage addTemplateToTemplateManagerStage,
-        InitializeTemplateInTypeManagersStage initializeTemplateInTypeManagersStage) : base(logger, transactionManager)
+        InitializeTemplateInTypeManagersStage initializeTemplateInTypeManagersStage) : base(logger, transactionManager,
+        systemClock)
     {
-        PipelineStages = new PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>[]
-        {
-            staticValidationStage,
-            checkAnalyzersAvailabilityStage,
-            addTemplateToTemplateManagerStage,
-            initializeTemplateInTypeManagersStage
-        };
+        PipelineStages =
+            new PipelineStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>[]
+            {
+                staticValidationStage, checkAnalyzersAvailabilityStage, addTemplateToTemplateManagerStage,
+                initializeTemplateInTypeManagersStage
+            };
     }
 
     protected override

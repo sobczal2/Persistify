@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Transactions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Exceptions;
@@ -14,10 +16,11 @@ public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTempl
     public GetTemplatePipeline(
         ILogger<GetTemplatePipeline> logger,
         ITransactionManager transactionManager,
+        ISystemClock systemClock,
         StaticValidationStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
             staticValidationStage,
         FetchTemplateFromTemplateManagerStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>
-            fetchTemplateFromTemplateManagerStage) : base(logger, transactionManager)
+            fetchTemplateFromTemplateManagerStage) : base(logger, transactionManager, systemClock)
     {
         PipelineStages = new PipelineStage<GetTemplatePipelineContext, GetTemplateRequest, GetTemplateResponse>[]
         {

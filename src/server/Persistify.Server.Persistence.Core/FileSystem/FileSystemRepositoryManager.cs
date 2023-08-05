@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Persistence.Core.Abstractions;
 using Persistify.Server.Persistence.Core.Exceptions;
 using Persistify.Server.Persistence.Core.Stream;
+using Persistify.Server.Persistence.Core.Transactions;
+using Persistify.Server.Persistence.Core.Transactions.RepositoryWrappers;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Persistence.Core.FileSystem;
 
 public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
 {
-    private readonly ILongLinearRepositoryManager _longLinearRepositoryManager;
+    private readonly ISystemClock _systemClock;
     private readonly ConcurrentDictionary<string, IDisposable> _repositories;
     private readonly ISerializer _serializer;
     private readonly StorageSettings _storageSettings;
@@ -20,12 +23,12 @@ public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
     public FileSystemRepositoryManager(
         IOptions<StorageSettings> storageSettings,
         ISerializer serializer,
-        ILongLinearRepositoryManager longLinearRepositoryManager
+        ISystemClock systemClock
     )
     {
         _storageSettings = storageSettings.Value;
         _serializer = serializer;
-        _longLinearRepositoryManager = longLinearRepositoryManager;
+        _systemClock = systemClock;
         _repositories = new ConcurrentDictionary<string, IDisposable>();
     }
 
@@ -50,12 +53,13 @@ public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
 
         var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
         var mainFilePath = $"{baseFilesPath}.bin";
-        var indexRepositoryName = $"{repositoryName}.idx";
+        var indexFilePath = $"{baseFilesPath}.idx";
 
-        _longLinearRepositoryManager.Create(indexRepositoryName);
 
         if (!_repositories.TryAdd(repositoryName, new StreamRepository<T>(
-                _longLinearRepositoryManager.Get(indexRepositoryName),
+                new StreamLongLinearRepository(
+                    new FileStream(indexFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+                ),
                 _serializer,
                 new FileStream(mainFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None),
                 _storageSettings.RepositorySectorSize
@@ -70,6 +74,15 @@ public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
         if (!_repositories.TryGetValue(repositoryName, out var repository))
         {
             throw new RepositoryNotFoundException(repositoryName);
+        }
+
+        if (TransactionState.Current is not null)
+        {
+            return new RepositoryTransactionWrapper<T>(
+                (IRepository<T>)repository,
+                TransactionState.RequiredCurrent,
+                _systemClock
+            );
         }
 
         return (IRepository<T>)repository;
@@ -91,9 +104,9 @@ public class FileSystemRepositoryManager : IRepositoryManager, IDisposable
 
         var baseFilesPath = Path.Combine(_storageSettings.DataPath, repositoryName);
         var mainFilePath = $"{baseFilesPath}.bin";
-        var indexRepositoryName = $"{repositoryName}.idx";
+        var indexFilePath = $"{baseFilesPath}.idx";
 
         File.Delete(mainFilePath);
-        _longLinearRepositoryManager.Delete(indexRepositoryName);
+        File.Delete(indexFilePath);
     }
 }

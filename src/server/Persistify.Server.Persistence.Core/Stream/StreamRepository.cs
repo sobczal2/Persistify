@@ -283,6 +283,7 @@ public class StreamRepository<T> : IRepository<T>, IDisposable, IPurgable
     {
         _semaphore.Dispose();
         _stream.Dispose();
+        (_indexRepository as IDisposable)?.Dispose();
     }
 
     public async ValueTask PurgeAsync()

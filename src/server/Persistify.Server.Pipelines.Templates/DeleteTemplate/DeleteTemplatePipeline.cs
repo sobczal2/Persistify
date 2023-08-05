@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Transactions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Templates.DeleteTemplate.Stages;
@@ -15,10 +17,11 @@ public class
     public DeleteTemplatePipeline(
         ILogger<DeleteTemplatePipeline> logger,
         ITransactionManager transactionManager,
+        ISystemClock systemClock,
         StaticValidationStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>
             staticValidationStage,
         DeleteTemplateFromTemplateManagerStage deleteTemplateFromTemplateManagerStage) : base(logger,
-        transactionManager)
+        transactionManager, systemClock)
     {
         PipelineStages =
             new PipelineStage<DeleteTemplatePipelineContext, DeleteTemplateRequest, DeleteTemplateResponse>[]

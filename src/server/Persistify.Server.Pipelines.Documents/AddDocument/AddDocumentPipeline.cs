@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Transactions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Documents.AddDocument.Stages;
@@ -15,10 +17,11 @@ public class AddDocumentPipeline : Pipeline<AddDocumentPipelineContext, AddDocum
     public AddDocumentPipeline(
         ILogger<AddDocumentPipeline> logger,
         ITransactionManager transactionManager,
+        ISystemClock systemClock,
         StaticValidationStage<AddDocumentPipelineContext, AddDocumentRequest, AddDocumentResponse>
             staticValidationStage,
         AddDocumentToDocumentManagerStage addDocumentToDocumentManagerStage
-    ) : base(logger, transactionManager)
+    ) : base(logger, transactionManager, systemClock)
     {
         PipelineStages = new PipelineStage<AddDocumentPipelineContext, AddDocumentRequest, AddDocumentResponse>[]
         {

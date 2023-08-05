@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Internal;
 using Persistify.Server.Configuration.Enums;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.HostedServices;
@@ -26,6 +27,8 @@ public static class PersistenceCoreExtensions
             default:
                 throw new ArgumentOutOfRangeException();
         }
+
+        services.AddSingleton<ISystemClock, SystemClock>();
 
         return services;
     }

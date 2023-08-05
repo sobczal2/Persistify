@@ -4,11 +4,11 @@ using Persistify.Server.Management.Abstractions.Domain;
 using Persistify.Server.Management.Abstractions.Types;
 using Persistify.Server.Management.Bool;
 using Persistify.Server.Management.Domain;
-using Persistify.Server.Management.Domain.Transactions;
 using Persistify.Server.Management.Fts;
 using Persistify.Server.Management.Number;
 using Persistify.Server.Management.Number.Queries;
 using Persistify.Server.Management.Text;
+using Persistify.Server.Persistence.Core.Transactions;
 
 namespace Persistify.Server.Management;
 

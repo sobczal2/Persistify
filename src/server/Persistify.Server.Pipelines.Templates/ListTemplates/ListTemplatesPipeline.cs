@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Transactions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Exceptions;
@@ -17,10 +19,11 @@ public class ListTemplatesPipeline : Pipeline<ListTemplatesPipelineContext, List
     public ListTemplatesPipeline(
         ILogger<ListTemplatesPipeline> logger,
         ITransactionManager transactionManager,
+        ISystemClock systemClock,
         StaticValidationStage<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>
             staticValidationStage,
         FetchTemplatesFromTemplateManagerStage fetchTemplatesFromTemplateManagerStage,
-        ApplyPaginationStage applyPaginationStage) : base(logger, transactionManager)
+        ApplyPaginationStage applyPaginationStage) : base(logger, transactionManager, systemClock)
     {
         PipelineStages = new PipelineStage<ListTemplatesPipelineContext, ListTemplatesRequest, ListTemplatesResponse>[]
         {

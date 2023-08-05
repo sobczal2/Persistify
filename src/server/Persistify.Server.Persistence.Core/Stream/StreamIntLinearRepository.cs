@@ -24,14 +24,14 @@ public class StreamIntLinearRepository : IIntLinearRepository, IDisposable
         _buffer = new byte[BufferSize];
     }
 
-    public async ValueTask<int?> ReadAsync(int id, bool useLock = true)
+    public async ValueTask<int?> ReadAsync(int key, bool useLock = true)
     {
-        if (id < 0)
+        if (key < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(id));
+            throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ReadWithoutLockAsync(id)) : await ReadWithoutLockAsync(id);
+        return useLock ? await _semaphore.WrapAsync(() => ReadWithoutLockAsync(key)) : await ReadWithoutLockAsync(key);
     }
 
     private async ValueTask<int?> ReadWithoutLockAsync(int key)
@@ -80,11 +80,11 @@ public class StreamIntLinearRepository : IIntLinearRepository, IDisposable
         return result;
     }
 
-    public async ValueTask WriteAsync(int id, int value, bool useLock = true)
+    public async ValueTask WriteAsync(int key, int value, bool useLock = true)
     {
-        if (id < 0)
+        if (key < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(id));
+            throw new ArgumentOutOfRangeException(nameof(key));
         }
 
         if (value < 0)
@@ -93,8 +93,8 @@ public class StreamIntLinearRepository : IIntLinearRepository, IDisposable
         }
 
         await (useLock
-            ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(id, value))
-            : WriteWithoutLockAsync(id, value));
+            ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(key, value))
+            : WriteWithoutLockAsync(key, value));
     }
 
     private async ValueTask WriteWithoutLockAsync(int key, int value)
@@ -128,14 +128,14 @@ public class StreamIntLinearRepository : IIntLinearRepository, IDisposable
         await _stream.FlushAsync();
     }
 
-    public async ValueTask DeleteAsync(int id, bool useLock = true)
+    public async ValueTask DeleteAsync(int key, bool useLock = true)
     {
-        if (id < 0)
+        if (key < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(id));
+            throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        await (useLock ? _semaphore.WrapAsync(() => DeleteWithoutLockAsync(id)) : DeleteWithoutLockAsync(id));
+        await (useLock ? _semaphore.WrapAsync(() => DeleteWithoutLockAsync(key)) : DeleteWithoutLockAsync(key));
     }
 
     private async ValueTask DeleteWithoutLockAsync(int key)

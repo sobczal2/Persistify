@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading;
 
-namespace Persistify.Server.Management.Domain.Transactions;
+namespace Persistify.Server.Persistence.Core.Transactions;
 
 public static class TransactionState
 {
-    private static AsyncLocal<Transaction?> _current = new();
+    private static readonly AsyncLocal<Transaction?> AsyncLocalTransaction = new();
 
     public static Transaction? Current
     {
-        get => _current.Value;
-        set => _current.Value = value;
+        get => AsyncLocalTransaction.Value;
+        set => AsyncLocalTransaction.Value = value;
     }
 
     public static Transaction RequiredCurrent

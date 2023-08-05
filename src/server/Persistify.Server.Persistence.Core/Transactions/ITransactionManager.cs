@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Grpc.Core;
-using Microsoft.IdentityModel.Tokens;
 
-namespace Persistify.Server.Management.Abstractions.Domain;
+namespace Persistify.Server.Persistence.Core.Transactions;
 
 public interface ITransactionManager
 {

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Transactions;
 using Persistify.Server.Pipelines.Common;
 using Persistify.Server.Pipelines.Common.Stages;
 using Persistify.Server.Pipelines.Documents.GetDocument.Stages;
@@ -20,12 +22,14 @@ public class GetDocumentPipeline : Pipeline<GetDocumentPipelineContext, GetDocum
     public GetDocumentPipeline(
         ILogger<GetDocumentPipeline> logger,
         ITransactionManager transactionManager,
+        ISystemClock systemClock,
         StaticValidationStage<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>
             staticValidationStage,
         GetDocumentFromDocumentManagerStage getDocumentFromDocumentManagerStage
     ) : base(
         logger,
-        transactionManager
+        transactionManager,
+        systemClock
     )
     {
         _staticValidationStage = staticValidationStage;

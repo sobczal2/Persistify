@@ -1,28 +1,66 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 using Persistify.Helpers.Locking;
-using Persistify.Server.Management.Abstractions.Domain;
+using Persistify.Server.Persistence.Core.Abstractions;
 
-namespace Persistify.Server.Management.Domain.Transactions;
+namespace Persistify.Server.Persistence.Core.Transactions;
 
 public class TransactionManager : ITransactionManager
 {
     private readonly ILogger<TransactionManager> _logger;
+    private readonly ISystemClock _systemClock;
     private readonly ConcurrentDictionary<int, ReadWriteSemaphoreSlim> _templateIdToLockMap;
     private readonly ReadWriteSemaphoreSlim _globalLock;
 
-    private static Transaction Transaction => TransactionState.RequiredCurrent;
+    private readonly IRepository<Transaction> _transactionRepository;
+    private readonly ILongLinearRepository _transactionIdRepository;
+    private readonly SemaphoreSlim _transactionIdLock;
+
+    private const string TransactionRepositoryName = "Transaction";
+    private const string TransactionIdRepositoryName = "TransactionId";
+
+    public Transaction Transaction => TransactionState.RequiredCurrent;
 
     public TransactionManager(
-        ILogger<TransactionManager> logger
+        ILogger<TransactionManager> logger,
+        IRepositoryManager repositoryManager,
+        ILongLinearRepositoryManager longLinearRepositoryManager,
+        ISystemClock systemClock
     )
     {
         _logger = logger;
+        _systemClock = systemClock;
         _templateIdToLockMap = new ConcurrentDictionary<int, ReadWriteSemaphoreSlim>();
         _globalLock = new ReadWriteSemaphoreSlim();
+
+        repositoryManager.Create<Transaction>(TransactionRepositoryName);
+        _transactionRepository = repositoryManager.Get<Transaction>(TransactionRepositoryName);
+
+        longLinearRepositoryManager.Create(TransactionIdRepositoryName);
+        _transactionIdRepository = longLinearRepositoryManager.Get(TransactionIdRepositoryName);
+
+        _transactionIdLock = new SemaphoreSlim(1, 1);
+    }
+
+    private async ValueTask<long> GetNextTransactionIdAsync()
+    {
+        await _transactionIdLock.WaitAsync();
+        try
+        {
+            var currentId = await _transactionIdRepository.ReadAsync(0) ?? 0;
+            var nextId = currentId + 1;
+            await _transactionIdRepository.WriteAsync(0, nextId);
+            return nextId;
+        }
+        finally
+        {
+            _transactionIdLock.Release();
+        }
     }
 
     public async ValueTask BeginAsync(IEnumerable<int> templateIds, bool write, bool global)
@@ -32,6 +70,7 @@ public class TransactionManager : ITransactionManager
             throw new InvalidOperationException("Transaction not available.");
         }
 
+        Transaction.Id = await GetNextTransactionIdAsync();
         Transaction.Write = write;
         Transaction.Global = global;
         Transaction.TemplateIds.AddRange(templateIds);
@@ -57,6 +96,8 @@ public class TransactionManager : ITransactionManager
                 await lockObject.EnterReadLockAsync();
             }
         }
+
+        Transaction.StartTimestamp = _systemClock.UtcNow.UtcDateTime;
     }
 
     public async ValueTask CommitAsync()
@@ -90,6 +131,13 @@ public class TransactionManager : ITransactionManager
                 await lockObject.ExitReadLockAsync();
             }
         }
+
+        Transaction.EndTimestamp = _systemClock.UtcNow.UtcDateTime;
+        Transaction.Committed = true;
+        await _transactionRepository.WriteAsync((int)(Transaction.Id % int.MaxValue), Transaction);
+
+        // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+        _logger.LogInformation(Transaction.ToString());
     }
 
     public async ValueTask RollbackAsync()
@@ -136,5 +184,13 @@ public class TransactionManager : ITransactionManager
                 await lockObject.ExitReadLockAsync();
             }
         }
+
+
+        Transaction.EndTimestamp = _systemClock.UtcNow.UtcDateTime;
+        Transaction.RolledBack = true;
+        await _transactionRepository.WriteAsync((int)(Transaction.Id % int.MaxValue), Transaction);
+
+        // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
+        _logger.LogInformation(Transaction.ToString());
     }
 }
