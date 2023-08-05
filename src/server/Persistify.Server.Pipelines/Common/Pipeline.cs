@@ -39,7 +39,7 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
     protected abstract TContext CreateContext(TRequest request);
 
     protected abstract TResponse CreateResponse(TContext context);
-    protected abstract (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(TContext context);
+    protected abstract Transaction CreateTransaction(TContext context);
 
     public async ValueTask<TResponse> ProcessAsync(TRequest request)
     {
@@ -50,9 +50,8 @@ public abstract class Pipeline<TContext, TRequest, TResponse>
 
         var context = CreateContext(request);
 
-        TransactionState.Current = new Transaction();
-        var (write, global, templateIds) = GetTransactionInfo(context);
-        await _transactionManager.BeginAsync(templateIds, write, global);
+        TransactionState.Current = CreateTransaction(context);
+        await _transactionManager.BeginAsync();
 
         string pipelineStageName = "Unknown";
         try

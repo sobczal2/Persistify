@@ -52,9 +52,8 @@ public class
         return new CreateTemplateResponse(context.Template?.Id ?? throw new PipelineException());
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
-        CreateTemplatePipelineContext context)
+    protected override Transaction CreateTransaction(CreateTemplatePipelineContext context)
     {
-        return (true, true, Array.Empty<int>());
+        return new Transaction(true, new Dictionary<int, bool>());
     }
 }

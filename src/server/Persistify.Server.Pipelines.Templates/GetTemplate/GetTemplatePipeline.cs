@@ -45,9 +45,8 @@ public class GetTemplatePipeline : Pipeline<GetTemplatePipelineContext, GetTempl
         return new GetTemplateResponse(context.Template ?? throw new PipelineException());
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
-        GetTemplatePipelineContext context)
+    protected override Transaction CreateTransaction(GetTemplatePipelineContext context)
     {
-        return (false, true, new []{ context.TemplateId });
+        return new Transaction(false, new Dictionary<int, bool> {{context.Request.TemplateId, false}});
     }
 }

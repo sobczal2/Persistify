@@ -23,8 +23,9 @@ public class FileSystemLongLinearRepositoryManager : ILongLinearRepositoryManage
         ISystemClock systemClock
     )
     {
-        _systemClock = systemClock;
-        _storageSettings = storageSettings.Value;
+        _systemClock = systemClock ?? throw new ArgumentNullException(nameof(systemClock));
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        _storageSettings = storageSettings?.Value ?? throw new ArgumentNullException(nameof(storageSettings));
         _repositories = new ConcurrentDictionary<string, IDisposable>();
     }
 

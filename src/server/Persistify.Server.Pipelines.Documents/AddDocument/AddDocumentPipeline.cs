@@ -45,9 +45,8 @@ public class AddDocumentPipeline : Pipeline<AddDocumentPipelineContext, AddDocum
         return new AddDocumentResponse(context.DocumentId ?? throw new PipelineException());
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
-        AddDocumentPipelineContext context)
+    protected override Transaction CreateTransaction(AddDocumentPipelineContext context)
     {
-        return (true, false, new[] { context.Request.TemplateId });
+        return new Transaction(false, new Dictionary<int, bool> { { context.Request.TemplateId, true } });
     }
 }

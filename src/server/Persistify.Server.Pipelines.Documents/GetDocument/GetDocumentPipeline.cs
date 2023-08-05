@@ -14,11 +14,6 @@ namespace Persistify.Server.Pipelines.Documents.GetDocument;
 
 public class GetDocumentPipeline : Pipeline<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>
 {
-    private readonly StaticValidationStage<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>
-        _staticValidationStage;
-
-    private readonly GetDocumentFromDocumentManagerStage _getDocumentFromDocumentManagerStage;
-
     public GetDocumentPipeline(
         ILogger<GetDocumentPipeline> logger,
         ITransactionManager transactionManager,
@@ -32,12 +27,10 @@ public class GetDocumentPipeline : Pipeline<GetDocumentPipelineContext, GetDocum
         systemClock
     )
     {
-        _staticValidationStage = staticValidationStage;
-        _getDocumentFromDocumentManagerStage = getDocumentFromDocumentManagerStage;
         PipelineStages =
             new PipelineStage<GetDocumentPipelineContext, GetDocumentRequest, GetDocumentResponse>[]
             {
-                _staticValidationStage, _getDocumentFromDocumentManagerStage
+                staticValidationStage, getDocumentFromDocumentManagerStage
             };
     }
 
@@ -57,7 +50,8 @@ public class GetDocumentPipeline : Pipeline<GetDocumentPipelineContext, GetDocum
         return new GetDocumentResponse(context.Document ?? throw new PipelineException());
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
-        GetDocumentPipelineContext context) =>
-        (false, false, new[] {context.Request.TemplateId});
+    protected override Transaction CreateTransaction(GetDocumentPipelineContext context)
+    {
+        return new Transaction(false, new Dictionary<int, bool> { { context.Request.TemplateId, false } });
+    }
 }

@@ -61,8 +61,8 @@ public class
             context.TotalCount ?? throw new PipelineException());
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(SearchDocumentsPipelineContext context)
+    protected override Transaction CreateTransaction(SearchDocumentsPipelineContext context)
     {
-        return (false, false, new[] {context.TemplateId});
+        return new Transaction(false, new Dictionary<int, bool> { { context.Request.TemplateId, false } });
     }
 }

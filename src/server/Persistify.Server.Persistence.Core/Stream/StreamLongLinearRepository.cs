@@ -19,7 +19,7 @@ public class StreamLongLinearRepository : ILongLinearRepository, IDisposable
 
     public StreamLongLinearRepository(System.IO.Stream stream)
     {
-        _stream = stream;
+        _stream = stream ?? throw new ArgumentNullException(nameof(stream));
         _semaphore = new SemaphoreSlim(1, 1);
         _buffer = new byte[BufferSize];
     }

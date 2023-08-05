@@ -50,9 +50,8 @@ public class ListTemplatesPipeline : Pipeline<ListTemplatesPipelineContext, List
         return new ListTemplatesResponse(context.Templates ?? throw new PipelineException(), context.TotalCount);
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
-        ListTemplatesPipelineContext context)
+    protected override Transaction CreateTransaction(ListTemplatesPipelineContext context)
     {
-        return (false, true, Array.Empty<int>());
+        return new Transaction(false, new Dictionary<int, bool>());
     }
 }

@@ -37,6 +37,70 @@ public class StreamRepositoryTests
     }
 
     [Fact]
+    public void Ctor_WhenIndexRepositoryIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        StreamLongLinearRepository indexRepository = null!;
+        var serializer = new JsonSerializer();
+        System.IO.Stream stream = new MemoryStream();
+        var sectorSize = 0;
+
+        // Act
+        var action = new Action(() => new StreamRepository<TestClass>(indexRepository, serializer, stream, sectorSize));
+
+        // Assert
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Ctor_WhenSerializerIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var indexRepository = new StreamLongLinearRepository(new MemoryStream());
+        ISerializer serializer = null!;
+        System.IO.Stream stream = new MemoryStream();
+        var sectorSize = 100;
+
+        // Act
+        var action = new Action(() => new StreamRepository<TestClass>(indexRepository, serializer, stream, sectorSize));
+
+        // Assert
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Ctor_WhenStreamIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var indexRepository = new StreamLongLinearRepository(new MemoryStream());
+        var serializer = new JsonSerializer();
+        System.IO.Stream stream = null!;
+        var sectorSize = 100;
+
+        // Act
+        var action = new Action(() => new StreamRepository<TestClass>(indexRepository, serializer, stream, sectorSize));
+
+        // Assert
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Ctor_WhenSectorSizeIsLessThanOne_ThrowsArgumentOutOfRangeException()
+    {
+        // Arrange
+        var indexRepository = new StreamLongLinearRepository(new MemoryStream());
+        var serializer = new JsonSerializer();
+        System.IO.Stream stream = new MemoryStream();
+        var sectorSize = 0;
+
+        // Act
+        var action = new Action(() => new StreamRepository<TestClass>(indexRepository, serializer, stream, sectorSize));
+
+        // Assert
+        action.Should().Throw<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
     public async Task ReadAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException()
     {
         // Arrange

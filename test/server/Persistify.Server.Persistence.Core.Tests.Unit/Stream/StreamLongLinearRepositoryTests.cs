@@ -19,6 +19,19 @@ public class StreamLongLinearRepositoryTests
     }
 
     [Fact]
+    public void Ctor_WhenStreamIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        System.IO.Stream stream = null!;
+
+        // Act
+        var action = new Action(() => new StreamLongLinearRepository(stream));
+
+        // Assert
+        action.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
     public async Task ReadAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException()
     {
         // Arrange

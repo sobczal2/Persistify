@@ -27,10 +27,10 @@ public class StreamRepository<T> : IRepository<T>, IDisposable, IPurgable
         int sectorSize
     )
     {
-        _indexRepository = indexRepository;
-        _stream = stream;
-        _serializer = serializer;
-        _sectorSize = sectorSize;
+        _indexRepository = indexRepository ?? throw new ArgumentNullException(nameof(indexRepository));
+        _stream = stream ?? throw new ArgumentNullException(nameof(stream));
+        _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
+        _sectorSize = sectorSize > 0 ? sectorSize : throw new ArgumentOutOfRangeException(nameof(sectorSize));
         _semaphore = new SemaphoreSlim(1, 1);
         _buffer = new byte[_sectorSize];
     }

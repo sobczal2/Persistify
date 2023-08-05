@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Internal;
@@ -24,7 +23,7 @@ public class TransactionManager : ITransactionManager
     private const string TransactionRepositoryName = "Transaction";
     private const string TransactionIdRepositoryName = "TransactionId";
 
-    public Transaction Transaction => TransactionState.RequiredCurrent;
+    private static Transaction Transaction => TransactionState.RequiredCurrent;
 
     public TransactionManager(
         ILogger<TransactionManager> logger,
@@ -63,7 +62,7 @@ public class TransactionManager : ITransactionManager
         }
     }
 
-    public async ValueTask BeginAsync(IEnumerable<int> templateIds, bool write, bool global)
+    public async ValueTask BeginAsync()
     {
         if (Transaction == null)
         {
@@ -71,23 +70,17 @@ public class TransactionManager : ITransactionManager
         }
 
         Transaction.Id = await GetNextTransactionIdAsync();
-        Transaction.Write = write;
-        Transaction.Global = global;
-        Transaction.TemplateIds.AddRange(templateIds);
 
-        if (global)
+        if (Transaction.WriteGlobal)
+            await _globalLock.EnterWriteLockAsync();
+        else
+            await _globalLock.EnterReadLockAsync();
+
+        foreach (var templateWriteKv in Transaction.TemplateWriteMap)
         {
-            if (write)
-                await _globalLock.EnterWriteLockAsync();
-            else
-                await _globalLock.EnterReadLockAsync();
-        }
+            var lockObject = _templateIdToLockMap.GetOrAdd(templateWriteKv.Key, _ => new ReadWriteSemaphoreSlim());
 
-        foreach (var templateId in Transaction.TemplateIds)
-        {
-            var lockObject = _templateIdToLockMap.GetOrAdd(templateId, _ => new ReadWriteSemaphoreSlim());
-
-            if (write)
+            if (templateWriteKv.Value)
             {
                 await lockObject.EnterWriteLockAsync();
             }
@@ -107,22 +100,19 @@ public class TransactionManager : ITransactionManager
             throw new InvalidOperationException("Transaction not available.");
         }
 
-        if (Transaction.Global)
-        {
-            if (Transaction.Write)
-                _globalLock.ExitWriteLock();
-            else
-                await _globalLock.ExitReadLockAsync();
-        }
+        if (Transaction.WriteGlobal)
+            _globalLock.ExitWriteLock();
+        else
+            await _globalLock.ExitReadLockAsync();
 
-        foreach (var templateId in Transaction.TemplateIds)
+        foreach (var templateWriteKv in Transaction.TemplateWriteMap)
         {
-            if (!_templateIdToLockMap.TryGetValue(templateId, out var lockObject))
+            if (!_templateIdToLockMap.TryGetValue(templateWriteKv.Key, out var lockObject))
             {
                 throw new InvalidOperationException("Lock object not found.");
             }
 
-            if (Transaction.Write)
+            if (templateWriteKv.Value)
             {
                 lockObject.ExitWriteLock();
             }
@@ -160,22 +150,19 @@ public class TransactionManager : ITransactionManager
             _logger.LogError("Rollback failed");
         }
 
-        if (Transaction.Global)
-        {
-            if (Transaction.Write)
-                _globalLock.ExitWriteLock();
-            else
-                await _globalLock.ExitReadLockAsync();
-        }
+        if (Transaction.WriteGlobal)
+            _globalLock.ExitWriteLock();
+        else
+            await _globalLock.ExitReadLockAsync();
 
-        foreach (var templateId in Transaction.TemplateIds)
+        foreach (var templateWriteKv in Transaction.TemplateWriteMap)
         {
-            if (!_templateIdToLockMap.TryGetValue(templateId, out var lockObject))
+            if (!_templateIdToLockMap.TryGetValue(templateWriteKv.Key, out var lockObject))
             {
                 throw new InvalidOperationException("Lock object not found.");
             }
 
-            if (Transaction.Write)
+            if (templateWriteKv.Value)
             {
                 lockObject.ExitWriteLock();
             }

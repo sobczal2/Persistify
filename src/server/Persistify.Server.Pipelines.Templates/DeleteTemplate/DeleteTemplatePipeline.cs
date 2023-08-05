@@ -47,9 +47,8 @@ public class
         return new DeleteTemplateResponse();
     }
 
-    protected override (bool write, bool global, IEnumerable<int> templateIds) GetTransactionInfo(
-        DeleteTemplatePipelineContext context)
+    protected override Transaction CreateTransaction(DeleteTemplatePipelineContext context)
     {
-        return (true, true, new[] { context.Request.TemplateId });
+        return new Transaction(true, new Dictionary<int, bool> { { context.Request.TemplateId, true } });
     }
 }
