@@ -1,4 +1,5 @@
-﻿using Persistify.Server.Configuration.Enums;
+﻿using System;
+using Persistify.Server.Configuration.Enums;
 
 namespace Persistify.Server.Configuration.Settings;
 
@@ -10,4 +11,5 @@ public class StorageSettings
     public StorageType StorageType { get; set; }
     public SerializerType SerializerType { get; set; }
     public int RepositorySectorSize { get; set; }
+    public TimeSpan IdleFileTimeout { get; set; }
 }
