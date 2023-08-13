@@ -480,17 +480,4 @@ public class SelfManagingFileStreamTests : IDisposable
         // Assert
         IsFileUsed().Should().BeTrue();
     }
-
-    [Fact]
-    public async Task Delete_WhenCalled_DeletesFile()
-    {
-        // Arrange
-
-        // Act
-        _sut.Delete();
-        await Task.Delay(_idleFileTimeout + TimeSpan.FromMilliseconds(10));
-
-        // Assert
-        File.Exists(_filePath).Should().BeFalse();
-    }
 }

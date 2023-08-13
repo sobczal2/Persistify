@@ -19,7 +19,6 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
     private readonly int _sectorSize;
     private readonly IntPairStreamRepository _offsetLengthRepository;
     private byte[] _buffer;
-    private readonly SemaphoreSlim _semaphore;
 
     public ObjectStreamRepository(
         Stream mainStream,
@@ -40,22 +39,16 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             new IntPairStreamRepository(offsetLengthStream ??
                                         throw new ArgumentNullException(nameof(offsetLengthStream)));
         _buffer = new byte[_sectorSize];
-        _semaphore = new SemaphoreSlim(1, 1);
     }
 
-    public async ValueTask<TValue?> ReadAsync(int key, bool useLock = true)
+    public async ValueTask<TValue?> ReadAsync(int key)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ReadWithoutLockAsync(key)) : await ReadWithoutLockAsync(key);
-    }
-
-    private async ValueTask<TValue?> ReadWithoutLockAsync(int key)
-    {
-        var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
+        var offsetLength = await _offsetLengthRepository.ReadAsync(key);
         if (_offsetLengthRepository.IsValueEmpty(offsetLength))
         {
             return null;
@@ -77,15 +70,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return _serializer.Deserialize<TValue>(_buffer.AsMemory()[..length]);
     }
 
-    public async ValueTask<Dictionary<int, TValue>> ReadAllAsync(bool useLock = true)
-    {
-        return useLock ? await _semaphore.WrapAsync(ReadAllWithoutLockAsync) : await ReadAllWithoutLockAsync();
-    }
-
-    private async ValueTask<Dictionary<int, TValue>> ReadAllWithoutLockAsync()
+    public async ValueTask<Dictionary<int, TValue>> ReadAllAsync()
     {
         var result = new Dictionary<int, TValue>();
-        var ids = await _offsetLengthRepository.ReadAllAsync(false);
+        var ids = await _offsetLengthRepository.ReadAllAsync();
 
         foreach (var (id, (offset, length)) in ids)
         {
@@ -104,7 +92,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, TValue value, bool useLock = true)
+    public async ValueTask WriteAsync(int key, TValue value)
     {
         if (key < 0)
         {
@@ -116,14 +104,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             throw new ArgumentNullException(nameof(value));
         }
 
-        await (useLock
-            ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(key, value))
-            : WriteWithoutLockAsync(key, value));
-    }
-
-    private async ValueTask WriteWithoutLockAsync(int key, TValue value)
-    {
-        var currentOffsetLength = await _offsetLengthRepository.ReadAsync(key, false);
+        var currentOffsetLength = await _offsetLengthRepository.ReadAsync(key);
 
         var serialized = _serializer.Serialize(value);
 
@@ -159,7 +140,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         var offset = BytesToSectors(_mainStream.Position);
         var length = serialized.Length;
 
-        await _offsetLengthRepository.WriteAsync(id, (offset, length), false);
+        await _offsetLengthRepository.WriteAsync(id, (offset, length));
         await _mainStream.WriteAsync(serialized);
 
         EnsureStreamCorrectLength(_mainStream.Position);
@@ -171,7 +152,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         _mainStream.Seek(byteOffset, SeekOrigin.Begin);
 
         await _mainStream.WriteAsync(serialized);
-        await _offsetLengthRepository.WriteAsync(id, (offset, serialized.Length), false);
+        await _offsetLengthRepository.WriteAsync(id, (offset, serialized.Length));
 
         if (isLast)
         {
@@ -179,21 +160,14 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock = true)
+    public async ValueTask<bool> DeleteAsync(int key)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return await (useLock
-            ? _semaphore.WrapAsync(() => DeleteWithoutLockAsync(key))
-            : DeleteWithoutLockAsync(key));
-    }
-
-    private async ValueTask<bool> DeleteWithoutLockAsync(int key)
-    {
-        var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
+        var offsetLength = await _offsetLengthRepository.ReadAsync(key);
         if (_offsetLengthRepository.IsValueEmpty(offsetLength))
         {
             return false;
@@ -206,26 +180,14 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             _mainStream.SetLength(byteOffset);
         }
 
-        await _offsetLengthRepository.DeleteAsync(key, false);
+        await _offsetLengthRepository.DeleteAsync(key);
         return true;
     }
 
-    public void Clear(bool useLock = true)
-    {
-        if (useLock)
-        {
-            _semaphore.Wrap(ClearWithoutLock);
-        }
-        else
-        {
-            ClearWithoutLock();
-        }
-    }
-
-    private void ClearWithoutLock()
+    public void Clear()
     {
         _mainStream.SetLength(0);
-        _offsetLengthRepository.Clear(false);
+        _offsetLengthRepository.Clear();
     }
 
     private long SectorsToBytes(int sectors) => sectors * (long)_sectorSize;
@@ -247,7 +209,6 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
 
     public void Dispose()
     {
-        _semaphore.Dispose();
         _offsetLengthRepository.Dispose();
         _mainStream.Dispose();
     }

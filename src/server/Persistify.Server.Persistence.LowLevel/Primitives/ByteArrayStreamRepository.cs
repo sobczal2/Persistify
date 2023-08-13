@@ -11,7 +11,6 @@ namespace Persistify.Server.Persistence.LowLevel.Primitives;
 public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDisposable
 {
     private readonly Stream _stream;
-    private readonly SemaphoreSlim _semaphore;
     private readonly int _bufferSize;
     private readonly byte[] _buffer;
     private readonly byte[] _emptyValue;
@@ -26,25 +25,19 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentOutOfRangeException(nameof(size));
         }
         _stream = stream ?? throw new ArgumentNullException(nameof(stream));
-        _semaphore = new SemaphoreSlim(1, 1);
         _bufferSize = size;
         _buffer = new byte[_bufferSize];
         _emptyValue = new byte[_bufferSize];
         _emptyValue.AsSpan().Fill(0xFF);
     }
 
-    public async ValueTask<byte[]> ReadAsync(int key, bool useLock = true)
+    public async ValueTask<byte[]> ReadAsync(int key)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ReadWithoutLockAsync(key)) : await ReadWithoutLockAsync(key);
-    }
-
-    private async ValueTask<byte[]> ReadWithoutLockAsync(int key)
-    {
         if (key * (long)_bufferSize >= _stream.Length)
         {
             var value = new byte[_bufferSize];
@@ -71,12 +64,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask<Dictionary<int, byte[]>> ReadAllAsync(bool useLock = true)
-    {
-        return useLock ? await _semaphore.WrapAsync(ReadAllWithoutLockAsync) : await ReadAllWithoutLockAsync();
-    }
-
-    private async ValueTask<Dictionary<int, byte[]>> ReadAllWithoutLockAsync()
+    public async ValueTask<Dictionary<int, byte[]>> ReadAllAsync()
     {
         var length = _stream.Length;
         _stream.Seek(0, SeekOrigin.Begin);
@@ -100,7 +88,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, byte[] value, bool useLock = true)
+    public async ValueTask WriteAsync(int key, byte[] value)
     {
         if (key < 0)
         {
@@ -117,13 +105,6 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentException(nameof(value));
         }
 
-        await (useLock
-            ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(key, value))
-            : WriteWithoutLockAsync(key, value));
-    }
-
-    private async ValueTask WriteWithoutLockAsync(int key, byte[] value)
-    {
         var length = _stream.Length;
         if (key * (long)_bufferSize > length)
         {
@@ -141,20 +122,13 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         await _stream.FlushAsync();
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock = true)
+    public async ValueTask<bool> DeleteAsync(int key)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return await (useLock
-            ? _semaphore.WrapAsync(() => DeleteWithoutLockAsync(key))
-            : DeleteWithoutLockAsync(key));
-    }
-
-    private async ValueTask<bool> DeleteWithoutLockAsync(int key)
-    {
         var length = _stream.Length;
         if (key * (long)_bufferSize >= length)
         {
@@ -187,16 +161,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return true;
     }
 
-    public void Clear(bool useLock = true)
+    public void Clear()
     {
-        if (useLock)
-        {
-            _semaphore.Wrap(ClearWithoutLockAsync);
-        }
-        else
-        {
-            ClearWithoutLockAsync();
-        }
+        _stream.SetLength(0);
     }
 
     public bool IsValueEmpty(byte[] value)
@@ -214,14 +181,8 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
     }
 
-    private void ClearWithoutLockAsync()
-    {
-        _stream.SetLength(0);
-    }
-
     public void Dispose()
     {
         _stream.Dispose();
-        _semaphore.Dispose();
     }
 }

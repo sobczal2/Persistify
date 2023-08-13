@@ -13,7 +13,6 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
 {
     private readonly ByteArrayStreamRepository _innerRepository;
     private readonly byte[] _buffer;
-    private readonly SemaphoreSlim _semaphore;
 
     public IntPairStreamRepository(
         Stream stream
@@ -21,31 +20,20 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
     {
         _innerRepository = new ByteArrayStreamRepository(stream, sizeof(int) * 2);
         _buffer = new byte[sizeof(int) * 2];
-        _semaphore = new SemaphoreSlim(1, 1);
     }
 
-    public async ValueTask<(int, int)> ReadAsync(int key, bool useLock = true)
+    public async ValueTask<(int, int)> ReadAsync(int key)
     {
-        return useLock ? await _semaphore.WrapAsync(() => ReadWithoutLockAsync(key)) : await ReadWithoutLockAsync(key);
-    }
-
-    private async ValueTask<(int, int)> ReadWithoutLockAsync(int key)
-    {
-        var value = await _innerRepository.ReadAsync(key, false);
+        var value = await _innerRepository.ReadAsync(key);
         return (
             MemoryMarshal.Read<int>(value.AsSpan(0, sizeof(int))),
             MemoryMarshal.Read<int>(value.AsSpan(sizeof(int), sizeof(int)))
         );
     }
 
-    public async ValueTask<Dictionary<int, (int, int)>> ReadAllAsync(bool useLock = true)
+    public async ValueTask<Dictionary<int, (int, int)>> ReadAllAsync()
     {
-        return useLock ? await _semaphore.WrapAsync(ReadAllWithoutLockAsync) : await ReadAllWithoutLockAsync();
-    }
-
-    private async ValueTask<Dictionary<int, (int, int)>> ReadAllWithoutLockAsync()
-    {
-        var values = await _innerRepository.ReadAllAsync(false);
+        var values = await _innerRepository.ReadAllAsync();
         var result = new Dictionary<int, (int, int)>(values.Count);
         foreach (var item in values)
         {
@@ -58,50 +46,28 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, (int, int) value, bool useLock = true)
+    public async ValueTask WriteAsync(int key, (int, int) value)
     {
-        await (useLock
-            ? _semaphore.WrapAsync(() => WriteWithoutLockAsync(key, value))
-            : WriteWithoutLockAsync(key, value));
+        MemoryMarshal.Write(_buffer.AsSpan(0, sizeof(int)), ref value.Item1);
+        MemoryMarshal.Write(_buffer.AsSpan(sizeof(int), sizeof(int)), ref value.Item2);
+        await _innerRepository.WriteAsync(key, _buffer);
     }
 
     private async ValueTask WriteWithoutLockAsync(int key, (int, int) value)
     {
         MemoryMarshal.Write(_buffer.AsSpan(0, sizeof(int)), ref value.Item1);
         MemoryMarshal.Write(_buffer.AsSpan(sizeof(int), sizeof(int)), ref value.Item2);
-        await _innerRepository.WriteAsync(key, _buffer, false);
+        await _innerRepository.WriteAsync(key, _buffer);
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock = true)
+    public async ValueTask<bool> DeleteAsync(int key)
     {
-        return await (useLock
-            ? _semaphore.WrapAsync(() => DeleteWithoutLockAsync(key))
-            : DeleteWithoutLockAsync(key));
+        return await _innerRepository.DeleteAsync(key);
     }
 
-    private async ValueTask<bool> DeleteWithoutLockAsync(int key)
+    public void Clear()
     {
-        return await _innerRepository.DeleteAsync(key, false);
-    }
-
-    public void Clear(bool useLock = true)
-    {
-        if (useLock)
-        {
-            _semaphore.Wait();
-            try
-            {
-                _innerRepository.Clear(false);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-        }
-        else
-        {
-            _innerRepository.Clear(false);
-        }
+        _innerRepository.Clear();
     }
 
     public bool IsValueEmpty((int, int) value)
@@ -115,6 +81,5 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
     public void Dispose()
     {
         _innerRepository.Dispose();
-        _semaphore.Dispose();
     }
 }

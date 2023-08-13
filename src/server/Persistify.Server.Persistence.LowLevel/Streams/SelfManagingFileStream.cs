@@ -12,7 +12,6 @@ public class SelfManagingFileStream : Stream
     private CancellationTokenSource? _cancellationTokenSource;
     private readonly object _lock;
     private readonly TimeSpan _idleFileTimeout;
-    private bool _fileExists;
 
     public SelfManagingFileStream(
         TimeSpan idleFileTimeout,
@@ -22,17 +21,12 @@ public class SelfManagingFileStream : Stream
         _filePath = filePath;
         _lock = new object();
         _idleFileTimeout = idleFileTimeout;
-        _fileExists = File.Exists(_filePath);
     }
 
     private void EnsureFileStreamOpen()
     {
         lock (_lock)
         {
-            if (!_fileExists)
-            {
-                throw new FileNotFoundException($"File '{_filePath}' does not exist.");
-            }
             _fileStream ??= new FileStream(_filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
             CancelCloseFileTask();
             ScheduleCloseFile();
@@ -151,26 +145,5 @@ public class SelfManagingFileStream : Stream
             _cancellationTokenSource?.Dispose();
         }
         base.Dispose(disposing);
-    }
-
-    public void CreateUnderlyingFile()
-    {
-        if(_fileExists)
-        {
-            throw new InvalidOperationException("File already exists");
-        }
-        File.Create(_filePath).Dispose();
-    }
-
-    public void Delete()
-    {
-        CancelCloseFileTask();
-        _fileStream?.Dispose();
-        _cancellationTokenSource?.Dispose();
-        if (!_fileExists)
-        {
-            throw new InvalidOperationException("File does not exist");
-        }
-        File.Delete(_filePath);
     }
 }
