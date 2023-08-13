@@ -8,9 +8,4 @@ public class LowLevelRepositoryCorruptedException : Exception
     {
 
     }
-
-    public LowLevelRepositoryCorruptedException(string message) : base(message)
-    {
-
-    }
 }

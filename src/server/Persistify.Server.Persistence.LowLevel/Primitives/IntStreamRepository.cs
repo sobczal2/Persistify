@@ -7,15 +7,15 @@ using Persistify.Server.Persistence.LowLevel.Abstractions;
 
 namespace Persistify.Server.Persistence.LowLevel.Primitives;
 
-public class LowLevelIntStreamRepository : ILowLevelStreamRepository<int>, IDisposable
+public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
 {
-    private readonly LowLevelByteArrayStreamRepository _innerRepository;
+    private readonly ByteArrayStreamRepository _innerRepository;
 
-    public LowLevelIntStreamRepository(
+    public IntStreamRepository(
         Stream stream
         )
     {
-        _innerRepository = new LowLevelByteArrayStreamRepository(stream, sizeof(int));
+        _innerRepository = new ByteArrayStreamRepository(stream, sizeof(int));
     }
 
     public async ValueTask<int> ReadAsync(int key, bool useLock = true)
@@ -41,9 +41,9 @@ public class LowLevelIntStreamRepository : ILowLevelStreamRepository<int>, IDisp
         await _innerRepository.WriteAsync(key, BitConverter.GetBytes(value), useLock);
     }
 
-    public async ValueTask DeleteAsync(int key, bool useLock = true)
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock = true)
     {
-        await _innerRepository.DeleteAsync(key, useLock);
+        return await _innerRepository.DeleteAsync(key, useLock);
     }
 
     public void Clear(bool useLock = true)

@@ -2,8 +2,6 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
-using Persistify.Server.Configuration.Settings;
 
 namespace Persistify.Server.Persistence.LowLevel.Streams;
 
@@ -16,13 +14,13 @@ public class SelfManagingFileStream : Stream
     private readonly TimeSpan _idleFileTimeout;
 
     public SelfManagingFileStream(
-        IOptions<StorageSettings> storageSettings,
+        TimeSpan idleFileTimeout,
         string filePath
     )
     {
         _filePath = filePath;
         _lock = new object();
-        _idleFileTimeout = storageSettings.Value.IdleFileTimeout;
+        _idleFileTimeout = idleFileTimeout;
     }
 
     private void EnsureFileStreamOpen()
@@ -53,7 +51,7 @@ public class SelfManagingFileStream : Stream
 
             lock (_lock)
             {
-                _fileStream?.Close();
+                _fileStream?.Dispose();
                 _fileStream = null;
             }
         });
@@ -89,15 +87,48 @@ public class SelfManagingFileStream : Stream
         _fileStream!.Write(buffer, offset, count);
     }
 
-    public override bool CanRead => _fileStream?.CanRead ?? false;
-    public override bool CanSeek => _fileStream?.CanSeek ?? false;
-    public override bool CanWrite => _fileStream?.CanWrite ?? false;
+    public override bool CanRead
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.CanRead;
+        }
+    }
 
-    public override long Length => _fileStream?.Length ?? throw new InvalidOperationException("File stream is not open.");
+    public override bool CanSeek
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.CanSeek;
+        }
+    }
+    public override bool CanWrite
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.CanWrite;
+        }
+    }
+
+    public override long Length
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.Length;
+        }
+    }
 
     public override long Position
     {
-        get => _fileStream?.Position ?? throw new InvalidOperationException("File stream is not open.");
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.Position;
+        }
         set
         {
             EnsureFileStreamOpen();

@@ -7,15 +7,21 @@ using Xunit;
 
 namespace Persistify.Server.Persistence.LowLevel.Tests.Unit.Primitives;
 
-public class LowLevelByteArrayStreamRepositoryTests
+public class IntStreamRepositoryTests : IDisposable
 {
-    private LowLevelByteArrayStreamRepository _sut;
+    private IntStreamRepository _sut;
     private Stream _stream;
 
-    public LowLevelByteArrayStreamRepositoryTests()
+    public IntStreamRepositoryTests()
     {
         _stream = new MemoryStream();
-        _sut = new LowLevelByteArrayStreamRepository(_stream, 1);
+        _sut = new IntStreamRepository(_stream);
+    }
+
+    public void Dispose()
+    {
+        _sut.Dispose();
+        _stream.Dispose();
     }
 
     [Fact]
@@ -27,27 +33,11 @@ public class LowLevelByteArrayStreamRepositoryTests
         // Act
         var action = new Action(() =>
         {
-            var unused = new LowLevelByteArrayStreamRepository(stream, 1);
+            var unused = new IntStreamRepository(stream);
         });
 
         // Assert
         action.Should().Throw<ArgumentNullException>();
-    }
-
-    [Fact]
-    public void Ctor_WhenSizeIsLessThanOne_ThrowsArgumentOutOfRangeException()
-    {
-        // Arrange
-        var size = 0;
-
-        // Act
-        var action = new Action(() =>
-        {
-            var unused = new LowLevelByteArrayStreamRepository(_stream, size);
-        });
-
-        // Assert
-        action.Should().Throw<ArgumentOutOfRangeException>();
     }
 
     [Fact]
@@ -81,14 +71,14 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 1 };
+        var value = 1;
         await _sut.WriteAsync(id, value);
 
         // Act
         var result = await _sut.ReadAsync(id);
 
         // Assert
-        result.Should().BeEquivalentTo(value);
+        result.Should().Be(value);
     }
 
     [Fact]
@@ -96,16 +86,16 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 1 };
+        var value = 1;
         await _sut.WriteAsync(id, value);
-        var newValue = new byte[] { 2 };
+        var newValue = 2;
         await _sut.WriteAsync(id, newValue);
 
         // Act
         var result = await _sut.ReadAsync(id);
 
         // Assert
-        result.Should().BeEquivalentTo(newValue);
+        result.Should().Be(newValue);
     }
 
     [Fact]
@@ -113,11 +103,11 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 1 };
+        var value = 1;
         await _sut.WriteAsync(id, value);
         await _sut.DeleteAsync(id);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
         await _sut.WriteAsync(id2, value2);
 
         // Act
@@ -144,7 +134,7 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 1 };
+        var value = 1;
         await _sut.WriteAsync(id, value);
 
         // Act
@@ -152,7 +142,7 @@ public class LowLevelByteArrayStreamRepositoryTests
 
         // Assert
         result.Should().HaveCount(1);
-        result[id].Should().BeEquivalentTo(value);
+        result[id].Should().Be(value);
     }
 
     [Fact]
@@ -160,10 +150,10 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = new byte[] { 1 };
+        var value1 = 1;
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
         await _sut.WriteAsync(id2, value2);
 
         // Act
@@ -171,8 +161,8 @@ public class LowLevelByteArrayStreamRepositoryTests
 
         // Assert
         result.Should().HaveCount(2);
-        result[id1].Should().BeEquivalentTo(value1);
-        result[id2].Should().BeEquivalentTo(value2);
+        result[id1].Should().Be(value1);
+        result[id2].Should().Be(value2);
     }
 
     [Fact]
@@ -180,12 +170,12 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = new byte[] { 1 };
+        var value1 = 1;
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
         await _sut.WriteAsync(id2, value2);
-        var newValue2 = new byte[] { 3 };
+        var newValue2 = 3;
         await _sut.WriteAsync(id2, newValue2);
 
         // Act
@@ -193,8 +183,8 @@ public class LowLevelByteArrayStreamRepositoryTests
 
         // Assert
         result.Should().HaveCount(2);
-        result[id1].Should().BeEquivalentTo(value1);
-        result[id2].Should().BeEquivalentTo(newValue2);
+        result[id1].Should().Be(value1);
+        result[id2].Should().Be(newValue2);
     }
 
     [Fact]
@@ -202,7 +192,7 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = -1;
-        var value = new byte[] { 1 };
+        var value = 1;
 
         // Act
         var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
@@ -212,16 +202,17 @@ public class LowLevelByteArrayStreamRepositoryTests
     }
 
     [Fact]
-    public async Task WriteAsync_WhenValueIsEqualToEmptyValue_ThrowsArgumentOutOfRangeException()
+    public async Task WriteAsync_WhenValueIsEmpty_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 0xFF };
+        var value = _sut.EmptyValue;
 
         // Act
         var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
 
         // Assert
+        _sut.IsValueEmpty(value).Should().BeTrue();
         await action.Should().ThrowAsync<ArgumentException>();
     }
 
@@ -230,13 +221,13 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 1;
-        var value = new byte[] { 1 };
+        var value = 1;
 
         // Act
         await _sut.WriteAsync(id, value);
 
         // Assert
-        _stream.Length.Should().Be((id + 1) * sizeof(byte));
+        _stream.Length.Should().Be((id + 1) * sizeof(int));
     }
 
     [Fact]
@@ -244,10 +235,10 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = new byte[] { 1 };
+        var value1 = 1;
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
 
         // Act
         await _sut.WriteAsync(id2, value2);
@@ -255,36 +246,8 @@ public class LowLevelByteArrayStreamRepositoryTests
         // Assert
         var result = await _sut.ReadAllAsync();
         result.Should().HaveCount(2);
-        result[id1].Should().BeEquivalentTo(value1);
-        result[id2].Should().BeEquivalentTo(value2);
-    }
-
-    [Fact]
-    public async Task WriteAsync_WhenValueLengthIsBiggerThanOne_ThrowsArgumentOutOfRangeException()
-    {
-        // Arrange
-        var id = 0;
-        var value = new byte[] { 1, 2 };
-
-        // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
-    }
-
-    [Fact]
-    public async Task WriteAsync_WhenValueLengthIsLessThanOne_ThrowsArgumentOutOfRangeException()
-    {
-        // Arrange
-        var id = 0;
-        var value = new byte[] { };
-
-        // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
-
-        // Assert
-        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        result[id1].Should().Be(value1);
+        result[id2].Should().Be(value2);
     }
 
     [Fact]
@@ -305,15 +268,16 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 1 };
+        var value = 1;
         await _sut.WriteAsync(id, value);
 
         // Act
-        await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id);
 
         // Assert
-        var result = await _sut.ReadAllAsync();
-        result.Should().BeEmpty();
+        result.Should().BeTrue();
+        var allDictionary = await _sut.ReadAllAsync();
+        allDictionary.Should().BeEmpty();
     }
 
     [Fact]
@@ -321,51 +285,52 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = new byte[] { 1 };
+        var value1 = 1;
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
         await _sut.WriteAsync(id2, value2);
 
         // Act
-        await _sut.DeleteAsync(id1);
+        var result = await _sut.DeleteAsync(id1);
 
         // Assert
-        var result = await _sut.ReadAllAsync();
-        result.Should().HaveCount(1);
-        result[id2].Should().BeEquivalentTo(value2);
+        result.Should().BeTrue();
+        var allDictionary = await _sut.ReadAllAsync();
+        allDictionary.Should().HaveCount(1);
+        allDictionary[id2].Should().Be(value2);
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ThrowsInvalidOperationException()
+    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ReturnsFalse()
     {
         // Arrange
         var id = 1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.DeleteAsync(id));
+        var result = await _sut.DeleteAsync(id);
 
         // Assert
-        await action.Should().ThrowAsync<InvalidOperationException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ThrowsInvalidOperationException()
+    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ReturnsFalse()
     {
         // Arrange
         var id1 = 0;
-        var value1 = new byte[] { 1 };
+        var value1 = 1;
         await _sut.WriteAsync(id1, value1);
         await _sut.DeleteAsync(id1);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
         await _sut.WriteAsync(id2, value2);
 
         // Act
-        var action = new Func<Task>(async () => await _sut.DeleteAsync(id1));
+        var result = await _sut.DeleteAsync(id1);
 
         // Assert
-        await action.Should().ThrowAsync<InvalidOperationException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
@@ -373,13 +338,14 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = new byte[] { 1 };
+        var value = 1;
         await _sut.WriteAsync(id, value);
 
         // Act
-        await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id);
 
         // Assert
+        result.Should().BeTrue();
         _stream.Length.Should().Be(0);
     }
 
@@ -388,10 +354,10 @@ public class LowLevelByteArrayStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = new byte[] { 1 };
+        var value1 = 1;
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = new byte[] { 2 };
+        var value2 = 2;
         await _sut.WriteAsync(id2, value2);
 
         // Act

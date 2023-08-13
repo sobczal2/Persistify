@@ -5,11 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Helpers.Locking;
 using Persistify.Server.Persistence.LowLevel.Abstractions;
-using Persistify.Server.Persistence.LowLevel.Exceptions;
 
 namespace Persistify.Server.Persistence.LowLevel.Primitives;
 
-public class LowLevelByteArrayStreamRepository : ILowLevelStreamRepository<byte[]>, IDisposable
+public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDisposable
 {
     private readonly Stream _stream;
     private readonly SemaphoreSlim _semaphore;
@@ -17,7 +16,7 @@ public class LowLevelByteArrayStreamRepository : ILowLevelStreamRepository<byte[
     private readonly byte[] _buffer;
     private readonly byte[] _emptyValue;
 
-    public LowLevelByteArrayStreamRepository(
+    public ByteArrayStreamRepository(
         Stream stream,
         int size
     )
@@ -142,24 +141,24 @@ public class LowLevelByteArrayStreamRepository : ILowLevelStreamRepository<byte[
         await _stream.FlushAsync();
     }
 
-    public async ValueTask DeleteAsync(int key, bool useLock = true)
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock = true)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        await (useLock
+        return await (useLock
             ? _semaphore.WrapAsync(() => DeleteWithoutLockAsync(key))
             : DeleteWithoutLockAsync(key));
     }
 
-    private async ValueTask DeleteWithoutLockAsync(int key)
+    private async ValueTask<bool> DeleteWithoutLockAsync(int key)
     {
         var length = _stream.Length;
         if (key * (long)_bufferSize >= length)
         {
-            throw new InvalidOperationException();
+            return false;
         }
 
         _stream.Seek(key * (long)_bufferSize, SeekOrigin.Begin);
@@ -171,7 +170,7 @@ public class LowLevelByteArrayStreamRepository : ILowLevelStreamRepository<byte[
 
         if (IsValueEmpty(_buffer))
         {
-            throw new InvalidOperationException();
+            return false;
         }
 
         if ((key + 1) * (long)_bufferSize == length)
@@ -184,6 +183,8 @@ public class LowLevelByteArrayStreamRepository : ILowLevelStreamRepository<byte[
             await _stream.WriteAsync(_emptyValue);
             await _stream.FlushAsync();
         }
+
+        return true;
     }
 
     public void Clear(bool useLock = true)

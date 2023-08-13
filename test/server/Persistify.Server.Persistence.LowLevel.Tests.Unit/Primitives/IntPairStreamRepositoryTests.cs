@@ -7,15 +7,21 @@ using Xunit;
 
 namespace Persistify.Server.Persistence.LowLevel.Tests.Unit.Primitives;
 
-public class LowLevelIntStreamRepositoryTests
+public class IntPairStreamRepositoryTests : IDisposable
 {
-        private LowLevelIntStreamRepository _sut;
+    private IntPairStreamRepository _sut;
     private Stream _stream;
 
-    public LowLevelIntStreamRepositoryTests()
+    public IntPairStreamRepositoryTests()
     {
         _stream = new MemoryStream();
-        _sut = new LowLevelIntStreamRepository(_stream);
+        _sut = new IntPairStreamRepository(_stream);
+    }
+
+    public void Dispose()
+    {
+        _sut.Dispose();
+        _stream.Dispose();
     }
 
     [Fact]
@@ -25,7 +31,10 @@ public class LowLevelIntStreamRepositoryTests
         Stream stream = null!;
 
         // Act
-        var action = new Action(() => new LowLevelIntStreamRepository(stream));
+        var action = new Action(() =>
+        {
+            var unused = new IntPairStreamRepository(stream);
+        });
 
         // Assert
         action.Should().Throw<ArgumentNullException>();
@@ -62,7 +71,7 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = 1;
+        var value = (1, 2);
         await _sut.WriteAsync(id, value);
 
         // Act
@@ -77,9 +86,9 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = 1;
+        var value = (1, 2);
         await _sut.WriteAsync(id, value);
-        var newValue = 2;
+        var newValue = (3, 4);
         await _sut.WriteAsync(id, newValue);
 
         // Act
@@ -94,11 +103,11 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = 1;
+        var value = (1, 2);
         await _sut.WriteAsync(id, value);
         await _sut.DeleteAsync(id);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
         await _sut.WriteAsync(id2, value2);
 
         // Act
@@ -125,7 +134,7 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = 1;
+        var value = (1, 2);
         await _sut.WriteAsync(id, value);
 
         // Act
@@ -141,10 +150,10 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = 1;
+        var value1 = (1, 2);
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
         await _sut.WriteAsync(id2, value2);
 
         // Act
@@ -161,12 +170,12 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = 1;
+        var value1 = (1, 2);
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
         await _sut.WriteAsync(id2, value2);
-        var newValue2 = 3;
+        var newValue2 = (5, 6);
         await _sut.WriteAsync(id2, newValue2);
 
         // Act
@@ -183,7 +192,7 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = -1;
-        var value = 1;
+        var value = (1, 2);
 
         // Act
         var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
@@ -197,7 +206,7 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = -1;
+        var value = _sut.EmptyValue;
 
         // Act
         var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
@@ -212,13 +221,13 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 1;
-        var value = 1;
+        var value = (1, 2);
 
         // Act
         await _sut.WriteAsync(id, value);
 
         // Assert
-        _stream.Length.Should().Be((id + 1) * sizeof(int));
+        _stream.Length.Should().Be((id + 1) * sizeof(int) * 2);
     }
 
     [Fact]
@@ -226,10 +235,10 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = 1;
+        var value1 = (1, 2);
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
 
         // Act
         await _sut.WriteAsync(id2, value2);
@@ -259,15 +268,16 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = 1;
+        var value = (1, 2);
         await _sut.WriteAsync(id, value);
 
         // Act
-        await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id);
 
         // Assert
-        var result = await _sut.ReadAllAsync();
-        result.Should().BeEmpty();
+        result.Should().BeTrue();
+        var allDictionary = await _sut.ReadAllAsync();
+        allDictionary.Should().BeEmpty();
     }
 
     [Fact]
@@ -275,51 +285,52 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = 1;
+        var value1 = (1, 2);
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
         await _sut.WriteAsync(id2, value2);
 
         // Act
-        await _sut.DeleteAsync(id1);
+        var result = await _sut.DeleteAsync(id1);
 
         // Assert
-        var result = await _sut.ReadAllAsync();
-        result.Should().HaveCount(1);
-        result[id2].Should().Be(value2);
+        result.Should().BeTrue();
+        var allDictionary = await _sut.ReadAllAsync();
+        allDictionary.Should().HaveCount(1);
+        allDictionary[id2].Should().Be(value2);
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ThrowsInvalidOperationException()
+    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ReturnsFalse()
     {
         // Arrange
         var id = 1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.DeleteAsync(id));
+        var result = await _sut.DeleteAsync(id);
 
         // Assert
-        await action.Should().ThrowAsync<InvalidOperationException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ThrowsInvalidOperationException()
+    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ReturnsFalse()
     {
         // Arrange
         var id1 = 0;
-        var value1 = 1;
+        var value1 = (1, 2);
         await _sut.WriteAsync(id1, value1);
         await _sut.DeleteAsync(id1);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
         await _sut.WriteAsync(id2, value2);
 
         // Act
-        var action = new Func<Task>(async () => await _sut.DeleteAsync(id1));
+        var result = await _sut.DeleteAsync(id1);
 
         // Assert
-        await action.Should().ThrowAsync<InvalidOperationException>();
+        result.Should().BeFalse();
     }
 
     [Fact]
@@ -327,13 +338,14 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id = 0;
-        var value = 1;
+        var value = (1, 2);
         await _sut.WriteAsync(id, value);
 
         // Act
-        await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id);
 
         // Assert
+        result.Should().BeTrue();
         _stream.Length.Should().Be(0);
     }
 
@@ -342,10 +354,10 @@ public class LowLevelIntStreamRepositoryTests
     {
         // Arrange
         var id1 = 0;
-        var value1 = 1;
+        var value1 = (1, 2);
         await _sut.WriteAsync(id1, value1);
         var id2 = 1;
-        var value2 = 2;
+        var value2 = (3, 4);
         await _sut.WriteAsync(id2, value2);
 
         // Act
