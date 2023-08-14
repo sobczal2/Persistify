@@ -6,6 +6,6 @@ namespace Persistify.Server.Persistence.Core.Templates;
 public interface ITemplateRepository
 {
     ValueTask<Template?> GetAsync(int id);
-    ValueTask AddAsync(Template template);
-    ValueTask<bool> RemoveAsync(int id);
+    void Add(Template template);
+    void Remove(int id);
 }

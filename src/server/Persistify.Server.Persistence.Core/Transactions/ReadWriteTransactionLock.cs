@@ -6,7 +6,7 @@ using Persistify.Server.Persistence.Core.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.Transactions
 {
-    public class GlobalLock : IDisposable
+    public class ReadWriteTransactionLock : IDisposable
     {
         private readonly HashSet<long> _readers;
         private long _writer;
@@ -14,7 +14,7 @@ namespace Persistify.Server.Persistence.Core.Transactions
         private readonly SemaphoreSlim _readSemaphoreSlim;
         private readonly SemaphoreSlim _writeSemaphoreSlim;
 
-        public GlobalLock()
+        public ReadWriteTransactionLock()
         {
             _readers = new HashSet<long>();
             _writer = 0;
@@ -66,7 +66,7 @@ namespace Persistify.Server.Persistence.Core.Transactions
             else
             {
                 _writeSemaphoreSlim.Release();
-                throw new TransactionException("Global lock error");
+                throw new TransactionException("The lock is already acquired by another transaction");
             }
         }
 

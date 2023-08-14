@@ -15,12 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Persistence.LowLevel\Persistify.Server.Persistence.LowLevel.csproj" />
     <ProjectReference Include="..\Persistify.Server.Serialization\Persistify.Server.Serialization.csproj" />
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Files\" />
   </ItemGroup>
 
 </Project>
