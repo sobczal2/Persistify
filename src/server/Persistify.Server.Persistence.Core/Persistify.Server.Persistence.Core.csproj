@@ -20,4 +20,6 @@
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
   </ItemGroup>
 
+
+
 </Project>

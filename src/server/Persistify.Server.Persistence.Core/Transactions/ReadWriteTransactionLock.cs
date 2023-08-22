@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Server.Persistence.Core.Exceptions;
+using Persistify.Server.Persistence.Core.Transactions.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.Transactions
 {
@@ -66,7 +66,7 @@ namespace Persistify.Server.Persistence.Core.Transactions
             else
             {
                 _writeSemaphoreSlim.Release();
-                throw new TransactionException("The lock is already acquired by another transaction");
+                throw new TransactionStateCorruptedException();
             }
         }
 
@@ -79,7 +79,7 @@ namespace Persistify.Server.Persistence.Core.Transactions
             }
             else
             {
-                throw new TransactionException("The transaction is not the owner of the lock");
+                throw new TransactionStateCorruptedException();
             }
 
             return ValueTask.CompletedTask;
