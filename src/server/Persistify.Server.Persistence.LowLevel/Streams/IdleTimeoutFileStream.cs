@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Persistify.Server.Persistence.LowLevel.Streams;
 
-public class SelfManagingFileStream : Stream
+public class IdleTimeoutFileStream : Stream
 {
     private readonly string _filePath;
     private FileStream? _fileStream;
@@ -13,7 +13,7 @@ public class SelfManagingFileStream : Stream
     private readonly object _lock;
     private readonly TimeSpan _idleFileTimeout;
 
-    public SelfManagingFileStream(
+    public IdleTimeoutFileStream(
         TimeSpan idleFileTimeout,
         string filePath
     )

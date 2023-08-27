@@ -9,7 +9,7 @@ namespace Persistify.Server.Persistence.LowLevel.Tests.Unit.Streams;
 
 public class SelfManagingFileStreamTests : IDisposable
 {
-    private SelfManagingFileStream _sut;
+    private IdleTimeoutFileStream _sut;
     private readonly string _filePath;
     private readonly TimeSpan _idleFileTimeout;
 
@@ -17,7 +17,7 @@ public class SelfManagingFileStreamTests : IDisposable
     {
         _idleFileTimeout = TimeSpan.FromMilliseconds(50);
         _filePath = Path.GetTempFileName();
-        _sut = new SelfManagingFileStream(_idleFileTimeout, _filePath);
+        _sut = new IdleTimeoutFileStream(_idleFileTimeout, _filePath);
     }
 
     public void Dispose()

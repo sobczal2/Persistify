@@ -1,5 +1,4 @@
 ﻿using Persistify.Domain.Templates;
-using Persistify.Helpers.Common;
 using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Validation.Common;
 
@@ -29,7 +28,9 @@ public class TextFieldValidator : IValidator<TextField>
             return new ValidationException($"{ErrorPrefix}.Name", "Name has a maximum length of 64 characters");
         }
 
-        if (!LogicHelpers.Xor(value.AnalyzerPresetName is null, value.AnalyzerDescriptor is null))
+        var analyzerPresetNameNull = value.AnalyzerPresetName is null;
+        var analyzerDescriptorNull = value.AnalyzerDescriptor is null;
+        if ((analyzerPresetNameNull && analyzerDescriptorNull) || (!analyzerPresetNameNull && !analyzerDescriptorNull))
         {
             return new ValidationException($"{ErrorPrefix}.AnalyzerPreset",
                 "Either AnalyzerPresetName or AnalyzerDescriptor must be set");

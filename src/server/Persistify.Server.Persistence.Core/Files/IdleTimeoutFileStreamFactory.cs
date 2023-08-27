@@ -6,11 +6,11 @@ using Persistify.Server.Persistence.LowLevel.Streams;
 
 namespace Persistify.Server.Persistence.Core.Files;
 
-public class SelfManagingFileStreamFactory : IFileStreamFactory
+public class IdleTimeoutFileStreamFactory : IFileStreamFactory
 {
     private readonly StorageSettings _storageSettings;
 
-    public SelfManagingFileStreamFactory(
+    public IdleTimeoutFileStreamFactory(
         IOptions<StorageSettings> storageSettingsOptions
         )
     {
@@ -20,7 +20,7 @@ public class SelfManagingFileStreamFactory : IFileStreamFactory
     {
         var filePath = Path.Combine(_storageSettings.DataPath, relativePath);
 
-        return new SelfManagingFileStream(
+        return new IdleTimeoutFileStream(
             _storageSettings.IdleFileTimeout,
             filePath
         );

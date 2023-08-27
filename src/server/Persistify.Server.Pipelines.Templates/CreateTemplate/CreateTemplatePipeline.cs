@@ -18,8 +18,8 @@ public class
 {
     public CreateTemplatePipeline(
         ILogger<CreateTemplatePipeline> logger,
-        ITransactionManager transactionManager,
         ISystemClock systemClock,
+        // ReSharper disable once SuggestBaseTypeForParameterInConstructor
         StaticValidationStage<CreateTemplatePipelineContext, CreateTemplateRequest, CreateTemplateResponse>
             staticValidationStage,
         CheckAnalyzersAvailabilityStage checkAnalyzersAvailabilityStage,

@@ -6,7 +6,7 @@ using Persistify.Server.Persistence.Core.Transactions.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.Repositories;
 
-public class Repository : IRepository
+public abstract class Repository : IRepository
 {
     private readonly ReadWriteTransactionLock _readWriteTransactionLock;
     protected readonly Queue<Func<Task>> CommitQueue;
