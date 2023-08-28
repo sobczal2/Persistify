@@ -7,85 +7,85 @@ namespace Persistify.Server.Persistence.Core.Files;
 
 public class FileManager : IFileManager
 {
-    private readonly IEnumerable<IRequiredFileDescriptor> _requiredFileDescriptors;
-    private readonly IEnumerable<IFileForTemplateDescriptor> _fileForTemplateDescriptors;
+    private readonly IEnumerable<IRequiredFileGroup> _requiredFileGroups;
+    private readonly IEnumerable<IFileGroupForTemplate> _fileGroupsForTemplate;
     private readonly ILogger<FileManager> _logger;
     private readonly IFileProvider _fileProvider;
 
     public FileManager(
         ILogger<FileManager> logger,
         IFileProvider fileProvider,
-        IEnumerable<IRequiredFileDescriptor> requiredFileDescriptors,
-        IEnumerable<IFileForTemplateDescriptor> fileForTemplateDescriptors
+        IEnumerable<IRequiredFileGroup> requiredFileGroups,
+        IEnumerable<IFileGroupForTemplate> fileGroupsForTemplate
     )
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
-        _requiredFileDescriptors =
-            requiredFileDescriptors ?? throw new ArgumentNullException(nameof(requiredFileDescriptors));
-        _fileForTemplateDescriptors = fileForTemplateDescriptors ??
-                                      throw new ArgumentNullException(nameof(fileForTemplateDescriptors));
+        _requiredFileGroups =
+            requiredFileGroups ?? throw new ArgumentNullException(nameof(requiredFileGroups));
+        _fileGroupsForTemplate = fileGroupsForTemplate ??
+                                 throw new ArgumentNullException(nameof(fileGroupsForTemplate));
     }
 
     public void EnsureRequiredFilesAsync()
     {
-        foreach (var fileDescriptor in _requiredFileDescriptors)
+        foreach (var fileGroup in _requiredFileGroups)
         {
-            _logger.LogInformation("Ensuring required files for {FileDescriptorName}", fileDescriptor.GetType().Name);
-            var requiredFiles = fileDescriptor.GetRequiredFilesNames();
-            foreach (var requiredFile in requiredFiles)
+            _logger.LogTrace("Ensuring required files for {FileGroupName}", fileGroup.FileGroupName);
+            var fileNames = fileGroup.GetFileNames();
+            foreach (var fileName in fileNames)
             {
-                _logger.LogInformation("Ensuring required file {RequiredFile}", requiredFile);
-                if (_fileProvider.Exists(requiredFile))
+                _logger.LogTrace("Ensuring required file {FileName}", fileName);
+                if (_fileProvider.Exists(fileName))
                 {
-                    _logger.LogInformation("Required file {RequiredFile} already exists", requiredFile);
+                    _logger.LogTrace("Required file {FileName} already exists", fileName);
                     continue;
                 }
 
-                _logger.LogInformation("Creating required file {RequiredFile}", requiredFile);
-                _fileProvider.Create(requiredFile);
+                _logger.LogTrace("Creating required file {FileName}", fileName);
+                _fileProvider.Create(fileName);
             }
         }
     }
 
     public void CreateFilesForTemplateAsync(int templateId)
     {
-        foreach (var fileDescriptor in _fileForTemplateDescriptors)
+        foreach (var fileGroup in _fileGroupsForTemplate)
         {
-            _logger.LogInformation("Creating files for template {TemplateId} for {FileDescriptorName}", templateId,
-                fileDescriptor.GetType().Name);
-            var files = fileDescriptor.GetFilesNamesForTemplate(templateId);
-            foreach (var file in files)
+            _logger.LogTrace("Creating files for template {TemplateId} for {FileGroupName}", templateId,
+                fileGroup.FileGroupName);
+            var fileNames = fileGroup.GetFileNamesForTemplate(templateId);
+            foreach (var fileName in fileNames)
             {
-                _logger.LogInformation("Creating file {File}", file);
-                if (_fileProvider.Exists(file))
+                _logger.LogTrace("Creating file {FileName}", fileName);
+                if (_fileProvider.Exists(fileName))
                 {
                     throw new FileStructureCorruptedException();
                 }
 
-                _logger.LogInformation("Creating file {File}", file);
-                _fileProvider.Create(file);
+                _logger.LogTrace("Creating file {FileName}", fileName);
+                _fileProvider.Create(fileName);
             }
         }
     }
 
     public void DeleteFilesForTemplateAsync(int templateId)
     {
-        foreach (var fileDescriptor in _fileForTemplateDescriptors)
+        foreach (var fileGroup in _fileGroupsForTemplate)
         {
-            _logger.LogInformation("Deleting files for template {TemplateId} for {FileDescriptorName}", templateId,
-                fileDescriptor.GetType().Name);
-            var files = fileDescriptor.GetFilesNamesForTemplate(templateId);
-            foreach (var file in files)
+            _logger.LogTrace("Deleting files for template {TemplateId} for {FileGroupName}", templateId,
+                fileGroup.FileGroupName);
+            var fileNames = fileGroup.GetFileNamesForTemplate(templateId);
+            foreach (var fileName in fileNames)
             {
-                _logger.LogInformation("Deleting file {File}", file);
-                if (!_fileProvider.Exists(file))
+                _logger.LogTrace("Deleting file {FileName}", fileName);
+                if (!_fileProvider.Exists(fileName))
                 {
                     throw new FileStructureCorruptedException();
                 }
 
-                _logger.LogInformation("Deleting file {File}", file);
-                _fileProvider.Delete(file);
+                _logger.LogTrace("Deleting file {FileName}", fileName);
+                _fileProvider.Delete(fileName);
             }
         }
     }

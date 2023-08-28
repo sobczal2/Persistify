@@ -40,10 +40,13 @@ public class LocalFileProviderTests : IDisposable
         ILogger<LocalFileProvider> logger = null!;
 
         // Act
-        var action = new Action(() => new LocalFileProvider(
-            logger,
-            _storageSettings
-        ));
+        var action = new Action(() =>
+        {
+            var unused = new LocalFileProvider(
+                logger,
+                _storageSettings
+            );
+        });
 
         // Assert
         action.Should().Throw<ArgumentNullException>();
@@ -56,10 +59,13 @@ public class LocalFileProviderTests : IDisposable
         IOptions<StorageSettings> storageSettings = null!;
 
         // Act
-        var action = new Action(() => new LocalFileProvider(
-            _logger,
-            storageSettings
-        ));
+        var action = new Action(() =>
+        {
+            var unused = new LocalFileProvider(
+                _logger,
+                storageSettings
+            );
+        });
 
         // Assert
         action.Should().Throw<ArgumentNullException>();

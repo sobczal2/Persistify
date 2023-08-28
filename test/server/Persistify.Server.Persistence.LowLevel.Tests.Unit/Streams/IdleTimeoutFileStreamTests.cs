@@ -7,13 +7,13 @@ using Xunit;
 
 namespace Persistify.Server.Persistence.LowLevel.Tests.Unit.Streams;
 
-public class SelfManagingFileStreamTests : IDisposable
+public class IdleTimeoutFileStreamTests : IDisposable
 {
     private IdleTimeoutFileStream _sut;
     private readonly string _filePath;
     private readonly TimeSpan _idleFileTimeout;
 
-    public SelfManagingFileStreamTests()
+    public IdleTimeoutFileStreamTests()
     {
         _idleFileTimeout = TimeSpan.FromMilliseconds(50);
         _filePath = Path.GetTempFileName();

@@ -19,7 +19,7 @@ public class TemplateRepository : Repository, ITemplateRepository
     private readonly ObjectStreamRepository<Template> _innerTemplateRepository;
 
     public TemplateRepository(
-        TemplateRepositoryRequiredFileDescriptor templateRepositoryRequiredFileDescriptor,
+        TemplateRepositoryRequiredFileGroup templateRepositoryRequiredFileGroup,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
@@ -28,11 +28,11 @@ public class TemplateRepository : Repository, ITemplateRepository
     {
         _fileManager = fileManager;
         var identifierFileStream =
-            fileStreamFactory.CreateStream(templateRepositoryRequiredFileDescriptor.IdentifierFileName);
+            fileStreamFactory.CreateStream(templateRepositoryRequiredFileGroup.IdentifierFileName);
         var innerTemplateMainFileStream =
-            fileStreamFactory.CreateStream(templateRepositoryRequiredFileDescriptor.InnerTemplateMainFileName);
+            fileStreamFactory.CreateStream(templateRepositoryRequiredFileGroup.InnerTemplateMainFileName);
         var innerTemplateOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(templateRepositoryRequiredFileDescriptor.InnerTemplateOffsetLengthFileName);
+            fileStreamFactory.CreateStream(templateRepositoryRequiredFileGroup.InnerTemplateOffsetLengthFileName);
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _innerTemplateRepository = new ObjectStreamRepository<Template>(

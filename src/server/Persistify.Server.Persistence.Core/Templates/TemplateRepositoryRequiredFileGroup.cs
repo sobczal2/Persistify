@@ -4,9 +4,11 @@ using Persistify.Server.Persistence.Core.Files;
 
 namespace Persistify.Server.Persistence.Core.Templates;
 
-public class TemplateRepositoryRequiredFileDescriptor : IRequiredFileDescriptor
+public class TemplateRepositoryRequiredFileGroup : IRequiredFileGroup
 {
-    public List<string> GetRequiredFilesNames() => new()
+    public string FileGroupName => "TemplateRepository";
+
+    public List<string> GetFileNames() => new()
     {
         IdentifierFileName,
         InnerTemplateMainFileName,

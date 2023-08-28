@@ -24,14 +24,14 @@ public class LocalFileProvider : IFileProvider
     public bool Exists(string relativePath)
     {
         var absolutePath = GetAbsolutePath(relativePath);
-        _logger.LogDebug("Checking if file {AbsolutePath} exists", absolutePath);
+        _logger.LogTrace("Checking if file {AbsolutePath} exists", absolutePath);
         return File.Exists(absolutePath);
     }
 
     public void Create(string relativePath)
     {
         var absolutePath = GetAbsolutePath(relativePath);
-        _logger.LogDebug("Creating file {AbsolutePath}", absolutePath);
+        _logger.LogTrace("Creating file {AbsolutePath}", absolutePath);
         if (File.Exists(absolutePath))
         {
             throw new InvalidOperationException($"File {absolutePath} already exists");
@@ -42,7 +42,7 @@ public class LocalFileProvider : IFileProvider
     public void Delete(string relativePath)
     {
         var absolutePath = GetAbsolutePath(relativePath);
-        _logger.LogDebug("Deleting file {AbsolutePath}", absolutePath);
+        _logger.LogTrace("Deleting file {AbsolutePath}", absolutePath);
         if (!File.Exists(absolutePath))
         {
             throw new InvalidOperationException($"File {absolutePath} does not exist");
