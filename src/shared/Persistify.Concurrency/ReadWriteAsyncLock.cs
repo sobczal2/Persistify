@@ -30,9 +30,9 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _pendingWriters = 0;
     }
 
-    public async ValueTask<bool> EnterReadLockAsync(ulong id, TimeSpan timeout)
+    public async ValueTask<bool> EnterReadLockAsync(ulong id, TimeSpan timeout, CancellationToken cancellationToken)
     {
-        if (!await _accessSemaphoreSlim.WaitAsync(timeout).ConfigureAwait(false))
+        if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
             return false;
         }
@@ -40,23 +40,16 @@ public sealed class ReadWriteAsyncLock : IDisposable
         while (_pendingWriters > 0)
         {
             _accessSemaphoreSlim.Release();
-            if (!await _accessSemaphoreSlim.WaitAsync(timeout).ConfigureAwait(false))
+            if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
             {
                 return false;
             }
         }
 
-        if (!await _readSemaphoreSlim.WaitAsync(timeout).ConfigureAwait(false))
+        if (!await _readSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
             _accessSemaphoreSlim.Release();
             return false;
-        }
-
-        if (_writer == id)
-        {
-            _readSemaphoreSlim.Release();
-            _accessSemaphoreSlim.Release();
-            throw new InvalidOperationException("Cannot enter read lock when already in write lock");
         }
 
         if (_readers.Contains(id))
@@ -68,7 +61,7 @@ public sealed class ReadWriteAsyncLock : IDisposable
 
         if (_readers.Count == 0)
         {
-            await _writeSemaphoreSlim.WaitAsync().ConfigureAwait(false);
+            await _writeSemaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
 
         _readers.Add(id);
@@ -105,27 +98,20 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _readSemaphoreSlim.Release();
     }
 
-    public async ValueTask<bool> EnterWriteLockAsync(ulong id, TimeSpan timeout)
+    public async ValueTask<bool> EnterWriteLockAsync(ulong id, TimeSpan timeout, CancellationToken cancellationToken)
     {
-        if (!await _accessSemaphoreSlim.WaitAsync(timeout).ConfigureAwait(false))
+        if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
             return false;
         }
 
         Interlocked.Increment(ref _pendingWriters);
 
-        if (!await _writeSemaphoreSlim.WaitAsync(timeout).ConfigureAwait(false))
+        if (!await _writeSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
             Interlocked.Decrement(ref _pendingWriters);
             _accessSemaphoreSlim.Release();
             return false;
-        }
-
-        if (_writer == id)
-        {
-            _writeSemaphoreSlim.Release();
-            _accessSemaphoreSlim.Release();
-            throw new InvalidOperationException("Cannot enter write lock when already in write lock");
         }
 
         _writer = id;

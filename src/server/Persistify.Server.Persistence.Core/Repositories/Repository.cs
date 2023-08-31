@@ -1,78 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using Persistify.Concurrency;
 using Persistify.Server.Persistence.Core.Transactions;
-using Persistify.Server.Persistence.Core.Transactions.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.Repositories;
 
 public abstract class Repository : IRepository
 {
-    private readonly ReadWriteTransactionLock _readWriteTransactionLock;
-    protected readonly Queue<Func<Task>> CommitQueue;
+    private readonly ReadWriteAsyncLock _readWriteAsyncLock;
+    protected Queue<Func<ValueTask>> PendingActions { get; }
+    private static ulong TransactionId => Transaction.CurrentTransactionId;
 
-    public Repository()
+    protected Repository()
     {
-        _readWriteTransactionLock = new ReadWriteTransactionLock();
-        CommitQueue = new Queue<Func<Task>>();
+        _readWriteAsyncLock = new ReadWriteAsyncLock();
+        PendingActions = new Queue<Func<ValueTask>>();
     }
 
-
-    public async ValueTask BeginReadAsync(long transactionId)
+    public async ValueTask<bool> BeginReadAsync(TimeSpan timeOut, CancellationToken cancellationToken)
     {
-        await _readWriteTransactionLock.EnterReadLockAsync(transactionId).ConfigureAwait(false);
+        return await _readWriteAsyncLock.EnterReadLockAsync(TransactionId, timeOut, cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async ValueTask BeginWriteAsync(long transactionId)
+    public async ValueTask<bool> BeginWriteAsync(TimeSpan timeOut, CancellationToken cancellationToken)
     {
-        await _readWriteTransactionLock.EnterWriteLockAsync(transactionId).ConfigureAwait(false);
+        return await _readWriteAsyncLock.EnterWriteLockAsync(TransactionId, timeOut, cancellationToken);
     }
 
-    public async ValueTask EndReadAsync(long transactionId)
+    public async ValueTask EndReadAsync()
     {
-        if (_readWriteTransactionLock.CanRead(transactionId))
-        {
-            await _readWriteTransactionLock.ExitReadLockAsync(transactionId).ConfigureAwait(false);
-        }
-        else
-        {
-            throw new TransactionStateCorruptedException();
-        }
+        await _readWriteAsyncLock.ExitReadLockAsync(TransactionId).ConfigureAwait(false);
     }
 
-    public async ValueTask EndWriteAsync(long transactionId)
+    public async ValueTask EndWriteAsync()
     {
-        if (_readWriteTransactionLock.CanWrite(transactionId))
+        await _readWriteAsyncLock.ExitWriteLockAsync(TransactionId).ConfigureAwait(false);
+    }
+
+    public async ValueTask ExecutePendingActionsAsync()
+    {
+        foreach (var pendingAction in PendingActions)
         {
-            CommitQueue.Clear();
-            await _readWriteTransactionLock.ExitWriteLockAsync(transactionId).ConfigureAwait(false);
-        }
-        else
-        {
-            throw new TransactionStateCorruptedException();
+            await pendingAction();
         }
     }
 
-    public async ValueTask FlushAsync()
+    public void ClearPendingActions()
     {
-        while (CommitQueue.Count > 0)
-        {
-            var action = CommitQueue.Dequeue();
-            await action().ConfigureAwait(false);
-        }
+        PendingActions.Clear();
     }
 
     protected bool CanRead()
     {
-        return Transaction.CanReadGlobal() &&
-               _readWriteTransactionLock.CanRead(Transaction.CurrentTransactionId ??
-                                                 throw new TransactionStateCorruptedException());
+        return _readWriteAsyncLock.CanRead(TransactionId);
     }
 
     protected bool CanWrite()
     {
-        return Transaction.CanReadGlobal() &&
-               _readWriteTransactionLock.CanWrite(Transaction.CurrentTransactionId ??
-                                                  throw new TransactionStateCorruptedException());
+        return _readWriteAsyncLock.CanWrite(TransactionId);
     }
 }

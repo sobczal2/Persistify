@@ -60,7 +60,7 @@ public class TemplateRepository : Repository, ITemplateRepository
             throw new NotAllowedForTransactionException();
         }
 
-        var addAction = new Func<Task>(async () =>
+        var addAction = new Func<ValueTask>(async () =>
         {
             var currentId = await _identifierRepository.ReadAsync(0);
             if (_identifierRepository.IsValueEmpty(currentId))
@@ -81,7 +81,7 @@ public class TemplateRepository : Repository, ITemplateRepository
             _fileManager.CreateFilesForTemplateAsync(currentId);
         });
 
-        CommitQueue.Enqueue(addAction);
+        PendingActions.Enqueue(addAction);
     }
 
     public void Remove(int id)
@@ -91,7 +91,7 @@ public class TemplateRepository : Repository, ITemplateRepository
             throw new NotAllowedForTransactionException();
         }
 
-        var deleteAction = new Func<Task>(async () =>
+        var deleteAction = new Func<ValueTask>(async () =>
         {
             if (await _innerTemplateRepository.DeleteAsync(id))
             {
@@ -99,6 +99,6 @@ public class TemplateRepository : Repository, ITemplateRepository
             }
         });
 
-        CommitQueue.Enqueue(deleteAction);
+        PendingActions.Enqueue(deleteAction);
     }
 }

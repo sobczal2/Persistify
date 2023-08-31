@@ -1,14 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Persistify.Server.Persistence.Core.Repositories;
 
 public interface IRepository
 {
-    ValueTask BeginReadAsync(long transactionId);
-    ValueTask BeginWriteAsync(long transactionId);
+    ValueTask<bool> BeginReadAsync(TimeSpan timeOut, CancellationToken cancellationToken);
+    ValueTask<bool> BeginWriteAsync(TimeSpan timeOut, CancellationToken cancellationToken);
 
-    ValueTask EndReadAsync(long transactionId);
-    ValueTask EndWriteAsync(long transactionId);
+    ValueTask EndReadAsync();
+    ValueTask EndWriteAsync();
 
-    ValueTask FlushAsync();
+    ValueTask ExecutePendingActionsAsync();
+    void ClearPendingActions();
 }

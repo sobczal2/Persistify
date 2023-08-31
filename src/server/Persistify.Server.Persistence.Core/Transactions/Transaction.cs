@@ -1,84 +1,64 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Persistify.Concurrency;
 using Persistify.Server.Persistence.Core.Transactions.Exceptions;
 
 namespace Persistify.Server.Persistence.Core.Transactions;
 
-public class Transaction
+public sealed class Transaction
 {
     private static readonly AsyncLocal<Transaction?> CurrentTransaction;
-    private static long _lastTransactionId;
-    private static readonly ReadWriteTransactionLock GlobalLock;
+    private static readonly ReadWriteAsyncLock GlobalLock;
+    private static ulong _lastTransactionId;
 
-    public static long? CurrentTransactionId => CurrentTransaction.Value?.Id;
+    public static ulong CurrentTransactionId => CurrentTransaction.Value?._id ?? throw new TransactionStateCorruptedException();
 
     static Transaction()
     {
         CurrentTransaction = new AsyncLocal<Transaction?>();
         _lastTransactionId = 0;
-        var tmp = _lastTransactionId;
-        GlobalLock = new ReadWriteTransactionLock();
+        GlobalLock = new ReadWriteAsyncLock();
     }
 
-    public static bool CanReadGlobal()
-    {
-        if (CurrentTransaction.Value is null)
-        {
-            return false;
-        }
-
-        return GlobalLock.CanRead(CurrentTransaction.Value.Id);
-    }
-
-    public static bool CanWriteGlobal()
-    {
-        if (CurrentTransaction.Value is null)
-        {
-            return false;
-        }
-
-        return GlobalLock.CanWrite(CurrentTransaction.Value.Id);
-    }
-
-    public long Id { get; private set; }
+    private readonly ulong _id;
     private readonly TransactionDescriptor _transactionDescriptor;
-    private Queue<Func<Task>> _queuedCommitActions;
 
     public Transaction(
         TransactionDescriptor transactionDescriptor
     )
     {
         _transactionDescriptor = transactionDescriptor;
-        Id = Interlocked.Increment(ref _lastTransactionId);
-        _queuedCommitActions = new Queue<Func<Task>>();
+        _id = Interlocked.Increment(ref _lastTransactionId);
     }
 
-    public async ValueTask BeginAsync()
+    // TODO: handle timeout and cancellation token
+    public async ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken)
     {
-        if (CurrentTransaction.Value is not null)
+        if (CurrentTransaction.Value != null)
         {
             throw new TransactionStateCorruptedException();
         }
 
         CurrentTransaction.Value = this;
 
-        await GlobalLock.EnterReadLockAsync(Id).ConfigureAwait(false);
-
-        if (_transactionDescriptor.WriteGlobal)
+        if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await GlobalLock.EnterWriteLockAsync(Id).ConfigureAwait(false);
+            await GlobalLock.EnterWriteLockAsync(_id, timeOut, cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            await GlobalLock.EnterReadLockAsync(_id, timeOut, cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var readRepository in _transactionDescriptor.ReadRepositories)
         {
-            await readRepository.BeginReadAsync(Id).ConfigureAwait(false);
+            await readRepository.BeginReadAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var writeRepository in _transactionDescriptor.WriteRepositories)
         {
-            await writeRepository.BeginWriteAsync(Id).ConfigureAwait(false);
+            await writeRepository.BeginWriteAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -89,28 +69,27 @@ public class Transaction
             throw new TransactionStateCorruptedException();
         }
 
-        foreach (var commitAction in _queuedCommitActions)
-        {
-            await commitAction().ConfigureAwait(false);
-        }
-
         foreach (var readRepository in _transactionDescriptor.ReadRepositories)
         {
-            await readRepository.EndReadAsync(Id).ConfigureAwait(false);
+            await readRepository.EndReadAsync().ConfigureAwait(false);
         }
 
         foreach (var writeRepository in _transactionDescriptor.WriteRepositories)
         {
-            await writeRepository.FlushAsync().ConfigureAwait(false);
-            await writeRepository.EndWriteAsync(Id).ConfigureAwait(false);
+            await writeRepository.ExecutePendingActionsAsync().ConfigureAwait(false);
+            await writeRepository.EndWriteAsync().ConfigureAwait(false);
         }
 
-        await GlobalLock.ExitReadLockAsync(Id).ConfigureAwait(false);
+        await GlobalLock.ExitReadLockAsync(_id).ConfigureAwait(false);
 
 
-        if (_transactionDescriptor.WriteGlobal)
+        if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await GlobalLock.ExitWriteLockAsync(Id).ConfigureAwait(false);
+            await GlobalLock.ExitWriteLockAsync(_id).ConfigureAwait(false);
+        }
+        else
+        {
+            await GlobalLock.ExitReadLockAsync(_id).ConfigureAwait(false);
         }
 
         CurrentTransaction.Value = null;
@@ -125,19 +104,22 @@ public class Transaction
 
         foreach (var readRepository in _transactionDescriptor.ReadRepositories)
         {
-            await readRepository.EndReadAsync(Id).ConfigureAwait(false);
+            await readRepository.EndReadAsync().ConfigureAwait(false);
         }
 
         foreach (var writeRepository in _transactionDescriptor.WriteRepositories)
         {
-            await writeRepository.EndWriteAsync(Id).ConfigureAwait(false);
+            writeRepository.ClearPendingActions();
+            await writeRepository.EndWriteAsync().ConfigureAwait(false);
         }
 
-        await GlobalLock.ExitReadLockAsync(Id).ConfigureAwait(false);
-
-        if (_transactionDescriptor.WriteGlobal)
+        if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await GlobalLock.ExitWriteLockAsync(Id).ConfigureAwait(false);
+            await GlobalLock.ExitWriteLockAsync(_id).ConfigureAwait(false);
+        }
+        else
+        {
+            await GlobalLock.ExitReadLockAsync(_id).ConfigureAwait(false);
         }
 
         CurrentTransaction.Value = null;

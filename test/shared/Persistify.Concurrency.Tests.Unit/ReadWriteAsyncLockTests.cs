@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -8,6 +9,8 @@ namespace Persistify.Concurrency.Tests.Unit;
 public class ReadWriteAsyncLockTests
 {
     private ReadWriteAsyncLock _sut;
+    private static TimeSpan DefaultTimeout => TimeSpan.FromMilliseconds(10);
+    private static CancellationToken DefaultCancellationToken => CancellationToken.None;
 
     public ReadWriteAsyncLockTests()
     {
@@ -19,10 +22,85 @@ public class ReadWriteAsyncLockTests
     {
         // Arrange
         var id = 1UL;
-        var timeout = TimeSpan.FromSeconds(1);
 
         // Act
-        var result = await _sut.EnterReadLockAsync(id, timeout);
+        var result = await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task EnterReadLockAsync_WhenReadLockIsHeldBySameId_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        var id = 1UL;
+        await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
+
+        // Act
+        Func<Task> act = async () => await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task EnterReadLockAsync_WhenReadLockIsHeldByOtherId_ReturnsTrue()
+    {
+        // Arrange
+        var id1 = 1UL;
+        var id2 = 2UL;
+        await _sut.EnterReadLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
+
+        // Act
+        var result = await _sut.EnterReadLockAsync(id2, DefaultTimeout, DefaultCancellationToken);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task EnterReadLockAsync_WhenWriteLockIsHeldByOtherId_ReturnsFalse()
+    {
+        // Arrange
+        var id1 = 1UL;
+        var id2 = 2UL;
+        await _sut.EnterWriteLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
+
+        // Act
+        var result = await _sut.EnterReadLockAsync(id2, DefaultTimeout, DefaultCancellationToken);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task EnterReadLockAsync_WhenWriteLockIsHeldByOtherIdAndReleased_ReturnsTrue()
+    {
+        // Arrange
+        var id1 = 1UL;
+        var id2 = 2UL;
+        await _sut.EnterWriteLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
+        await _sut.ExitWriteLockAsync(id1);
+
+        // Act
+        var result = await _sut.EnterReadLockAsync(id2, DefaultTimeout, DefaultCancellationToken);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task EnterReadLockAsync_WhenReadLockIsHeldByOtherIdAndReleased_ReturnsTrue()
+    {
+        // Arrange
+        var id1 = 1UL;
+        var id2 = 2UL;
+        await _sut.EnterReadLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
+        await _sut.ExitReadLockAsync(id1);
+
+        // Act
+        var result = await _sut.EnterReadLockAsync(id2, DefaultTimeout, DefaultCancellationToken);
 
         // Assert
         result.Should().BeTrue();

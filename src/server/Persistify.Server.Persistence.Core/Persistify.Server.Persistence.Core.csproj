@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.Concurrency\Persistify.Concurrency.csproj" />
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj" />
     <ProjectReference Include="..\Persistify.Server.Persistence.LowLevel\Persistify.Server.Persistence.LowLevel.csproj" />
