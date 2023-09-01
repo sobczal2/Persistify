@@ -6,7 +6,7 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Common;
 
-public abstract class Command<TData, TResult>
+public abstract class Command<TData, TResponse>
 {
     private readonly IValidator<TData> _validator;
     private static TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
@@ -16,11 +16,11 @@ public abstract class Command<TData, TResult>
         _validator = validator;
     }
 
-    protected abstract ValueTask<TResult> ExecuteAsync(TData data, CancellationToken cancellationToken);
-
+    protected abstract ValueTask ExecuteAsync(TData data, CancellationToken cancellationToken);
+    protected abstract TResponse? Response { get; }
     protected abstract TransactionDescriptor TransactionDescriptor { get; }
 
-    public async ValueTask<TResult> RunInTransactionAsync(TData data, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> RunInTransactionAsync(TData data, CancellationToken cancellationToken)
     {
         var result = _validator.Validate(data);
         if (result.Failure)
@@ -33,9 +33,9 @@ public abstract class Command<TData, TResult>
         await transaction.BeginAsync(TransactionTimeout, cancellationToken).ConfigureAwait(false);
         try
         {
-            var response = await ExecuteAsync(data, cancellationToken).ConfigureAwait(false);
+            await ExecuteAsync(data, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync().ConfigureAwait(false);
-            return response;
+            return Response ?? throw new InvalidOperationException();
         }
         catch (Exception)
         {

@@ -42,9 +42,10 @@ public abstract class Manager : IManager
 
     public async ValueTask ExecutePendingActionsAsync()
     {
-        foreach (var pendingAction in PendingActions)
+        while (PendingActions.Count > 0)
         {
-            await pendingAction();
+            var action = PendingActions.Dequeue();
+            await action().ConfigureAwait(false);
         }
     }
 

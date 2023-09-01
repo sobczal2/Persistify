@@ -15,7 +15,7 @@ namespace Persistify.Server.Commands.Templates;
 public class CreateTemplateCommand : Command<CreateTemplateRequest, CreateTemplateResponse>
 {
     private readonly ITemplateManager _templateManager;
-
+    private Template? _template;
     public CreateTemplateCommand(
         IValidator<CreateTemplateRequest> validator,
         ITemplateManager templateManager
@@ -31,9 +31,9 @@ public class CreateTemplateCommand : Command<CreateTemplateRequest, CreateTempla
         );
     }
 
-    protected override ValueTask<CreateTemplateResponse> ExecuteAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
+    protected override ValueTask ExecuteAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
     {
-        var template = new Template()
+        _template = new Template
         {
             Name = data.TemplateName,
             TextFields = data.TextFields,
@@ -41,10 +41,12 @@ public class CreateTemplateCommand : Command<CreateTemplateRequest, CreateTempla
             BoolFields = data.BoolFields
         };
 
-        _templateManager.Add(template);
+        _templateManager.Add(_template);
 
-        return ValueTask.FromResult(new CreateTemplateResponse(template.Id));
+        return ValueTask.CompletedTask;
     }
+
+    protected override CreateTemplateResponse? Response => _template is null ? null : new CreateTemplateResponse(_template.Id);
 
     protected override TransactionDescriptor TransactionDescriptor { get; }
 }
