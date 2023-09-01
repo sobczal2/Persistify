@@ -79,7 +79,7 @@ public class TemplateManager : Manager, ITemplateManager
 
             template.Id = currentId;
 
-            _fileManager.CreateFilesForTemplateAsync(currentId);
+            _fileManager.CreateFilesForTemplate(currentId);
         });
 
         PendingActions.Enqueue(addAction);
@@ -96,7 +96,7 @@ public class TemplateManager : Manager, ITemplateManager
         {
             if (await _innerTemplateRepository.DeleteAsync(id))
             {
-                _fileManager.DeleteFilesForTemplateAsync(id);
+                _fileManager.DeleteFilesForTemplate(id);
             }
         });
 

@@ -27,7 +27,7 @@ public class FileManager : IFileManager
                                  throw new ArgumentNullException(nameof(fileGroupsForTemplate));
     }
 
-    public void EnsureRequiredFilesAsync()
+    public void EnsureRequiredFiles()
     {
         foreach (var fileGroup in _requiredFileGroups)
         {
@@ -48,7 +48,7 @@ public class FileManager : IFileManager
         }
     }
 
-    public void CreateFilesForTemplateAsync(int templateId)
+    public void CreateFilesForTemplate(int templateId)
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {
@@ -69,7 +69,7 @@ public class FileManager : IFileManager
         }
     }
 
-    public void DeleteFilesForTemplateAsync(int templateId)
+    public void DeleteFilesForTemplate(int templateId)
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {

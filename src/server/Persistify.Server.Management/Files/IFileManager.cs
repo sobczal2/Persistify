@@ -2,7 +2,7 @@
 
 public interface IFileManager
 {
-    void EnsureRequiredFilesAsync();
-    void CreateFilesForTemplateAsync(int templateId);
-    void DeleteFilesForTemplateAsync(int templateId);
+    void EnsureRequiredFiles();
+    void CreateFilesForTemplate(int templateId);
+    void DeleteFilesForTemplate(int templateId);
 }

@@ -36,7 +36,13 @@ public class LocalFileProvider : IFileProvider
         {
             throw new InvalidOperationException($"File {absolutePath} already exists");
         }
-        File.Create(absolutePath);
+        if (!Directory.Exists(Path.GetDirectoryName(absolutePath)))
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ??
+                                      throw new InvalidOperationException(
+                                          $"Could not get directory name from {absolutePath}"));
+        }
+        File.Create(absolutePath).Dispose();
     }
 
     public void Delete(string relativePath)

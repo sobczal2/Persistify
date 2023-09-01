@@ -8,7 +8,7 @@ namespace Persistify.Server.Management.Transactions;
 
 public sealed class Transaction
 {
-    private static readonly AsyncLocal<Transaction?> CurrentTransaction;
+    public static readonly AsyncLocal<Transaction?> CurrentTransaction;
     private static readonly ReadWriteAsyncLock GlobalLock;
     private static ulong _lastTransactionId;
 
@@ -35,12 +35,10 @@ public sealed class Transaction
     // TODO: handle timeout and cancellation token
     public async ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken)
     {
-        if (CurrentTransaction.Value != null)
+        if (CurrentTransaction.Value != this)
         {
             throw new TransactionStateCorruptedException();
         }
-
-        CurrentTransaction.Value = this;
 
         if (_transactionDescriptor.ExclusiveGlobal)
         {
@@ -51,14 +49,14 @@ public sealed class Transaction
             await GlobalLock.EnterReadLockAsync(_id, timeOut, cancellationToken).ConfigureAwait(false);
         }
 
-        foreach (var readRepository in _transactionDescriptor.ReadManagers)
+        foreach (var readManager in _transactionDescriptor.ReadManagers)
         {
-            await readRepository.BeginReadAsync(timeOut, cancellationToken).ConfigureAwait(false);
+            await readManager.BeginReadAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
 
-        foreach (var writeRepository in _transactionDescriptor.WriteManagers)
+        foreach (var writeManager in _transactionDescriptor.WriteManagers)
         {
-            await writeRepository.BeginWriteAsync(timeOut, cancellationToken).ConfigureAwait(false);
+            await writeManager.BeginWriteAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
     }
 
@@ -69,19 +67,16 @@ public sealed class Transaction
             throw new TransactionStateCorruptedException();
         }
 
-        foreach (var readRepository in _transactionDescriptor.ReadManagers)
+        foreach (var readManager in _transactionDescriptor.ReadManagers)
         {
-            await readRepository.EndReadAsync().ConfigureAwait(false);
+            await readManager.EndReadAsync().ConfigureAwait(false);
         }
 
-        foreach (var writeRepository in _transactionDescriptor.WriteManagers)
+        foreach (var writeManager in _transactionDescriptor.WriteManagers)
         {
-            await writeRepository.ExecutePendingActionsAsync().ConfigureAwait(false);
-            await writeRepository.EndWriteAsync().ConfigureAwait(false);
+            await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
+            await writeManager.EndWriteAsync().ConfigureAwait(false);
         }
-
-        await GlobalLock.ExitReadLockAsync(_id).ConfigureAwait(false);
-
 
         if (_transactionDescriptor.ExclusiveGlobal)
         {
@@ -102,15 +97,15 @@ public sealed class Transaction
             throw new TransactionStateCorruptedException();
         }
 
-        foreach (var readRepository in _transactionDescriptor.ReadManagers)
+        foreach (var readManager in _transactionDescriptor.ReadManagers)
         {
-            await readRepository.EndReadAsync().ConfigureAwait(false);
+            await readManager.EndReadAsync().ConfigureAwait(false);
         }
 
-        foreach (var writeRepository in _transactionDescriptor.WriteManagers)
+        foreach (var writeManager in _transactionDescriptor.WriteManagers)
         {
-            writeRepository.ClearPendingActions();
-            await writeRepository.EndWriteAsync().ConfigureAwait(false);
+            writeManager.ClearPendingActions();
+            await writeManager.EndWriteAsync().ConfigureAwait(false);
         }
 
         if (_transactionDescriptor.ExclusiveGlobal)

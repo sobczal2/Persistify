@@ -2,12 +2,12 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using Persistify.Domain.Templates;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Analyzers;
 using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Fts.Analysis.TokenFilters;
 using Persistify.Server.Fts.Analysis.Tokenizers;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Fts.Analysis.Factories;
 
@@ -20,7 +20,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
     public Result TryCreate(AnalyzerDescriptor descriptor, out IAnalyzer? analyzer)
     {
         var result = Validate(descriptor);
-        if (result.IsFailure)
+        if (result.Failure)
         {
             analyzer = null;
             return result;
@@ -28,7 +28,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
 
         analyzer = Create(descriptor);
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     public Result Validate(AnalyzerDescriptor descriptor)
@@ -54,7 +54,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
             }
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     public IAnalyzer Create(AnalyzerDescriptor descriptor)

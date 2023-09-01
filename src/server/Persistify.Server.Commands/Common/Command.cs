@@ -29,6 +29,7 @@ public abstract class Command<TData, TResult>
         }
 
         var transaction = new Transaction(TransactionDescriptor);
+        Transaction.CurrentTransaction.Value = transaction;
         await transaction.BeginAsync(TransactionTimeout, cancellationToken).ConfigureAwait(false);
         try
         {

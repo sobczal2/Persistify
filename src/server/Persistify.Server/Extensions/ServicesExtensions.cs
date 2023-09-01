@@ -7,15 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Server.Commands;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Fts.Analysis;
 using Persistify.Server.HostedServices;
-using Persistify.Server.Management.Domain;
-using Persistify.Server.Persistence.Core;
-using Persistify.Server.Persistence.DataStructures;
-using Persistify.Server.Pipelines;
-using Persistify.Server.Pipelines.Documents;
-using Persistify.Server.Pipelines.Templates;
+using Persistify.Server.Management;
 using Persistify.Server.Serialization;
 using Persistify.Server.Validation;
 using ProtoBuf.Grpc.Server;
@@ -72,12 +67,8 @@ public static class ServicesExtensions
 
         services.AddSerialization(configuration);
         services.AddValidation();
-        services.AddPipelines();
-        services.AddPipelinesTemplates();
-        services.AddPipelinesDocuments();
-        services.AddFtsAnalysis();
+        services.AddCommands();
         services.AddManagement();
-        services.AddPersistenceCore(configuration);
         services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
             assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
 

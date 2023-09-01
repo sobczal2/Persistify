@@ -2,9 +2,6 @@
 using System.Threading.Tasks;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Pipelines.Documents.AddDocument;
-using Persistify.Server.Pipelines.Documents.GetDocument;
-using Persistify.Server.Pipelines.Documents.SearchDocuments;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 
@@ -12,37 +9,27 @@ namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    private readonly GetDocumentPipeline _getDocumentPipeline;
-    private readonly SearchDocumentsPipeline _searchDocumentsPipeline;
-    private readonly AddDocumentPipeline _addDocumentPipeline;
-
     public DocumentService(
-        AddDocumentPipeline addDocumentPipeline,
-        GetDocumentPipeline getDocumentPipeline,
-        SearchDocumentsPipeline searchDocumentsPipeline
     )
     {
-        _addDocumentPipeline = addDocumentPipeline;
-        _getDocumentPipeline = getDocumentPipeline;
-        _searchDocumentsPipeline = searchDocumentsPipeline;
     }
 
-    public async ValueTask<AddDocumentResponse> AddDocumentAsync(AddDocumentRequest request)
+    public ValueTask<AddDocumentResponse> AddDocumentAsync(AddDocumentRequest request, CallContext context)
     {
-        return await _addDocumentPipeline.ProcessAsync(request);
+        throw new NotImplementedException();
     }
 
-    public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request)
+    public ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
     {
-        return await _getDocumentPipeline.ProcessAsync(request);
+        throw new NotImplementedException();
     }
 
-    public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request)
+    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
     {
-        return await _searchDocumentsPipeline.ProcessAsync(request);
+        throw new NotImplementedException();
     }
 
-    public ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request)
+    public ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)
     {
         throw new NotImplementedException();
     }

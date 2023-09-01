@@ -10,14 +10,14 @@ namespace Persistify.Services;
 public interface ITemplateService
 {
     [OperationContract]
-    ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request);
+    ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context);
 
     [OperationContract]
-    ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request);
+    ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext context);
 
     [OperationContract]
-    ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request);
+    ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext context);
 
     [OperationContract]
-    ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request);
+    ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context);
 }

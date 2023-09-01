@@ -75,6 +75,16 @@ public static class SettingsExtensions
 
         services.Configure<DataStructuresSettings>(dataStructuresSettingsSection);
 
+        var repositorySettingsSection = configuration
+            .GetRequiredSection(RepositorySettings.SectionName);
+
+        var repositorySettingsValidator = new RepositorySettingsValidator();
+        repositorySettingsValidator.ValidateAndThrow(repositorySettingsSection.Get<RepositorySettings>() ??
+                                                         throw new InvalidOperationException(
+                                                             $"Could not load {RepositorySettings.SectionName} from configuration"));
+
+        services.Configure<RepositorySettings>(repositorySettingsSection);
+
         return services;
     }
 }

@@ -137,7 +137,7 @@ public class FileManagerTests
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        _sut.EnsureRequiredFilesAsync();
+        _sut.EnsureRequiredFiles();
 
         // Assert
         _fileProvider.Received(1).Create(Arg.Any<string>());
@@ -155,7 +155,7 @@ public class FileManagerTests
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        _sut.EnsureRequiredFilesAsync();
+        _sut.EnsureRequiredFiles();
 
         // Assert
         _fileProvider.DidNotReceive().Create(Arg.Any<string>());
@@ -173,7 +173,7 @@ public class FileManagerTests
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        _sut.CreateFilesForTemplateAsync(1);
+        _sut.CreateFilesForTemplate(1);
 
         // Assert
         _fileProvider.Received(1).Create(Arg.Any<string>());
@@ -191,7 +191,7 @@ public class FileManagerTests
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        var action = new Action(() => _sut.CreateFilesForTemplateAsync(1));
+        var action = new Action(() => _sut.CreateFilesForTemplate(1));
 
         // Assert
         action.Should().Throw<FileStructureCorruptedException>();
@@ -209,7 +209,7 @@ public class FileManagerTests
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        _sut.DeleteFilesForTemplateAsync(1);
+        _sut.DeleteFilesForTemplate(1);
 
         // Assert
         _fileProvider.Received(1).Delete(Arg.Any<string>());
@@ -227,7 +227,7 @@ public class FileManagerTests
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        var action = new Action(() => _sut.DeleteFilesForTemplateAsync(1));
+        var action = new Action(() => _sut.DeleteFilesForTemplate(1));
 
         // Assert
         action.Should().Throw<FileStructureCorruptedException>();

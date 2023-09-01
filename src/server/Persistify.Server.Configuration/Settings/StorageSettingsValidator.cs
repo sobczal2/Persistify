@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using FluentValidation;
 
 namespace Persistify.Server.Configuration.Settings;
@@ -20,5 +21,9 @@ public class StorageSettingsValidator : AbstractValidator<StorageSettings>
         RuleFor(x => x.SerializerType)
             .IsInEnum()
             .WithMessage("The serializer type must be a valid value.");
+
+        RuleFor(x => x.IdleFileTimeout)
+            .GreaterThan(TimeSpan.Zero)
+            .WithMessage("The idle file timeout must be greater than zero.");
     }
 }

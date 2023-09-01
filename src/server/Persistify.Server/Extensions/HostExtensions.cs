@@ -1,7 +1,10 @@
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.Management.Files;
 using Serilog;
 
 namespace Persistify.Server.Extensions;
@@ -30,5 +33,20 @@ public static class HostExtensions
         });
 
         return host;
+    }
+
+    // TODO: Change for background service
+    public static void LoadServices(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var services = scope.ServiceProvider;
+        var fileManager = services.GetService<IFileManager>();
+
+        if (fileManager is null)
+        {
+            throw new InvalidOperationException("File manager is not configured");
+        }
+
+        fileManager.EnsureRequiredFiles();
     }
 }
