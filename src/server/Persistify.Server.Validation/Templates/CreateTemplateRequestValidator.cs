@@ -1,7 +1,7 @@
 ﻿using Persistify.Domain.Templates;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -47,7 +47,7 @@ public class CreateTemplateRequestValidator : IValidator<CreateTemplateRequest>
         {
             _textFieldValidator.ErrorPrefix = $"{ErrorPrefix}.TextFields[{i}]";
             var textFieldValidationResult = _textFieldValidator.Validate(value.TextFields[i]);
-            if (textFieldValidationResult.IsFailure)
+            if (textFieldValidationResult.Failure)
             {
                 return textFieldValidationResult;
             }
@@ -57,7 +57,7 @@ public class CreateTemplateRequestValidator : IValidator<CreateTemplateRequest>
         {
             _numberFieldValidator.ErrorPrefix = $"{ErrorPrefix}.NumberFields[{i}]";
             var numberFieldValidationResult = _numberFieldValidator.Validate(value.NumberFields[i]);
-            if (numberFieldValidationResult.IsFailure)
+            if (numberFieldValidationResult.Failure)
             {
                 return numberFieldValidationResult;
             }
@@ -67,12 +67,12 @@ public class CreateTemplateRequestValidator : IValidator<CreateTemplateRequest>
         {
             _boolFieldValidator.ErrorPrefix = $"{ErrorPrefix}.BoolFields[{i}]";
             var boolFieldValidationResult = _boolFieldValidator.Validate(value.BoolFields[i]);
-            if (boolFieldValidationResult.IsFailure)
+            if (boolFieldValidationResult.Failure)
             {
                 return boolFieldValidationResult;
             }
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

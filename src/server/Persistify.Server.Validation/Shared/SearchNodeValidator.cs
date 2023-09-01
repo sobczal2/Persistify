@@ -1,6 +1,6 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Search;
+﻿using Persistify.Requests.Search;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Shared;
 
@@ -52,13 +52,13 @@ public class SearchNodeValidator : IValidator<SearchNode>
         for(var i = 0; i < value.Nodes.Count; i++)
         {
             var result = ValidateSearchNode(value.Nodes[i], $"{errorPrefix}.Nodes[{i}]");
-            if (result.IsFailure)
+            if (result.Failure)
             {
                 return result;
             }
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateOrSearchNode(OrSearchNode value, string errorPrefix)
@@ -71,13 +71,13 @@ public class SearchNodeValidator : IValidator<SearchNode>
         for (var i = 0; i < value.Nodes.Count; i++)
         {
             var result = ValidateSearchNode(value.Nodes[i], $"{errorPrefix}.Nodes[{i}]");
-            if (result.IsFailure)
+            if (result.Failure)
             {
                 return result;
             }
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateNotSearchNode(NotSearchNode value, string errorPrefix)
@@ -94,7 +94,7 @@ public class SearchNodeValidator : IValidator<SearchNode>
     private Result ValidateTextSearchNode(TextSearchNode value, string errorPrefix)
     {
         var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.IsFailure)
+        if (fieldNameResult.Failure)
         {
             return fieldNameResult;
         }
@@ -105,13 +105,13 @@ public class SearchNodeValidator : IValidator<SearchNode>
             return new ValidationException($"{errorPrefix}.Value", "Value must not be empty");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateFtsSearchNode(FtsSearchNode value, string errorPrefix)
     {
         var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.IsFailure)
+        if (fieldNameResult.Failure)
         {
             return fieldNameResult;
         }
@@ -121,40 +121,40 @@ public class SearchNodeValidator : IValidator<SearchNode>
             return new ValidationException($"{errorPrefix}.Value", "Value must not be empty");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateNumberSearchNode(NumberSearchNode value, string errorPrefix)
     {
         var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.IsFailure)
+        if (fieldNameResult.Failure)
         {
             return fieldNameResult;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateNumberRangeSearchNode(NumberRangeSearchNode value, string errorPrefix)
     {
         var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.IsFailure)
+        if (fieldNameResult.Failure)
         {
             return fieldNameResult;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateBoolSearchNode(BoolSearchNode value, string errorPrefix)
     {
         var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.IsFailure)
+        if (fieldNameResult.Failure)
         {
             return fieldNameResult;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 
     private Result ValidateFieldName(string fieldName, string errorPrefix)
@@ -169,6 +169,6 @@ public class SearchNodeValidator : IValidator<SearchNode>
             return new ValidationException($"{errorPrefix}.FieldName", "FieldName must not be longer than 64 characters");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

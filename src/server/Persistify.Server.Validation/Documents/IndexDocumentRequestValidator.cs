@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using Persistify.Domain.Documents;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -42,7 +42,7 @@ public class IndexDocumentRequestValidator : IValidator<AddDocumentRequest>
         {
             _textFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.TextFieldValues[{i}]";
             var result = _textFieldValueValidator.Validate(value.TextFieldValues[i]);
-            if (result.IsFailure)
+            if (result.Failure)
             {
                 return result;
             }
@@ -52,7 +52,7 @@ public class IndexDocumentRequestValidator : IValidator<AddDocumentRequest>
         {
             _numberFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.NumberFieldValues[{i}]";
             var result = _numberFieldValueValidator.Validate(value.NumberFieldValues[i]);
-            if (result.IsFailure)
+            if (result.Failure)
             {
                 return result;
             }
@@ -62,7 +62,7 @@ public class IndexDocumentRequestValidator : IValidator<AddDocumentRequest>
         {
             _boolFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.BoolFieldValues[{i}]";
             var result = _boolFieldValueValidator.Validate(value.BoolFieldValues[i]);
-            if (result.IsFailure)
+            if (result.Failure)
             {
                 return result;
             }
@@ -103,6 +103,6 @@ public class IndexDocumentRequestValidator : IValidator<AddDocumentRequest>
             allFieldNames.Add(fieldName);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

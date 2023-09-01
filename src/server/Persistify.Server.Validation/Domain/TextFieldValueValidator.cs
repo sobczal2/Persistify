@@ -1,6 +1,6 @@
 ﻿using Persistify.Domain.Documents;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Domain;
 
@@ -25,6 +25,6 @@ public class TextFieldValueValidator : IValidator<TextFieldValue>
             return new ValidationException($"{ErrorPrefix}.Value", "Value must not be longer than 64 characters");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

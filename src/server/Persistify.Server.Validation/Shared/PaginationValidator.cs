@@ -1,6 +1,6 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Shared;
+﻿using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Shared;
 
@@ -25,6 +25,6 @@ public class PaginationValidator : IValidator<Pagination>
             return new ValidationException($"{ErrorPrefix}.PageSize", "PageSize must be greater than 0");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

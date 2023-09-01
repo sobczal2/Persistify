@@ -1,8 +1,8 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Documents;
+﻿using Persistify.Requests.Documents;
 using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -32,7 +32,7 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
 
         _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
         var paginationValidator = _paginationValidator.Validate(value.Pagination);
-        if (paginationValidator.IsFailure)
+        if (paginationValidator.Failure)
         {
             return paginationValidator;
         }
@@ -45,11 +45,11 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
 
         _searchNodeValidator.ErrorPrefix = $"{ErrorPrefix}.SearchNode";
         var searchNodeValidator = _searchNodeValidator.Validate(value.SearchNode);
-        if (searchNodeValidator.IsFailure)
+        if (searchNodeValidator.Failure)
         {
             return searchNodeValidator;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

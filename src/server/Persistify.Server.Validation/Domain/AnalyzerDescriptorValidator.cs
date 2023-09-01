@@ -1,6 +1,6 @@
 ﻿using Persistify.Domain.Templates;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Domain;
 
@@ -62,6 +62,6 @@ public class AnalyzerDescriptorValidator : IValidator<AnalyzerDescriptor>
             }
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

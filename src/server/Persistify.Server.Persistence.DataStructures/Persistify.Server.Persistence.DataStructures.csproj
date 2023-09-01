@@ -7,8 +7,5 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.Persistence.Core\Persistify.Server.Persistence.Core.csproj" />
-  </ItemGroup>
 
 </Project>

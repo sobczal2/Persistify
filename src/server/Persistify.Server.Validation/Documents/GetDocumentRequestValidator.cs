@@ -1,6 +1,6 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Documents;
+﻿using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -25,6 +25,6 @@ public class GetDocumentRequestValidator : IValidator<GetDocumentRequest>
             return new ValidationException($"{ErrorPrefix}.DocumentId", "DocumentId must be greater than or equal to 0");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

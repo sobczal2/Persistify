@@ -1,6 +1,6 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Templates;
+﻿using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -20,6 +20,6 @@ public class DeleteTemplateRequestValidator : IValidator<DeleteTemplateRequest>
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than or equal to 0");
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

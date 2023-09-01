@@ -1,7 +1,7 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Shared;
+﻿using Persistify.Requests.Shared;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -21,11 +21,11 @@ public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
     {
         _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
         var paginationResult = _paginationValidator.Validate(value.Pagination);
-        if (paginationResult.IsFailure)
+        if (paginationResult.Failure)
         {
             return paginationResult;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

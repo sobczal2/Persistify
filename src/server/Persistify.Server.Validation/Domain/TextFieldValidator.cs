@@ -1,6 +1,6 @@
 ﻿using Persistify.Domain.Templates;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Domain;
 
@@ -51,12 +51,12 @@ public class TextFieldValidator : IValidator<TextField>
         {
             _analyzerDescriptorValidator.ErrorPrefix = $"{ErrorPrefix}.AnalyzerDescriptor";
             var analyzerDescriptorValidationResult = _analyzerDescriptorValidator.Validate(value.AnalyzerDescriptor);
-            if (analyzerDescriptorValidationResult.IsFailure)
+            if (analyzerDescriptorValidationResult.Failure)
             {
                 return analyzerDescriptorValidationResult;
             }
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }
