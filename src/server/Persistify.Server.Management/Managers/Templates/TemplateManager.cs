@@ -15,7 +15,7 @@ public class TemplateManager : Manager, ITemplateManager
 {
     private readonly IFileManager _fileManager;
     private readonly IntStreamRepository _identifierRepository;
-    private readonly ObjectStreamRepository<Template> _innerTemplateRepository;
+    private readonly ObjectStreamRepository<Template> _templateRepository;
 
     private static readonly TemplateManagerRequiredFileGroup TemplateManagerRequiredFileGroup =
         new();
@@ -36,7 +36,7 @@ public class TemplateManager : Manager, ITemplateManager
             fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.InnerTemplateOffsetLengthFileName);
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
-        _innerTemplateRepository = new ObjectStreamRepository<Template>(
+        _templateRepository = new ObjectStreamRepository<Template>(
             innerTemplateMainFileStream,
             innerTemplateOffsetLengthFileStream,
             serializer,
@@ -51,7 +51,7 @@ public class TemplateManager : Manager, ITemplateManager
             throw new NotAllowedForTransactionException();
         }
 
-        return await _innerTemplateRepository.ReadAsync(id);
+        return await _templateRepository.ReadAsync(id, true);
     }
 
     public void Add(Template template)
@@ -63,7 +63,7 @@ public class TemplateManager : Manager, ITemplateManager
 
         var addAction = new Func<ValueTask>(async () =>
         {
-            var currentId = await _identifierRepository.ReadAsync(0);
+            var currentId = await _identifierRepository.ReadAsync(0, true);
             if (_identifierRepository.IsValueEmpty(currentId))
             {
                 currentId = 0;
@@ -73,9 +73,9 @@ public class TemplateManager : Manager, ITemplateManager
                 currentId++;
             }
 
-            await _identifierRepository.WriteAsync(0, currentId);
+            await _identifierRepository.WriteAsync(0, currentId, true);
 
-            await _innerTemplateRepository.WriteAsync(currentId, template);
+            await _templateRepository.WriteAsync(currentId, template, true);
 
             template.Id = currentId;
 
@@ -85,21 +85,28 @@ public class TemplateManager : Manager, ITemplateManager
         PendingActions.Enqueue(addAction);
     }
 
-    public void Remove(int id)
+    public async ValueTask<bool> RemoveAsync(int id)
     {
         if (!CanWrite())
         {
             throw new NotAllowedForTransactionException();
         }
 
+        if (!await _templateRepository.ExistsAsync(id, true))
+        {
+            return false;
+        }
+
         var deleteAction = new Func<ValueTask>(async () =>
         {
-            if (await _innerTemplateRepository.DeleteAsync(id))
+            if (await _templateRepository.DeleteAsync(id, true))
             {
                 _fileManager.DeleteFilesForTemplate(id);
             }
         });
 
         PendingActions.Enqueue(deleteAction);
+
+        return true;
     }
 }

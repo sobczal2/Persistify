@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Persistify.Concurrency;
 using Persistify.Server.Persistence.Abstractions;
 
 namespace Persistify.Server.Persistence.Primitives;
@@ -13,6 +14,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
     private readonly int _bufferSize;
     private readonly byte[] _buffer;
     private readonly byte[] _emptyValue;
+    private readonly SemaphoreSlim _semaphore;
 
     public ByteArrayStreamRepository(
         Stream stream,
@@ -28,15 +30,21 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         _buffer = new byte[_bufferSize];
         _emptyValue = new byte[_bufferSize];
         _emptyValue.AsSpan().Fill(0xFF);
+        _semaphore = new SemaphoreSlim(1, 1);
     }
 
-    public async ValueTask<byte[]> ReadAsync(int key)
+    public async ValueTask<byte[]> ReadAsync(int key, bool useLock)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
+        return useLock ? await _semaphore.WrapAsync(() => ReadInternalAsync(key)) : await ReadInternalAsync(key);
+    }
+
+    private async ValueTask<byte[]> ReadInternalAsync(int key)
+    {
         if (key * (long)_bufferSize >= _stream.Length)
         {
             var value = new byte[_bufferSize];
@@ -63,7 +71,12 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask<Dictionary<int, byte[]>> ReadAllAsync()
+    public async ValueTask<Dictionary<int, byte[]>> ReadAllAsync(bool useLock)
+    {
+        return useLock ? await _semaphore.WrapAsync(ReadAllInternalAsync) : await ReadAllInternalAsync();
+    }
+
+    private async ValueTask<Dictionary<int, byte[]>> ReadAllInternalAsync()
     {
         var length = _stream.Length;
         _stream.Seek(0, SeekOrigin.Begin);
@@ -87,7 +100,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, byte[] value)
+    public async ValueTask WriteAsync(int key, byte[] value, bool useLock)
     {
         if (key < 0)
         {
@@ -104,6 +117,11 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentException(nameof(value));
         }
 
+        await (useLock ? _semaphore.WrapAsync(() => WriteInternalAsync(key, value)) : WriteInternalAsync(key, value));
+    }
+
+    private async ValueTask WriteInternalAsync(int key, byte[] value)
+    {
         var length = _stream.Length;
         if (key * (long)_bufferSize > length)
         {
@@ -121,13 +139,18 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         await _stream.FlushAsync();
     }
 
-    public async ValueTask<bool> DeleteAsync(int key)
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
     {
         if (key < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
+        return useLock ? await _semaphore.WrapAsync(() => DeleteInternalAsync(key)) : await DeleteInternalAsync(key);
+    }
+
+    private async ValueTask<bool> DeleteInternalAsync(int key)
+    {
         var length = _stream.Length;
         if (key * (long)_bufferSize >= length)
         {
@@ -160,7 +183,19 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return true;
     }
 
-    public void Clear()
+    public void Clear(bool useLock)
+    {
+        if (useLock)
+        {
+            _semaphore.Wrap(ClearInternal);
+        }
+        else
+        {
+            ClearInternal();
+        }
+    }
+
+    private void ClearInternal()
     {
         _stream.SetLength(0);
     }
@@ -183,5 +218,8 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
     public void Dispose()
     {
         _stream.Dispose();
+        _semaphore.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

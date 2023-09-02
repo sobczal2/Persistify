@@ -47,7 +47,7 @@ public class IntStreamRepositoryTests : IDisposable
         var id = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadAsync(id));
+        var action = new Func<Task>(async () => await _sut.ReadAsync(id, false));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -60,7 +60,7 @@ public class IntStreamRepositoryTests : IDisposable
         var id = 1;
 
         // Act
-        var result = await _sut.ReadAsync(id);
+        var result = await _sut.ReadAsync(id, false);
 
         // Assert
         _sut.IsValueEmpty(result).Should().BeTrue();
@@ -72,10 +72,10 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id = 0;
         var value = 1;
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.ReadAsync(id);
+        var result = await _sut.ReadAsync(id, false);
 
         // Assert
         result.Should().Be(value);
@@ -87,12 +87,12 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id = 0;
         var value = 1;
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
         var newValue = 2;
-        await _sut.WriteAsync(id, newValue);
+        await _sut.WriteAsync(id, newValue, false);
 
         // Act
-        var result = await _sut.ReadAsync(id);
+        var result = await _sut.ReadAsync(id, false);
 
         // Assert
         result.Should().Be(newValue);
@@ -104,14 +104,14 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id = 0;
         var value = 1;
-        await _sut.WriteAsync(id, value);
-        await _sut.DeleteAsync(id);
+        await _sut.WriteAsync(id, value, false);
+        await _sut.DeleteAsync(id, false);
         var id2 = 1;
         var value2 = 2;
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.ReadAsync(id);
+        var result = await _sut.ReadAsync(id, false);
 
         // Assert
         _sut.IsValueEmpty(result).Should().BeTrue();
@@ -123,7 +123,7 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
 
         // Act
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
 
         // Assert
         result.Should().BeEmpty();
@@ -135,10 +135,10 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id = 0;
         var value = 1;
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
 
         // Assert
         result.Should().HaveCount(1);
@@ -151,13 +151,13 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id1 = 0;
         var value1 = 1;
-        await _sut.WriteAsync(id1, value1);
+        await _sut.WriteAsync(id1, value1, false);
         var id2 = 1;
         var value2 = 2;
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
 
         // Assert
         result.Should().HaveCount(2);
@@ -171,15 +171,15 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id1 = 0;
         var value1 = 1;
-        await _sut.WriteAsync(id1, value1);
+        await _sut.WriteAsync(id1, value1, false);
         var id2 = 1;
         var value2 = 2;
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
         var newValue2 = 3;
-        await _sut.WriteAsync(id2, newValue2);
+        await _sut.WriteAsync(id2, newValue2, false);
 
         // Act
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
 
         // Assert
         result.Should().HaveCount(2);
@@ -195,7 +195,7 @@ public class IntStreamRepositoryTests : IDisposable
         var value = 1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, false));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -209,7 +209,7 @@ public class IntStreamRepositoryTests : IDisposable
         var value = _sut.EmptyValue;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, false));
 
         // Assert
         _sut.IsValueEmpty(value).Should().BeTrue();
@@ -224,7 +224,7 @@ public class IntStreamRepositoryTests : IDisposable
         var value = 1;
 
         // Act
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
 
         // Assert
         _stream.Length.Should().Be((id + 1) * sizeof(int));
@@ -236,15 +236,15 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id1 = 0;
         var value1 = 1;
-        await _sut.WriteAsync(id1, value1);
+        await _sut.WriteAsync(id1, value1, false);
         var id2 = 1;
         var value2 = 2;
 
         // Act
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Assert
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
         result.Should().HaveCount(2);
         result[id1].Should().Be(value1);
         result[id2].Should().Be(value2);
@@ -257,7 +257,7 @@ public class IntStreamRepositoryTests : IDisposable
         var id = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.DeleteAsync(id));
+        var action = new Func<Task>(async () => await _sut.DeleteAsync(id, false));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -269,14 +269,14 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id = 0;
         var value = 1;
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id, false);
 
         // Assert
         result.Should().BeTrue();
-        var allDictionary = await _sut.ReadAllAsync();
+        var allDictionary = await _sut.ReadAllAsync(false);
         allDictionary.Should().BeEmpty();
     }
 
@@ -286,17 +286,17 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id1 = 0;
         var value1 = 1;
-        await _sut.WriteAsync(id1, value1);
+        await _sut.WriteAsync(id1, value1, false);
         var id2 = 1;
         var value2 = 2;
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id1);
+        var result = await _sut.DeleteAsync(id1, false);
 
         // Assert
         result.Should().BeTrue();
-        var allDictionary = await _sut.ReadAllAsync();
+        var allDictionary = await _sut.ReadAllAsync(false);
         allDictionary.Should().HaveCount(1);
         allDictionary[id2].Should().Be(value2);
     }
@@ -308,7 +308,7 @@ public class IntStreamRepositoryTests : IDisposable
         var id = 1;
 
         // Act
-        var result = await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id, false);
 
         // Assert
         result.Should().BeFalse();
@@ -320,14 +320,14 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id1 = 0;
         var value1 = 1;
-        await _sut.WriteAsync(id1, value1);
-        await _sut.DeleteAsync(id1);
+        await _sut.WriteAsync(id1, value1, false);
+        await _sut.DeleteAsync(id1, false);
         var id2 = 1;
         var value2 = 2;
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id1);
+        var result = await _sut.DeleteAsync(id1, false);
 
         // Assert
         result.Should().BeFalse();
@@ -339,10 +339,10 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id = 0;
         var value = 1;
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id);
+        var result = await _sut.DeleteAsync(id, false);
 
         // Assert
         result.Should().BeTrue();
@@ -355,16 +355,16 @@ public class IntStreamRepositoryTests : IDisposable
         // Arrange
         var id1 = 0;
         var value1 = 1;
-        await _sut.WriteAsync(id1, value1);
+        await _sut.WriteAsync(id1, value1, false);
         var id2 = 1;
         var value2 = 2;
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        _sut.Clear();
+        _sut.Clear(false);
 
         // Assert
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
         result.Should().BeEmpty();
     }
 

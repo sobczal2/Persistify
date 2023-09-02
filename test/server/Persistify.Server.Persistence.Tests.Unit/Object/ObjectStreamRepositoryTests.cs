@@ -138,7 +138,7 @@ public class ObjectStreamRepositoryTests
         var key = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadAsync(key));
+        var action = new Func<Task>(async () => await _sut.ReadAsync(key, false));
 
         // Assert
         await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
@@ -151,7 +151,7 @@ public class ObjectStreamRepositoryTests
         var key = 0;
 
         // Act
-        var result = await _sut.ReadAsync(key);
+        var result = await _sut.ReadAsync(key, false);
 
         // Assert
         result.Should().BeNull();
@@ -163,10 +163,10 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var testClass = new TestClass { Id = 1, Name = "Test" };
-        await _sut.WriteAsync(key, testClass);
+        await _sut.WriteAsync(key, testClass, false);
 
         // Act
-        var result = await _sut.ReadAsync(key);
+        var result = await _sut.ReadAsync(key, false);
 
         // Assert
         result.Should().BeEquivalentTo(testClass);
@@ -176,14 +176,14 @@ public class ObjectStreamRepositoryTests
     public async Task ReadAsync_ObjectExistsAndMultipleObjectsAreWritten_ReturnsObject()
     {
         // Arrange
-        await _sut.WriteAsync(0, new TestClass { Id = 0, Name = "Test0" });
+        await _sut.WriteAsync(0, new TestClass { Id = 0, Name = "Test0" }, false);
         var key = 1;
         var testClass = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key, testClass);
-        await _sut.WriteAsync(2, new TestClass { Id = 2, Name = "Test2" });
+        await _sut.WriteAsync(key, testClass, false);
+        await _sut.WriteAsync(2, new TestClass { Id = 2, Name = "Test2" }, false);
 
         // Act
-        var result = await _sut.ReadAsync(key);
+        var result = await _sut.ReadAsync(key, false);
 
         // Assert
         result.Should().BeEquivalentTo(testClass);
@@ -195,7 +195,7 @@ public class ObjectStreamRepositoryTests
         // Arrange
 
         // Act
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
 
         // Assert
         result.Should().BeEmpty();
@@ -207,16 +207,16 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key0 = 0;
         var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0);
+        await _sut.WriteAsync(key0, testClass0, false);
         var key1 = 1;
         var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1);
+        await _sut.WriteAsync(key1, testClass1, false);
         var key2 = 2;
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
-        await _sut.WriteAsync(key2, testClass2);
+        await _sut.WriteAsync(key2, testClass2, false);
 
         // Act
-        var result = await _sut.ReadAllAsync();
+        var result = await _sut.ReadAllAsync(false);
 
         // Assert
         result[key0].Should().BeEquivalentTo(testClass0);
@@ -232,7 +232,7 @@ public class ObjectStreamRepositoryTests
         var testClass = new TestClass { Id = 1, Name = "Test" };
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass, false));
 
         // Assert
         await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
@@ -246,7 +246,7 @@ public class ObjectStreamRepositoryTests
         TestClass testClass = null!;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass, false));
 
         // Assert
         await action.Should().ThrowExactlyAsync<ArgumentNullException>();
@@ -260,10 +260,10 @@ public class ObjectStreamRepositoryTests
         var testClass = new TestClass { Id = 1, Name = "Test" };
 
         // Act
-        await _sut.WriteAsync(key, testClass);
+        await _sut.WriteAsync(key, testClass, false);
 
         // Assert
-        var result = await _sut.ReadAsync(key);
+        var result = await _sut.ReadAsync(key, false);
         result.Should().BeEquivalentTo(testClass);
     }
 
@@ -273,14 +273,14 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var testClass = new TestClass { Id = 1, Name = "Test" };
-        await _sut.WriteAsync(key, testClass);
+        await _sut.WriteAsync(key, testClass, false);
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
 
         // Act
-        await _sut.WriteAsync(key, testClass2);
+        await _sut.WriteAsync(key, testClass2, false);
 
         // Assert
-        var result = await _sut.ReadAsync(key);
+        var result = await _sut.ReadAsync(key, false);
         result.Should().BeEquivalentTo(testClass2);
     }
 
@@ -290,15 +290,15 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key0 = 0;
         var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0);
+        await _sut.WriteAsync(key0, testClass0, false);
         var key1 = 1;
         var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1);
+        await _sut.WriteAsync(key1, testClass1, false);
         var key2 = 2;
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
 
         // Act
-        await _sut.WriteAsync(key2, testClass2);
+        await _sut.WriteAsync(key2, testClass2, false);
 
         // Assert
         _mainStream.Length.Should().Be(3 * _sectorSize);
@@ -311,18 +311,18 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key0 = 0;
         var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0);
+        await _sut.WriteAsync(key0, testClass0, false);
         var key1 = 1;
         var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1);
+        await _sut.WriteAsync(key1, testClass1, false);
         var key2 = 2;
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
-        await _sut.WriteAsync(key2, testClass2);
+        await _sut.WriteAsync(key2, testClass2, false);
         var key1New = 1;
         var testClass1New = new TestClass { Id = 1, Name = new string('a', 100) };
 
         // Act
-        await _sut.WriteAsync(key1New, testClass1New);
+        await _sut.WriteAsync(key1New, testClass1New, false);
 
         // Assert
         _mainStream.Length.Should().Be(5 * _sectorSize);
@@ -335,18 +335,18 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key0 = 0;
         var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0);
+        await _sut.WriteAsync(key0, testClass0, false);
         var key1 = 1;
         var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1);
+        await _sut.WriteAsync(key1, testClass1, false);
         var key2 = 2;
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
-        await _sut.WriteAsync(key2, testClass2);
+        await _sut.WriteAsync(key2, testClass2, false);
         var key2New = 2;
         var testClass2New = new TestClass { Id = 2, Name = new string('a', 100) };
 
         // Act
-        await _sut.WriteAsync(key2New, testClass2New);
+        await _sut.WriteAsync(key2New, testClass2New, false);
 
         // Assert
         _mainStream.Length.Should().Be(4 * _sectorSize);
@@ -358,18 +358,18 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key0 = 0;
         var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0);
+        await _sut.WriteAsync(key0, testClass0, false);
         var key1 = 1;
         var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1);
+        await _sut.WriteAsync(key1, testClass1, false);
         var key2 = 2;
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
-        await _sut.WriteAsync(key2, testClass2);
+        await _sut.WriteAsync(key2, testClass2, false);
         var key2New = 2;
         var testClass2New = new TestClass { Id = 2, Name = "a" };
 
         // Act
-        await _sut.WriteAsync(key2New, testClass2New);
+        await _sut.WriteAsync(key2New, testClass2New, false);
 
         // Assert
         _mainStream.Length.Should().Be(3 * _sectorSize);
@@ -381,18 +381,18 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key0 = 0;
         var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0);
+        await _sut.WriteAsync(key0, testClass0, false);
         var key1 = 1;
         var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1);
+        await _sut.WriteAsync(key1, testClass1, false);
         var key2 = 2;
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
-        await _sut.WriteAsync(key2, testClass2);
+        await _sut.WriteAsync(key2, testClass2, false);
         var key1New = 1;
         var testClass1New = new TestClass { Id = 1, Name = "a" };
 
         // Act
-        await _sut.WriteAsync(key1New, testClass1New);
+        await _sut.WriteAsync(key1New, testClass1New, false);
 
         // Assert
         _mainStream.Length.Should().Be(3 * _sectorSize);
@@ -404,11 +404,11 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var value = new TestClass { Id = 1, Name = new string('a', 100) };
-        await _sut.WriteAsync(key, value);
+        await _sut.WriteAsync(key, value, false);
         var value2 = new TestClass { Id = 2 };
 
         // Act
-        await _sut.WriteAsync(key, value2);
+        await _sut.WriteAsync(key, value2, false);
 
         // Assert
         var result = _mainStream.Length;
@@ -422,7 +422,7 @@ public class ObjectStreamRepositoryTests
         var key = -1;
 
         // Act
-        Func<Task> act = async () => await _sut.DeleteAsync(key);
+        Func<Task> act = async () => await _sut.DeleteAsync(key, false);
 
         // Assert
         await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -435,7 +435,7 @@ public class ObjectStreamRepositoryTests
         var key = 100;
 
         // Act
-        var result = await _sut.DeleteAsync(key);
+        var result = await _sut.DeleteAsync(key, false);
 
         // Assert
         result.Should().BeFalse();
@@ -447,10 +447,10 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var value = new TestClass { Id = 1 };
-        await _sut.WriteAsync(key, value);
+        await _sut.WriteAsync(key, value, false);
 
         // Act
-        var result = await _sut.DeleteAsync(key);
+        var result = await _sut.DeleteAsync(key, false);
 
         // Assert
         result.Should().BeTrue();
@@ -463,7 +463,7 @@ public class ObjectStreamRepositoryTests
         var key = 0;
 
         // Act
-        var result = await _sut.DeleteAsync(key);
+        var result = await _sut.DeleteAsync(key, false);
 
         // Assert
         result.Should().BeFalse();
@@ -475,13 +475,13 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var value = new TestClass { Id = 1 };
-        await _sut.WriteAsync(key, value);
+        await _sut.WriteAsync(key, value, false);
 
         // Act
-        await _sut.DeleteAsync(key);
+        await _sut.DeleteAsync(key, false);
 
         // Assert
-        var result = await _sut.ReadAsync(key);
+        var result = await _sut.ReadAsync(key, false);
         result.Should().BeNull();
     }
 
@@ -491,10 +491,10 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var value = new TestClass { Id = 1 };
-        await _sut.WriteAsync(key, value);
+        await _sut.WriteAsync(key, value, false);
 
         // Act
-        await _sut.DeleteAsync(key);
+        await _sut.DeleteAsync(key, false);
 
         // Assert
         var result = _mainStream.Length;
@@ -507,13 +507,13 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var value = new TestClass { Id = 1 };
-        await _sut.WriteAsync(key, value);
+        await _sut.WriteAsync(key, value, false);
         var key2 = 1;
         var value2 = new TestClass { Id = 2 };
-        await _sut.WriteAsync(key2, value2);
+        await _sut.WriteAsync(key2, value2, false);
 
         // Act
-        await _sut.DeleteAsync(key2);
+        await _sut.DeleteAsync(key2, false);
 
         // Assert
         var streamLength = _mainStream.Length;
@@ -526,16 +526,16 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var key = 0;
         var value = new TestClass { Id = 1 };
-        await _sut.WriteAsync(key, value);
+        await _sut.WriteAsync(key, value, false);
         var key2 = 1;
         var value2 = new TestClass { Id = 2 };
-        await _sut.WriteAsync(key2, value2);
+        await _sut.WriteAsync(key2, value2, false);
 
         // Act
-        await _sut.DeleteAsync(key);
+        await _sut.DeleteAsync(key, false);
 
         // Assert
-        var result = await _sut.ReadAsync(key2);
+        var result = await _sut.ReadAsync(key2, false);
         result.Should().BeEquivalentTo(value2);
     }
 
@@ -545,18 +545,18 @@ public class ObjectStreamRepositoryTests
         // Arrange
         var id = 0;
         var value = new TestClass { Id = 1 };
-        await _sut.WriteAsync(id, value);
+        await _sut.WriteAsync(id, value, false);
         var id2 = 1;
         var value2 = new TestClass { Id = 2 };
-        await _sut.WriteAsync(id2, value2);
+        await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        _sut.Clear();
+        _sut.Clear(false);
 
         // Assert
-        var result = await _sut.ReadAsync(id);
+        var result = await _sut.ReadAsync(id, false);
         result.Should().BeNull();
-        var result2 = await _sut.ReadAsync(id2);
+        var result2 = await _sut.ReadAsync(id2, false);
         result2.Should().BeNull();
     }
 

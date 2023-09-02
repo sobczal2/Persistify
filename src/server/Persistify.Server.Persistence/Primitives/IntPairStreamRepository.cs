@@ -21,18 +21,18 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
         _buffer = new byte[sizeof(int) * 2];
     }
 
-    public async ValueTask<(int, int)> ReadAsync(int key)
+    public async ValueTask<(int, int)> ReadAsync(int key, bool useLock)
     {
-        var value = await _innerRepository.ReadAsync(key);
+        var value = await _innerRepository.ReadAsync(key, useLock);
         return (
             MemoryMarshal.Read<int>(value.AsSpan(0, sizeof(int))),
             MemoryMarshal.Read<int>(value.AsSpan(sizeof(int), sizeof(int)))
         );
     }
 
-    public async ValueTask<Dictionary<int, (int, int)>> ReadAllAsync()
+    public async ValueTask<Dictionary<int, (int, int)>> ReadAllAsync(bool useLock)
     {
-        var values = await _innerRepository.ReadAllAsync();
+        var values = await _innerRepository.ReadAllAsync(useLock);
         var result = new Dictionary<int, (int, int)>(values.Count);
         foreach (var item in values)
         {
@@ -45,28 +45,28 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, (int, int) value)
+    public async ValueTask WriteAsync(int key, (int, int) value, bool useLock)
     {
         MemoryMarshal.Write(_buffer.AsSpan(0, sizeof(int)), ref value.Item1);
         MemoryMarshal.Write(_buffer.AsSpan(sizeof(int), sizeof(int)), ref value.Item2);
-        await _innerRepository.WriteAsync(key, _buffer);
+        await _innerRepository.WriteAsync(key, _buffer, useLock);
     }
 
-    private async ValueTask WriteWithoutLockAsync(int key, (int, int) value)
+    private async ValueTask WriteWithoutLockAsync(int key, (int, int) value, bool useLock)
     {
         MemoryMarshal.Write(_buffer.AsSpan(0, sizeof(int)), ref value.Item1);
         MemoryMarshal.Write(_buffer.AsSpan(sizeof(int), sizeof(int)), ref value.Item2);
-        await _innerRepository.WriteAsync(key, _buffer);
+        await _innerRepository.WriteAsync(key, _buffer, useLock);
     }
 
-    public async ValueTask<bool> DeleteAsync(int key)
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
     {
-        return await _innerRepository.DeleteAsync(key);
+        return await _innerRepository.DeleteAsync(key, useLock);
     }
 
-    public void Clear()
+    public void Clear(bool useLock)
     {
-        _innerRepository.Clear();
+        _innerRepository.Clear(useLock);
     }
 
     public bool IsValueEmpty((int, int) value)
@@ -80,5 +80,7 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
     public void Dispose()
     {
         _innerRepository.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

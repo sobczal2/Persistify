@@ -7,5 +7,5 @@ public interface ITemplateManager : IManager
 {
     ValueTask<Template?> GetAsync(int id);
     void Add(Template template);
-    void Remove(int id);
+    ValueTask<bool> RemoveAsync(int id);
 }

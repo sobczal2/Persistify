@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Persistify.Domain.Templates;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
@@ -15,12 +13,12 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Templates;
 
-public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, CreateTemplateResponse>
+public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTemplateResponse>
 {
     private readonly ITemplateManager _templateManager;
-    private Template? _template;
-    public CreateTemplateCommand(
-        IValidator<CreateTemplateRequest> validator,
+
+    public DeleteTemplateCommand(
+        IValidator<DeleteTemplateRequest> validator,
         ILoggerFactory loggerFactory,
         ITemplateManager templateManager
     ) : base(
@@ -34,32 +32,22 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
             exclusiveGlobal: false,
             readManagers: ImmutableList<IManager>.Empty,
             writeManagers: ImmutableList.Create<IManager>(_templateManager)
-        );
+            );
     }
 
-    protected override ValueTask ExecuteAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask ExecuteAsync(DeleteTemplateRequest data, CancellationToken cancellationToken)
     {
-        _template = new Template
+        var result = await _templateManager.RemoveAsync(data.TemplateId);
+
+        if (!result)
         {
-            Name = data.TemplateName,
-            TextFields = data.TextFields,
-            NumberFields = data.NumberFields,
-            BoolFields = data.BoolFields
-        };
-
-        _templateManager.Add(_template);
-
-        return ValueTask.CompletedTask;
-    }
-
-    protected override CreateTemplateResponse GetResponse()
-    {
-        if (_template is null)
-        {
-            throw new PersistifyInternalException();
+            new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found").Throw();
         }
+    }
 
-        return new CreateTemplateResponse(_template.Id);
+    protected override DeleteTemplateResponse GetResponse()
+    {
+        return new DeleteTemplateResponse();
     }
 
     protected override TransactionDescriptor TransactionDescriptor { get; }

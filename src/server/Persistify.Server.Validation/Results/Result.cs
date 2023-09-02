@@ -39,9 +39,9 @@ public readonly struct Result
 
     public Result OnFailure(Action<Exception> action)
     {
-        var exception = _exception ?? throw new InvalidOperationException();
         if (Failure)
         {
+            var exception = _exception ?? throw new InvalidOperationException();
             action(exception);
         }
 
@@ -51,18 +51,5 @@ public readonly struct Result
     public TRes Match<TRes>(Func<TRes> onSuccess, Func<Exception, TRes> onFailure)
     {
         return Success ? onSuccess() : onFailure(_exception!);
-    }
-
-    public void Throw()
-    {
-        var exception = _exception ?? throw new InvalidOperationException();
-        throw exception;
-    }
-
-    public void ThrowSuppressed()
-    {
-        var exception = _exception ?? throw new InvalidOperationException();
-        var edi = ExceptionDispatchInfo.Capture(exception);
-        edi.Throw();
     }
 }

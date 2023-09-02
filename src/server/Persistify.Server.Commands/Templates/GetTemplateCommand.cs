@@ -15,12 +15,13 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Templates;
 
-public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, CreateTemplateResponse>
+public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplateResponse>
 {
     private readonly ITemplateManager _templateManager;
     private Template? _template;
-    public CreateTemplateCommand(
-        IValidator<CreateTemplateRequest> validator,
+
+    public GetTemplateCommand(
+        IValidator<GetTemplateRequest> validator,
         ILoggerFactory loggerFactory,
         ITemplateManager templateManager
     ) : base(
@@ -32,35 +33,30 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
 
         TransactionDescriptor = new TransactionDescriptor(
             exclusiveGlobal: false,
-            readManagers: ImmutableList<IManager>.Empty,
-            writeManagers: ImmutableList.Create<IManager>(_templateManager)
+            readManagers: ImmutableList.Create<IManager>(_templateManager),
+            writeManagers: ImmutableList<IManager>.Empty
         );
     }
 
-    protected override ValueTask ExecuteAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask ExecuteAsync(GetTemplateRequest data, CancellationToken cancellationToken)
     {
-        _template = new Template
+        _template = await _templateManager.GetAsync(data.TemplateId);
+
+        if (_template is null)
         {
-            Name = data.TemplateName,
-            TextFields = data.TextFields,
-            NumberFields = data.NumberFields,
-            BoolFields = data.BoolFields
-        };
-
-        _templateManager.Add(_template);
-
-        return ValueTask.CompletedTask;
+            new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found").Throw();
+        }
     }
 
-    protected override CreateTemplateResponse GetResponse()
+    protected override TransactionDescriptor TransactionDescriptor { get; }
+
+    protected override GetTemplateResponse GetResponse()
     {
         if (_template is null)
         {
             throw new PersistifyInternalException();
         }
 
-        return new CreateTemplateResponse(_template.Id);
+        return new GetTemplateResponse(_template);
     }
-
-    protected override TransactionDescriptor TransactionDescriptor { get; }
 }

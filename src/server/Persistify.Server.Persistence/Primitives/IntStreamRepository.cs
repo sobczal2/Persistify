@@ -18,15 +18,15 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
         _innerRepository = new ByteArrayStreamRepository(stream, sizeof(int));
     }
 
-    public async ValueTask<int> ReadAsync(int key)
+    public async ValueTask<int> ReadAsync(int key, bool useLock)
     {
-        var value = await _innerRepository.ReadAsync(key);
+        var value = await _innerRepository.ReadAsync(key, useLock);
         return BitConverter.ToInt32(value);
     }
 
-    public async ValueTask<Dictionary<int, int>> ReadAllAsync()
+    public async ValueTask<Dictionary<int, int>> ReadAllAsync(bool useLock)
     {
-        var values = await _innerRepository.ReadAllAsync();
+        var values = await _innerRepository.ReadAllAsync(useLock);
         var result = new Dictionary<int, int>(values.Count);
         foreach (var item in values)
         {
@@ -36,19 +36,19 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, int value)
+    public async ValueTask WriteAsync(int key, int value, bool useLock)
     {
-        await _innerRepository.WriteAsync(key, BitConverter.GetBytes(value));
+        await _innerRepository.WriteAsync(key, BitConverter.GetBytes(value), useLock);
     }
 
-    public async ValueTask<bool> DeleteAsync(int key)
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
     {
-        return await _innerRepository.DeleteAsync(key);
+        return await _innerRepository.DeleteAsync(key, useLock);
     }
 
-    public void Clear()
+    public void Clear(bool useLock)
     {
-        _innerRepository.Clear();
+        _innerRepository.Clear(useLock);
     }
 
     public bool IsValueEmpty(int value)
@@ -62,5 +62,7 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
     public void Dispose()
     {
         _innerRepository.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

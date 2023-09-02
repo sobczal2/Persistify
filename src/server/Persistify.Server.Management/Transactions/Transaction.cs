@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Persistify.Concurrency;
 using Persistify.Server.Management.Transactions.Exceptions;
 
@@ -12,7 +13,8 @@ public sealed class Transaction
     private static readonly ReadWriteAsyncLock GlobalLock;
     private static ulong _lastTransactionId;
 
-    public static ulong CurrentTransactionId => CurrentTransaction.Value?._id ?? throw new TransactionStateCorruptedException();
+    public static ulong CurrentTransactionId =>
+        CurrentTransaction.Value?._id ?? throw new TransactionStateCorruptedException();
 
     static Transaction()
     {
@@ -23,18 +25,23 @@ public sealed class Transaction
 
     private readonly ulong _id;
     private readonly TransactionDescriptor _transactionDescriptor;
+    private readonly ILogger<Transaction> _logger;
 
     public Transaction(
-        TransactionDescriptor transactionDescriptor
-    )
+        TransactionDescriptor transactionDescriptor,
+        ILogger<Transaction> logger
+        )
     {
         _transactionDescriptor = transactionDescriptor;
+        _logger = logger;
         _id = Interlocked.Increment(ref _lastTransactionId);
     }
 
     // TODO: handle timeout and cancellation token
     public async ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken)
     {
+        _logger.LogDebug("Begin transaction {TransactionId}", _id);
+
         if (CurrentTransaction.Value != this)
         {
             throw new TransactionStateCorruptedException();
@@ -58,10 +65,14 @@ public sealed class Transaction
         {
             await writeManager.BeginWriteAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
+
+        _logger.LogDebug("Transaction {TransactionId} started", _id);
     }
 
     public async ValueTask CommitAsync()
     {
+        _logger.LogDebug("Commit transaction {TransactionId}", _id);
+
         if (CurrentTransaction.Value != this)
         {
             throw new TransactionStateCorruptedException();
@@ -74,7 +85,15 @@ public sealed class Transaction
 
         foreach (var writeManager in _transactionDescriptor.WriteManagers)
         {
-            await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
+            try
+            {
+                await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Error while executing pending actions for transaction {TransactionId} on manager {ManagerName}", _id, writeManager.GetType().Name);
+            }
+
             await writeManager.EndWriteAsync().ConfigureAwait(false);
         }
 
@@ -88,10 +107,14 @@ public sealed class Transaction
         }
 
         CurrentTransaction.Value = null;
+
+        _logger.LogDebug("Transaction {TransactionId} committed", _id);
     }
 
     public async ValueTask RollbackAsync()
     {
+        _logger.LogDebug("Rollback transaction {TransactionId}", _id);
+
         if (CurrentTransaction.Value != this)
         {
             throw new TransactionStateCorruptedException();
@@ -118,5 +141,7 @@ public sealed class Transaction
         }
 
         CurrentTransaction.Value = null;
+
+        _logger.LogDebug("Transaction {TransactionId} rolled back", _id);
     }
 }

@@ -69,17 +69,4 @@ public readonly struct Result<T>
     {
         return Success ? onSuccess(_value!) : onFailure(_exception!);
     }
-
-    public void Throw()
-    {
-        var exception = _exception ?? throw new InvalidOperationException();
-        throw exception;
-    }
-
-    public void ThrowSuppressed()
-    {
-        var exception = _exception ?? throw new InvalidOperationException();
-        var edi = ExceptionDispatchInfo.Capture(exception);
-        edi.Throw();
-    }
 }

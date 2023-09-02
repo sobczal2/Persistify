@@ -8,6 +8,9 @@ public static class CommandsExtensions
     public static IServiceCollection AddCommands(this IServiceCollection services)
     {
         services.AddTransient<CreateTemplateCommand>();
+        services.AddTransient<GetTemplateCommand>();
+        // services.AddTransient<ListTemplatesCommand>();
+        services.AddTransient<DeleteTemplateCommand>();
 
         return services;
     }

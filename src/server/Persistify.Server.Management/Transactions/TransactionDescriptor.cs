@@ -13,12 +13,12 @@ public class TransactionDescriptor
 
     public TransactionDescriptor(
         bool exclusiveGlobal,
-        IEnumerable<IManager> readManagers,
-        IEnumerable<IManager> writeManagers
+        IImmutableList<IManager> readManagers,
+        IImmutableList<IManager> writeManagers
     )
     {
         ExclusiveGlobal = exclusiveGlobal;
-        ReadManagers = readManagers.ToImmutableList();
-        WriteManagers = writeManagers.ToImmutableList();
+        ReadManagers = readManagers;
+        WriteManagers = writeManagers;
     }
 }
