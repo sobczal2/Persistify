@@ -15,6 +15,7 @@ public static class ManagementExtensions
         services.AddSingleton<IFileManager, FileManager>();
         services.AddSingleton<IFileProvider, LocalFileProvider>();
         services.AddSingleton<IRequiredFileGroup, TemplateManagerRequiredFileGroup>();
+        services.AddSingleton<IDocumentManagerStore, DocumentManagerStore>();
 
         return services;
     }

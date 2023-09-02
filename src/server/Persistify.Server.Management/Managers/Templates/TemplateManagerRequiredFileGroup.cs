@@ -15,8 +15,8 @@ public class TemplateManagerRequiredFileGroup : IRequiredFileGroup
         InnerTemplateOffsetLengthFileName
     };
 
-    public string IdentifierFileName => Path.Join("Template", "identifier.bin");
-    public string InnerTemplateMainFileName => Path.Join("Template", "object.bin");
-    public string InnerTemplateOffsetLengthFileName => Path.Join("Template", "offsetLength.bin");
+    public static string IdentifierFileName => Path.Join("Template", "identifier.bin");
+    public static string InnerTemplateMainFileName => Path.Join("Template", "object.bin");
+    public static string InnerTemplateOffsetLengthFileName => Path.Join("Template", "offsetLength.bin");
 
 }

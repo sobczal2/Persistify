@@ -53,7 +53,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
 
         _stream.Seek(key * (long)_bufferSize, SeekOrigin.Begin);
-        var readBytes = await _stream.ReadAsync(_buffer, 0, _bufferSize);
+        var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
         if (readBytes != _bufferSize)
         {
             throw new InvalidOperationException();

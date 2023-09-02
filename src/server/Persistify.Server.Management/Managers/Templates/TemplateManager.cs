@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Management.Files;
+using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Transactions.Exceptions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
@@ -14,20 +15,20 @@ namespace Persistify.Server.Management.Managers.Templates;
 public class TemplateManager : Manager, ITemplateManager
 {
     private readonly IFileManager _fileManager;
+    private readonly IDocumentManagerStore _documentManagerStore;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Template> _templateRepository;
-
-    private static readonly TemplateManagerRequiredFileGroup TemplateManagerRequiredFileGroup =
-        new();
 
     public TemplateManager(
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
-        IFileManager fileManager
+        IFileManager fileManager,
+        IDocumentManagerStore documentManagerStore
     )
     {
         _fileManager = fileManager;
+        _documentManagerStore = documentManagerStore;
         var identifierFileStream =
             fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.IdentifierFileName);
         var innerTemplateMainFileStream =
@@ -80,6 +81,7 @@ public class TemplateManager : Manager, ITemplateManager
             template.Id = currentId;
 
             _fileManager.CreateFilesForTemplate(currentId);
+            _documentManagerStore.AddManager(currentId);
         });
 
         PendingActions.Enqueue(addAction);
@@ -102,6 +104,7 @@ public class TemplateManager : Manager, ITemplateManager
             if (await _templateRepository.DeleteAsync(id, true))
             {
                 _fileManager.DeleteFilesForTemplate(id);
+                _documentManagerStore.DeleteManager(id);
             }
         });
 
