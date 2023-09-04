@@ -3,12 +3,12 @@
 namespace Persistify.Responses.Documents;
 
 [ProtoContract]
-public class AddDocumentResponse
+public class CreateDocumentResponse
 {
     [ProtoMember(1)]
     public int DocumentId { get; set; }
 
-    public AddDocumentResponse(int documentId)
+    public CreateDocumentResponse(int documentId)
     {
         DocumentId = documentId;
     }

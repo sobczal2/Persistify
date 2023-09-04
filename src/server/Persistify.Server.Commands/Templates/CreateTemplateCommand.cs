@@ -29,15 +29,9 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
     )
     {
         _templateManager = templateManager;
-
-        TransactionDescriptor = new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: ImmutableList<IManager>.Empty,
-            writeManagers: ImmutableList.Create<IManager>(_templateManager)
-        );
     }
 
-    protected override ValueTask ExecuteAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
     {
         _template = new Template
         {
@@ -62,5 +56,12 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
         return new CreateTemplateResponse(_template.Id);
     }
 
-    protected override TransactionDescriptor TransactionDescriptor { get; }
+    protected override TransactionDescriptor GetTransactionDescriptor(CreateTemplateRequest data)
+    {
+        return new TransactionDescriptor(
+            exclusiveGlobal: false,
+            readManagers: ImmutableList<IManager>.Empty,
+            writeManagers: ImmutableList.Create<IManager>(_templateManager)
+        );
+    }
 }

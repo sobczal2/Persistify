@@ -27,21 +27,15 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
     )
     {
         _templateManager = templateManager;
-
-        TransactionDescriptor = new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: ImmutableList<IManager>.Empty,
-            writeManagers: ImmutableList.Create<IManager>(_templateManager)
-            );
     }
 
-    protected override async ValueTask ExecuteAsync(DeleteTemplateRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(DeleteTemplateRequest data, CancellationToken cancellationToken)
     {
         var result = await _templateManager.RemoveAsync(data.TemplateId);
 
         if (!result)
         {
-            new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found").Throw();
+            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
         }
     }
 
@@ -50,5 +44,12 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
         return new DeleteTemplateResponse();
     }
 
-    protected override TransactionDescriptor TransactionDescriptor { get; }
+    protected override TransactionDescriptor GetTransactionDescriptor(DeleteTemplateRequest data)
+    {
+        return new TransactionDescriptor(
+            exclusiveGlobal: false,
+            readManagers: ImmutableList<IManager>.Empty,
+            writeManagers: ImmutableList.Create<IManager>(_templateManager)
+        );
+    }
 }

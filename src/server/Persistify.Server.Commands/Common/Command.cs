@@ -23,20 +23,22 @@ public abstract class Command<TData, TResponse>
         LoggerFactory = loggerFactory;
     }
 
-    protected abstract ValueTask ExecuteAsync(TData data, CancellationToken cancellationToken);
+    protected abstract ValueTask RunAsync(TData data, CancellationToken cancellationToken);
     protected abstract TResponse GetResponse();
-    protected abstract TransactionDescriptor TransactionDescriptor { get; }
+    protected abstract TransactionDescriptor GetTransactionDescriptor(TData data);
 
     public async ValueTask<TResponse> RunInTransactionAsync(TData data, CancellationToken cancellationToken)
     {
-        _validator.Validate(data).OnFailure(exception => exception.Throw());
+        _validator.Validate(data).OnFailure(exception => throw exception);
 
-        var transaction = new Transaction(TransactionDescriptor, LoggerFactory.CreateLogger<Transaction>());
+        var transactionDescriptor = GetTransactionDescriptor(data);
+
+        var transaction = new Transaction(transactionDescriptor, LoggerFactory.CreateLogger<Transaction>());
         Transaction.CurrentTransaction.Value = transaction;
         await transaction.BeginAsync(TransactionTimeout, cancellationToken).ConfigureAwait(false);
         try
         {
-            await ExecuteAsync(data, cancellationToken).ConfigureAwait(false);
+            await RunAsync(data, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync().ConfigureAwait(false);
             return GetResponse();
         }

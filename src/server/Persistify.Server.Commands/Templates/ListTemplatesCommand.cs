@@ -31,19 +31,13 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
     )
     {
         _templateManager = templateManager;
-
-        TransactionDescriptor = new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: ImmutableList.Create<IManager>(_templateManager),
-            writeManagers: ImmutableList<IManager>.Empty
-        );
     }
 
-    protected override async ValueTask ExecuteAsync(ListTemplatesRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(ListTemplatesRequest data, CancellationToken cancellationToken)
     {
         var skip = data.Pagination.PageNumber * data.Pagination.PageSize;
         var take = data.Pagination.PageSize;
-        _templates = await _templateManager.ListAsync(skip, take);
+        _templates = await _templateManager.ListAsync(take, skip);
         _totalCount = await _templateManager.CountAsync();
     }
 
@@ -57,5 +51,12 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
         return new ListTemplatesResponse(_templates, _totalCount);
     }
 
-    protected override TransactionDescriptor TransactionDescriptor { get; }
+    protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest data)
+    {
+        return new TransactionDescriptor(
+            exclusiveGlobal: false,
+            readManagers: ImmutableList.Create<IManager>(_templateManager),
+            writeManagers: ImmutableList<IManager>.Empty
+        );
+    }
 }

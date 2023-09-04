@@ -32,7 +32,7 @@ public readonly struct Result<T>
 
     public static implicit operator T(Result<T> result)
     {
-        return result._value ?? throw result._exception!;
+        return result._value ?? throw new InvalidOperationException();
     }
 
     public static implicit operator Exception(Result<T> result)

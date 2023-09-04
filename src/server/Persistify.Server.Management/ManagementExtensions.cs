@@ -10,12 +10,12 @@ public static class ManagementExtensions
     public static IServiceCollection AddManagement(this IServiceCollection services)
     {
         services.AddSingleton<ITemplateManager, TemplateManager>();
-        services.AddSingleton<IDocumentManager, DocumentManager>();
         services.AddSingleton<IFileStreamFactory, IdleTimeoutFileStreamFactory>();
         services.AddSingleton<IFileManager, FileManager>();
         services.AddSingleton<IFileProvider, LocalFileProvider>();
         services.AddSingleton<IRequiredFileGroup, TemplateManagerRequiredFileGroup>();
         services.AddSingleton<IDocumentManagerStore, DocumentManagerStore>();
+        services.AddSingleton<IFileGroupForTemplate, DocumentManagerFileGroupForTemplate>();
 
         return services;
     }

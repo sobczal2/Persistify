@@ -2,7 +2,7 @@
 
 public interface IDocumentManagerStore
 {
-    IDocumentManager GetManager(int templateId);
+    IDocumentManager? GetManager(int templateId);
     void AddManager(int templateId);
     void DeleteManager(int templateId);
 }

@@ -5,9 +5,9 @@ using ProtoBuf;
 namespace Persistify.Requests.Documents;
 
 [ProtoContract]
-public class AddDocumentRequest
+public class CreateDocumentRequest
 {
-    public AddDocumentRequest()
+    public CreateDocumentRequest()
     {
         TextFieldValues = new List<TextFieldValue>(0);
         NumberFieldValues = new List<NumberFieldValue>(0);

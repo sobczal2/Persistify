@@ -32,16 +32,16 @@ public class TemplateManager : Manager, ITemplateManager
         _fileManager = fileManager;
         _documentManagerStore = documentManagerStore;
         var identifierFileStream =
-            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.IdentifierFileName);
-        var innerTemplateMainFileStream =
-            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.InnerTemplateMainFileName);
-        var innerTemplateOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.InnerTemplateOffsetLengthFileName);
+            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.IdentifierRepositoryFileName);
+        var templateRepositoryMainFileStream =
+            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.TemplateRepositoryMainFileName);
+        var templateRepositoryOffsetLengthFileStream =
+            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.TemplateRepositoryOffsetLengthFileName);
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _templateRepository = new ObjectStreamRepository<Template>(
-            innerTemplateMainFileStream,
-            innerTemplateOffsetLengthFileStream,
+            templateRepositoryMainFileStream,
+            templateRepositoryOffsetLengthFileStream,
             serializer,
             repositorySettingsOptions.Value.TemplateRepositorySectorSize
         );
@@ -64,7 +64,7 @@ public class TemplateManager : Manager, ITemplateManager
             throw new NotAllowedForTransactionException();
         }
 
-        var kvList = await _templateRepository.ReadRangeAsync(skip, take, true);
+        var kvList = await _templateRepository.ReadRangeAsync(take, skip, true);
         var list = new List<Template>(kvList.Count);
 
         foreach (var kv in kvList)
@@ -95,6 +95,8 @@ public class TemplateManager : Manager, ITemplateManager
         var addAction = new Func<ValueTask>(async () =>
         {
             var currentId = await _identifierRepository.ReadAsync(0, true);
+
+            // TODO: Do this on initialization
             if (_identifierRepository.IsValueEmpty(currentId))
             {
                 currentId = 0;
@@ -129,7 +131,7 @@ public class TemplateManager : Manager, ITemplateManager
             return false;
         }
 
-        var deleteAction = new Func<ValueTask>(async () =>
+        var removeAction = new Func<ValueTask>(async () =>
         {
             if (await _templateRepository.DeleteAsync(id, true))
             {
@@ -138,7 +140,7 @@ public class TemplateManager : Manager, ITemplateManager
             }
         });
 
-        PendingActions.Enqueue(deleteAction);
+        PendingActions.Enqueue(removeAction);
 
         return true;
     }

@@ -30,25 +30,17 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
     )
     {
         _templateManager = templateManager;
-
-        TransactionDescriptor = new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: ImmutableList.Create<IManager>(_templateManager),
-            writeManagers: ImmutableList<IManager>.Empty
-        );
     }
 
-    protected override async ValueTask ExecuteAsync(GetTemplateRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(GetTemplateRequest data, CancellationToken cancellationToken)
     {
         _template = await _templateManager.GetAsync(data.TemplateId);
 
         if (_template is null)
         {
-            new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found").Throw();
+            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
         }
     }
-
-    protected override TransactionDescriptor TransactionDescriptor { get; }
 
     protected override GetTemplateResponse GetResponse()
     {
@@ -58,5 +50,14 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
         }
 
         return new GetTemplateResponse(_template);
+    }
+
+    protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest data)
+    {
+        return new TransactionDescriptor(
+            exclusiveGlobal: false,
+            readManagers: ImmutableList.Create<IManager>(_templateManager),
+            writeManagers: ImmutableList<IManager>.Empty
+        );
     }
 }
