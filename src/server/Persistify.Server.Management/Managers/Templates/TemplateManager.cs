@@ -13,6 +13,7 @@ using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Management.Managers.Templates;
 
+// TODO: Add Cache
 public class TemplateManager : Manager, ITemplateManager
 {
     private readonly IFileManager _fileManager;

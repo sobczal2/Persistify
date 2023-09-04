@@ -95,7 +95,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
 
     public async ValueTask<List<(int Key, TValue Value)>> ReadRangeAsync(int take, int skip, bool useLock)
     {
-        if (take < 0)
+        if (take <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(take));
         }
@@ -146,7 +146,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
     {
         return await _offsetLengthRepository.CountAsync(false);
     }
-    
+
     public async ValueTask WriteAsync(int key, TValue value, bool useLock)
     {
         if (key < 0)
@@ -255,7 +255,6 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
 
     public void Clear(bool useLock)
     {
-        _semaphore.Wait();
         if (useLock)
         {
             _semaphore.Wrap(ClearInternal);

@@ -6,6 +6,5 @@ public class RepositoryCorruptedException : Exception
 {
     public RepositoryCorruptedException() : base("Repository is corrupted")
     {
-
     }
 }

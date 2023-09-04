@@ -57,34 +57,40 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         action.Should().Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var id = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadAsync(id, false));
+        var action = new Func<Task>(async () => await _sut.ReadAsync(id, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadAsync_WhenIdIsGreaterThanLength_ReturnsNull()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_WhenIdIsGreaterThanLength_ReturnsNull(bool useLock)
     {
         // Arrange
         var id = 1;
 
         // Act
-        var result = await _sut.ReadAsync(id, false);
+        var result = await _sut.ReadAsync(id, useLock);
 
         // Assert
         _sut.IsValueEmpty(result).Should().BeTrue();
     }
 
-    [Fact]
-    public async Task ReadAsync_WhenIdIsLessThanLength_ReturnsValue()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_WhenIdIsLessThanLength_ReturnsValue(bool useLock)
     {
         // Arrange
         var id = 0;
@@ -92,14 +98,16 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.ReadAsync(id, false);
+        var result = await _sut.ReadAsync(id, useLock);
 
         // Assert
         result.Should().BeEquivalentTo(value);
     }
 
-    [Fact]
-    public async Task ReadAsync_WhenIdIsOverwritten_ReturnsNewValue()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_WhenIdIsOverwritten_ReturnsNewValue(bool useLock)
     {
         // Arrange
         var id = 0;
@@ -109,14 +117,16 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id, newValue, false);
 
         // Act
-        var result = await _sut.ReadAsync(id, false);
+        var result = await _sut.ReadAsync(id, useLock);
 
         // Assert
         result.Should().BeEquivalentTo(newValue);
     }
 
-    [Fact]
-    public async Task ReadAsync_WhenValueWasDeletedButWasNotLast_ReturnsNull()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_WhenValueWasDeletedButWasNotLast_ReturnsNull(bool useLock)
     {
         // Arrange
         var id = 0;
@@ -128,26 +138,30 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.ReadAsync(id, false);
+        var result = await _sut.ReadAsync(id, useLock);
 
         // Assert
         _sut.IsValueEmpty(result).Should().BeTrue();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenRepositoryIsEmpty_ReturnsEmptyList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenRepositoryIsEmpty_ReturnsEmptyList(bool useLock)
     {
         // Arrange
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, 0, false);
+        var result = await _sut.ReadRangeAsync(1000, 0, useLock);
 
         // Assert
         result.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenRepositoryIsNotEmpty_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenRepositoryIsNotEmpty_ReturnsList(bool useLock)
     {
         // Arrange
         var id1 = 0;
@@ -158,7 +172,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, 0, false);
+        var result = await _sut.ReadRangeAsync(1000, 0, useLock);
 
         // Assert
         result.Should().HaveCount(2);
@@ -166,76 +180,88 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         result.FirstOrDefault(x => x.key == id2).value.Should().BeEquivalentTo(value2);
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenTakeIsEqualToZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenTakeIsEqualToZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var take = 0;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, false));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, false));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList(bool useLock)
     {
         // Arrange
         var skip = 1;
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, false);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
 
         // Assert
         result.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList(bool useLock)
     {
         // Arrange
         var skip = 2;
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, false);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
 
         // Assert
         result.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList(bool useLock)
     {
         // Arrange
         var take = 2;
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, false);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock);
 
         // Assert
         result.Should().HaveCount(1);
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList(bool useLock)
     {
         // Arrange
         var take = 1;
@@ -243,14 +269,16 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(1, new byte[] { 2 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, false);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock);
 
         // Assert
         result.Should().HaveCount(1);
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList(bool useLock)
     {
         // Arrange
         var skip = 1;
@@ -260,41 +288,47 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(2, new byte[] { 3 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, false);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
 
         // Assert
         result.Should().HaveCount(1);
         result.FirstOrDefault(x => x.key == 2).value.Should().BeEquivalentTo(new byte[] { 3 });
     }
 
-    [Fact]
-    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero(bool useLock)
     {
         // Arrange
 
         // Act
-        var result = await _sut.CountAsync(false);
+        var result = await _sut.CountAsync(useLock);
 
         // Assert
         result.Should().Be(0);
     }
 
-    [Fact]
-    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount(bool useLock)
     {
         // Arrange
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
         await _sut.WriteAsync(1, new byte[] { 2 }, false);
 
         // Act
-        var result = await _sut.CountAsync(false);
+        var result = await _sut.CountAsync(useLock);
 
         // Assert
         result.Should().Be(2);
     }
 
-    [Fact]
-    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount(bool useLock)
     {
         // Arrange
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
@@ -302,56 +336,64 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(1, new byte[] { 2 }, false);
 
         // Act
-        var result = await _sut.CountAsync(false);
+        var result = await _sut.CountAsync(useLock);
 
         // Assert
         result.Should().Be(1);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var id = -1;
         var value = new byte[] { 1 };
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, false));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenValueIsEqualToEmptyValue_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenValueIsEqualToEmptyValue_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var id = 0;
         var value = new byte[] { 0xFF };
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, false));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentException>();
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenIdIsBiggerThanLength_ExtendsStream()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenIdIsBiggerThanLength_ExtendsStream(bool useLock)
     {
         // Arrange
         var id = 1;
         var value = new byte[] { 1 };
 
         // Act
-        await _sut.WriteAsync(id, value, false);
+        await _sut.WriteAsync(id, value, useLock);
 
         // Assert
         _stream.Length.Should().Be((id + 1) * sizeof(byte));
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenIdIsBiggerThanLength_DoesNotChangeOtherValues()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenIdIsBiggerThanLength_DoesNotChangeOtherValues(bool useLock)
     {
         // Arrange
         var id1 = 0;
@@ -361,7 +403,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         var value2 = new byte[] { 2 };
 
         // Act
-        await _sut.WriteAsync(id2, value2, false);
+        await _sut.WriteAsync(id2, value2, useLock);
 
         // Assert
         var result = await _sut.ReadRangeAsync(1000, 0, false);
@@ -370,49 +412,57 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         result.FirstOrDefault(x => x.key == id2).value.Should().BeEquivalentTo(value2);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenValueLengthIsBiggerThanOne_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenValueLengthIsBiggerThanOne_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var id = 0;
         var value = new byte[] { 1, 2 };
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, false));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenValueLengthIsLessThanOne_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenValueLengthIsLessThanOne_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var id = 0;
         var value = new byte[] { };
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, false));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(id, value, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var id = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.DeleteAsync(id, false));
+        var action = new Func<Task>(async () => await _sut.DeleteAsync(id, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenIdIsLessThanLength_DeletesValue()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenIdIsLessThanLength_DeletesValue(bool useLock)
     {
         // Arrange
         var id = 0;
@@ -420,7 +470,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id, false);
+        var result = await _sut.DeleteAsync(id, useLock);
 
         // Assert
         result.Should().BeTrue();
@@ -428,8 +478,10 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         allList.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenIdIsLessThanLength_DoesNotChangeOtherValues()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenIdIsLessThanLength_DoesNotChangeOtherValues(bool useLock)
     {
         // Arrange
         var id1 = 0;
@@ -440,7 +492,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id1, false);
+        var result = await _sut.DeleteAsync(id1, useLock);
 
         // Assert
         result.Should().BeTrue();
@@ -449,21 +501,25 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         allList.FirstOrDefault(x => x.key == id2).value.Should().BeEquivalentTo(value2);
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ReturnsFalse()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ReturnsFalse(bool useLock)
     {
         // Arrange
         var id = 1;
 
         // Act
-        var result = await _sut.DeleteAsync(id, false);
+        var result = await _sut.DeleteAsync(id, useLock);
 
         // Assert
         result.Should().BeFalse();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ReturnsFalse()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ReturnsFalse(bool useLock)
     {
         // Arrange
         var id1 = 0;
@@ -475,14 +531,16 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id1, false);
+        var result = await _sut.DeleteAsync(id1, useLock);
 
         // Assert
         result.Should().BeFalse();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenIdIsLastIdAndValueIsDeleted_TruncatesStream()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenIdIsLastIdAndValueIsDeleted_TruncatesStream(bool useLock)
     {
         // Arrange
         var id = 0;
@@ -490,15 +548,17 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id, value, false);
 
         // Act
-        var result = await _sut.DeleteAsync(id, false);
+        var result = await _sut.DeleteAsync(id, useLock);
 
         // Assert
         result.Should().BeTrue();
         _stream.Length.Should().Be(0);
     }
 
-    [Fact]
-    public async Task Clear_WhenCalled_DeletesAllValues()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Clear_WhenCalled_DeletesAllValues(bool useLock)
     {
         // Arrange
         var id1 = 0;
@@ -509,7 +569,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        _sut.Clear(false);
+        _sut.Clear(useLock);
 
         // Assert
         var result = await _sut.ReadRangeAsync(1000, 0, false);

@@ -132,34 +132,40 @@ public class ObjectStreamRepositoryTests
         action.Should().ThrowExactly<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var key = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadAsync(key, false));
+        var action = new Func<Task>(async () => await _sut.ReadAsync(key, useLock));
 
         // Assert
         await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadAsync_ObjectDoesNotExist_ReturnsNull()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_ObjectDoesNotExist_ReturnsNull(bool useLock)
     {
         // Arrange
         var key = 0;
 
         // Act
-        var result = await _sut.ReadAsync(key, false);
+        var result = await _sut.ReadAsync(key, useLock);
 
         // Assert
         result.Should().BeNull();
     }
 
-    [Fact]
-    public async Task ReadAsync_ObjectExists_ReturnsObject()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_ObjectExists_ReturnsObject(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -167,14 +173,16 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(key, testClass, false);
 
         // Act
-        var result = await _sut.ReadAsync(key, false);
+        var result = await _sut.ReadAsync(key, useLock);
 
         // Assert
         result.Should().BeEquivalentTo(testClass);
     }
 
-    [Fact]
-    public async Task ReadAsync_ObjectExistsAndMultipleObjectsAreWritten_ReturnsObject()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadAsync_ObjectExistsAndMultipleObjectsAreWritten_ReturnsObject(bool useLock)
     {
         // Arrange
         await _sut.WriteAsync(0, new TestClass { Id = 0, Name = "Test0" }, false);
@@ -184,69 +192,94 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(2, new TestClass { Id = 2, Name = "Test2" }, false);
 
         // Act
-        var result = await _sut.ReadAsync(key, false);
+        var result = await _sut.ReadAsync(key, useLock);
 
         // Assert
         result.Should().BeEquivalentTo(testClass);
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, false));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock));
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenTakeIsEqualToZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    {
+        // Arrange
+        var take = 0;
+
+        // Act
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock));
+
+        // Assert
+        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList(bool useLock)
     {
         // Arrange
         var skip = 1;
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, false);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
 
         // Assert
         result.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList(bool useLock)
     {
         // Arrange
         var skip = 2;
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, false);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
 
         // Assert
         result.Should().BeEmpty();
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList(bool useLock)
     {
         // Arrange
         var take = 2;
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, false);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock);
 
         // Assert
         result.Should().HaveCount(1);
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList(bool useLock)
     {
         // Arrange
         var take = 1;
@@ -254,14 +287,16 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, false);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock);
 
         // Assert
         result.Should().HaveCount(1);
     }
 
-    [Fact]
-    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList(bool useLock)
     {
         // Arrange
         var skip = 1;
@@ -272,41 +307,47 @@ public class ObjectStreamRepositoryTests
 
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, false);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
 
         // Assert
         result.Should().HaveCount(1);
         result.FirstOrDefault(x => x.Key == 2).Value.Should().BeEquivalentTo(new TestClass { Id = 3 });
     }
 
-    [Fact]
-    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero(bool useLock)
     {
         // Arrange
 
         // Act
-        var result = await _sut.CountAsync(false);
+        var result = await _sut.CountAsync(useLock);
 
         // Assert
         result.Should().Be(0);
     }
 
-    [Fact]
-    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount(bool useLock)
     {
         // Arrange
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
         await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
 
         // Act
-        var result = await _sut.CountAsync(false);
+        var result = await _sut.CountAsync(useLock);
 
         // Assert
         result.Should().Be(2);
     }
 
-    [Fact]
-    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount(bool useLock)
     {
         // Arrange
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
@@ -314,57 +355,65 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
 
         // Act
-        var result = await _sut.CountAsync(false);
+        var result = await _sut.CountAsync(useLock);
 
         // Assert
         result.Should().Be(1);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var key = -1;
         var testClass = new TestClass { Id = 1, Name = "Test" };
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass, false));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass, useLock));
 
         // Assert
         await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenObjectIsNull_ThrowsArgumentNullException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenObjectIsNull_ThrowsArgumentNullException(bool useLock)
     {
         // Arrange
         var key = 0;
         TestClass testClass = null!;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass, false));
+        var action = new Func<Task>(async () => await _sut.WriteAsync(key, testClass, useLock));
 
         // Assert
         await action.Should().ThrowExactlyAsync<ArgumentNullException>();
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenObjectIsNotNull_WritesObject()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenObjectIsNotNull_WritesObject(bool useLock)
     {
         // Arrange
         var key = 0;
         var testClass = new TestClass { Id = 1, Name = "Test" };
 
         // Act
-        await _sut.WriteAsync(key, testClass, false);
+        await _sut.WriteAsync(key, testClass, useLock);
 
         // Assert
         var result = await _sut.ReadAsync(key, false);
         result.Should().BeEquivalentTo(testClass);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenOverwritingObject_WritesObject()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenOverwritingObject_WritesObject(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -373,15 +422,17 @@ public class ObjectStreamRepositoryTests
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
 
         // Act
-        await _sut.WriteAsync(key, testClass2, false);
+        await _sut.WriteAsync(key, testClass2, useLock);
 
         // Assert
         var result = await _sut.ReadAsync(key, false);
         result.Should().BeEquivalentTo(testClass2);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenMultipleObjectsAreWritten_ExtendsStreamToLengthDivisibleBySectorSize()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenMultipleObjectsAreWritten_ExtendsStreamToLengthDivisibleBySectorSize(bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -394,15 +445,17 @@ public class ObjectStreamRepositoryTests
         var testClass2 = new TestClass { Id = 2, Name = "Test2" };
 
         // Act
-        await _sut.WriteAsync(key2, testClass2, false);
+        await _sut.WriteAsync(key2, testClass2, useLock);
 
         // Assert
         _mainStream.Length.Should().Be(3 * _sectorSize);
     }
 
-    [Fact]
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task
-        WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize()
+        WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -418,15 +471,17 @@ public class ObjectStreamRepositoryTests
         var testClass1New = new TestClass { Id = 1, Name = new string('a', 100) };
 
         // Act
-        await _sut.WriteAsync(key1New, testClass1New, false);
+        await _sut.WriteAsync(key1New, testClass1New, useLock);
 
         // Assert
         _mainStream.Length.Should().Be(5 * _sectorSize);
     }
 
-    [Fact]
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task
-        WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize()
+        WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -442,14 +497,16 @@ public class ObjectStreamRepositoryTests
         var testClass2New = new TestClass { Id = 2, Name = new string('a', 100) };
 
         // Act
-        await _sut.WriteAsync(key2New, testClass2New, false);
+        await _sut.WriteAsync(key2New, testClass2New, useLock);
 
         // Assert
         _mainStream.Length.Should().Be(4 * _sectorSize);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_WritesValueAndDoesNotExtendStream()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -465,14 +522,16 @@ public class ObjectStreamRepositoryTests
         var testClass2New = new TestClass { Id = 2, Name = "a" };
 
         // Act
-        await _sut.WriteAsync(key2New, testClass2New, false);
+        await _sut.WriteAsync(key2New, testClass2New, useLock);
 
         // Assert
         _mainStream.Length.Should().Be(3 * _sectorSize);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenOverridingNotLastValueWithShorterValue_WritesValueAndDoesNotExtendStream()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenOverridingNotLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -488,14 +547,16 @@ public class ObjectStreamRepositoryTests
         var testClass1New = new TestClass { Id = 1, Name = "a" };
 
         // Act
-        await _sut.WriteAsync(key1New, testClass1New, false);
+        await _sut.WriteAsync(key1New, testClass1New, useLock);
 
         // Assert
         _mainStream.Length.Should().Be(3 * _sectorSize);
     }
 
-    [Fact]
-    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_ShrinksStreamToLengthDivisibleBySectorSize()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_ShrinksStreamToLengthDivisibleBySectorSize(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -504,41 +565,47 @@ public class ObjectStreamRepositoryTests
         var value2 = new TestClass { Id = 2 };
 
         // Act
-        await _sut.WriteAsync(key, value2, false);
+        await _sut.WriteAsync(key, value2, useLock);
 
         // Assert
         var result = _mainStream.Length;
         result.Should().Be(_sectorSize);
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
         var key = -1;
 
         // Act
-        Func<Task> act = async () => await _sut.DeleteAsync(key, false);
+        Func<Task> act = async () => await _sut.DeleteAsync(key, useLock);
 
         // Assert
         await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsGreaterThanMaxKey_ReturnsFalse()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsGreaterThanMaxKey_ReturnsFalse(bool useLock)
     {
         // Arrange
         var key = 100;
 
         // Act
-        var result = await _sut.DeleteAsync(key, false);
+        var result = await _sut.DeleteAsync(key, useLock);
 
         // Assert
         result.Should().BeFalse();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_ReturnsTrue()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_ReturnsTrue(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -546,27 +613,31 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(key, value, false);
 
         // Act
-        var result = await _sut.DeleteAsync(key, false);
+        var result = await _sut.DeleteAsync(key, useLock);
 
         // Assert
         result.Should().BeTrue();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectDoesNotExist_ReturnsFalse()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectDoesNotExist_ReturnsFalse(bool useLock)
     {
         // Arrange
         var key = 0;
 
         // Act
-        var result = await _sut.DeleteAsync(key, false);
+        var result = await _sut.DeleteAsync(key, useLock);
 
         // Assert
         result.Should().BeFalse();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_RemovesValue()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_RemovesValue(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -574,15 +645,17 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(key, value, false);
 
         // Act
-        await _sut.DeleteAsync(key, false);
+        await _sut.DeleteAsync(key, useLock);
 
         // Assert
         var result = await _sut.ReadAsync(key, false);
         result.Should().BeNull();
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectIsLast_RemovesValueAndTruncatesStream()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectIsLast_RemovesValueAndTruncatesStream(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -590,15 +663,17 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(key, value, false);
 
         // Act
-        await _sut.DeleteAsync(key, false);
+        await _sut.DeleteAsync(key, useLock);
 
         // Assert
         var result = _mainStream.Length;
         result.Should().Be(0);
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndMultipleObjectsExist_ShrinksStreamToLengthDivisibleBySectorSize()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsCorrectAndMultipleObjectsExist_ShrinksStreamToLengthDivisibleBySectorSize(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -609,15 +684,17 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(key2, value2, false);
 
         // Act
-        await _sut.DeleteAsync(key2, false);
+        await _sut.DeleteAsync(key2, useLock);
 
         // Assert
         var streamLength = _mainStream.Length;
         streamLength.Should().Be(_sectorSize);
     }
 
-    [Fact]
-    public async Task DeleteAsync_WhenKeyIsCorrect_DoesNotRemoveOtherObjects()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeleteAsync_WhenKeyIsCorrect_DoesNotRemoveOtherObjects(bool useLock)
     {
         // Arrange
         var key = 0;
@@ -628,15 +705,17 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(key2, value2, false);
 
         // Act
-        await _sut.DeleteAsync(key, false);
+        await _sut.DeleteAsync(key, useLock);
 
         // Assert
         var result = await _sut.ReadAsync(key2, false);
         result.Should().BeEquivalentTo(value2);
     }
 
-    [Fact]
-    public async Task Clear_WhenCalled_DeletesAllObjects()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Clear_WhenCalled_DeletesAllObjects(bool useLock)
     {
         // Arrange
         var id = 0;
@@ -647,7 +726,7 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        _sut.Clear(false);
+        _sut.Clear(useLock);
 
         // Assert
         var result = await _sut.ReadAsync(id, false);

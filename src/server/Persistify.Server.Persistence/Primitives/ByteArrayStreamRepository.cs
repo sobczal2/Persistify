@@ -86,35 +86,6 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return useLock ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip)) : await ReadRangeInternalAsync(take, skip);
     }
 
-    // TODO: Cache it and adjust on write
-    public async ValueTask<int> CountAsync(bool useLock)
-    {
-        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
-    }
-
-    private async ValueTask<int> CountInternalAsync()
-    {
-        var length = _stream.Length / _bufferSize;
-        var result = 0;
-        _stream.Seek(0, SeekOrigin.Begin);
-
-        for(var i = 0; i < length; i++)
-        {
-            var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
-            if (readBytes != _bufferSize)
-            {
-                throw new InvalidOperationException();
-            }
-
-            if (!IsValueEmpty(_buffer))
-            {
-                result++;
-            }
-        }
-
-        return result;
-    }
-
     private async ValueTask<List<(int key, byte[] value)>> ReadRangeInternalAsync(int take, int skip)
     {
         var length = _stream.Length / _bufferSize;
@@ -159,6 +130,34 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             }
 
             position++;
+        }
+
+        return result;
+    }
+
+    public async ValueTask<int> CountAsync(bool useLock)
+    {
+        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
+    }
+
+    private async ValueTask<int> CountInternalAsync()
+    {
+        var length = _stream.Length / _bufferSize;
+        var result = 0;
+        _stream.Seek(0, SeekOrigin.Begin);
+
+        for(var i = 0; i < length; i++)
+        {
+            var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
+            if (readBytes != _bufferSize)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!IsValueEmpty(_buffer))
+            {
+                result++;
+            }
         }
 
         return result;
