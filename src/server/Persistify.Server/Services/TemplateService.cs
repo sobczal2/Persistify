@@ -12,18 +12,19 @@ public class TemplateService : ITemplateService
 {
     private readonly CreateTemplateCommand _createTemplateCommand;
     private readonly GetTemplateCommand _getTemplateCommand;
-    // private readonly ListTemplatesCommand _listTemplatesCommand;
+    private readonly ListTemplatesCommand _listTemplatesCommand;
     private readonly DeleteTemplateCommand _deleteTemplateCommand;
 
     public TemplateService(
         CreateTemplateCommand createTemplateCommand,
         GetTemplateCommand getTemplateCommand,
-        // ListTemplatesCommand listTemplatesCommand,
+        ListTemplatesCommand listTemplatesCommand,
         DeleteTemplateCommand deleteTemplateCommand
     )
     {
         _createTemplateCommand = createTemplateCommand;
         _getTemplateCommand = getTemplateCommand;
+        _listTemplatesCommand = listTemplatesCommand;
         _deleteTemplateCommand = deleteTemplateCommand;
     }
 
@@ -39,7 +40,7 @@ public class TemplateService : ITemplateService
 
     public ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext context)
     {
-        throw new NotImplementedException();
+        return _listTemplatesCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 
     public async ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)

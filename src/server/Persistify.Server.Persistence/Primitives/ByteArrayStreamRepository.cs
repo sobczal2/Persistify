@@ -71,19 +71,77 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask<Dictionary<int, byte[]>> ReadAllAsync(bool useLock)
+    public async ValueTask<List<(int key, byte[] value)>> ReadRangeAsync(int take, int skip, bool useLock)
     {
-        return useLock ? await _semaphore.WrapAsync(ReadAllInternalAsync) : await ReadAllInternalAsync();
+        if (take <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(take));
+        }
+
+        if (skip < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(skip));
+        }
+
+        return useLock ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip)) : await ReadRangeInternalAsync(take, skip);
     }
 
-    private async ValueTask<Dictionary<int, byte[]>> ReadAllInternalAsync()
+    // TODO: Cache it and adjust on write
+    public async ValueTask<int> CountAsync(bool useLock)
     {
-        var length = _stream.Length;
+        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
+    }
+
+    private async ValueTask<int> CountInternalAsync()
+    {
+        var length = _stream.Length / _bufferSize;
+        var result = 0;
         _stream.Seek(0, SeekOrigin.Begin);
-        var result = new Dictionary<int, byte[]>((int)(length / _bufferSize));
-        for (var i = 0; i < length; i += _bufferSize)
+
+        for(var i = 0; i < length; i++)
         {
-            var readBytes = await _stream.ReadAsync(_buffer, 0, _bufferSize);
+            var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
+            if (readBytes != _bufferSize)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (!IsValueEmpty(_buffer))
+            {
+                result++;
+            }
+        }
+
+        return result;
+    }
+
+    private async ValueTask<List<(int key, byte[] value)>> ReadRangeInternalAsync(int take, int skip)
+    {
+        var length = _stream.Length / _bufferSize;
+        var result = new List<(int key, byte[] value)>(take);
+        _stream.Seek(0, SeekOrigin.Begin);
+
+        var position = 0;
+
+        for(var i = 0; i < skip && position < length; i++)
+        {
+            var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
+            if (readBytes != _bufferSize)
+            {
+                throw new InvalidOperationException();
+            }
+
+            if (IsValueEmpty(_buffer))
+            {
+                i--;
+            }
+
+            position++;
+        }
+
+        for(var i = 0; i < take && position < length; i++)
+        {
+            var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
             if (readBytes != _bufferSize)
             {
                 throw new InvalidOperationException();
@@ -93,8 +151,14 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             {
                 var value = new byte[_bufferSize];
                 _buffer.AsSpan().CopyTo(value);
-                result.Add(i / _bufferSize, value);
+                result.Add((position, value));
             }
+            else
+            {
+                i--;
+            }
+
+            position++;
         }
 
         return result;

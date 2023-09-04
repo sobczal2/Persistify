@@ -21,24 +21,32 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
     public async ValueTask<int> ReadAsync(int key, bool useLock)
     {
         var value = await _innerRepository.ReadAsync(key, useLock);
-        return BitConverter.ToInt32(value);
+        return MemoryMarshal.Read<int>(value);
     }
 
-    public async ValueTask<Dictionary<int, int>> ReadAllAsync(bool useLock)
+    public async ValueTask<List<(int key, int value)>> ReadRangeAsync(int take, int skip, bool useLock)
     {
-        var values = await _innerRepository.ReadAllAsync(useLock);
-        var result = new Dictionary<int, int>(values.Count);
-        foreach (var item in values)
+        var values = await _innerRepository.ReadRangeAsync(take, skip, useLock);
+        var result = new List<(int key, int value)>(values.Count);
+
+        foreach (var (key, value) in values)
         {
-            result[item.Key] = MemoryMarshal.Read<int>(item.Value);
+            result.Add((key, MemoryMarshal.Read<int>(value)));
         }
 
         return result;
     }
 
+    public async ValueTask<int> CountAsync(bool useLock)
+    {
+        return await _innerRepository.CountAsync(useLock);
+    }
+
     public async ValueTask WriteAsync(int key, int value, bool useLock)
     {
-        await _innerRepository.WriteAsync(key, BitConverter.GetBytes(value), useLock);
+        var bytes = new byte[sizeof(int)];
+        MemoryMarshal.Write(bytes, ref value);
+        await _innerRepository.WriteAsync(key, bytes, useLock);
     }
 
     public async ValueTask<bool> DeleteAsync(int key, bool useLock)
@@ -53,7 +61,8 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
 
     public bool IsValueEmpty(int value)
     {
-        var bytes = BitConverter.GetBytes(value);
+        var bytes = new byte[sizeof(int)];
+        MemoryMarshal.Write(bytes, ref value);
         return _innerRepository.IsValueEmpty(bytes);
     }
 

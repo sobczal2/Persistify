@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
@@ -53,6 +54,34 @@ public class TemplateManager : Manager, ITemplateManager
         }
 
         return await _templateRepository.ReadAsync(id, true);
+    }
+
+    public async ValueTask<List<Template>> ListAsync(int take, int skip)
+    {
+        if (!CanRead())
+        {
+            throw new NotAllowedForTransactionException();
+        }
+
+        var kvList = await _templateRepository.ReadRangeAsync(skip, take, true);
+        var list = new List<Template>(kvList.Count);
+
+        foreach (var kv in kvList)
+        {
+            list.Add(kv.Value);
+        }
+
+        return list;
+    }
+
+    public async ValueTask<int> CountAsync()
+    {
+        if (!CanRead())
+        {
+            throw new NotAllowedForTransactionException();
+        }
+
+        return await _templateRepository.CountAsync(true);
     }
 
     public void Add(Template template)

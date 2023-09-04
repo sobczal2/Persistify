@@ -30,19 +30,28 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
         );
     }
 
-    public async ValueTask<Dictionary<int, (int, int)>> ReadAllAsync(bool useLock)
+    public async ValueTask<List<(int key, (int, int) value)>> ReadRangeAsync(int take, int skip, bool useLock)
     {
-        var values = await _innerRepository.ReadAllAsync(useLock);
-        var result = new Dictionary<int, (int, int)>(values.Count);
-        foreach (var item in values)
+        var values = await _innerRepository.ReadRangeAsync(take, skip, useLock);
+        var result = new List<(int key, (int, int) value)>(values.Count);
+
+        foreach (var (key, value) in values)
         {
-            result[item.Key] = (
-                MemoryMarshal.Read<int>(item.Value.AsSpan(0, sizeof(int))),
-                MemoryMarshal.Read<int>(item.Value.AsSpan(sizeof(int), sizeof(int)))
-            );
+            result.Add((
+                key,
+                (
+                    MemoryMarshal.Read<int>(value.AsSpan(0, sizeof(int))),
+                    MemoryMarshal.Read<int>(value.AsSpan(sizeof(int), sizeof(int)))
+                )
+            ));
         }
 
         return result;
+    }
+
+    public async ValueTask<int> CountAsync(bool useLock)
+    {
+        return await _innerRepository.CountAsync(useLock);
     }
 
     public async ValueTask WriteAsync(int key, (int, int) value, bool useLock)

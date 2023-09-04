@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Server.Persistence.Object;
@@ -190,38 +191,133 @@ public class ObjectStreamRepositoryTests
     }
 
     [Fact]
-    public async Task ReadAllAsync_WhenRepositoryIsEmpty_ReturnsEmptyList()
+    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
+        var skip = -1;
 
         // Act
-        var result = await _sut.ReadAllAsync(false);
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, false));
+
+        // Assert
+        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList()
+    {
+        // Arrange
+        var skip = 1;
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
+
+        // Act
+        var result = await _sut.ReadRangeAsync(1000, skip, false);
 
         // Assert
         result.Should().BeEmpty();
     }
 
     [Fact]
-    public async Task ReadAllAsync_WhenRepositoryIsNotEmpty_ReturnsAllObjects()
+    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList()
     {
         // Arrange
-        var key0 = 0;
-        var testClass0 = new TestClass { Id = 0, Name = "Test0" };
-        await _sut.WriteAsync(key0, testClass0, false);
-        var key1 = 1;
-        var testClass1 = new TestClass { Id = 1, Name = "Test1" };
-        await _sut.WriteAsync(key1, testClass1, false);
-        var key2 = 2;
-        var testClass2 = new TestClass { Id = 2, Name = "Test2" };
-        await _sut.WriteAsync(key2, testClass2, false);
+        var skip = 2;
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadAllAsync(false);
+        var result = await _sut.ReadRangeAsync(1000, skip, false);
 
         // Assert
-        result[key0].Should().BeEquivalentTo(testClass0);
-        result[key1].Should().BeEquivalentTo(testClass1);
-        result[key2].Should().BeEquivalentTo(testClass2);
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList()
+    {
+        // Arrange
+        var take = 2;
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
+
+        // Act
+        var result = await _sut.ReadRangeAsync(take, 0, false);
+
+        // Assert
+        result.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList()
+    {
+        // Arrange
+        var take = 1;
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
+        await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
+
+        // Act
+        var result = await _sut.ReadRangeAsync(take, 0, false);
+
+        // Assert
+        result.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList()
+    {
+        // Arrange
+        var skip = 1;
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
+        await _sut.DeleteAsync(0, false);
+        await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
+        await _sut.WriteAsync(2, new TestClass { Id = 3 }, false);
+
+
+        // Act
+        var result = await _sut.ReadRangeAsync(1000, skip, false);
+
+        // Assert
+        result.Should().HaveCount(1);
+        result.FirstOrDefault(x => x.Key == 2).Value.Should().BeEquivalentTo(new TestClass { Id = 3 });
+    }
+
+    [Fact]
+    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero()
+    {
+        // Arrange
+
+        // Act
+        var result = await _sut.CountAsync(false);
+
+        // Assert
+        result.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount()
+    {
+        // Arrange
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
+        await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
+
+        // Act
+        var result = await _sut.CountAsync(false);
+
+        // Assert
+        result.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount()
+    {
+        // Arrange
+        await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
+        await _sut.DeleteAsync(0, false);
+        await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
+
+        // Act
+        var result = await _sut.CountAsync(false);
+
+        // Assert
+        result.Should().Be(1);
     }
 
     [Fact]

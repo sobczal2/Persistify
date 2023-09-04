@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Server.Persistence.Primitives;
@@ -118,73 +119,132 @@ public class IntStreamRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task ReadAllAsync_WhenNoValues_ReturnsEmptyDictionary()
+    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException()
     {
         // Arrange
+        var skip = -1;
 
         // Act
-        var result = await _sut.ReadAllAsync(false);
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, false));
+
+        // Assert
+        await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
+    }
+
+    [Fact]
+    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList()
+    {
+        // Arrange
+        var skip = 1;
+        await _sut.WriteAsync(0, 1, false);
+
+        // Act
+        var result = await _sut.ReadRangeAsync(1000, skip, false);
 
         // Assert
         result.Should().BeEmpty();
     }
 
     [Fact]
-    public async Task ReadAllAsync_WhenOneValue_ReturnsDictionaryWithOneValue()
+    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList()
     {
         // Arrange
-        var id = 0;
-        var value = 1;
-        await _sut.WriteAsync(id, value, false);
+        var skip = 2;
+        await _sut.WriteAsync(0, 1, false);
 
         // Act
-        var result = await _sut.ReadAllAsync(false);
+        var result = await _sut.ReadRangeAsync(1000, skip, false);
+
+        // Assert
+        result.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList()
+    {
+        // Arrange
+        var take = 2;
+        await _sut.WriteAsync(0, 1, false);
+
+        // Act
+        var result = await _sut.ReadRangeAsync(take, 0, false);
 
         // Assert
         result.Should().HaveCount(1);
-        result[id].Should().Be(value);
     }
 
     [Fact]
-    public async Task ReadAllAsync_WhenMultipleValues_ReturnsDictionaryWithMultipleValues()
+    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList()
     {
         // Arrange
-        var id1 = 0;
-        var value1 = 1;
-        await _sut.WriteAsync(id1, value1, false);
-        var id2 = 1;
-        var value2 = 2;
-        await _sut.WriteAsync(id2, value2, false);
+        var take = 1;
+        await _sut.WriteAsync(0, 1, false);
+        await _sut.WriteAsync(1, 2, false);
 
         // Act
-        var result = await _sut.ReadAllAsync(false);
+        var result = await _sut.ReadRangeAsync(take, 0, false);
 
         // Assert
-        result.Should().HaveCount(2);
-        result[id1].Should().Be(value1);
-        result[id2].Should().Be(value2);
+        result.Should().HaveCount(1);
     }
 
     [Fact]
-    public async Task ReadAllAsync_WhenMultipleValuesAndOneIsOverwritten_ReturnsDictionaryWithMultipleValues()
+    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList()
     {
         // Arrange
-        var id1 = 0;
-        var value1 = 1;
-        await _sut.WriteAsync(id1, value1, false);
-        var id2 = 1;
-        var value2 = 2;
-        await _sut.WriteAsync(id2, value2, false);
-        var newValue2 = 3;
-        await _sut.WriteAsync(id2, newValue2, false);
+        var skip = 1;
+        await _sut.WriteAsync(0, 1, false);
+        await _sut.DeleteAsync(0, false);
+        await _sut.WriteAsync(1, 2, false);
+        await _sut.WriteAsync(2, 3, false);
 
         // Act
-        var result = await _sut.ReadAllAsync(false);
+        var result = await _sut.ReadRangeAsync(1000, skip, false);
 
         // Assert
-        result.Should().HaveCount(2);
-        result[id1].Should().Be(value1);
-        result[id2].Should().Be(newValue2);
+        result.Should().HaveCount(1);
+        result.FirstOrDefault(x => x.key == 2).value.Should().Be(3);
+    }
+
+    [Fact]
+    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero()
+    {
+        // Arrange
+
+        // Act
+        var result = await _sut.CountAsync(false);
+
+        // Assert
+        result.Should().Be(0);
+    }
+
+    [Fact]
+    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount()
+    {
+        // Arrange
+        await _sut.WriteAsync(0, 1, false);
+        await _sut.WriteAsync(1, 2, false);
+
+        // Act
+        var result = await _sut.CountAsync(false);
+
+        // Assert
+        result.Should().Be(2);
+    }
+
+    [Fact]
+    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount()
+    {
+        // Arrange
+        await _sut.WriteAsync(0, 1, false);
+        await _sut.DeleteAsync(0, false);
+        await _sut.WriteAsync(1, 2, false);
+
+        // Act
+        var result = await _sut.CountAsync(false);
+
+        // Assert
+        result.Should().Be(1);
     }
 
     [Fact]
@@ -244,10 +304,10 @@ public class IntStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Assert
-        var result = await _sut.ReadAllAsync(false);
+        var result = await _sut.ReadRangeAsync(1000, 0, false);
         result.Should().HaveCount(2);
-        result[id1].Should().Be(value1);
-        result[id2].Should().Be(value2);
+        result.FirstOrDefault(x => x.key == id1).value.Should().Be(value1);
+        result.FirstOrDefault(x => x.key == id2).value.Should().Be(value2);
     }
 
     [Fact]
@@ -276,8 +336,8 @@ public class IntStreamRepositoryTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        var allDictionary = await _sut.ReadAllAsync(false);
-        allDictionary.Should().BeEmpty();
+        var allList = await _sut.ReadRangeAsync(1000, 0, false);
+        allList.Should().BeEmpty();
     }
 
     [Fact]
@@ -296,9 +356,9 @@ public class IntStreamRepositoryTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        var allDictionary = await _sut.ReadAllAsync(false);
-        allDictionary.Should().HaveCount(1);
-        allDictionary[id2].Should().Be(value2);
+        var allList = await _sut.ReadRangeAsync(1000, 0, false);
+        allList.Should().HaveCount(1);
+        allList.FirstOrDefault(x => x.key == id2).value.Should().Be(value2);
     }
 
     [Fact]
@@ -364,7 +424,7 @@ public class IntStreamRepositoryTests : IDisposable
         _sut.Clear(false);
 
         // Assert
-        var result = await _sut.ReadAllAsync(false);
+        var result = await _sut.ReadRangeAsync(1000, 0, false);
         result.Should().BeEmpty();
     }
 

@@ -6,7 +6,8 @@ namespace Persistify.Server.Persistence.Abstractions;
 public interface IValueTypeStreamRepository<TValue>
 {
     ValueTask<TValue> ReadAsync(int key, bool useLock);
-    ValueTask<Dictionary<int, TValue>> ReadAllAsync(bool useLock);
+    ValueTask<List<(int key, TValue value)>> ReadRangeAsync(int take, int skip, bool useLock);
+    ValueTask<int> CountAsync(bool useLock);
     ValueTask WriteAsync(int key, TValue value, bool useLock);
     ValueTask<bool> DeleteAsync(int key, bool useLock);
     void Clear(bool useLock);
