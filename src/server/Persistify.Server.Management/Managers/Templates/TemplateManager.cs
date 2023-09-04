@@ -108,9 +108,9 @@ public class TemplateManager : Manager, ITemplateManager
 
             await _identifierRepository.WriteAsync(0, currentId, true);
 
-            await _templateRepository.WriteAsync(currentId, template, true);
-
             template.Id = currentId;
+
+            await _templateRepository.WriteAsync(currentId, template, true);
 
             _fileManager.CreateFilesForTemplate(currentId);
             _documentManagerStore.AddManager(currentId);
