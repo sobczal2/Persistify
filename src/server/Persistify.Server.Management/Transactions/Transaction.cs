@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Concurrency;
+using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions.Exceptions;
 
 namespace Persistify.Server.Management.Transactions;
@@ -13,6 +14,10 @@ public sealed class Transaction
     private static readonly ReadWriteAsyncLock GlobalLock;
     private static ulong _lastTransactionId;
 
+    public static Transaction GetCurrentTransaction()
+    {
+        return CurrentTransaction.Value ?? throw new TransactionStateCorruptedException();
+    }
     public static ulong CurrentTransactionId =>
         CurrentTransaction.Value?._id ?? throw new TransactionStateCorruptedException();
 
@@ -67,6 +72,28 @@ public sealed class Transaction
         }
 
         _logger.LogDebug("Transaction {TransactionId} started", _id);
+    }
+
+    public async ValueTask PromoteManagerAsync(IManager manager, bool write, TimeSpan timeOut)
+    {
+        _logger.LogDebug("Promote manager {ManagerName} to {Write} in transaction {TransactionId}", manager.GetType().Name, write ? "write" : "read", _id);
+        if (CurrentTransaction.Value != this)
+        {
+            throw new TransactionStateCorruptedException();
+        }
+
+        if (write)
+        {
+            await manager.BeginWriteAsync(timeOut, CancellationToken.None).ConfigureAwait(false);
+            _transactionDescriptor.WriteManagers.Add(manager);
+        }
+        else
+        {
+            await manager.BeginReadAsync(timeOut, CancellationToken.None).ConfigureAwait(false);
+            _transactionDescriptor.ReadManagers.Add(manager);
+        }
+
+        _logger.LogDebug("Manager {ManagerName} promoted to {Write} in transaction {TransactionId}", manager.GetType().Name, write ? "write" : "read", _id);
     }
 
     public async ValueTask CommitAsync()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -48,8 +49,8 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
     {
         return new TransactionDescriptor(
             exclusiveGlobal: false,
-            readManagers: ImmutableList<IManager>.Empty,
-            writeManagers: ImmutableList.Create<IManager>(_templateManager)
+            readManagers: new List<IManager>(),
+            writeManagers: new List<IManager> { _templateManager }
         );
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Documents;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Management.Files;
-using Persistify.Server.Management.Transactions.Exceptions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
@@ -17,6 +16,7 @@ public class DocumentManager : Manager, IDocumentManager
     private readonly int _templateId;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Document> _documentRepository;
+    private volatile int _count;
 
     public DocumentManager(
         int templateId,
@@ -30,9 +30,11 @@ public class DocumentManager : Manager, IDocumentManager
         var identifierFileStream =
             fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_templateId));
         var documentRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.DocumentRepositoryMainFileName(_templateId));
+            fileStreamFactory.CreateStream(
+                DocumentManagerFileGroupForTemplate.DocumentRepositoryMainFileName(_templateId));
         var documentRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.DocumentRepositoryOffsetLengthFileName(_templateId));
+            fileStreamFactory.CreateStream(
+                DocumentManagerFileGroupForTemplate.DocumentRepositoryOffsetLengthFileName(_templateId));
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _documentRepository = new ObjectStreamRepository<Document>(
@@ -41,24 +43,43 @@ public class DocumentManager : Manager, IDocumentManager
             serializer,
             repositorySettingsOptions.Value.DocumentRepositorySectorSize
         );
+
+        _count = 0;
+    }
+
+    public override void Initialize()
+    {
+        ThrowIfCannotWrite();
+
+        var initializeAction = new Func<ValueTask>(async () =>
+        {
+            var currentId = await _identifierRepository.ReadAsync(0, true);
+
+            if (_identifierRepository.IsValueEmpty(currentId))
+            {
+                await _identifierRepository.WriteAsync(0, 0, true);
+            }
+
+            _count = await _documentRepository.CountAsync(true);
+
+            base.Initialize();
+        });
+
+        PendingActions.Enqueue(initializeAction);
     }
 
     public async ValueTask<Document?> GetAsync(int id)
     {
-        if (!CanRead())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
 
         return await _documentRepository.ReadAsync(id, true);
     }
 
     public async ValueTask<List<Document>> ListAsync(int take, int skip)
     {
-        if (!CanRead())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
 
         var kvList = await _documentRepository.ReadRangeAsync(take, skip, true);
         var list = new List<Document>(kvList.Count);
@@ -71,36 +92,24 @@ public class DocumentManager : Manager, IDocumentManager
         return list;
     }
 
-    public async ValueTask<int> CountAsync()
+    public int Count()
     {
-        if (!CanRead())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
 
-        return await _documentRepository.CountAsync(true);
+        return _count;
     }
 
     public void Add(Document document)
     {
-        if (!CanWrite())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotWrite();
 
         var addAction = new Func<ValueTask>(async () =>
         {
             var currentId = await _identifierRepository.ReadAsync(0, true);
 
-            // TODO: Do this on initialization
-            if (_identifierRepository.IsValueEmpty(currentId))
-            {
-                currentId = 0;
-            }
-            else
-            {
-                currentId++;
-            }
+            currentId++;
 
             await _identifierRepository.WriteAsync(0, currentId, true);
 
@@ -114,10 +123,8 @@ public class DocumentManager : Manager, IDocumentManager
 
     public async ValueTask<bool> RemoveAsync(int id)
     {
-        if (!CanWrite())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotWrite();
 
         if (!await _documentRepository.ExistsAsync(id, true))
         {

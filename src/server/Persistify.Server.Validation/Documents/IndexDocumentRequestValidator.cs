@@ -28,7 +28,7 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
 
     public Result Validate(CreateDocumentRequest value)
     {
-        if (value.TemplateId < 0)
+        if (value.TemplateId <= 0)
         {
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
         }

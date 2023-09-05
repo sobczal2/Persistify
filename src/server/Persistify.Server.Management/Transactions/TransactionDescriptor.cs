@@ -8,13 +8,13 @@ public class TransactionDescriptor
 {
     public bool ExclusiveGlobal { get; }
 
-    public IImmutableList<IManager> ReadManagers { get; }
-    public IImmutableList<IManager> WriteManagers { get; }
+    public List<IManager> ReadManagers { get; }
+    public List<IManager> WriteManagers { get; }
 
     public TransactionDescriptor(
         bool exclusiveGlobal,
-        IImmutableList<IManager> readManagers,
-        IImmutableList<IManager> writeManagers
+        List<IManager> readManagers,
+        List<IManager> writeManagers
     )
     {
         ExclusiveGlobal = exclusiveGlobal;

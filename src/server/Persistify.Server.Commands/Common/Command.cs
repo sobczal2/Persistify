@@ -2,9 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Persistify.Server.Errors;
+using Persistify.Requests.Shared;
+using Persistify.Responses.Shared;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Commands.Common;
 
@@ -12,7 +14,7 @@ public abstract class Command<TData, TResponse>
 {
     private readonly IValidator<TData> _validator;
     protected readonly ILoggerFactory LoggerFactory;
-    private static TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
+    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
     public Command(
         IValidator<TData> validator,
@@ -47,5 +49,12 @@ public abstract class Command<TData, TResponse>
             await transaction.RollbackAsync().ConfigureAwait(false);
             throw;
         }
+    }
+}
+
+public abstract class Command : Command<EmptyRequest, EmptyResponse>
+{
+    protected Command(ILoggerFactory loggerFactory) : base(new EmptyRequestValidator(), loggerFactory)
+    {
     }
 }

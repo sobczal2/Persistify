@@ -14,7 +14,11 @@
     <ProjectReference Include="..\Persistify.Server.Errors\Persistify.Server.Errors.csproj" />
     <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj" />
     <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj" />
+
+
   </ItemGroup>
+
+
 
 
 

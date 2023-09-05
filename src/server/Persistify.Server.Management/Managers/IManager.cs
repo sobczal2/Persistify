@@ -6,6 +6,7 @@ namespace Persistify.Server.Management.Managers;
 
 public interface IManager
 {
+    void Initialize();
     ValueTask<bool> BeginReadAsync(TimeSpan timeOut, CancellationToken cancellationToken);
     ValueTask<bool> BeginWriteAsync(TimeSpan timeOut, CancellationToken cancellationToken);
 

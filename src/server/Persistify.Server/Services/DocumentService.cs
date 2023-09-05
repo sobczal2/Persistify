@@ -11,12 +11,15 @@ namespace Persistify.Server.Services;
 public class DocumentService : IDocumentService
 {
     private readonly CreateDocumentCommand _createDocumentCommand;
+    private readonly GetDocumentCommand _getDocumentCommand;
 
     public DocumentService(
-        CreateDocumentCommand createDocumentCommand
+        CreateDocumentCommand createDocumentCommand,
+        GetDocumentCommand getDocumentCommand
     )
     {
         _createDocumentCommand = createDocumentCommand;
+        _getDocumentCommand = getDocumentCommand;
     }
 
     public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request, CallContext context)
@@ -24,9 +27,9 @@ public class DocumentService : IDocumentService
         return await _createDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 
-    public ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
+    public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
     {
-        throw new NotImplementedException();
+        return await _getDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 
     public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)

@@ -25,7 +25,7 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
 
     public Result Validate(SearchDocumentsRequest value)
     {
-        if (value.TemplateId < 0)
+        if (value.TemplateId <= 0)
         {
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than or equal to 0");
         }

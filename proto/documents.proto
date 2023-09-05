@@ -1,15 +1,6 @@
 syntax = "proto3";
 package Persistify.Services;
 
-message AddDocumentRequest {
-   int32 TemplateId = 1;
-   repeated TextFieldValue TextFieldValues = 2;
-   repeated NumberFieldValue NumberFieldValues = 3;
-   repeated BoolFieldValue BoolFieldValues = 4;
-}
-message AddDocumentResponse {
-   int32 DocumentId = 1;
-}
 message AndSearchNode {
    repeated SearchNode Nodes = 1;
 }
@@ -20,6 +11,15 @@ message BoolFieldValue {
 message BoolSearchNode {
    string FieldName = 1;
    bool Value = 2;
+}
+message CreateDocumentRequest {
+   int32 TemplateId = 1;
+   repeated TextFieldValue TextFieldValues = 2;
+   repeated NumberFieldValue NumberFieldValues = 3;
+   repeated BoolFieldValue BoolFieldValues = 4;
+}
+message CreateDocumentResponse {
+   int32 DocumentId = 1;
 }
 message DeleteDocumentRequest {
    int32 TemplateId = 1;
@@ -114,7 +114,7 @@ message TextSearchNode {
    string Value = 2;
 }
 service DocumentService {
-   rpc AddDocument (AddDocumentRequest) returns (AddDocumentResponse);
+   rpc CreateDocument (CreateDocumentRequest) returns (CreateDocumentResponse);
    rpc DeleteDocument (DeleteDocumentRequest) returns (DeleteDocumentResponse);
    rpc GetDocument (GetDocumentRequest) returns (GetDocumentResponse);
    rpc SearchDocuments (SearchDocumentsRequest) returns (SearchDocumentsResponse);

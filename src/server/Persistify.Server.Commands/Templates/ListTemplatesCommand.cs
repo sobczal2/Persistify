@@ -38,7 +38,7 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
         var skip = data.Pagination.PageNumber * data.Pagination.PageSize;
         var take = data.Pagination.PageSize;
         _templates = await _templateManager.ListAsync(take, skip);
-        _totalCount = await _templateManager.CountAsync();
+        _totalCount = _templateManager.Count();
     }
 
     protected override ListTemplatesResponse GetResponse()
@@ -55,8 +55,8 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
     {
         return new TransactionDescriptor(
             exclusiveGlobal: false,
-            readManagers: ImmutableList.Create<IManager>(_templateManager),
-            writeManagers: ImmutableList<IManager>.Empty
+            readManagers: new List<IManager> { _templateManager },
+            writeManagers: new List<IManager>()
         );
     }
 }

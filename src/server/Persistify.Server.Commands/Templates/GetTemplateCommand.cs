@@ -56,8 +56,8 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
     {
         return new TransactionDescriptor(
             exclusiveGlobal: false,
-            readManagers: ImmutableList.Create<IManager>(_templateManager),
-            writeManagers: ImmutableList<IManager>.Empty
+            readManagers: new List<IManager> {_templateManager},
+            writeManagers: new List<IManager>()
         );
     }
 }

@@ -15,4 +15,5 @@
     <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj" />
   </ItemGroup>
 
+
 </Project>

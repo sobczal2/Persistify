@@ -19,6 +19,7 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
 {
     private readonly ITemplateManager _templateManager;
     private Template? _template;
+
     public CreateTemplateCommand(
         IValidator<CreateTemplateRequest> validator,
         ILoggerFactory loggerFactory,
@@ -60,8 +61,8 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
     {
         return new TransactionDescriptor(
             exclusiveGlobal: false,
-            readManagers: ImmutableList<IManager>.Empty,
-            writeManagers: ImmutableList.Create<IManager>(_templateManager)
+            readManagers: new List<IManager>(),
+            writeManagers: new List<IManager> { _templateManager }
         );
     }
 }

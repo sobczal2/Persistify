@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Concurrency;
+using Persistify.Server.Errors;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Management.Transactions.Exceptions;
 
 namespace Persistify.Server.Management.Managers;
 
@@ -12,11 +14,18 @@ public abstract class Manager : IManager
     private readonly ReadWriteAsyncLock _readWriteAsyncLock;
     protected Queue<Func<ValueTask>> PendingActions { get; }
     private static ulong TransactionId => Transaction.CurrentTransactionId;
+    private bool _isInitialized;
 
     protected Manager()
     {
         _readWriteAsyncLock = new ReadWriteAsyncLock();
         PendingActions = new Queue<Func<ValueTask>>();
+        _isInitialized = false;
+    }
+
+    public virtual void Initialize()
+    {
+        _isInitialized = true;
     }
 
     public async ValueTask<bool> BeginReadAsync(TimeSpan timeOut, CancellationToken cancellationToken)
@@ -54,13 +63,27 @@ public abstract class Manager : IManager
         PendingActions.Clear();
     }
 
-    protected bool CanRead()
+    protected void ThrowIfCannotRead()
     {
-        return _readWriteAsyncLock.CanRead(TransactionId);
+        if (!_readWriteAsyncLock.CanRead(TransactionId))
+        {
+            throw new NotAllowedForTransactionException();
+        }
     }
 
-    protected bool CanWrite()
+    protected void ThrowIfCannotWrite()
     {
-        return _readWriteAsyncLock.CanWrite(TransactionId);
+        if (!_readWriteAsyncLock.CanWrite(TransactionId))
+        {
+            throw new NotAllowedForTransactionException();
+        }
+    }
+
+    protected void ThrowIfNotInitialized()
+    {
+        if (!_isInitialized)
+        {
+            throw new PersistifyInternalException();
+        }
     }
 }

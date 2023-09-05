@@ -13,4 +13,12 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <ProjectReference Include="..\Persistify.Server.Commands\Persistify.Server.Commands.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj" />
+  </ItemGroup>
+
+
+
 </Project>

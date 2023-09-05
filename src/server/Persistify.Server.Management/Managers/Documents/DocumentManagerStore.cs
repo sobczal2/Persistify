@@ -85,4 +85,9 @@ public class DocumentManagerStore : IDocumentManagerStore
             }
         }
     }
+
+    public IEnumerable<IDocumentManager> GetManagers()
+    {
+        return _repositories.Values;
+    }
 }

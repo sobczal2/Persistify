@@ -27,9 +27,9 @@ export default () => {
                 "Value": false
             }
         ],
-        "TemplateId": 0
+        "TemplateId": 1
     };
-    const response = client.invoke('/Persistify.Services.DocumentService/AddDocument', data);
+    const response = client.invoke('/Persistify.Services.DocumentService/CreateDocument', data);
 
     check(response, {
         'status is OK': (r) => r && r.status === grpc.StatusOK,

@@ -16,14 +16,14 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Documents;
 
-public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, CreateDocumentResponse>
+public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentResponse>
 {
     private readonly ITemplateManager _templateManager;
     private readonly IDocumentManagerStore _documentManagerStore;
     private Document? _document;
 
-    public CreateDocumentCommand(
-        IValidator<CreateDocumentRequest> validator,
+    public GetDocumentCommand(
+        IValidator<GetDocumentRequest> validator,
         ILoggerFactory loggerFactory,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
@@ -36,7 +36,7 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(CreateDocumentRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(GetDocumentRequest data, CancellationToken cancellationToken)
     {
         var template = await _templateManager.GetAsync(data.TemplateId);
 
@@ -54,27 +54,20 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
         await Transaction.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        _document = new Document
-        {
-            TextFieldValues = data.TextFieldValues,
-            NumberFieldValues = data.NumberFieldValues,
-            BoolFieldValues = data.BoolFieldValues
-        };
-
-        documentManager.Add(_document);
+        _document = await documentManager.GetAsync(data.DocumentId);
     }
 
-    protected override CreateDocumentResponse GetResponse()
+    protected override GetDocumentResponse GetResponse()
     {
         if (_document is null)
         {
             throw new PersistifyInternalException();
         }
 
-        return new CreateDocumentResponse(_document.Id);
+        return new GetDocumentResponse(_document);
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest data)
     {
         return new TransactionDescriptor(
             exclusiveGlobal: false,

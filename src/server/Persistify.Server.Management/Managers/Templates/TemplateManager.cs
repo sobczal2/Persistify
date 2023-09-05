@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.Errors;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers.Documents;
-using Persistify.Server.Management.Transactions.Exceptions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Management.Managers.Templates;
 
-// TODO: Add Cache
+
 public class TemplateManager : Manager, ITemplateManager
 {
     private readonly IFileManager _fileManager;
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Template> _templateRepository;
+    private volatile int _count;
 
     public TemplateManager(
         IFileStreamFactory fileStreamFactory,
@@ -45,24 +47,59 @@ public class TemplateManager : Manager, ITemplateManager
             serializer,
             repositorySettingsOptions.Value.TemplateRepositorySectorSize
         );
+
+        _count = 0;
+    }
+
+    public override void Initialize()
+    {
+        ThrowIfCannotWrite();
+
+        var initializeAction = new Func<ValueTask>(async () =>
+        {
+
+            var currentId = await _identifierRepository.ReadAsync(0, true);
+
+            if (_identifierRepository.IsValueEmpty(currentId))
+            {
+                await _identifierRepository.WriteAsync(0, 0, true);
+            }
+
+            _count = await _templateRepository.CountAsync(true);
+
+            var read = 0;
+            const int batchSize = 1000;
+
+            while (read < _count)
+            {
+                var kvList = await _templateRepository.ReadRangeAsync(batchSize, read, true);
+
+                foreach (var kv in kvList)
+                {
+                    _documentManagerStore.AddManager(kv.Key);
+                }
+
+                read += batchSize;
+            }
+
+            base.Initialize();
+        });
+
+        PendingActions.Enqueue(initializeAction);
     }
 
     public async ValueTask<Template?> GetAsync(int id)
     {
-        if (!CanRead())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
 
         return await _templateRepository.ReadAsync(id, true);
     }
 
     public async ValueTask<List<Template>> ListAsync(int take, int skip)
     {
-        if (!CanRead())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
 
         var kvList = await _templateRepository.ReadRangeAsync(take, skip, true);
         var list = new List<Template>(kvList.Count);
@@ -75,36 +112,24 @@ public class TemplateManager : Manager, ITemplateManager
         return list;
     }
 
-    public async ValueTask<int> CountAsync()
+    public int Count()
     {
-        if (!CanRead())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
 
-        return await _templateRepository.CountAsync(true);
+        return _count;
     }
 
     public void Add(Template template)
     {
-        if (!CanWrite())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotWrite();
 
         var addAction = new Func<ValueTask>(async () =>
         {
             var currentId = await _identifierRepository.ReadAsync(0, true);
 
-            // TODO: Do this on initialization
-            if (_identifierRepository.IsValueEmpty(currentId))
-            {
-                currentId = 0;
-            }
-            else
-            {
-                currentId++;
-            }
+            currentId++;
 
             await _identifierRepository.WriteAsync(0, currentId, true);
 
@@ -114,6 +139,8 @@ public class TemplateManager : Manager, ITemplateManager
 
             _fileManager.CreateFilesForTemplate(currentId);
             _documentManagerStore.AddManager(currentId);
+
+            Interlocked.Increment(ref _count);
         });
 
         PendingActions.Enqueue(addAction);
@@ -121,10 +148,8 @@ public class TemplateManager : Manager, ITemplateManager
 
     public async ValueTask<bool> RemoveAsync(int id)
     {
-        if (!CanWrite())
-        {
-            throw new NotAllowedForTransactionException();
-        }
+        ThrowIfNotInitialized();
+        ThrowIfCannotWrite();
 
         if (!await _templateRepository.ExistsAsync(id, true))
         {
@@ -138,6 +163,8 @@ public class TemplateManager : Manager, ITemplateManager
                 _fileManager.DeleteFilesForTemplate(id);
                 _documentManagerStore.DeleteManager(id);
             }
+
+            Interlocked.Decrement(ref _count);
         });
 
         PendingActions.Enqueue(removeAction);

@@ -137,7 +137,7 @@ public sealed class ReadWriteAsyncLock : IDisposable
 
     public bool CanRead(ulong id)
     {
-        return _readers.Contains(id);
+        return _readers.Contains(id) || _writer == id;
     }
 
     public bool CanWrite(ulong id)

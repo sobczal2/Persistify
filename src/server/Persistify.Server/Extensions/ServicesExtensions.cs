@@ -69,8 +69,7 @@ public static class ServicesExtensions
         services.AddValidation();
         services.AddCommands();
         services.AddManagement();
-        services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
-            assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
+        services.AddHostedServices();
 
         return services;
     }

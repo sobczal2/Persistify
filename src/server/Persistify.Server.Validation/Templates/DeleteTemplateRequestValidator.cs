@@ -15,7 +15,7 @@ public class DeleteTemplateRequestValidator : IValidator<DeleteTemplateRequest>
 
     public Result Validate(DeleteTemplateRequest value)
     {
-        if (value.TemplateId < 0)
+        if (value.TemplateId <= 0)
         {
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than or equal to 0");
         }

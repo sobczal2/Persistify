@@ -8,7 +8,7 @@ public interface IDocumentManager : IManager
 {
     ValueTask<Document?> GetAsync(int id);
     ValueTask<List<Document>> ListAsync(int take, int skip);
-    ValueTask<int> CountAsync();
+    int Count();
     void Add(Document document);
     ValueTask<bool> RemoveAsync(int id);
 }
