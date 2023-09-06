@@ -8,57 +8,43 @@ using Persistify.Server.Management.Transactions.Exceptions;
 
 namespace Persistify.Server.Management.Transactions;
 
-public sealed class Transaction
+public sealed class Transaction : ITransaction
 {
-    public static readonly AsyncLocal<Transaction?> CurrentTransaction;
-    private static readonly ReadWriteAsyncLock GlobalLock;
-    private static ulong _lastTransactionId;
-
-    public static Transaction GetCurrentTransaction()
-    {
-        return CurrentTransaction.Value ?? throw new TransactionStateCorruptedException();
-    }
-    public static ulong CurrentTransactionId =>
-        CurrentTransaction.Value?._id ?? throw new TransactionStateCorruptedException();
-
-    static Transaction()
-    {
-        CurrentTransaction = new AsyncLocal<Transaction?>();
-        _lastTransactionId = 0;
-        GlobalLock = new ReadWriteAsyncLock();
-    }
-
-    private readonly ulong _id;
     private readonly TransactionDescriptor _transactionDescriptor;
+    private readonly ITransactionState _transactionState;
     private readonly ILogger<Transaction> _logger;
+
+    public Guid Id { get; }
 
     public Transaction(
         TransactionDescriptor transactionDescriptor,
+        ITransactionState transactionState,
         ILogger<Transaction> logger
-        )
+    )
     {
         _transactionDescriptor = transactionDescriptor;
+        _transactionState = transactionState;
         _logger = logger;
-        _id = Interlocked.Increment(ref _lastTransactionId);
+        Id = Guid.NewGuid();
     }
 
-    // TODO: handle timeout and cancellation token
-    public async ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken)
+    public async ValueTask BeginAsync(TimeSpan timeOut,
+        CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Begin transaction {TransactionId}", _id);
+        _logger.LogDebug("Begin transaction {TransactionId}", Id);
 
-        if (CurrentTransaction.Value != this)
+        if (_transactionState.GetCurrentTransaction() != this)
         {
             throw new TransactionStateCorruptedException();
         }
 
         if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await GlobalLock.EnterWriteLockAsync(_id, timeOut, cancellationToken).ConfigureAwait(false);
+            await _transactionState.EnterWriteGlobalLockAsync(Id, timeOut, cancellationToken).ConfigureAwait(false);
         }
         else
         {
-            await GlobalLock.EnterReadLockAsync(_id, timeOut, cancellationToken).ConfigureAwait(false);
+            await _transactionState.EnterReadGlobalLockAsync(Id, timeOut, cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var readManager in _transactionDescriptor.ReadManagers)
@@ -71,13 +57,15 @@ public sealed class Transaction
             await writeManager.BeginWriteAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
 
-        _logger.LogDebug("Transaction {TransactionId} started", _id);
+        _logger.LogDebug("Transaction {TransactionId} started", Id);
     }
 
     public async ValueTask PromoteManagerAsync(IManager manager, bool write, TimeSpan timeOut)
     {
-        _logger.LogDebug("Promote manager {ManagerName} to {Write} in transaction {TransactionId}", manager.GetType().Name, write ? "write" : "read", _id);
-        if (CurrentTransaction.Value != this)
+        _logger.LogDebug("Promote manager {ManagerName} to {Write} in transaction {TransactionId}",
+            manager.Name, write ? "write" : "read", Id);
+
+        if (_transactionState.GetCurrentTransaction() != this)
         {
             throw new TransactionStateCorruptedException();
         }
@@ -93,16 +81,33 @@ public sealed class Transaction
             _transactionDescriptor.ReadManagers.Add(manager);
         }
 
-        _logger.LogDebug("Manager {ManagerName} promoted to {Write} in transaction {TransactionId}", manager.GetType().Name, write ? "write" : "read", _id);
+        _logger.LogDebug("Manager {ManagerName} promoted to {Write} in transaction {TransactionId}",
+            manager.Name, write ? "write" : "read", Id);
     }
 
     public async ValueTask CommitAsync()
     {
-        _logger.LogDebug("Commit transaction {TransactionId}", _id);
+        _logger.LogDebug("Commit transaction {TransactionId}", Id);
 
-        if (CurrentTransaction.Value != this)
+        if (_transactionState.GetCurrentTransaction() != this)
         {
             throw new TransactionStateCorruptedException();
+        }
+
+        // ReSharper disable once ForCanBeConvertedToForeach
+        for (var i = 0; i < _transactionDescriptor.WriteManagers.Count; i++)
+        {
+            var writeManager = _transactionDescriptor.WriteManagers[i];
+            try
+            {
+                await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                _logger.LogError(
+                    "Error while executing pending actions for transaction {TransactionId} on manager {ManagerName}",
+                    Id, writeManager.GetType().Name);
+            }
         }
 
         foreach (var readManager in _transactionDescriptor.ReadManagers)
@@ -112,37 +117,28 @@ public sealed class Transaction
 
         foreach (var writeManager in _transactionDescriptor.WriteManagers)
         {
-            try
-            {
-                await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                _logger.LogError("Error while executing pending actions for transaction {TransactionId} on manager {ManagerName}", _id, writeManager.GetType().Name);
-            }
-
             await writeManager.EndWriteAsync().ConfigureAwait(false);
         }
 
         if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await GlobalLock.ExitWriteLockAsync(_id).ConfigureAwait(false);
+            await _transactionState.ExitWriteGlobalLockAsync(Id).ConfigureAwait(false);
         }
         else
         {
-            await GlobalLock.ExitReadLockAsync(_id).ConfigureAwait(false);
+            await _transactionState.ExitReadGlobalLockAsync(Id).ConfigureAwait(false);
         }
 
-        CurrentTransaction.Value = null;
+        _transactionState.CurrentTransaction.Value = null;
 
-        _logger.LogDebug("Transaction {TransactionId} committed", _id);
+        _logger.LogDebug("Transaction {TransactionId} committed", Id);
     }
 
     public async ValueTask RollbackAsync()
     {
-        _logger.LogDebug("Rollback transaction {TransactionId}", _id);
+        _logger.LogDebug("Rollback transaction {TransactionId}", Id);
 
-        if (CurrentTransaction.Value != this)
+        if (_transactionState.GetCurrentTransaction() != this)
         {
             throw new TransactionStateCorruptedException();
         }
@@ -160,15 +156,15 @@ public sealed class Transaction
 
         if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await GlobalLock.ExitWriteLockAsync(_id).ConfigureAwait(false);
+            await _transactionState.ExitWriteGlobalLockAsync(Id).ConfigureAwait(false);
         }
         else
         {
-            await GlobalLock.ExitReadLockAsync(_id).ConfigureAwait(false);
+            await _transactionState.ExitReadGlobalLockAsync(Id).ConfigureAwait(false);
         }
 
-        CurrentTransaction.Value = null;
+        _transactionState.CurrentTransaction.Value = null;
 
-        _logger.LogDebug("Transaction {TransactionId} rolled back", _id);
+        _logger.LogDebug("Transaction {TransactionId} rolled back", Id);
     }
 }

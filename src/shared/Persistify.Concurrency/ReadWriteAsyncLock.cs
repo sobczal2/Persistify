@@ -16,8 +16,8 @@ public sealed class ReadWriteAsyncLock : IDisposable
     private readonly SemaphoreSlim _readSemaphoreSlim;
     private readonly SemaphoreSlim _writeSemaphoreSlim;
     private readonly SemaphoreSlim _accessSemaphoreSlim;
-    private readonly HashSet<ulong> _readers;
-    private ulong? _writer;
+    private readonly HashSet<Guid> _readers;
+    private Guid? _writer;
     private volatile uint _pendingWriters;
 
     public ReadWriteAsyncLock()
@@ -25,12 +25,12 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _readSemaphoreSlim = new SemaphoreSlim(1, 1);
         _writeSemaphoreSlim = new SemaphoreSlim(1, 1);
         _accessSemaphoreSlim = new SemaphoreSlim(1, 1);
-        _readers = new HashSet<ulong>();
+        _readers = new HashSet<Guid>();
         _writer = null;
         _pendingWriters = 0;
     }
 
-    public async ValueTask<bool> EnterReadLockAsync(ulong id, TimeSpan timeout, CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterReadLockAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken)
     {
         if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
@@ -72,7 +72,7 @@ public sealed class ReadWriteAsyncLock : IDisposable
         return true;
     }
 
-    public async ValueTask ExitReadLockAsync(ulong id)
+    public async ValueTask ExitReadLockAsync(Guid id)
     {
         await _readSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
@@ -98,7 +98,7 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _readSemaphoreSlim.Release();
     }
 
-    public async ValueTask<bool> EnterWriteLockAsync(ulong id, TimeSpan timeout, CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterWriteLockAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken)
     {
         if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
@@ -119,7 +119,7 @@ public sealed class ReadWriteAsyncLock : IDisposable
         return true;
     }
 
-    public ValueTask ExitWriteLockAsync(ulong id)
+    public ValueTask ExitWriteLockAsync(Guid id)
     {
         if (_writer != id)
         {
@@ -135,12 +135,12 @@ public sealed class ReadWriteAsyncLock : IDisposable
         return ValueTask.CompletedTask;
     }
 
-    public bool CanRead(ulong id)
+    public bool CanRead(Guid id)
     {
         return _readers.Contains(id) || _writer == id;
     }
 
-    public bool CanWrite(ulong id)
+    public bool CanWrite(Guid id)
     {
         return _writer == id;
     }

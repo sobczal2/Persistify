@@ -8,12 +8,12 @@ using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Errors;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers.Documents;
+using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Management.Managers.Templates;
-
 
 public class TemplateManager : Manager, ITemplateManager
 {
@@ -24,11 +24,14 @@ public class TemplateManager : Manager, ITemplateManager
     private volatile int _count;
 
     public TemplateManager(
+        ITransactionState transactionState,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
         IFileManager fileManager,
         IDocumentManagerStore documentManagerStore
+    ) : base(
+        transactionState
     )
     {
         _fileManager = fileManager;
@@ -51,13 +54,14 @@ public class TemplateManager : Manager, ITemplateManager
         _count = 0;
     }
 
+    public override string Name => "TemplateManager";
+
     public override void Initialize()
     {
         ThrowIfCannotWrite();
 
         var initializeAction = new Func<ValueTask>(async () =>
         {
-
             var currentId = await _identifierRepository.ReadAsync(0, true);
 
             if (_identifierRepository.IsValueEmpty(currentId))
@@ -140,6 +144,18 @@ public class TemplateManager : Manager, ITemplateManager
             _fileManager.CreateFilesForTemplate(currentId);
             _documentManagerStore.AddManager(currentId);
 
+            var documentManager = _documentManagerStore.GetManager(currentId);
+
+            if (documentManager is null)
+            {
+                throw new PersistifyInternalException();
+            }
+
+            await TransactionState.GetCurrentTransaction()
+                .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+
+            documentManager.Initialize();
+
             Interlocked.Increment(ref _count);
         });
 
@@ -160,11 +176,20 @@ public class TemplateManager : Manager, ITemplateManager
         {
             if (await _templateRepository.DeleteAsync(id, true))
             {
+                var documentManager = _documentManagerStore.GetManager(id);
+                if (documentManager is null)
+                {
+                    throw new PersistifyInternalException();
+                }
+
+                await TransactionState.GetCurrentTransaction()
+                    .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+
                 _fileManager.DeleteFilesForTemplate(id);
                 _documentManagerStore.DeleteManager(id);
+                Interlocked.Decrement(ref _count);
             }
-
-            Interlocked.Decrement(ref _count);
+            else throw new PersistifyInternalException();
         });
 
         PendingActions.Enqueue(removeAction);

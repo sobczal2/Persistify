@@ -14,15 +14,21 @@ public abstract class Command<TData, TResponse>
 {
     private readonly IValidator<TData> _validator;
     protected readonly ILoggerFactory LoggerFactory;
+
+    protected readonly ITransactionState TransactionState;
+
+    // TODO: move to config
     protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
     public Command(
         IValidator<TData> validator,
-        ILoggerFactory loggerFactory
-        )
+        ILoggerFactory loggerFactory,
+        ITransactionState transactionState
+    )
     {
         _validator = validator;
         LoggerFactory = loggerFactory;
+        TransactionState = transactionState;
     }
 
     protected abstract ValueTask RunAsync(TData data, CancellationToken cancellationToken);
@@ -35,9 +41,16 @@ public abstract class Command<TData, TResponse>
 
         var transactionDescriptor = GetTransactionDescriptor(data);
 
-        var transaction = new Transaction(transactionDescriptor, LoggerFactory.CreateLogger<Transaction>());
-        Transaction.CurrentTransaction.Value = transaction;
-        await transaction.BeginAsync(TransactionTimeout, cancellationToken).ConfigureAwait(false);
+        var transaction = new Transaction(
+            transactionDescriptor,
+            TransactionState,
+            LoggerFactory.CreateLogger<Transaction>()
+        );
+
+        TransactionState.CurrentTransaction.Value = transaction;
+
+        await transaction.BeginAsync(TransactionTimeout, cancellationToken)
+            .ConfigureAwait(false);
         try
         {
             await RunAsync(data, cancellationToken).ConfigureAwait(false);
@@ -54,7 +67,14 @@ public abstract class Command<TData, TResponse>
 
 public abstract class Command : Command<EmptyRequest, EmptyResponse>
 {
-    protected Command(ILoggerFactory loggerFactory) : base(new EmptyRequestValidator(), loggerFactory)
+    protected Command(
+        ILoggerFactory loggerFactory,
+        ITransactionState transactionState
+    ) : base(
+        new EmptyRequestValidator(),
+        loggerFactory,
+        transactionState
+    )
     {
     }
 }

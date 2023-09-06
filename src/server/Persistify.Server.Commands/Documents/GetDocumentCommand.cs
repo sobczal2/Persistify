@@ -26,10 +26,12 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
         IValidator<GetDocumentRequest> validator,
         ILoggerFactory loggerFactory,
         ITemplateManager templateManager,
-        IDocumentManagerStore documentManagerStore
+        IDocumentManagerStore documentManagerStore,
+        ITransactionState transactionState
     ) : base(
         validator,
-        loggerFactory
+        loggerFactory,
+        transactionState
     )
     {
         _templateManager = templateManager;
@@ -52,9 +54,14 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
             throw new PersistifyInternalException();
         }
 
-        await Transaction.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await TransactionState.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
         _document = await documentManager.GetAsync(data.DocumentId);
+
+        if (_document is null)
+        {
+            throw new ValidationException(nameof(data.DocumentId), $"Document with id {data.DocumentId} not found");
+        }
     }
 
     protected override GetDocumentResponse GetResponse()

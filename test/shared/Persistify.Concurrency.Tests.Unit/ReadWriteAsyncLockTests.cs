@@ -21,7 +21,7 @@ public class ReadWriteAsyncLockTests
     public async Task EnterReadLockAsync_WhenNoLocksAreHeld_ReturnsTrue()
     {
         // Arrange
-        var id = 1UL;
+        var id = Guid.Parse("00000000-0000-0000-0000-000000000000");
 
         // Act
         var result = await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
@@ -34,7 +34,7 @@ public class ReadWriteAsyncLockTests
     public async Task EnterReadLockAsync_WhenReadLockIsHeldBySameId_ThrowsInvalidOperationException()
     {
         // Arrange
-        var id = 1UL;
+        var id = Guid.Parse("00000000-0000-0000-0000-000000000000");
         await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
 
         // Act
@@ -48,8 +48,8 @@ public class ReadWriteAsyncLockTests
     public async Task EnterReadLockAsync_WhenReadLockIsHeldByOtherId_ReturnsTrue()
     {
         // Arrange
-        var id1 = 1UL;
-        var id2 = 2UL;
+        var id1 = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        var id2 = Guid.Parse("00000000-0000-0000-0000-000000000001");
         await _sut.EnterReadLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
 
         // Act
@@ -63,8 +63,8 @@ public class ReadWriteAsyncLockTests
     public async Task EnterReadLockAsync_WhenWriteLockIsHeldByOtherId_ReturnsFalse()
     {
         // Arrange
-        var id1 = 1UL;
-        var id2 = 2UL;
+        var id1 = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        var id2 = Guid.Parse("00000000-0000-0000-0000-000000000001");
         await _sut.EnterWriteLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
 
         // Act
@@ -78,8 +78,8 @@ public class ReadWriteAsyncLockTests
     public async Task EnterReadLockAsync_WhenWriteLockIsHeldByOtherIdAndReleased_ReturnsTrue()
     {
         // Arrange
-        var id1 = 1UL;
-        var id2 = 2UL;
+        var id1 = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        var id2 = Guid.Parse("00000000-0000-0000-0000-000000000001");
         await _sut.EnterWriteLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
         await _sut.ExitWriteLockAsync(id1);
 
@@ -94,8 +94,8 @@ public class ReadWriteAsyncLockTests
     public async Task EnterReadLockAsync_WhenReadLockIsHeldByOtherIdAndReleased_ReturnsTrue()
     {
         // Arrange
-        var id1 = 1UL;
-        var id2 = 2UL;
+        var id1 = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        var id2 = Guid.Parse("00000000-0000-0000-0000-000000000001");
         await _sut.EnterReadLockAsync(id1, DefaultTimeout, DefaultCancellationToken);
         await _sut.ExitReadLockAsync(id1);
 

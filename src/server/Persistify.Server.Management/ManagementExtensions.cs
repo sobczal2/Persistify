@@ -2,6 +2,7 @@
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
+using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.Management;
 
@@ -16,6 +17,8 @@ public static class ManagementExtensions
         services.AddSingleton<IRequiredFileGroup, TemplateManagerRequiredFileGroup>();
         services.AddSingleton<IDocumentManagerStore, DocumentManagerStore>();
         services.AddSingleton<IFileGroupForTemplate, DocumentManagerFileGroupForTemplate>();
+
+        services.AddSingleton<ITransactionState, TransactionState>();
 
         return services;
     }

@@ -18,9 +18,11 @@ public class InitializeTemplateManagerCommand : Command
 
     public InitializeTemplateManagerCommand(
         ILoggerFactory loggerFactory,
-        ITemplateManager templateManager
+        ITemplateManager templateManager,
+        ITransactionState transactionState
     ) : base(
-        loggerFactory
+        loggerFactory,
+        transactionState
     )
     {
         _templateManager = templateManager;

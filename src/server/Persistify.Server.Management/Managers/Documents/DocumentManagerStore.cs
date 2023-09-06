@@ -5,12 +5,14 @@ using System.Threading;
 using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Management.Files;
+using Persistify.Server.Management.Transactions;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Management.Managers.Documents;
 
 public class DocumentManagerStore : IDocumentManagerStore
 {
+    private readonly ITransactionState _transactionState;
     private readonly IFileStreamFactory _fileStreamFactory;
     private readonly ISerializer _serializer;
     private readonly IOptions<RepositorySettings> _repositorySettingsOptions;
@@ -18,10 +20,12 @@ public class DocumentManagerStore : IDocumentManagerStore
     private SpinLock _spinLock;
 
     public DocumentManagerStore(
+        ITransactionState transactionState,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions)
     {
+        _transactionState = transactionState;
         _fileStreamFactory = fileStreamFactory;
         _serializer = serializer;
         _repositorySettingsOptions = repositorySettingsOptions;
@@ -48,6 +52,7 @@ public class DocumentManagerStore : IDocumentManagerStore
             }
 
             var repository = new DocumentManager(
+                _transactionState,
                 templateId,
                 _fileStreamFactory,
                 _serializer,

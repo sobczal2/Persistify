@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Documents;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Management.Files;
+using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
@@ -19,10 +20,13 @@ public class DocumentManager : Manager, IDocumentManager
     private volatile int _count;
 
     public DocumentManager(
+        ITransactionState transactionState,
         int templateId,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions
+    ) : base(
+        transactionState
     )
     {
         _templateId = templateId;
@@ -46,6 +50,8 @@ public class DocumentManager : Manager, IDocumentManager
 
         _count = 0;
     }
+
+    public override string Name => $"DocumentManager_{_templateId:x8}";
 
     public override void Initialize()
     {

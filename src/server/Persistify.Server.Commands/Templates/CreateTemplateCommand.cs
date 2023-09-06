@@ -23,10 +23,12 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
     public CreateTemplateCommand(
         IValidator<CreateTemplateRequest> validator,
         ILoggerFactory loggerFactory,
-        ITemplateManager templateManager
+        ITemplateManager templateManager,
+        ITransactionState transactionState
     ) : base(
         validator,
-        loggerFactory
+        loggerFactory,
+        transactionState
     )
     {
         _templateManager = templateManager;

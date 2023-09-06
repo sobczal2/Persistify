@@ -24,10 +24,12 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
     public ListTemplatesCommand(
         IValidator<ListTemplatesRequest> validator,
         ILoggerFactory loggerFactory,
-        ITemplateManager templateManager
+        ITemplateManager templateManager,
+        ITransactionState transactionState
     ) : base(
         validator,
-        loggerFactory
+        loggerFactory,
+        transactionState
     )
     {
         _templateManager = templateManager;

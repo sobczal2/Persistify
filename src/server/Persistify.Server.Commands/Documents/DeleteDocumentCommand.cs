@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Persistify.Domain.Documents;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
@@ -16,18 +14,17 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Documents;
 
-public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, CreateDocumentResponse>
+public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocumentResponse>
 {
     private readonly ITemplateManager _templateManager;
     private readonly IDocumentManagerStore _documentManagerStore;
-    private Document? _document;
 
-    public CreateDocumentCommand(
-        IValidator<CreateDocumentRequest> validator,
+    public DeleteDocumentCommand(
+        IValidator<DeleteDocumentRequest> validator,
         ILoggerFactory loggerFactory,
+        ITransactionState transactionState,
         ITemplateManager templateManager,
-        IDocumentManagerStore documentManagerStore,
-        ITransactionState transactionState
+        IDocumentManagerStore documentManagerStore
     ) : base(
         validator,
         loggerFactory,
@@ -38,7 +35,7 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(CreateDocumentRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(DeleteDocumentRequest data, CancellationToken cancellationToken)
     {
         var template = await _templateManager.GetAsync(data.TemplateId);
 
@@ -56,27 +53,20 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
         await TransactionState.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        _document = new Document
-        {
-            TextFieldValues = data.TextFieldValues,
-            NumberFieldValues = data.NumberFieldValues,
-            BoolFieldValues = data.BoolFieldValues
-        };
+        var result = await documentManager.RemoveAsync(data.DocumentId);
 
-        documentManager.Add(_document);
-    }
-
-    protected override CreateDocumentResponse GetResponse()
-    {
-        if (_document is null)
+        if (!result)
         {
-            throw new PersistifyInternalException();
+            throw new ValidationException(nameof(data.DocumentId), $"Document with id {data.DocumentId} not found");
         }
-
-        return new CreateDocumentResponse(_document.Id);
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest data)
+    protected override DeleteDocumentResponse GetResponse()
+    {
+        return new DeleteDocumentResponse();
+    }
+
+    protected override TransactionDescriptor GetTransactionDescriptor(DeleteDocumentRequest data)
     {
         return new TransactionDescriptor(
             exclusiveGlobal: false,

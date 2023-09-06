@@ -21,10 +21,12 @@ public class InitializeDocumentManagersCommand : Command
 
     public InitializeDocumentManagersCommand(
         ILoggerFactory loggerFactory,
-        IDocumentManagerStore documentManagerStore
-        ) : base(
-        loggerFactory
-        )
+        IDocumentManagerStore documentManagerStore,
+        ITransactionState transactionState
+    ) : base(
+        loggerFactory,
+        transactionState
+    )
     {
         _documentManagerStore = documentManagerStore;
         _documentManagers = Enumerable.Empty<IDocumentManager>();

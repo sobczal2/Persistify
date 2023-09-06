@@ -17,6 +17,8 @@ public static class CommandsExtensions
 
         services.AddTransient<CreateDocumentCommand>();
         services.AddTransient<GetDocumentCommand>();
+        // services.AddTransient<ListDocumentsCommand>();
+        services.AddTransient<DeleteDocumentCommand>();
 
         services.AddTransient<InitializeTemplateManagerCommand>();
         services.AddTransient<InitializeDocumentManagersCommand>();

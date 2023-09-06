@@ -12,14 +12,18 @@ public class DocumentService : IDocumentService
 {
     private readonly CreateDocumentCommand _createDocumentCommand;
     private readonly GetDocumentCommand _getDocumentCommand;
+    private readonly DeleteDocumentCommand _deleteDocumentCommand;
 
     public DocumentService(
         CreateDocumentCommand createDocumentCommand,
-        GetDocumentCommand getDocumentCommand
+        GetDocumentCommand getDocumentCommand,
+        // ListDocumentsCommand listDocumentsCommand,
+        DeleteDocumentCommand deleteDocumentCommand
     )
     {
         _createDocumentCommand = createDocumentCommand;
         _getDocumentCommand = getDocumentCommand;
+        _deleteDocumentCommand = deleteDocumentCommand;
     }
 
     public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request, CallContext context)
@@ -37,8 +41,8 @@ public class DocumentService : IDocumentService
         throw new NotImplementedException();
     }
 
-    public ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)
+    public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)
     {
-        throw new NotImplementedException();
+        return await _deleteDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 }

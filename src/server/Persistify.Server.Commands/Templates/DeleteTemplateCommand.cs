@@ -21,10 +21,12 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
     public DeleteTemplateCommand(
         IValidator<DeleteTemplateRequest> validator,
         ILoggerFactory loggerFactory,
-        ITemplateManager templateManager
+        ITemplateManager templateManager,
+        ITransactionState transactionState
     ) : base(
         validator,
-        loggerFactory
+        loggerFactory,
+        transactionState
     )
     {
         _templateManager = templateManager;
