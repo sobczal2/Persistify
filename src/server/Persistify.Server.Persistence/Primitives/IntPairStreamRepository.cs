@@ -61,13 +61,6 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
         await _innerRepository.WriteAsync(key, _buffer, useLock);
     }
 
-    private async ValueTask WriteWithoutLockAsync(int key, (int, int) value, bool useLock)
-    {
-        MemoryMarshal.Write(_buffer.AsSpan(0, sizeof(int)), ref value.Item1);
-        MemoryMarshal.Write(_buffer.AsSpan(sizeof(int), sizeof(int)), ref value.Item2);
-        await _innerRepository.WriteAsync(key, _buffer, useLock);
-    }
-
     public async ValueTask<bool> DeleteAsync(int key, bool useLock)
     {
         return await _innerRepository.DeleteAsync(key, useLock);

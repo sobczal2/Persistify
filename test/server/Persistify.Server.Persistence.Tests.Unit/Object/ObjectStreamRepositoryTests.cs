@@ -201,6 +201,69 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    public async Task ReadAsync_WhenObjectIsLongerThanSectorSize_ReturnsObject(bool useLock)
+    {
+        // Arrange
+        var key = 0;
+        var value = new TestClass { Id = 1, Name = new string('a', 1000) };
+        await _sut.WriteAsync(key, value, false);
+
+        // Act
+        var result = await _sut.ReadAsync(key, useLock);
+
+        // Assert
+        result.Should().BeEquivalentTo(value);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ExistsAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    {
+        // Arrange
+        var key = -1;
+
+        // Act
+        var action = new Func<Task>(async () => await _sut.ExistsAsync(key, useLock));
+
+        // Assert
+        await action.Should().ThrowExactlyAsync<ArgumentOutOfRangeException>();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ExistsAsync_WhenObjectDoesNotExist_ReturnsFalse(bool useLock)
+    {
+        // Arrange
+        var key = 0;
+
+        // Act
+        var result = await _sut.ExistsAsync(key, useLock);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ExistsAsync_WhenObjectExists_ReturnsTrue(bool useLock)
+    {
+        // Arrange
+        var key = 0;
+        await _sut.WriteAsync(key, new TestClass { Id = 1, Name = "Test" }, false);
+
+        // Act
+        var result = await _sut.ExistsAsync(key, useLock);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
     {
         // Arrange
@@ -455,7 +518,8 @@ public class ObjectStreamRepositoryTests
     [InlineData(false)]
     [InlineData(true)]
     public async Task
-        WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(bool useLock)
+        WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
+            bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -481,7 +545,8 @@ public class ObjectStreamRepositoryTests
     [InlineData(false)]
     [InlineData(true)]
     public async Task
-        WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(bool useLock)
+        WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
+            bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -531,7 +596,8 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenOverridingNotLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(bool useLock)
+    public async Task WriteAsync_WhenOverridingNotLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(
+        bool useLock)
     {
         // Arrange
         var key0 = 0;
@@ -556,7 +622,8 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_ShrinksStreamToLengthDivisibleBySectorSize(bool useLock)
+    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_ShrinksStreamToLengthDivisibleBySectorSize(
+        bool useLock)
     {
         // Arrange
         var key = 0;
@@ -673,7 +740,8 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndMultipleObjectsExist_ShrinksStreamToLengthDivisibleBySectorSize(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsCorrectAndMultipleObjectsExist_ShrinksStreamToLengthDivisibleBySectorSize(
+        bool useLock)
     {
         // Arrange
         var key = 0;

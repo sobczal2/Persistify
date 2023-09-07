@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -7,24 +8,26 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions.Exceptions;
 
 namespace Persistify.Server.Management.Transactions;
-
+// TODO: Handle timeout and cancellation token
 public sealed class Transaction : ITransaction
 {
-    private readonly TransactionDescriptor _transactionDescriptor;
+    private readonly ITransactionDescriptor _transactionDescriptor;
     private readonly ITransactionState _transactionState;
     private readonly ILogger<Transaction> _logger;
 
     public Guid Id { get; }
 
     public Transaction(
-        TransactionDescriptor transactionDescriptor,
+        ITransactionDescriptor transactionDescriptor,
         ITransactionState transactionState,
         ILogger<Transaction> logger
     )
     {
-        _transactionDescriptor = transactionDescriptor;
-        _transactionState = transactionState;
-        _logger = logger;
+        _transactionDescriptor =
+            transactionDescriptor ?? throw new ArgumentNullException(nameof(transactionDescriptor));
+        _transactionState = transactionState ?? throw new ArgumentNullException(nameof(transactionState));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         Id = Guid.NewGuid();
     }
 
@@ -70,15 +73,25 @@ public sealed class Transaction : ITransaction
             throw new TransactionStateCorruptedException();
         }
 
+        if (_transactionDescriptor.WriteManagers.Contains(manager))
+        {
+            throw new InvalidOperationException("Manager already promoted to write");
+        }
+
+        if (_transactionDescriptor.ReadManagers.Contains(manager))
+        {
+            throw new InvalidOperationException("Manager already promoted to read");
+        }
+
         if (write)
         {
             await manager.BeginWriteAsync(timeOut, CancellationToken.None).ConfigureAwait(false);
-            _transactionDescriptor.WriteManagers.Add(manager);
+            _transactionDescriptor.AddWriteManager(manager);
         }
         else
         {
             await manager.BeginReadAsync(timeOut, CancellationToken.None).ConfigureAwait(false);
-            _transactionDescriptor.ReadManagers.Add(manager);
+            _transactionDescriptor.AddReadManager(manager);
         }
 
         _logger.LogDebug("Manager {ManagerName} promoted to {Write} in transaction {TransactionId}",
