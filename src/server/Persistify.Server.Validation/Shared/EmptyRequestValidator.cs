@@ -1,19 +1,19 @@
-﻿using Persistify.Requests.Shared;
+﻿using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Shared;
 
-public class EmptyRequestValidator : IValidator<EmptyRequest>
+public class EmptyRequestValidator : Validator<EmptyRequest>
 {
     public EmptyRequestValidator()
     {
-        ErrorPrefix = "EmptyRequest";
+        PropertyNames.Push(nameof(EmptyRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(EmptyRequest value)
+    public override Result Validate(EmptyRequest value)
     {
         return Result.Ok;
     }

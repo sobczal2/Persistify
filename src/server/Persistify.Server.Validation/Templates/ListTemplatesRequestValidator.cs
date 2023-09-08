@@ -5,22 +5,22 @@ using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
-public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
+public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 {
     private readonly IValidator<Pagination> _paginationValidator;
 
     public ListTemplatesRequestValidator(IValidator<Pagination> paginationValidator)
     {
         _paginationValidator = paginationValidator;
-        ErrorPrefix = "ListTemplatesRequest";
+        _paginationValidator.PropertyNames = PropertyNames;
+        PropertyNames.Push(nameof(ListTemplatesRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(ListTemplatesRequest value)
+    public override Result Validate(ListTemplatesRequest value)
     {
-        _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
+        PropertyNames.Push(nameof(ListTemplatesRequest.Pagination));
         var paginationResult = _paginationValidator.Validate(value.Pagination);
+        PropertyNames.Pop();
         if (paginationResult.Failure)
         {
             return paginationResult;

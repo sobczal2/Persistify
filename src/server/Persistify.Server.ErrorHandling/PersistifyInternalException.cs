@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Errors;
+namespace Persistify.Server.ErrorHandling;
 
 public class PersistifyInternalException : Exception
 {

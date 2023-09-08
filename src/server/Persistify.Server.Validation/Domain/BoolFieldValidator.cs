@@ -1,28 +1,32 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
 
-public class BoolFieldValidator : IValidator<BoolField>
+public class BoolFieldValidator : Validator<BoolField>
 {
     public BoolFieldValidator()
     {
-        ErrorPrefix = "BoolField";
+        PropertyNames.Push(nameof(BoolField));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(BoolField value)
+    public override Result Validate(BoolField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            return new ValidationException($"{ErrorPrefix}.Name", "Name is required");
+            PropertyNames.Push(nameof(BoolField.Name));
+            return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
-            return new ValidationException($"{ErrorPrefix}.Name", "Name has a maximum length of 64 characters");
+            PropertyNames.Push(nameof(BoolField.Name));
+            return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 
         return Result.Ok;

@@ -4,21 +4,19 @@ using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
-public class GetTemplateRequestValidator : IValidator<GetTemplateRequest>
+public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 {
     public GetTemplateRequestValidator()
     {
-        ErrorPrefix = "GetTemplateRequest";
+        PropertyNames.Push(nameof(GetTemplateRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(GetTemplateRequest value)
+    public override Result Validate(GetTemplateRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId",
-                "TemplateId must be greater than or equal to 0");
+            PropertyNames.Push(nameof(GetTemplateRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
         return Result.Ok;

@@ -1,28 +1,30 @@
-﻿using Persistify.Requests.Shared;
+﻿using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Shared;
 
-public class PaginationValidator : IValidator<Pagination>
+public class PaginationValidator : Validator<Pagination>
 {
     public PaginationValidator()
     {
-        ErrorPrefix = "Pagination";
+        PropertyNames.Push(nameof(Pagination));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(Pagination value)
+    public override Result Validate(Pagination value)
     {
         if (value.PageNumber < 0)
         {
-            return new ValidationException($"{ErrorPrefix}.PageNumber", "PageNumber must be greater than 0");
+            PropertyNames.Push(nameof(value.PageNumber));
+            return ValidationException(SharedErrorMessages.PageNumberLessThanZero);
         }
 
         if (value.PageSize <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.PageSize", "PageSize must be greater than 0");
+            PropertyNames.Push(nameof(value.PageSize));
+            return ValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero);
         }
 
         return Result.Ok;

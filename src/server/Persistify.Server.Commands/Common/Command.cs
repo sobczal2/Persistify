@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
+using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
@@ -16,16 +19,19 @@ public abstract class Command<TData, TResponse>
     protected readonly ILoggerFactory LoggerFactory;
 
     protected readonly ITransactionState TransactionState;
+    private readonly IExceptionHandler _exceptionHandler;
 
     public Command(
         IValidator<TData> validator,
         ILoggerFactory loggerFactory,
-        ITransactionState transactionState
+        ITransactionState transactionState,
+        IExceptionHandler exceptionHandler
     )
     {
         _validator = validator;
         LoggerFactory = loggerFactory;
         TransactionState = transactionState;
+        _exceptionHandler = exceptionHandler;
     }
 
     // TODO: move to config
@@ -37,7 +43,7 @@ public abstract class Command<TData, TResponse>
 
     public async ValueTask<TResponse> RunInTransactionAsync(TData data, CancellationToken cancellationToken)
     {
-        _validator.Validate(data).OnFailure(exception => throw exception);
+        _validator.Validate(data).OnFailure(exception => _exceptionHandler.Handle(exception));
 
         var transactionDescriptor = GetTransactionDescriptor(data);
 
@@ -57,11 +63,13 @@ public abstract class Command<TData, TResponse>
             await transaction.CommitAsync().ConfigureAwait(false);
             return GetResponse();
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             await transaction.RollbackAsync().ConfigureAwait(false);
-            throw;
+            _exceptionHandler.Handle(exception);
         }
+
+        throw new PersistifyInternalException();
     }
 }
 
@@ -69,11 +77,13 @@ public abstract class Command : Command<EmptyRequest, EmptyResponse>
 {
     protected Command(
         ILoggerFactory loggerFactory,
-        ITransactionState transactionState
+        ITransactionState transactionState,
+        IExceptionHandler exceptionHandler
     ) : base(
         new EmptyRequestValidator(),
         loggerFactory,
-        transactionState
+        transactionState,
+        exceptionHandler
     )
     {
     }

@@ -6,7 +6,8 @@ using Persistify.Domain.Documents;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.Errors;
+using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
@@ -24,13 +25,15 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
     public CreateDocumentCommand(
         IValidator<CreateDocumentRequest> validator,
         ILoggerFactory loggerFactory,
+        ITransactionState transactionState,
+        IExceptionHandler exceptionHandler,
         ITemplateManager templateManager,
-        IDocumentManagerStore documentManagerStore,
-        ITransactionState transactionState
+        IDocumentManagerStore documentManagerStore
     ) : base(
         validator,
         loggerFactory,
-        transactionState
+        transactionState,
+        exceptionHandler
     )
     {
         _templateManager = templateManager;

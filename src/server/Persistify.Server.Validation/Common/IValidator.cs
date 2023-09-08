@@ -1,9 +1,10 @@
-﻿using Persistify.Server.Validation.Results;
+﻿using System.Collections.Generic;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Common;
 
 public interface IValidator<in T>
 {
-    public string ErrorPrefix { get; set; }
     Result Validate(T value);
+    Stack<string> PropertyNames { get; set; }
 }

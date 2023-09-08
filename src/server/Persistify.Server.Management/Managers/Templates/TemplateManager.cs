@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Errors;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Transactions;

@@ -1,47 +1,56 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.Extensions.ObjectPool;
 using Persistify.Domain.Documents;
 using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 
-public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
+public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
     private readonly IValidator<BoolFieldValue> _boolFieldValueValidator;
     private readonly IValidator<NumberFieldValue> _numberFieldValueValidator;
     private readonly IValidator<TextFieldValue> _textFieldValueValidator;
 
-    public IndexDocumentRequestValidator(
+    public CreateDocumentRequestValidator(
         IValidator<TextFieldValue> textFieldValueValidator,
         IValidator<NumberFieldValue> numberFieldValueValidator,
         IValidator<BoolFieldValue> boolFieldValueValidator
     )
     {
-        _textFieldValueValidator = textFieldValueValidator;
-        _numberFieldValueValidator = numberFieldValueValidator;
-        _boolFieldValueValidator = boolFieldValueValidator;
-        ErrorPrefix = "IndexDocumentRequest";
+        _textFieldValueValidator = textFieldValueValidator ?? throw new ArgumentNullException(nameof(textFieldValueValidator));
+        _textFieldValueValidator.PropertyNames = PropertyNames;
+        _numberFieldValueValidator = numberFieldValueValidator ?? throw new ArgumentNullException(nameof(numberFieldValueValidator));
+        _numberFieldValueValidator.PropertyNames = PropertyNames;
+        _boolFieldValueValidator = boolFieldValueValidator ?? throw new ArgumentNullException(nameof(boolFieldValueValidator));
+        _boolFieldValueValidator.PropertyNames = PropertyNames;
+        PropertyNames.Push(nameof(CreateDocumentRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(CreateDocumentRequest value)
+    public override Result Validate(CreateDocumentRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            PropertyNames.Push(nameof(CreateDocumentRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
         if (value.TextFieldValues.Count == 0 && value.NumberFieldValues.Count == 0 && value.BoolFieldValues.Count == 0)
         {
-            return new ValidationException($"{ErrorPrefix}", "At least one field value is required");
+            PropertyNames.Push("*FieldValues");
+            return ValidationException(DocumentErrorMessages.NoFieldValues);
         }
 
         for (var i = 0; i < value.TextFieldValues.Count; i++)
         {
-            _textFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.TextFieldValues[{i}]";
+            _textFieldValueValidator.PropertyNames.Push($"{nameof(CreateDocumentRequest.TextFieldValues)}[{i}]");
             var result = _textFieldValueValidator.Validate(value.TextFieldValues[i]);
+            _textFieldValueValidator.PropertyNames.Pop();
             if (result.Failure)
             {
                 return result;
@@ -50,8 +59,9 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
 
         for (var i = 0; i < value.NumberFieldValues.Count; i++)
         {
-            _numberFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.NumberFieldValues[{i}]";
+            _numberFieldValueValidator.PropertyNames.Push($"{nameof(CreateDocumentRequest.NumberFieldValues)}[{i}]");
             var result = _numberFieldValueValidator.Validate(value.NumberFieldValues[i]);
+            _numberFieldValueValidator.PropertyNames.Pop();
             if (result.Failure)
             {
                 return result;
@@ -60,8 +70,9 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
 
         for (var i = 0; i < value.BoolFieldValues.Count; i++)
         {
-            _boolFieldValueValidator.ErrorPrefix = $"{ErrorPrefix}.BoolFieldValues[{i}]";
+            _boolFieldValueValidator.PropertyNames.Push($"{nameof(CreateDocumentRequest.BoolFieldValues)}[{i}]");
             var result = _boolFieldValueValidator.Validate(value.BoolFieldValues[i]);
+            _boolFieldValueValidator.PropertyNames.Pop();
             if (result.Failure)
             {
                 return result;
@@ -76,8 +87,9 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             var fieldName = value.TextFieldValues[i].FieldName;
             if (allFieldNames.Contains(fieldName))
             {
-                return new ValidationException($"{ErrorPrefix}.TextFieldValues[{i}].FieldName",
-                    $"Field name '{fieldName}' is not unique");
+                PropertyNames.Push($"{nameof(CreateDocumentRequest.TextFieldValues)}[{i}]");
+                PropertyNames.Push(nameof(TextFieldValue.FieldName));
+                return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
             allFieldNames.Add(fieldName);
@@ -88,8 +100,9 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             var fieldName = value.NumberFieldValues[i].FieldName;
             if (allFieldNames.Contains(fieldName))
             {
-                return new ValidationException($"{ErrorPrefix}.NumberFieldValues[{i}].FieldName",
-                    $"Field name '{fieldName}' is not unique");
+                PropertyNames.Push($"{nameof(CreateDocumentRequest.NumberFieldValues)}[{i}]");
+                PropertyNames.Push(nameof(NumberFieldValue.FieldName));
+                return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
             allFieldNames.Add(fieldName);
@@ -100,8 +113,9 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             var fieldName = value.BoolFieldValues[i].FieldName;
             if (allFieldNames.Contains(fieldName))
             {
-                return new ValidationException($"{ErrorPrefix}.BoolFieldValues[{i}].FieldName",
-                    $"Field name '{fieldName}' is not unique");
+                PropertyNames.Push($"{nameof(CreateDocumentRequest.BoolFieldValues)}[{i}]");
+                PropertyNames.Push(nameof(BoolFieldValue.FieldName));
+                return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
             allFieldNames.Add(fieldName);

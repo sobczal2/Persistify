@@ -1,19 +1,21 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
 
-public class AnalyzerDescriptorValidator : IValidator<AnalyzerDescriptor>
+public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
 {
     public AnalyzerDescriptorValidator()
     {
-        ErrorPrefix = "AnalyzerDescriptor";
+        PropertyNames.Push(nameof(AnalyzerDescriptor));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(AnalyzerDescriptor value)
+    public override Result Validate(AnalyzerDescriptor value)
     {
         if (value.CharacterFilterNames.Count > 0)
         {
@@ -21,27 +23,28 @@ public class AnalyzerDescriptorValidator : IValidator<AnalyzerDescriptor>
             {
                 if (string.IsNullOrEmpty(value.CharacterFilterNames[i]))
                 {
-                    return new ValidationException($"{ErrorPrefix}.CharacterFilterNames[{i}]",
-                        "CharacterFilterName cannot be empty");
+                    PropertyNames.Push($"{nameof(AnalyzerDescriptor.CharacterFilterNames)}[{i}]");
+                    return ValidationException(TemplateErrorMessages.NameEmpty);
                 }
 
                 if (value.CharacterFilterNames[i].Length > 64)
                 {
-                    return new ValidationException($"{ErrorPrefix}.CharacterFilterNames[{i}]",
-                        "CharacterFilterName has a maximum length of 64 characters");
+                    PropertyNames.Push($"{nameof(AnalyzerDescriptor.CharacterFilterNames)}[{i}]");
+                    return ValidationException(TemplateErrorMessages.NameTooLong);
                 }
             }
         }
 
         if (string.IsNullOrEmpty(value.TokenizerName))
         {
-            return new ValidationException($"{ErrorPrefix}.TokenizerName", "TokenizerName is required");
+            PropertyNames.Push(nameof(AnalyzerDescriptor.TokenizerName));
+            return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.TokenizerName.Length > 64)
         {
-            return new ValidationException($"{ErrorPrefix}.TokenizerName",
-                "TokenizerName has a maximum length of 64 characters");
+            PropertyNames.Push(nameof(AnalyzerDescriptor.TokenizerName));
+            return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 
         if (value.TokenFilterNames.Count > 0)
@@ -50,14 +53,14 @@ public class AnalyzerDescriptorValidator : IValidator<AnalyzerDescriptor>
             {
                 if (string.IsNullOrEmpty(value.TokenFilterNames[i]))
                 {
-                    return new ValidationException($"{ErrorPrefix}.TokenFilterNames[{i}]",
-                        "TokenFilterName cannot be empty");
+                    PropertyNames.Push($"{nameof(AnalyzerDescriptor.TokenFilterNames)}[{i}]");
+                    return ValidationException(TemplateErrorMessages.NameEmpty);
                 }
 
                 if (value.TokenFilterNames[i].Length > 64)
                 {
-                    return new ValidationException($"{ErrorPrefix}.TokenFilterNames[{i}]",
-                        "TokenFilterName has a maximum length of 64 characters");
+                    PropertyNames.Push($"{nameof(AnalyzerDescriptor.TokenFilterNames)}[{i}]");
+                    return ValidationException(TemplateErrorMessages.NameTooLong);
                 }
             }
         }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
+using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -19,12 +20,14 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
     public DeleteTemplateCommand(
         IValidator<DeleteTemplateRequest> validator,
         ILoggerFactory loggerFactory,
-        ITemplateManager templateManager,
-        ITransactionState transactionState
+        ITransactionState transactionState,
+        IExceptionHandler exceptionHandler,
+        ITemplateManager templateManager
     ) : base(
         validator,
         loggerFactory,
-        transactionState
+        transactionState,
+        exceptionHandler
     )
     {
         _templateManager = templateManager;

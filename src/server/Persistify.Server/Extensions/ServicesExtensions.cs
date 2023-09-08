@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Persistify.Server.Commands;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.HostedServices;
 using Persistify.Server.Management;
 using Persistify.Server.Serialization;
@@ -69,6 +70,7 @@ public static class ServicesExtensions
         services.AddCommands();
         services.AddManagement();
         services.AddHostedServices();
+        services.AddErrorHandling();
 
         return services;
     }

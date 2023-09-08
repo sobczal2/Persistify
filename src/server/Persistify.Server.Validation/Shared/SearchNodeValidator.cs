@@ -1,58 +1,69 @@
-﻿using Persistify.Requests.Search;
+﻿using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Persistify.Requests.Search;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Documents;
 using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Shared;
 
-public class SearchNodeValidator : IValidator<SearchNode>
+public class SearchNodeValidator : Validator<SearchNode>
 {
     public SearchNodeValidator()
     {
-        ErrorPrefix = "SearchNode";
+        PropertyNames.Push(nameof(SearchNode));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(SearchNode value)
+    public override Result Validate(SearchNode value)
     {
-        return ValidateSearchNode(value, ErrorPrefix);
+        return ValidateSearchNode(value);
     }
 
-    private Result ValidateSearchNode(SearchNode value, string errorPrefix)
+    private Result ValidateSearchNode(SearchNode value)
     {
         switch (value)
         {
             case AndSearchNode andSearchNode:
-                return ValidateAndSearchNode(andSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(AndSearchNode));
+                return ValidateAndSearchNode(andSearchNode);
             case OrSearchNode orSearchNode:
-                return ValidateOrSearchNode(orSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(OrSearchNode));
+                return ValidateOrSearchNode(orSearchNode);
             case NotSearchNode notSearchNode:
-                return ValidateNotSearchNode(notSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(NotSearchNode));
+                return ValidateNotSearchNode(notSearchNode);
             case TextSearchNode textSearchNode:
-                return ValidateTextSearchNode(textSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(TextSearchNode));
+                return ValidateTextSearchNode(textSearchNode);
             case FtsSearchNode ftsSearchNode:
-                return ValidateFtsSearchNode(ftsSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(FtsSearchNode));
+                return ValidateFtsSearchNode(ftsSearchNode);
             case NumberSearchNode numberSearchNode:
-                return ValidateNumberSearchNode(numberSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(NumberSearchNode));
+                return ValidateNumberSearchNode(numberSearchNode);
             case NumberRangeSearchNode numberRangeSearchNode:
-                return ValidateNumberRangeSearchNode(numberRangeSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(NumberRangeSearchNode));
+                return ValidateNumberRangeSearchNode(numberRangeSearchNode);
             case BoolSearchNode boolSearchNode:
-                return ValidateBoolSearchNode(boolSearchNode, errorPrefix);
+                PropertyNames.Push(nameof(BoolSearchNode));
+                return ValidateBoolSearchNode(boolSearchNode);
             default:
-                return new ValidationException(ErrorPrefix, "Unknown SearchNode type");
+                return ValidationException("Unknown SearchNode type");
         }
     }
 
-    private Result ValidateAndSearchNode(AndSearchNode value, string errorPrefix)
+    private Result ValidateAndSearchNode(AndSearchNode value)
     {
         if (value.Nodes.Count <= 1)
         {
-            return new ValidationException(ErrorPrefix, "AndSearchNode must have at least 2 nodes");
+            return ValidationException(DocumentErrorMessages.AndSearchNodeMustHaveAtLeastTwoNodes);
         }
 
         for (var i = 0; i < value.Nodes.Count; i++)
         {
-            var result = ValidateSearchNode(value.Nodes[i], $"{errorPrefix}.Nodes[{i}]");
+            PropertyNames.Push($"{nameof(AndSearchNode.Nodes)}[{i}]");
+            var result = ValidateSearchNode(value.Nodes[i]);
+            PropertyNames.Pop();
             if (result.Failure)
             {
                 return result;
@@ -62,16 +73,18 @@ public class SearchNodeValidator : IValidator<SearchNode>
         return Result.Ok;
     }
 
-    private Result ValidateOrSearchNode(OrSearchNode value, string errorPrefix)
+    private Result ValidateOrSearchNode(OrSearchNode value)
     {
         if (value.Nodes.Count <= 1)
         {
-            return new ValidationException(ErrorPrefix, "OrSearchNode must have at least 2 nodes");
+            return ValidationException(DocumentErrorMessages.OrSearchNodeMustHaveAtLeastTwoNodes);
         }
 
         for (var i = 0; i < value.Nodes.Count; i++)
         {
-            var result = ValidateSearchNode(value.Nodes[i], $"{errorPrefix}.Nodes[{i}]");
+            PropertyNames.Push($"{nameof(OrSearchNode.Nodes)}[{i}]");
+            var result = ValidateSearchNode(value.Nodes[i]);
+            PropertyNames.Pop();
             if (result.Failure)
             {
                 return result;
@@ -81,94 +94,108 @@ public class SearchNodeValidator : IValidator<SearchNode>
         return Result.Ok;
     }
 
-    private Result ValidateNotSearchNode(NotSearchNode value, string errorPrefix)
+    private Result ValidateNotSearchNode(NotSearchNode value)
     {
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value.Node == null)
         {
-            return new ValidationException(ErrorPrefix, "NotSearchNode must have exactly 1 node");
+            return ValidationException(DocumentErrorMessages.NotSearchNodeMustHaveOneNode);
         }
 
-        return ValidateSearchNode(value.Node, $"{errorPrefix}.Node");
+        return ValidateSearchNode(value.Node);
     }
 
-    private Result ValidateTextSearchNode(TextSearchNode value, string errorPrefix)
+    private Result ValidateTextSearchNode(TextSearchNode value)
     {
-        var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.Failure)
+        if (string.IsNullOrEmpty(value.FieldName))
         {
-            return fieldNameResult;
+            PropertyNames.Push(nameof(TextSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
-
-        if (string.IsNullOrEmpty(value.Value))
+        if (value.FieldName.Length > 64)
         {
-            return new ValidationException($"{errorPrefix}.Value", "Value must not be empty");
-        }
-
-        return Result.Ok;
-    }
-
-    private Result ValidateFtsSearchNode(FtsSearchNode value, string errorPrefix)
-    {
-        var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.Failure)
-        {
-            return fieldNameResult;
+            PropertyNames.Push(nameof(TextSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
         if (string.IsNullOrEmpty(value.Value))
         {
-            return new ValidationException($"{errorPrefix}.Value", "Value must not be empty");
+            PropertyNames.Push(nameof(TextSearchNode.Value));
+            return ValidationException(DocumentErrorMessages.ValueEmpty);
         }
 
         return Result.Ok;
     }
 
-    private Result ValidateNumberSearchNode(NumberSearchNode value, string errorPrefix)
+    private Result ValidateFtsSearchNode(FtsSearchNode value)
     {
-        var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.Failure)
+        if (string.IsNullOrEmpty(value.FieldName))
         {
-            return fieldNameResult;
+            PropertyNames.Push(nameof(FtsSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameEmpty);
+        }
+
+        if (value.FieldName.Length > 64)
+        {
+            PropertyNames.Push(nameof(FtsSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameTooLong);
+        }
+
+        if (string.IsNullOrEmpty(value.Value))
+        {
+            return ValidationException(DocumentErrorMessages.ValueEmpty);
         }
 
         return Result.Ok;
     }
 
-    private Result ValidateNumberRangeSearchNode(NumberRangeSearchNode value, string errorPrefix)
+    private Result ValidateNumberSearchNode(NumberSearchNode value)
     {
-        var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.Failure)
+        if (string.IsNullOrEmpty(value.FieldName))
         {
-            return fieldNameResult;
+            PropertyNames.Push(nameof(NumberSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameEmpty);
+        }
+
+        if (value.FieldName.Length > 64)
+        {
+            PropertyNames.Push(nameof(NumberSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
         return Result.Ok;
     }
 
-    private Result ValidateBoolSearchNode(BoolSearchNode value, string errorPrefix)
+    private Result ValidateNumberRangeSearchNode(NumberRangeSearchNode value)
     {
-        var fieldNameResult = ValidateFieldName(value.FieldName, errorPrefix);
-        if (fieldNameResult.Failure)
+        if (string.IsNullOrEmpty(value.FieldName))
         {
-            return fieldNameResult;
+            PropertyNames.Push(nameof(NumberRangeSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameEmpty);
+        }
+
+        if (value.FieldName.Length > 64)
+        {
+            PropertyNames.Push(nameof(NumberRangeSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
         return Result.Ok;
     }
 
-    private Result ValidateFieldName(string fieldName, string errorPrefix)
+    private Result ValidateBoolSearchNode(BoolSearchNode value)
     {
-        if (string.IsNullOrEmpty(fieldName))
+        if (string.IsNullOrEmpty(value.FieldName))
         {
-            return new ValidationException($"{errorPrefix}.FieldName", "FieldName must not be empty");
+            PropertyNames.Push(nameof(BoolSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
-        if (fieldName.Length > 64)
+        if (value.FieldName.Length > 64)
         {
-            return new ValidationException($"{errorPrefix}.FieldName",
-                "FieldName must not be longer than 64 characters");
+            PropertyNames.Push(nameof(BoolSearchNode.FieldName));
+            return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
         return Result.Ok;

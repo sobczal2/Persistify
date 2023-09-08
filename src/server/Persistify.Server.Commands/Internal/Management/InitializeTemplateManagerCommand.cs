@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
+using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -18,10 +19,12 @@ public class InitializeTemplateManagerCommand : Command
     public InitializeTemplateManagerCommand(
         ILoggerFactory loggerFactory,
         ITemplateManager templateManager,
-        ITransactionState transactionState
+        ITransactionState transactionState,
+        IExceptionHandler exceptionHandler
     ) : base(
         loggerFactory,
-        transactionState
+        transactionState,
+        exceptionHandler
     )
     {
         _templateManager = templateManager;
