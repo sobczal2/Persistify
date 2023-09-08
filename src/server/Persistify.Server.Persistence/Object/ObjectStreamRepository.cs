@@ -15,11 +15,11 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
     where TValue : class
 {
     private readonly Stream _mainStream;
-    private readonly ISerializer _serializer;
-    private readonly int _sectorSize;
     private readonly IntPairStreamRepository _offsetLengthRepository;
-    private byte[] _buffer;
+    private readonly int _sectorSize;
     private readonly SemaphoreSlim _semaphore;
+    private readonly ISerializer _serializer;
+    private byte[] _buffer;
 
     public ObjectStreamRepository(
         Stream mainStream,
@@ -43,6 +43,15 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         _semaphore = new SemaphoreSlim(1, 1);
     }
 
+    public void Dispose()
+    {
+        _offsetLengthRepository.Dispose();
+        _mainStream.Dispose();
+        _semaphore.Dispose();
+
+        GC.SuppressFinalize(this);
+    }
+
     public async ValueTask<TValue?> ReadAsync(int key, bool useLock)
     {
         if (key < 0)
@@ -51,6 +60,75 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
 
         return useLock ? await _semaphore.WrapAsync(() => ReadInternalAsync(key)) : await ReadInternalAsync(key);
+    }
+
+    public async ValueTask<bool> ExistsAsync(int key, bool useLock)
+    {
+        if (key < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(key));
+        }
+
+        return useLock ? await _semaphore.WrapAsync(() => ExistsInternalAsync(key)) : await ExistsInternalAsync(key);
+    }
+
+    public async ValueTask<List<(int Key, TValue Value)>> ReadRangeAsync(int take, int skip, bool useLock)
+    {
+        if (take <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(take));
+        }
+
+        if (skip < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(skip));
+        }
+
+        return useLock
+            ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip))
+            : await ReadRangeInternalAsync(take, skip);
+    }
+
+    public async ValueTask<int> CountAsync(bool useLock)
+    {
+        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
+    }
+
+    public async ValueTask WriteAsync(int key, TValue value, bool useLock)
+    {
+        if (key < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(key));
+        }
+
+        if (value is null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+        await (useLock ? _semaphore.WrapAsync(() => WriteInternalAsync(key, value)) : WriteInternalAsync(key, value));
+    }
+
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
+    {
+        if (key < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(key));
+        }
+
+        return useLock ? await _semaphore.WrapAsync(() => DeleteInternalAsync(key)) : await DeleteInternalAsync(key);
+    }
+
+    public void Clear(bool useLock)
+    {
+        if (useLock)
+        {
+            _semaphore.Wrap(ClearInternal);
+        }
+        else
+        {
+            ClearInternal();
+        }
     }
 
     private async ValueTask<TValue?> ReadInternalAsync(int key)
@@ -77,37 +155,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return _serializer.Deserialize<TValue>(_buffer.AsMemory()[..length]);
     }
 
-    public async ValueTask<bool> ExistsAsync(int key, bool useLock)
-    {
-        if (key < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(key));
-        }
-
-        return useLock ? await _semaphore.WrapAsync(() => ExistsInternalAsync(key)) : await ExistsInternalAsync(key);
-    }
-
     private async ValueTask<bool> ExistsInternalAsync(int key)
     {
         var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
         return !_offsetLengthRepository.IsValueEmpty(offsetLength);
-    }
-
-    public async ValueTask<List<(int Key, TValue Value)>> ReadRangeAsync(int take, int skip, bool useLock)
-    {
-        if (take <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(take));
-        }
-
-        if (skip < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(skip));
-        }
-
-        return useLock
-            ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip))
-            : await ReadRangeInternalAsync(take, skip);
     }
 
     private async ValueTask<List<(int Key, TValue Value)>> ReadRangeInternalAsync(int take, int skip)
@@ -137,29 +188,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return result;
     }
 
-    public async ValueTask<int> CountAsync(bool useLock)
-    {
-        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
-    }
-
     private async ValueTask<int> CountInternalAsync()
     {
         return await _offsetLengthRepository.CountAsync(false);
-    }
-
-    public async ValueTask WriteAsync(int key, TValue value, bool useLock)
-    {
-        if (key < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(key));
-        }
-
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-        await (useLock ? _semaphore.WrapAsync(() => WriteInternalAsync(key, value)) : WriteInternalAsync(key, value));
     }
 
     private async ValueTask WriteInternalAsync(int key, TValue value)
@@ -220,16 +251,6 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
-    {
-        if (key < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(key));
-        }
-
-        return useLock ? await _semaphore.WrapAsync(() => DeleteInternalAsync(key)) : await DeleteInternalAsync(key);
-    }
-
     private async ValueTask<bool> DeleteInternalAsync(int key)
     {
         var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
@@ -253,29 +274,20 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return true;
     }
 
-    public void Clear(bool useLock)
-    {
-        if (useLock)
-        {
-            _semaphore.Wrap(ClearInternal);
-        }
-        else
-        {
-            ClearInternal();
-        }
-    }
-
     private void ClearInternal()
     {
         _mainStream.SetLength(0);
         _offsetLengthRepository.Clear(false);
     }
 
-    private long SectorsToBytes(int sectors) => sectors * (long)_sectorSize;
+    private long SectorsToBytes(int sectors)
+    {
+        return sectors * (long)_sectorSize;
+    }
 
     private int BytesToSectors(long bytes)
     {
-        int fullSectors = (int)(bytes / _sectorSize);
+        var fullSectors = (int)(bytes / _sectorSize);
         return bytes % _sectorSize > 0 ? fullSectors + 1 : fullSectors;
     }
 
@@ -286,15 +298,6 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         {
             _mainStream.SetLength(desiredStreamLength);
         }
-    }
-
-    public void Dispose()
-    {
-        _offsetLengthRepository.Dispose();
-        _mainStream.Dispose();
-        _semaphore.Dispose();
-
-        GC.SuppressFinalize(this);
     }
 
     private void EnsureBufferCapacity(int length)

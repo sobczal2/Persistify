@@ -17,12 +17,14 @@ public class DeleteDocumentRequestValidator : IValidator<DeleteDocumentRequest>
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than or equal to 0");
+            return new ValidationException($"{ErrorPrefix}.TemplateId",
+                "TemplateId must be greater than or equal to 0");
         }
 
         if (value.DocumentId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.DocumentId", "DocumentId must be greater than or equal to 0");
+            return new ValidationException($"{ErrorPrefix}.DocumentId",
+                "DocumentId must be greater than or equal to 0");
         }
 
         return Result.Ok;

@@ -12,16 +12,15 @@ namespace Persistify.Server.Management.Tests.Unit.Files;
 
 public class IdleTimeoutFileStreamFactoryTests
 {
-    private IdleTimeoutFileStreamFactory _sut;
+    private readonly IdleTimeoutFileStreamFactory _sut;
 
     public IdleTimeoutFileStreamFactoryTests()
     {
         var logger = Substitute.For<ILogger<IdleTimeoutFileStreamFactory>>();
         var storageSettingsOptions = Substitute.For<IOptions<StorageSettings>>();
-        storageSettingsOptions.Value.Returns(new StorageSettings()
+        storageSettingsOptions.Value.Returns(new StorageSettings
         {
-            DataPath = "dataPath",
-            IdleFileTimeout = TimeSpan.FromMinutes(1)
+            DataPath = "dataPath", IdleFileTimeout = TimeSpan.FromMinutes(1)
         });
         _sut = new IdleTimeoutFileStreamFactory(
             storageSettingsOptions,

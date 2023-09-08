@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -43,9 +42,9 @@ public class InitializeTemplateManagerCommand : Command
     protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
     {
         return new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: new List<IManager>(),
-            writeManagers: new List<IManager> { _templateManager }
+            false,
+            new List<IManager>(),
+            new List<IManager> { _templateManager }
         );
     }
 }

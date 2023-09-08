@@ -8,8 +8,8 @@ namespace Persistify.Server.HostedServices.Actions;
 
 public class ManagementStartupAction : IStartupAction
 {
-    private readonly InitializeTemplateManagerCommand _initializeTemplateManagerCommand;
     private readonly InitializeDocumentManagersCommand _initializeDocumentManagersCommand;
+    private readonly InitializeTemplateManagerCommand _initializeTemplateManagerCommand;
 
     public ManagementStartupAction(
         InitializeTemplateManagerCommand initializeTemplateManagerCommand,

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Templates;
@@ -11,9 +10,9 @@ namespace Persistify.Server.Services;
 public class TemplateService : ITemplateService
 {
     private readonly CreateTemplateCommand _createTemplateCommand;
+    private readonly DeleteTemplateCommand _deleteTemplateCommand;
     private readonly GetTemplateCommand _getTemplateCommand;
     private readonly ListTemplatesCommand _listTemplatesCommand;
-    private readonly DeleteTemplateCommand _deleteTemplateCommand;
 
     public TemplateService(
         CreateTemplateCommand createTemplateCommand,
@@ -28,7 +27,8 @@ public class TemplateService : ITemplateService
         _deleteTemplateCommand = deleteTemplateCommand;
     }
 
-    public async ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request, CallContext context)
+    public async ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request,
+        CallContext context)
     {
         return await _createTemplateCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
@@ -43,7 +43,8 @@ public class TemplateService : ITemplateService
         return _listTemplatesCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 
-    public async ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext context)
+    public async ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request,
+        CallContext context)
     {
         return await _deleteTemplateCommand.RunInTransactionAsync(request, context.CancellationToken);
     }

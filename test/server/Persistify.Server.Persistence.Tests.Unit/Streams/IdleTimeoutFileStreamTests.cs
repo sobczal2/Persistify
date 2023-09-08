@@ -9,9 +9,9 @@ namespace Persistify.Server.Persistence.Tests.Unit.Streams;
 
 public class IdleTimeoutFileStreamTests : IDisposable
 {
-    private IdleTimeoutFileStream _sut;
     private readonly string _filePath;
     private readonly TimeSpan _idleFileTimeout;
+    private readonly IdleTimeoutFileStream _sut;
 
     public IdleTimeoutFileStreamTests()
     {

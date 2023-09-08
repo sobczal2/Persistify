@@ -11,8 +11,8 @@ namespace Persistify.Server.Management.Tests.Unit.Files;
 
 public class FileManagerTests
 {
-    private IFileProvider _fileProvider;
-    private ILogger<FileManager> _logger;
+    private readonly IFileProvider _fileProvider;
+    private readonly ILogger<FileManager> _logger;
     private FileManager _sut;
 
     public FileManagerTests()

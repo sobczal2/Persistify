@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 namespace Persistify.Concurrency;
 
 /// <summary>
-/// This class is used to lock a resource for reading or writing.
-/// Unsafe to use in a recursive manner.
-/// Nested read locks are allowed.
-/// Nested write locks are not allowed.
+///     This class is used to lock a resource for reading or writing.
+///     Unsafe to use in a recursive manner.
+///     Nested read locks are allowed.
+///     Nested write locks are not allowed.
 /// </summary>
 public sealed class ReadWriteAsyncLock : IDisposable
 {
-    private readonly SemaphoreSlim _readSemaphoreSlim;
-    private readonly SemaphoreSlim _writeSemaphoreSlim;
     private readonly SemaphoreSlim _accessSemaphoreSlim;
     private readonly HashSet<Guid> _readers;
-    private Guid? _writer;
+    private readonly SemaphoreSlim _readSemaphoreSlim;
+    private readonly SemaphoreSlim _writeSemaphoreSlim;
     private volatile uint _pendingWriters;
+    private Guid? _writer;
 
     public ReadWriteAsyncLock()
     {
@@ -28,6 +28,14 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _readers = new HashSet<Guid>();
         _writer = null;
         _pendingWriters = 0;
+    }
+
+    public void Dispose()
+    {
+        _readSemaphoreSlim.Dispose();
+        _writeSemaphoreSlim.Dispose();
+        _accessSemaphoreSlim.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public async ValueTask<bool> EnterReadLockAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken)
@@ -143,13 +151,5 @@ public sealed class ReadWriteAsyncLock : IDisposable
     public bool CanWrite(Guid id)
     {
         return _writer == id;
-    }
-
-    public void Dispose()
-    {
-        _readSemaphoreSlim.Dispose();
-        _writeSemaphoreSlim.Dispose();
-        _accessSemaphoreSlim.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

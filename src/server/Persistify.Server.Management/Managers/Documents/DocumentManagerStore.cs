@@ -12,11 +12,11 @@ namespace Persistify.Server.Management.Managers.Documents;
 
 public class DocumentManagerStore : IDocumentManagerStore
 {
-    private readonly ITransactionState _transactionState;
     private readonly IFileStreamFactory _fileStreamFactory;
-    private readonly ISerializer _serializer;
-    private readonly IOptions<RepositorySettings> _repositorySettingsOptions;
     private readonly ConcurrentDictionary<int, IDocumentManager> _repositories;
+    private readonly IOptions<RepositorySettings> _repositorySettingsOptions;
+    private readonly ISerializer _serializer;
+    private readonly ITransactionState _transactionState;
     private SpinLock _spinLock;
 
     public DocumentManagerStore(

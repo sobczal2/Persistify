@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.Errors;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -50,9 +48,9 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
     protected override TransactionDescriptor GetTransactionDescriptor(DeleteTemplateRequest data)
     {
         return new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: new List<IManager>(),
-            writeManagers: new List<IManager> { _templateManager }
+            false,
+            new List<IManager>(),
+            new List<IManager> { _templateManager }
         );
     }
 }

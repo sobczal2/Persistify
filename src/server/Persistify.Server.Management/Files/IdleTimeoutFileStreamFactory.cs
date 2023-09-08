@@ -15,12 +15,13 @@ public class IdleTimeoutFileStreamFactory : IFileStreamFactory
     public IdleTimeoutFileStreamFactory(
         IOptions<StorageSettings> storageSettingsOptions,
         ILogger<IdleTimeoutFileStreamFactory> logger
-            )
+    )
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ArgumentNullException.ThrowIfNull(storageSettingsOptions, nameof(storageSettingsOptions));
         _storageSettings = storageSettingsOptions.Value;
     }
+
     public Stream CreateStream(string relativePath)
     {
         ArgumentException.ThrowIfNullOrEmpty(relativePath, nameof(relativePath));

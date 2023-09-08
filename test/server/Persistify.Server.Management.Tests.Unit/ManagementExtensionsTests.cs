@@ -19,9 +19,7 @@ public class ManagementExtensionsTests
         // Act
         var action = new Action(() =>
         {
-            var unused = ManagementExtensions.AddManagement(
-                services
-            );
+            var unused = services.AddManagement();
         });
 
         // Assert
@@ -35,9 +33,7 @@ public class ManagementExtensionsTests
         var services = new ServiceCollection();
 
         // Act
-        var actual = ManagementExtensions.AddManagement(
-            services
-        );
+        var actual = services.AddManagement();
 
         // Assert
         actual.Should().BeSameAs(services);

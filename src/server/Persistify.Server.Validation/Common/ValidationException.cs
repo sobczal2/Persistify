@@ -1,5 +1,4 @@
-﻿using System;
-using Grpc.Core;
+﻿using Grpc.Core;
 
 namespace Persistify.Server.Validation.Common;
 

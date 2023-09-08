@@ -6,6 +6,5 @@ public class ProviderDataCorruptedException : Exception
 {
     public ProviderDataCorruptedException() : base("Provider data is corrupted")
     {
-
     }
 }

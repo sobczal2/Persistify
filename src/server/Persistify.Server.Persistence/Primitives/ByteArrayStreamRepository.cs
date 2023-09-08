@@ -10,11 +10,11 @@ namespace Persistify.Server.Persistence.Primitives;
 
 public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDisposable
 {
-    private readonly Stream _stream;
-    private readonly int _bufferSize;
     private readonly byte[] _buffer;
+    private readonly int _bufferSize;
     private readonly byte[] _emptyValue;
     private readonly SemaphoreSlim _semaphore;
+    private readonly Stream _stream;
 
     public ByteArrayStreamRepository(
         Stream stream,
@@ -25,12 +25,21 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         {
             throw new ArgumentOutOfRangeException(nameof(size));
         }
+
         _stream = stream ?? throw new ArgumentNullException(nameof(stream));
         _bufferSize = size;
         _buffer = new byte[_bufferSize];
         _emptyValue = new byte[_bufferSize];
         _emptyValue.AsSpan().Fill(0xFF);
         _semaphore = new SemaphoreSlim(1, 1);
+    }
+
+    public void Dispose()
+    {
+        _stream.Dispose();
+        _semaphore.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 
     public async ValueTask<byte[]> ReadAsync(int key, bool useLock)
@@ -41,6 +50,85 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
 
         return useLock ? await _semaphore.WrapAsync(() => ReadInternalAsync(key)) : await ReadInternalAsync(key);
+    }
+
+    public async ValueTask<List<(int key, byte[] value)>> ReadRangeAsync(int take, int skip, bool useLock)
+    {
+        if (take <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(take));
+        }
+
+        if (skip < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(skip));
+        }
+
+        return useLock
+            ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip))
+            : await ReadRangeInternalAsync(take, skip);
+    }
+
+    public async ValueTask<int> CountAsync(bool useLock)
+    {
+        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
+    }
+
+    public async ValueTask WriteAsync(int key, byte[] value, bool useLock)
+    {
+        if (key < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(key));
+        }
+
+        if (value.Length != _bufferSize)
+        {
+            throw new ArgumentOutOfRangeException(nameof(value));
+        }
+
+        if (IsValueEmpty(value))
+        {
+            throw new ArgumentException(nameof(value));
+        }
+
+        await (useLock ? _semaphore.WrapAsync(() => WriteInternalAsync(key, value)) : WriteInternalAsync(key, value));
+    }
+
+    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
+    {
+        if (key < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(key));
+        }
+
+        return useLock ? await _semaphore.WrapAsync(() => DeleteInternalAsync(key)) : await DeleteInternalAsync(key);
+    }
+
+    public void Clear(bool useLock)
+    {
+        if (useLock)
+        {
+            _semaphore.Wrap(ClearInternal);
+        }
+        else
+        {
+            ClearInternal();
+        }
+    }
+
+    public bool IsValueEmpty(byte[] value)
+    {
+        return value.AsSpan().SequenceEqual(_emptyValue);
+    }
+
+    public byte[] EmptyValue
+    {
+        get
+        {
+            var value = new byte[_bufferSize];
+            _emptyValue.AsSpan().CopyTo(value);
+            return value;
+        }
     }
 
     private async ValueTask<byte[]> ReadInternalAsync(int key)
@@ -71,21 +159,6 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask<List<(int key, byte[] value)>> ReadRangeAsync(int take, int skip, bool useLock)
-    {
-        if (take <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(take));
-        }
-
-        if (skip < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(skip));
-        }
-
-        return useLock ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip)) : await ReadRangeInternalAsync(take, skip);
-    }
-
     private async ValueTask<List<(int key, byte[] value)>> ReadRangeInternalAsync(int take, int skip)
     {
         var length = _stream.Length / _bufferSize;
@@ -94,7 +167,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
 
         var position = 0;
 
-        for(var i = 0; i < skip && position < length; i++)
+        for (var i = 0; i < skip && position < length; i++)
         {
             var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
             if (readBytes != _bufferSize)
@@ -110,7 +183,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             position++;
         }
 
-        for(var i = 0; i < take && position < length; i++)
+        for (var i = 0; i < take && position < length; i++)
         {
             var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
             if (readBytes != _bufferSize)
@@ -135,18 +208,13 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask<int> CountAsync(bool useLock)
-    {
-        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
-    }
-
     private async ValueTask<int> CountInternalAsync()
     {
         var length = _stream.Length / _bufferSize;
         var result = 0;
         _stream.Seek(0, SeekOrigin.Begin);
 
-        for(var i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             var readBytes = await _stream.ReadAsync(_buffer.AsMemory(0, _bufferSize));
             if (readBytes != _bufferSize)
@@ -163,33 +231,13 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, byte[] value, bool useLock)
-    {
-        if (key < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(key));
-        }
-
-        if (value.Length != _bufferSize)
-        {
-            throw new ArgumentOutOfRangeException(nameof(value));
-        }
-
-        if (IsValueEmpty(value))
-        {
-            throw new ArgumentException(nameof(value));
-        }
-
-        await (useLock ? _semaphore.WrapAsync(() => WriteInternalAsync(key, value)) : WriteInternalAsync(key, value));
-    }
-
     private async ValueTask WriteInternalAsync(int key, byte[] value)
     {
         var length = _stream.Length;
         if (key * (long)_bufferSize > length)
         {
             _stream.Seek(0, SeekOrigin.End);
-            var bytesToWrite = new byte[(key - length / _bufferSize) * _bufferSize];
+            var bytesToWrite = new byte[(key - (length / _bufferSize)) * _bufferSize];
             bytesToWrite.AsSpan().Fill(0xFF);
             await _stream.WriteAsync(bytesToWrite);
         }
@@ -200,16 +248,6 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
 
         await _stream.WriteAsync(value);
         await _stream.FlushAsync();
-    }
-
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
-    {
-        if (key < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(key));
-        }
-
-        return useLock ? await _semaphore.WrapAsync(() => DeleteInternalAsync(key)) : await DeleteInternalAsync(key);
     }
 
     private async ValueTask<bool> DeleteInternalAsync(int key)
@@ -246,43 +284,8 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return true;
     }
 
-    public void Clear(bool useLock)
-    {
-        if (useLock)
-        {
-            _semaphore.Wrap(ClearInternal);
-        }
-        else
-        {
-            ClearInternal();
-        }
-    }
-
     private void ClearInternal()
     {
         _stream.SetLength(0);
-    }
-
-    public bool IsValueEmpty(byte[] value)
-    {
-        return value.AsSpan().SequenceEqual(_emptyValue);
-    }
-
-    public byte[] EmptyValue
-    {
-        get
-        {
-            var value = new byte[_bufferSize];
-            _emptyValue.AsSpan().CopyTo(value);
-            return value;
-        }
-    }
-
-    public void Dispose()
-    {
-        _stream.Dispose();
-        _semaphore.Dispose();
-
-        GC.SuppressFinalize(this);
     }
 }

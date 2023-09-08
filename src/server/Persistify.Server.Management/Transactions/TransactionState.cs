@@ -8,7 +8,6 @@ namespace Persistify.Server.Management.Transactions;
 
 public class TransactionState : ITransactionState
 {
-    public AsyncLocal<ITransaction?> CurrentTransaction { get; }
     private readonly ReadWriteAsyncLock _globalLock;
 
     public TransactionState()
@@ -17,17 +16,21 @@ public class TransactionState : ITransactionState
         _globalLock = new ReadWriteAsyncLock();
     }
 
+    public AsyncLocal<ITransaction?> CurrentTransaction { get; }
+
     public ITransaction GetCurrentTransaction()
     {
         return CurrentTransaction.Value ?? throw new TransactionStateCorruptedException();
     }
 
-    public async ValueTask<bool> EnterReadGlobalLockAsync(Guid transactionId, TimeSpan timeOut, CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterReadGlobalLockAsync(Guid transactionId, TimeSpan timeOut,
+        CancellationToken cancellationToken)
     {
         return await _globalLock.EnterReadLockAsync(transactionId, timeOut, cancellationToken).ConfigureAwait(false);
     }
 
-    public async ValueTask<bool> EnterWriteGlobalLockAsync(Guid transactionId, TimeSpan timeOut, CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterWriteGlobalLockAsync(Guid transactionId, TimeSpan timeOut,
+        CancellationToken cancellationToken)
     {
         return await _globalLock.EnterWriteLockAsync(transactionId, timeOut, cancellationToken).ConfigureAwait(false);
     }

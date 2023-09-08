@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Server.Persistence.Abstractions;
 
@@ -10,8 +9,8 @@ namespace Persistify.Server.Persistence.Primitives;
 
 public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, IDisposable
 {
-    private readonly ByteArrayStreamRepository _innerRepository;
     private readonly byte[] _buffer;
+    private readonly ByteArrayStreamRepository _innerRepository;
 
     public IntPairStreamRepository(
         Stream stream
@@ -19,6 +18,13 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
     {
         _innerRepository = new ByteArrayStreamRepository(stream, sizeof(int) * 2);
         _buffer = new byte[sizeof(int) * 2];
+    }
+
+    public void Dispose()
+    {
+        _innerRepository.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 
     public async ValueTask<(int, int)> ReadAsync(int key, bool useLock)
@@ -78,11 +84,4 @@ public class IntPairStreamRepository : IValueTypeStreamRepository<(int, int)>, I
     }
 
     public (int, int) EmptyValue => MemoryMarshal.Read<(int, int)>(_innerRepository.EmptyValue.AsSpan());
-
-    public void Dispose()
-    {
-        _innerRepository.Dispose();
-
-        GC.SuppressFinalize(this);
-    }
 }

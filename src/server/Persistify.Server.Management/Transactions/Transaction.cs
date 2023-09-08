@@ -3,19 +3,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Persistify.Concurrency;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions.Exceptions;
 
 namespace Persistify.Server.Management.Transactions;
+
 // TODO: Handle timeout and cancellation token
 public sealed class Transaction : ITransaction
 {
+    private readonly ILogger<Transaction> _logger;
     private readonly ITransactionDescriptor _transactionDescriptor;
     private readonly ITransactionState _transactionState;
-    private readonly ILogger<Transaction> _logger;
-
-    public Guid Id { get; }
 
     public Transaction(
         ITransactionDescriptor transactionDescriptor,
@@ -30,6 +28,8 @@ public sealed class Transaction : ITransaction
 
         Id = Guid.NewGuid();
     }
+
+    public Guid Id { get; }
 
     public async ValueTask BeginAsync(TimeSpan timeOut,
         CancellationToken cancellationToken)

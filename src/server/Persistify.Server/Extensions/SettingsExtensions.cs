@@ -80,8 +80,8 @@ public static class SettingsExtensions
 
         var repositorySettingsValidator = new RepositorySettingsValidator();
         repositorySettingsValidator.ValidateAndThrow(repositorySettingsSection.Get<RepositorySettings>() ??
-                                                         throw new InvalidOperationException(
-                                                             $"Could not load {RepositorySettings.SectionName} from configuration"));
+                                                     throw new InvalidOperationException(
+                                                         $"Could not load {RepositorySettings.SectionName} from configuration"));
 
         services.Configure<RepositorySettings>(repositorySettingsSection);
 

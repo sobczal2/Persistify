@@ -11,25 +11,26 @@ namespace Persistify.Server.Management.Managers;
 
 public abstract class Manager : IManager
 {
-    protected readonly ITransactionState TransactionState;
     private readonly ReadWriteAsyncLock _readWriteAsyncLock;
-    protected Queue<Func<ValueTask>> PendingActions { get; }
+    protected readonly ITransactionState TransactionState;
     private bool _isInitialized;
-
-    private Guid TransactionId => TransactionState.GetCurrentTransaction().Id;
-
-    // TODO: move to config
-    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
     protected Manager(
         ITransactionState transactionState
-        )
+    )
     {
         TransactionState = transactionState;
         _readWriteAsyncLock = new ReadWriteAsyncLock();
         PendingActions = new Queue<Func<ValueTask>>();
         _isInitialized = false;
     }
+
+    protected Queue<Func<ValueTask>> PendingActions { get; }
+
+    private Guid TransactionId => TransactionState.GetCurrentTransaction().Id;
+
+    // TODO: move to config
+    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
     public abstract string Name { get; }
 

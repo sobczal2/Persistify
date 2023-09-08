@@ -11,17 +11,11 @@ namespace Persistify.Server.Persistence.Tests.Unit.Object;
 
 public class ObjectStreamRepositoryTests
 {
-    public class TestClass
-    {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-    }
+    private readonly Stream _mainStream;
+    private readonly Stream _offsetLengthStream;
+    private readonly int _sectorSize;
 
-    private Stream _mainStream;
-    private Stream _offsetLengthStream;
-    private int _sectorSize;
-
-    private ObjectStreamRepository<TestClass> _sut;
+    private readonly ObjectStreamRepository<TestClass> _sut;
 
     public ObjectStreamRepositoryTests()
     {
@@ -813,5 +807,11 @@ public class ObjectStreamRepositoryTests
 
         // Assert
         _mainStream.CanRead.Should().BeFalse();
+    }
+
+    public class TestClass
+    {
+        public int Id { get; set; }
+        public string? Name { get; set; }
     }
 }

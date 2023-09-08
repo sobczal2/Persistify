@@ -17,8 +17,8 @@ namespace Persistify.Server.Management.Managers.Templates;
 
 public class TemplateManager : Manager, ITemplateManager
 {
-    private readonly IFileManager _fileManager;
     private readonly IDocumentManagerStore _documentManagerStore;
+    private readonly IFileManager _fileManager;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Template> _templateRepository;
     private volatile int _count;
@@ -189,7 +189,10 @@ public class TemplateManager : Manager, ITemplateManager
                 _documentManagerStore.DeleteManager(id);
                 Interlocked.Decrement(ref _count);
             }
-            else throw new PersistifyInternalException();
+            else
+            {
+                throw new PersistifyInternalException();
+            }
         });
 
         PendingActions.Enqueue(removeAction);

@@ -14,9 +14,9 @@ namespace Persistify.Server.Management.Managers.Documents;
 
 public class DocumentManager : Manager, IDocumentManager
 {
-    private readonly int _templateId;
-    private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Document> _documentRepository;
+    private readonly IntStreamRepository _identifierRepository;
+    private readonly int _templateId;
     private volatile int _count;
 
     public DocumentManager(

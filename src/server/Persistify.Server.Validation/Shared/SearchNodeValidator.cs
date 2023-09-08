@@ -6,12 +6,13 @@ namespace Persistify.Server.Validation.Shared;
 
 public class SearchNodeValidator : IValidator<SearchNode>
 {
-    public string ErrorPrefix { get; set; }
-
     public SearchNodeValidator()
     {
         ErrorPrefix = "SearchNode";
     }
+
+    public string ErrorPrefix { get; set; }
+
     public Result Validate(SearchNode value)
     {
         return ValidateSearchNode(value, ErrorPrefix);
@@ -44,12 +45,12 @@ public class SearchNodeValidator : IValidator<SearchNode>
 
     private Result ValidateAndSearchNode(AndSearchNode value, string errorPrefix)
     {
-        if(value.Nodes.Count <= 1)
+        if (value.Nodes.Count <= 1)
         {
             return new ValidationException(ErrorPrefix, "AndSearchNode must have at least 2 nodes");
         }
 
-        for(var i = 0; i < value.Nodes.Count; i++)
+        for (var i = 0; i < value.Nodes.Count; i++)
         {
             var result = ValidateSearchNode(value.Nodes[i], $"{errorPrefix}.Nodes[{i}]");
             if (result.Failure)
@@ -100,7 +101,7 @@ public class SearchNodeValidator : IValidator<SearchNode>
         }
 
 
-        if(string.IsNullOrEmpty(value.Value))
+        if (string.IsNullOrEmpty(value.Value))
         {
             return new ValidationException($"{errorPrefix}.Value", "Value must not be empty");
         }
@@ -166,7 +167,8 @@ public class SearchNodeValidator : IValidator<SearchNode>
 
         if (fieldName.Length > 64)
         {
-            return new ValidationException($"{errorPrefix}.FieldName", "FieldName must not be longer than 64 characters");
+            return new ValidationException($"{errorPrefix}.FieldName",
+                "FieldName must not be longer than 64 characters");
         }
 
         return Result.Ok;

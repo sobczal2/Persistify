@@ -11,8 +11,8 @@ namespace Persistify.Server.Services;
 public class DocumentService : IDocumentService
 {
     private readonly CreateDocumentCommand _createDocumentCommand;
-    private readonly GetDocumentCommand _getDocumentCommand;
     private readonly DeleteDocumentCommand _deleteDocumentCommand;
+    private readonly GetDocumentCommand _getDocumentCommand;
 
     public DocumentService(
         CreateDocumentCommand createDocumentCommand,
@@ -26,7 +26,8 @@ public class DocumentService : IDocumentService
         _deleteDocumentCommand = deleteDocumentCommand;
     }
 
-    public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request, CallContext context)
+    public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request,
+        CallContext context)
     {
         return await _createDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
@@ -41,7 +42,8 @@ public class DocumentService : IDocumentService
         throw new NotImplementedException();
     }
 
-    public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)
+    public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request,
+        CallContext context)
     {
         return await _deleteDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }

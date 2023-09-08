@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\shared\Persistify.Concurrency\Persistify.Concurrency.csproj" />
+    <ProjectReference Include="..\..\..\src\shared\Persistify.Concurrency\Persistify.Concurrency.csproj"/>
   </ItemGroup>
 
 </Project>

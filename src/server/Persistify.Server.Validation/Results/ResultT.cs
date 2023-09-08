@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.ExceptionServices;
 
 namespace Persistify.Server.Validation.Results;
 

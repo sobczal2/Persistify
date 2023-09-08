@@ -8,14 +8,15 @@ namespace Persistify.Concurrency.Tests.Unit;
 
 public class ReadWriteAsyncLockTests
 {
-    private ReadWriteAsyncLock _sut;
-    private static TimeSpan DefaultTimeout => TimeSpan.FromMilliseconds(10);
-    private static CancellationToken DefaultCancellationToken => CancellationToken.None;
+    private readonly ReadWriteAsyncLock _sut;
 
     public ReadWriteAsyncLockTests()
     {
         _sut = new ReadWriteAsyncLock();
     }
+
+    private static TimeSpan DefaultTimeout => TimeSpan.FromMilliseconds(10);
+    private static CancellationToken DefaultCancellationToken => CancellationToken.None;
 
     [Fact]
     public async Task EnterReadLockAsync_WhenNoLocksAreHeld_ReturnsTrue()

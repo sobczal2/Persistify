@@ -6,17 +6,16 @@ namespace Persistify.Server.Management.Managers.Templates;
 
 public class TemplateManagerRequiredFileGroup : IRequiredFileGroup
 {
-    public string FileGroupName => "TemplateManager";
-
-    public List<string> GetFileNames() => new()
-    {
-        IdentifierRepositoryFileName,
-        TemplateRepositoryMainFileName,
-        TemplateRepositoryOffsetLengthFileName
-    };
-
     public static string IdentifierRepositoryFileName => Path.Join("Template", "identifier.bin");
     public static string TemplateRepositoryMainFileName => Path.Join("Template", "object.bin");
     public static string TemplateRepositoryOffsetLengthFileName => Path.Join("Template", "offsetLength.bin");
+    public string FileGroupName => "TemplateManager";
 
+    public List<string> GetFileNames()
+    {
+        return new List<string>
+        {
+            IdentifierRepositoryFileName, TemplateRepositoryMainFileName, TemplateRepositoryOffsetLengthFileName
+        };
+    }
 }

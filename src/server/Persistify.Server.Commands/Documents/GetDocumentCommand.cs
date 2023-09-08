@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -18,8 +17,8 @@ namespace Persistify.Server.Commands.Documents;
 
 public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private readonly IDocumentManagerStore _documentManagerStore;
+    private readonly ITemplateManager _templateManager;
     private Document? _document;
 
     public GetDocumentCommand(
@@ -77,9 +76,9 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
     protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest data)
     {
         return new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: new List<IManager> { _templateManager },
-            writeManagers: new List<IManager>()
+            false,
+            new List<IManager> { _templateManager },
+            new List<IManager>()
         );
     }
 }

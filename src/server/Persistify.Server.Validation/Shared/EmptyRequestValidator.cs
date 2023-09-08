@@ -10,7 +10,9 @@ public class EmptyRequestValidator : IValidator<EmptyRequest>
     {
         ErrorPrefix = "EmptyRequest";
     }
+
     public string ErrorPrefix { get; set; }
+
     public Result Validate(EmptyRequest value)
     {
         return Result.Ok;

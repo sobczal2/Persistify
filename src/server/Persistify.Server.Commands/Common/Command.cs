@@ -17,9 +17,6 @@ public abstract class Command<TData, TResponse>
 
     protected readonly ITransactionState TransactionState;
 
-    // TODO: move to config
-    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
-
     public Command(
         IValidator<TData> validator,
         ILoggerFactory loggerFactory,
@@ -30,6 +27,9 @@ public abstract class Command<TData, TResponse>
         LoggerFactory = loggerFactory;
         TransactionState = transactionState;
     }
+
+    // TODO: move to config
+    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
     protected abstract ValueTask RunAsync(TData data, CancellationToken cancellationToken);
     protected abstract TResponse GetResponse();

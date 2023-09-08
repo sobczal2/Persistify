@@ -16,8 +16,8 @@ namespace Persistify.Server.Commands.Documents;
 
 public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocumentResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private readonly IDocumentManagerStore _documentManagerStore;
+    private readonly ITemplateManager _templateManager;
 
     public DeleteDocumentCommand(
         IValidator<DeleteDocumentRequest> validator,
@@ -69,9 +69,9 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
     protected override TransactionDescriptor GetTransactionDescriptor(DeleteDocumentRequest data)
     {
         return new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: new List<IManager> { _templateManager },
-            writeManagers: new List<IManager>()
+            false,
+            new List<IManager> { _templateManager },
+            new List<IManager>()
         );
     }
 }

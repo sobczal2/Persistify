@@ -12,10 +12,10 @@ namespace Persistify.Server.Management.Tests.Unit.Files;
 
 public class LocalFileProviderTests : IDisposable
 {
-    private ILogger<LocalFileProvider> _logger;
-    private IOptions<StorageSettings> _storageSettings;
-    private string _tempDirectoryPath;
-    private LocalFileProvider _sut;
+    private readonly ILogger<LocalFileProvider> _logger;
+    private readonly IOptions<StorageSettings> _storageSettings;
+    private readonly LocalFileProvider _sut;
+    private readonly string _tempDirectoryPath;
 
     public LocalFileProviderTests()
     {
@@ -31,6 +31,14 @@ public class LocalFileProviderTests : IDisposable
             _logger,
             _storageSettings
         );
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_tempDirectoryPath))
+        {
+            Directory.Delete(_tempDirectoryPath, true);
+        }
     }
 
     [Fact]
@@ -159,13 +167,5 @@ public class LocalFileProviderTests : IDisposable
 
         // Assert
         action.Should().Throw<InvalidOperationException>();
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_tempDirectoryPath))
-        {
-            Directory.Delete(_tempDirectoryPath, true);
-        }
     }
 }

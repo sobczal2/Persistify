@@ -10,8 +10,8 @@ namespace Persistify.Server.Persistence.Tests.Unit.Primitives;
 
 public class IntStreamRepositoryTests : IDisposable
 {
-    private IntStreamRepository _sut;
-    private Stream _stream;
+    private readonly Stream _stream;
+    private readonly IntStreamRepository _sut;
 
     public IntStreamRepositoryTests()
     {

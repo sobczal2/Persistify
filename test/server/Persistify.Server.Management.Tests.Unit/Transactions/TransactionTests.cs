@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Management.Transactions.Exceptions;
@@ -15,13 +14,13 @@ namespace Persistify.Server.Management.Tests.Unit.Transactions;
 
 public class TransactionTests
 {
-    private readonly ITransactionDescriptor _transactionDescriptor;
-    private readonly ITransactionState _transactionState;
     private readonly ILogger<Transaction> _logger;
 
-    private Transaction _sut;
-
     private readonly TimeSpan _timeOut;
+    private readonly ITransactionDescriptor _transactionDescriptor;
+    private readonly ITransactionState _transactionState;
+
+    private Transaction _sut;
 
     public TransactionTests()
     {
@@ -92,7 +91,7 @@ public class TransactionTests
         _transactionState.GetCurrentTransaction().Returns(Substitute.For<ITransaction>());
 
         // Act
-        Func<Task> act = async () => await _sut.BeginAsync(_timeOut, CancellationToken.None);
+        var act = async () => await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowExactlyAsync<TransactionStateCorruptedException>();

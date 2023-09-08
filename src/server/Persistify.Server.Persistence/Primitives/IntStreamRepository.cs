@@ -13,9 +13,16 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
 
     public IntStreamRepository(
         Stream stream
-        )
+    )
     {
         _innerRepository = new ByteArrayStreamRepository(stream, sizeof(int));
+    }
+
+    public void Dispose()
+    {
+        _innerRepository.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 
     public async ValueTask<int> ReadAsync(int key, bool useLock)
@@ -67,11 +74,4 @@ public class IntStreamRepository : IValueTypeStreamRepository<int>, IDisposable
     }
 
     public int EmptyValue => MemoryMarshal.Read<int>(_innerRepository.EmptyValue);
-
-    public void Dispose()
-    {
-        _innerRepository.Dispose();
-
-        GC.SuppressFinalize(this);
-    }
 }

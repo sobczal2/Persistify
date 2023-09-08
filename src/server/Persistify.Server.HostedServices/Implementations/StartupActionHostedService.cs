@@ -10,17 +10,18 @@ namespace Persistify.Server.HostedServices.Implementations;
 
 public class StartupActionHostedService : BackgroundService
 {
-    private readonly IEnumerable<IStartupAction> _startupActions;
     private readonly ILogger<StartupActionHostedService> _logger;
+    private readonly IEnumerable<IStartupAction> _startupActions;
 
     public StartupActionHostedService(
         IEnumerable<IStartupAction> startupActions,
         ILogger<StartupActionHostedService> logger
-        )
+    )
     {
         _startupActions = startupActions;
         _logger = logger;
     }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var tasks = new List<Task>();
@@ -36,7 +37,8 @@ public class StartupActionHostedService : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error while performing startup action {StartupActionName}", startupAction.Name);
+                    _logger.LogError(e, "Error while performing startup action {StartupActionName}",
+                        startupAction.Name);
                 }
             }, stoppingToken));
         }

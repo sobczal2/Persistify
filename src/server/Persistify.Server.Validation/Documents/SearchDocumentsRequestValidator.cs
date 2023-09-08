@@ -27,7 +27,8 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than or equal to 0");
+            return new ValidationException($"{ErrorPrefix}.TemplateId",
+                "TemplateId must be greater than or equal to 0");
         }
 
         _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
@@ -38,7 +39,7 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if(value.SearchNode == null)
+        if (value.SearchNode == null)
         {
             return new ValidationException($"{ErrorPrefix}.SearchNode", "SearchNode is required");
         }

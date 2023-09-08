@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -53,9 +52,9 @@ public class InitializeDocumentManagersCommand : Command
 
         var managers = _documentManagers.Cast<IManager>().ToList();
         return new TransactionDescriptor(
-            exclusiveGlobal: false,
-            readManagers: new List<IManager>(),
-            writeManagers: managers
+            false,
+            new List<IManager>(),
+            managers
         );
     }
 }

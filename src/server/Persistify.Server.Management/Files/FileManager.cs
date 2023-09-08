@@ -7,10 +7,10 @@ namespace Persistify.Server.Management.Files;
 
 public class FileManager : IFileManager
 {
-    private readonly IEnumerable<IRequiredFileGroup> _requiredFileGroups;
     private readonly IEnumerable<IFileGroupForTemplate> _fileGroupsForTemplate;
-    private readonly ILogger<FileManager> _logger;
     private readonly IFileProvider _fileProvider;
+    private readonly ILogger<FileManager> _logger;
+    private readonly IEnumerable<IRequiredFileGroup> _requiredFileGroups;
 
     public FileManager(
         ILogger<FileManager> logger,

@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="protobuf-net" Version="3.2.26" />
+    <PackageReference Include="protobuf-net" Version="3.2.26"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj" />
+    <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj"/>
   </ItemGroup>
 
 

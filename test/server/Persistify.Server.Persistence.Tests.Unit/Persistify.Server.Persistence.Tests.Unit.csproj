@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\server\Persistify.Server.Persistence\Persistify.Server.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\src\server\Persistify.Server.Persistence\Persistify.Server.Persistence.csproj"/>
   </ItemGroup>
 
 </Project>

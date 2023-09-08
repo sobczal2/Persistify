@@ -33,7 +33,7 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
         }
 
-        if(value.TextFieldValues.Count == 0 && value.NumberFieldValues.Count == 0 && value.BoolFieldValues.Count == 0)
+        if (value.TextFieldValues.Count == 0 && value.NumberFieldValues.Count == 0 && value.BoolFieldValues.Count == 0)
         {
             return new ValidationException($"{ErrorPrefix}", "At least one field value is required");
         }
@@ -68,14 +68,16 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             }
         }
 
-        var allFieldNames = new HashSet<string>(value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count);
+        var allFieldNames = new HashSet<string>(value.TextFieldValues.Count + value.NumberFieldValues.Count +
+                                                value.BoolFieldValues.Count);
 
         for (var i = 0; i < value.TextFieldValues.Count; i++)
         {
             var fieldName = value.TextFieldValues[i].FieldName;
             if (allFieldNames.Contains(fieldName))
             {
-                return new ValidationException($"{ErrorPrefix}.TextFieldValues[{i}].FieldName", $"Field name '{fieldName}' is not unique");
+                return new ValidationException($"{ErrorPrefix}.TextFieldValues[{i}].FieldName",
+                    $"Field name '{fieldName}' is not unique");
             }
 
             allFieldNames.Add(fieldName);
@@ -86,7 +88,8 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             var fieldName = value.NumberFieldValues[i].FieldName;
             if (allFieldNames.Contains(fieldName))
             {
-                return new ValidationException($"{ErrorPrefix}.NumberFieldValues[{i}].FieldName", $"Field name '{fieldName}' is not unique");
+                return new ValidationException($"{ErrorPrefix}.NumberFieldValues[{i}].FieldName",
+                    $"Field name '{fieldName}' is not unique");
             }
 
             allFieldNames.Add(fieldName);
@@ -97,7 +100,8 @@ public class IndexDocumentRequestValidator : IValidator<CreateDocumentRequest>
             var fieldName = value.BoolFieldValues[i].FieldName;
             if (allFieldNames.Contains(fieldName))
             {
-                return new ValidationException($"{ErrorPrefix}.BoolFieldValues[{i}].FieldName", $"Field name '{fieldName}' is not unique");
+                return new ValidationException($"{ErrorPrefix}.BoolFieldValues[{i}].FieldName",
+                    $"Field name '{fieldName}' is not unique");
             }
 
             allFieldNames.Add(fieldName);

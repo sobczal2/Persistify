@@ -8,10 +8,10 @@ namespace Persistify.Server.Persistence.Streams;
 public class IdleTimeoutFileStream : Stream
 {
     private readonly string _filePath;
-    private FileStream? _fileStream;
-    private CancellationTokenSource? _cancellationTokenSource;
-    private readonly object _lock;
     private readonly TimeSpan _idleFileTimeout;
+    private readonly object _lock;
+    private CancellationTokenSource? _cancellationTokenSource;
+    private FileStream? _fileStream;
 
     public IdleTimeoutFileStream(
         TimeSpan idleFileTimeout,
@@ -21,6 +21,56 @@ public class IdleTimeoutFileStream : Stream
         _filePath = filePath;
         _lock = new object();
         _idleFileTimeout = idleFileTimeout;
+    }
+
+    public override bool CanRead
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.CanRead;
+        }
+    }
+
+    public override bool CanSeek
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.CanSeek;
+        }
+    }
+
+    public override bool CanWrite
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.CanWrite;
+        }
+    }
+
+    public override long Length
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.Length;
+        }
+    }
+
+    public override long Position
+    {
+        get
+        {
+            EnsureFileStreamOpen();
+            return _fileStream!.Position;
+        }
+        set
+        {
+            EnsureFileStreamOpen();
+            _fileStream!.Position = value;
+        }
     }
 
     private void EnsureFileStreamOpen()
@@ -87,55 +137,6 @@ public class IdleTimeoutFileStream : Stream
         _fileStream!.Write(buffer, offset, count);
     }
 
-    public override bool CanRead
-    {
-        get
-        {
-            EnsureFileStreamOpen();
-            return _fileStream!.CanRead;
-        }
-    }
-
-    public override bool CanSeek
-    {
-        get
-        {
-            EnsureFileStreamOpen();
-            return _fileStream!.CanSeek;
-        }
-    }
-    public override bool CanWrite
-    {
-        get
-        {
-            EnsureFileStreamOpen();
-            return _fileStream!.CanWrite;
-        }
-    }
-
-    public override long Length
-    {
-        get
-        {
-            EnsureFileStreamOpen();
-            return _fileStream!.Length;
-        }
-    }
-
-    public override long Position
-    {
-        get
-        {
-            EnsureFileStreamOpen();
-            return _fileStream!.Position;
-        }
-        set
-        {
-            EnsureFileStreamOpen();
-            _fileStream!.Position = value;
-        }
-    }
-
     protected override void Dispose(bool disposing)
     {
         if (disposing)
@@ -144,6 +145,7 @@ public class IdleTimeoutFileStream : Stream
             _fileStream?.Dispose();
             _cancellationTokenSource?.Dispose();
         }
+
         base.Dispose(disposing);
     }
 }
