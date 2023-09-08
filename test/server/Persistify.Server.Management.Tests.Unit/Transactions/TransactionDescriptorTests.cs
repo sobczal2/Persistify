@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using NSubstitute;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions;
 using Xunit;
@@ -55,5 +56,75 @@ public class TransactionDescriptorTests
         Assert.Equal(exclusiveGlobal, transactionDescriptor.ExclusiveGlobal);
         Assert.Equal(readManagers, transactionDescriptor.ReadManagers);
         Assert.Equal(writeManagers, transactionDescriptor.WriteManagers);
+    }
+
+    [Fact]
+    public void AddReadManager_WhenManagerIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var exclusiveGlobal = false;
+        var readManagers = new List<IManager>();
+        var writeManagers = new List<IManager>();
+        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        IManager manager = null!;
+
+        // Act
+        var exception = Record.Exception(() => transactionDescriptor.AddReadManager(manager));
+
+        // Assert
+        Assert.NotNull(exception);
+        Assert.IsType<ArgumentNullException>(exception);
+    }
+
+    [Fact]
+    public void AddReadManager_WhenManagerIsNotNull_AddsManager()
+    {
+        // Arrange
+        var exclusiveGlobal = false;
+        var readManagers = new List<IManager>();
+        var writeManagers = new List<IManager>();
+        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var manager = Substitute.For<IManager>();
+
+        // Act
+        transactionDescriptor.AddReadManager(manager);
+
+        // Assert
+        Assert.Contains(manager, transactionDescriptor.ReadManagers);
+    }
+
+    [Fact]
+    public void AddWriteManager_WhenManagerIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var exclusiveGlobal = false;
+        var readManagers = new List<IManager>();
+        var writeManagers = new List<IManager>();
+        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        IManager manager = null!;
+
+        // Act
+        var exception = Record.Exception(() => transactionDescriptor.AddWriteManager(manager));
+
+        // Assert
+        Assert.NotNull(exception);
+        Assert.IsType<ArgumentNullException>(exception);
+    }
+
+    [Fact]
+    public void AddWriteManager_WhenManagerIsNotNull_AddsManager()
+    {
+        // Arrange
+        var exclusiveGlobal = false;
+        var readManagers = new List<IManager>();
+        var writeManagers = new List<IManager>();
+        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var manager = Substitute.For<IManager>();
+
+        // Act
+        transactionDescriptor.AddWriteManager(manager);
+
+        // Assert
+        Assert.Contains(manager, transactionDescriptor.WriteManagers);
     }
 }

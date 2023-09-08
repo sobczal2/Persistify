@@ -27,11 +27,21 @@ public class TransactionDescriptor : ITransactionDescriptor
 
     public void AddReadManager(IManager manager)
     {
+        if (manager is null)
+        {
+            throw new ArgumentNullException(nameof(manager));
+        }
+
         _readManagers.Add(manager);
     }
 
     public void AddWriteManager(IManager manager)
     {
+        if (manager is null)
+        {
+            throw new ArgumentNullException(nameof(manager));
+        }
+
         _writeManagers.Add(manager);
     }
 }

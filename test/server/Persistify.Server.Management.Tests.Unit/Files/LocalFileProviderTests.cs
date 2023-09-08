@@ -124,6 +124,23 @@ public class LocalFileProviderTests : IDisposable
     }
 
     [Fact]
+    public void Create_WhenDirectoryAndFileDoNotExist_CreatesDirectoryAndFile()
+    {
+        // Arrange
+        var relativePath = "test/test.txt";
+        var absolutePath = Path.Combine(_tempDirectoryPath, relativePath);
+        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should().BeFalse();
+        File.Exists(absolutePath).Should().BeFalse();
+
+        // Act
+        _sut.Create(relativePath);
+
+        // Assert
+        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should().BeTrue();
+        File.Exists(absolutePath).Should().BeTrue();
+    }
+
+    [Fact]
     public void Create_WhenFileExists_ThrowsIOException()
     {
         // Arrange
