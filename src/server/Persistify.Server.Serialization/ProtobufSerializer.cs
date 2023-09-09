@@ -11,38 +11,35 @@ public class ProtobufSerializer : ISerializer
 {
     private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
 
-    public ProtobufSerializer(RecyclableMemoryStreamManager recyclableMemoryStreamManager)
+    static ProtobufSerializer()
     {
-        _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
         Serializer.PrepareSerializer<Template>();
         Serializer.PrepareSerializer<Document>();
     }
 
-    public void Serialize<T>(Stream stream, T obj)
+    public ProtobufSerializer(RecyclableMemoryStreamManager recyclableMemoryStreamManager)
     {
-        Serializer.Serialize(stream, obj);
+        _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
     }
-
     public ReadOnlyMemory<byte> Serialize<T>(T obj)
     {
-        var stream = _recyclableMemoryStreamManager.GetStream();
+        if (obj == null)
+        {
+            throw new ArgumentNullException(nameof(obj));
+        }
+
+        using var stream = _recyclableMemoryStreamManager.GetStream();
         Serializer.Serialize(stream, obj);
-        return stream.ToArray();
-    }
-
-    public T Deserialize<T>(Stream stream)
-    {
-        return Serializer.Deserialize<T>(stream);
-    }
-
-    public T Deserialize<T>(byte[] bytes)
-    {
-        using var stream = _recyclableMemoryStreamManager.GetStream(bytes);
-        return Serializer.Deserialize<T>(stream);
+        return new ReadOnlyMemory<byte>(stream.GetBuffer(), 0, (int)stream.Length);
     }
 
     public T Deserialize<T>(ReadOnlyMemory<byte> bytes)
     {
+        if (bytes.IsEmpty)
+        {
+            throw new InvalidDataException();
+        }
+
         return Serializer.Deserialize<T>(bytes);
     }
 }

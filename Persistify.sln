@@ -70,6 +70,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.ErrorHand
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Validation.Tests.Unit", "test\server\Persistify.Server.Validation.Tests.Unit\Persistify.Server.Validation.Tests.Unit.csproj", "{8EC830EC-8A32-4D73-A82C-4C740C32BDAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Serialization.Tests.Unit", "test\server\Persistify.Server.Serialization.Tests.Unit\Persistify.Server.Serialization.Tests.Unit.csproj", "{213AF30C-3967-4893-B3B0-30595D08A467}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,6 +186,10 @@ Global
 		{8EC830EC-8A32-4D73-A82C-4C740C32BDAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EC830EC-8A32-4D73-A82C-4C740C32BDAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EC830EC-8A32-4D73-A82C-4C740C32BDAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{213AF30C-3967-4893-B3B0-30595D08A467}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{213AF30C-3967-4893-B3B0-30595D08A467}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{213AF30C-3967-4893-B3B0-30595D08A467}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{213AF30C-3967-4893-B3B0-30595D08A467}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -218,5 +224,6 @@ Global
 		{5853376F-A538-4F83-87AA-C5BE4DA713AA} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{00B356E6-AA22-42CD-BACC-1E787343B096} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{8EC830EC-8A32-4D73-A82C-4C740C32BDAA} = {A4A48851-1F0E-4013-99D9-688E84160257}
+		{213AF30C-3967-4893-B3B0-30595D08A467} = {A4A48851-1F0E-4013-99D9-688E84160257}
 	EndGlobalSection
 EndGlobal
