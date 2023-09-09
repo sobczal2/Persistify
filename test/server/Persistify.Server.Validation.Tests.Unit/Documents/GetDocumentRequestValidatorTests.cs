@@ -44,12 +44,12 @@ public class GetDocumentRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateIdIsZero_ReturnsValidationException()
+    public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
         var request = new GetDocumentRequest
         {
-            TemplateId = 0,
+            TemplateName = null!,
             DocumentId = 1
         };
 
@@ -60,8 +60,29 @@ public class GetDocumentRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Invalid template id");
-        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateId");
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
+    }
+
+    [Fact]
+    public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new GetDocumentRequest
+        {
+            TemplateName = string.Empty,
+            DocumentId = 1
+        };
+
+        // Act
+        var result = _sut.Validate(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
     }
 
     [Fact]
@@ -70,7 +91,7 @@ public class GetDocumentRequestValidatorTests
         // Arrange
         var request = new GetDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             DocumentId = 0
         };
 
@@ -91,7 +112,7 @@ public class GetDocumentRequestValidatorTests
         // Arrange
         var request = new GetDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             DocumentId = 1
         };
 

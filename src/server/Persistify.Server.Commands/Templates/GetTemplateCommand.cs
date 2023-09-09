@@ -38,11 +38,11 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
 
     protected override async ValueTask RunAsync(GetTemplateRequest data, CancellationToken cancellationToken)
     {
-        _template = await _templateManager.GetAsync(data.TemplateId);
+        _template = await _templateManager.GetAsync(data.TemplateName);
 
         if (_template is null)
         {
-            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
+            throw new ValidationException(nameof(GetTemplateRequest.TemplateName), $"Template {data.TemplateName} not found");
         }
     }
 

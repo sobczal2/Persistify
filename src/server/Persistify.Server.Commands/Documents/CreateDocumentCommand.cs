@@ -42,11 +42,11 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override async ValueTask RunAsync(CreateDocumentRequest data, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(data.TemplateId);
+        var template = await _templateManager.GetAsync(data.TemplateName);
 
         if (template is null)
         {
-            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
+            throw new ValidationException(nameof(CreateDocumentRequest.TemplateName), $"Template {data.TemplateName} not found");
         }
 
         var documentManager = _documentManagerStore.GetManager(template.Id);

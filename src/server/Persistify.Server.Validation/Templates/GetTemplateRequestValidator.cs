@@ -1,6 +1,7 @@
 ﻿using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -13,10 +14,10 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 
     public override Result ValidateNotNull(GetTemplateRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(GetTemplateRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         return Result.Ok;

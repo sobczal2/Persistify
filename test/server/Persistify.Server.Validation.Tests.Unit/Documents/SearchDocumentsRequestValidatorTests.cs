@@ -86,10 +86,13 @@ public class SearchDocumentsRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateIdIsZero_ReturnsValidationException()
+    public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateId = 0 };
+        var request = new SearchDocumentsRequest
+        {
+            TemplateName = null!
+        };
 
         // Act
         var result = _sut.Validate(request);
@@ -98,8 +101,28 @@ public class SearchDocumentsRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Invalid template id");
-        exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateId");
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
+    }
+
+    [Fact]
+    public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new SearchDocumentsRequest
+        {
+            TemplateName = string.Empty
+        };
+
+        // Act
+        var result = _sut.Validate(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
     }
 
     [Fact]
@@ -108,7 +131,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1
+            TemplateName = "Test"
         };
 
         // Act
@@ -128,7 +151,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             Pagination = new Pagination()
         };
 
@@ -151,7 +174,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             Pagination = new Pagination()
         };
 
@@ -172,7 +195,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             Pagination = new Pagination()
         };
 
@@ -193,7 +216,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             Pagination = new Pagination(),
             SearchNode = new SearchNode()
         };
@@ -217,7 +240,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             Pagination = new Pagination(),
             SearchNode = new SearchNode()
         };
@@ -239,7 +262,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             Pagination = new Pagination(),
             SearchNode = new SearchNode()
         };

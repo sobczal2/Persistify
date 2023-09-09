@@ -40,11 +40,11 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
 
     protected override async ValueTask RunAsync(DeleteDocumentRequest data, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(data.TemplateId);
+        var template = await _templateManager.GetAsync(data.TemplateName);
 
         if (template is null)
         {
-            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
+            throw new ValidationException(nameof(DeleteDocumentRequest.TemplateName), $"Template {data.TemplateName} not found");
         }
 
         var documentManager = _documentManagerStore.GetManager(template.Id);

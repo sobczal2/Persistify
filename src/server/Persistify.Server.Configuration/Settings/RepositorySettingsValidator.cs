@@ -13,5 +13,9 @@ public class RepositorySettingsValidator : AbstractValidator<RepositorySettings>
         RuleFor(x => x.DocumentRepositorySectorSize)
             .GreaterThan(0)
             .WithMessage("DocumentRepositorySectorSize must be greater than 0");
+
+        RuleFor(x => x.UserRepositorySectorSize)
+            .GreaterThan(0)
+            .WithMessage("UserRepositorySectorSize must be greater than 0");
     }
 }

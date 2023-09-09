@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,15 +22,16 @@ public class TemplateManager : Manager, ITemplateManager
     private readonly IFileManager _fileManager;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Template> _templateRepository;
+    private readonly ConcurrentDictionary<string, int> _templateNameIdDictionary;
     private volatile int _count;
 
     public TemplateManager(
         ITransactionState transactionState,
+        IFileManager fileManager,
+        IDocumentManagerStore documentManagerStore,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
-        IOptions<RepositorySettings> repositorySettingsOptions,
-        IFileManager fileManager,
-        IDocumentManagerStore documentManagerStore
+        IOptions<RepositorySettings> repositorySettingsOptions
     ) : base(
         transactionState
     )
@@ -51,6 +53,7 @@ public class TemplateManager : Manager, ITemplateManager
             repositorySettingsOptions.Value.TemplateRepositorySectorSize
         );
 
+        _templateNameIdDictionary = new ConcurrentDictionary<string, int>();
         _count = 0;
     }
 
@@ -81,6 +84,7 @@ public class TemplateManager : Manager, ITemplateManager
                 foreach (var kv in kvList)
                 {
                     _documentManagerStore.AddManager(kv.Key);
+                    _templateNameIdDictionary.TryAdd(kv.Value.Name, kv.Key);
                 }
 
                 read += batchSize;
@@ -92,12 +96,33 @@ public class TemplateManager : Manager, ITemplateManager
         PendingActions.Enqueue(initializeAction);
     }
 
+    public async ValueTask<Template?> GetAsync(string templateName)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        if (!_templateNameIdDictionary.TryGetValue(templateName, out var id))
+        {
+            return null;
+        }
+
+        return await _templateRepository.ReadAsync(id, true);
+    }
+
     public async ValueTask<Template?> GetAsync(int id)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
         return await _templateRepository.ReadAsync(id, true);
+    }
+
+    public bool Exists(string templateName)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        return _templateNameIdDictionary.ContainsKey(templateName);
     }
 
     public async ValueTask<List<Template>> ListAsync(int take, int skip)
@@ -129,6 +154,11 @@ public class TemplateManager : Manager, ITemplateManager
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
+        if (_templateNameIdDictionary.ContainsKey(template.Name))
+        {
+            throw new PersistifyInternalException();
+        }
+
         var addAction = new Func<ValueTask>(async () =>
         {
             var currentId = await _identifierRepository.ReadAsync(0, true);
@@ -156,6 +186,8 @@ public class TemplateManager : Manager, ITemplateManager
 
             documentManager.Initialize();
 
+            _templateNameIdDictionary.TryAdd(template.Name, currentId);
+
             Interlocked.Increment(ref _count);
         });
 
@@ -167,7 +199,9 @@ public class TemplateManager : Manager, ITemplateManager
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
-        if (!await _templateRepository.ExistsAsync(id, true))
+        var template = await _templateRepository.ReadAsync(id, true);
+
+        if (template is null)
         {
             return false;
         }
@@ -187,6 +221,9 @@ public class TemplateManager : Manager, ITemplateManager
 
                 _fileManager.DeleteFilesForTemplate(id);
                 _documentManagerStore.DeleteManager(id);
+
+                _templateNameIdDictionary.TryRemove(template.Name, out _);
+
                 Interlocked.Decrement(ref _count);
             }
             else

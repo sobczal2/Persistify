@@ -4,6 +4,7 @@ using Persistify.Domain.Documents;
 using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
@@ -31,10 +32,10 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 
     public override Result ValidateNotNull(CreateDocumentRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(CreateDocumentRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count == 0)

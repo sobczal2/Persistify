@@ -6,5 +6,5 @@ namespace Persistify.Requests.Templates;
 public class DeleteTemplateRequest
 {
     [ProtoMember(1)]
-    public int TemplateId { get; set; }
+    public string TemplateName { get; set; } = default!;
 }

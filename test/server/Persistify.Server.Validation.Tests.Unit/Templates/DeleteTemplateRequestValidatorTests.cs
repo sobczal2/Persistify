@@ -44,12 +44,12 @@ public class DeleteTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateIdIsZero_ReturnsValidationException()
+    public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
         var request = new DeleteTemplateRequest
         {
-            TemplateId = 0
+            TemplateName = null!
         };
 
         // Act
@@ -59,8 +59,28 @@ public class DeleteTemplateRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Invalid template id");
-        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateId");
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateName");
+    }
+
+    [Fact]
+    public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new DeleteTemplateRequest
+        {
+            TemplateName = string.Empty
+        };
+
+        // Act
+        var result = _sut.Validate(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateName");
     }
 
     [Fact]
@@ -69,7 +89,7 @@ public class DeleteTemplateRequestValidatorTests
         // Arrange
         var request = new DeleteTemplateRequest
         {
-            TemplateId = 1
+            TemplateName = "Test"
         };
 
         // Act

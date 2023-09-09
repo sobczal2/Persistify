@@ -113,10 +113,10 @@ public class CreateDocumentRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateIdIsZero_ReturnsValidationException()
+    public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateDocumentRequest { TemplateId = 0 };
+        var request = new CreateDocumentRequest();
 
         // Act
         var result = _sut.Validate(request);
@@ -125,15 +125,32 @@ public class CreateDocumentRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Invalid template id");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateId");
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
+    }
+
+    [Fact]
+    public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest { TemplateName = string.Empty };
+
+        // Act
+        var result = _sut.Validate(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
     }
 
     [Fact]
     public void Validate_WhenNoFieldValues_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateDocumentRequest { TemplateId = 1 };
+        var request = new CreateDocumentRequest { TemplateName = "Test" };
 
         // Act
         var result = _sut.Validate(request);
@@ -152,7 +169,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1, TextFieldValues = new List<TextFieldValue> { new() }
+            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
         };
         List<string> propertyNameAtCall = null!;
         _textFieldValueValidator
@@ -173,7 +190,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1, TextFieldValues = new List<TextFieldValue> { new() }
+            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
         };
         var validationException = new ValidationException("Test", "Test");
         _textFieldValueValidator
@@ -194,7 +211,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1, NumberFieldValues = new List<NumberFieldValue> { new() }
+            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
         };
         List<string> propertyNameAtCall = null!;
         _numberFieldValueValidator
@@ -215,7 +232,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1, NumberFieldValues = new List<NumberFieldValue> { new() }
+            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
         };
         var validationException = new ValidationException("Test", "Test");
         _numberFieldValueValidator
@@ -236,7 +253,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1, BoolFieldValues = new List<BoolFieldValue> { new() }
+            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
         };
 
         List<string> propertyNameAtCall = null!;
@@ -258,7 +275,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1, BoolFieldValues = new List<BoolFieldValue> { new() }
+            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
         };
         var validationException = new ValidationException("Test", "Test");
         _boolFieldValueValidator
@@ -279,7 +296,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
         };
 
@@ -300,7 +317,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
         };
 
@@ -321,7 +338,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
         };
 
@@ -342,7 +359,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
         };
@@ -364,7 +381,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
         };
@@ -386,7 +403,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
         };
@@ -408,7 +425,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var value = new CreateDocumentRequest
         {
-            TemplateId = 1,
+            TemplateName = "Test",
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "2" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "3" } }

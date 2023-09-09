@@ -38,6 +38,11 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
 
     protected override ValueTask RunAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
     {
+        if (_templateManager.Exists(data.TemplateName))
+        {
+            throw new ValidationException(nameof(CreateTemplateRequest.TemplateName), $"Template {data.TemplateName} already exists");
+        }
+
         _template = new Template
         {
             Name = data.TemplateName,

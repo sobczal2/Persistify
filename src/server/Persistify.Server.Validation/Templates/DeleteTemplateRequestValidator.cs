@@ -1,6 +1,7 @@
 ﻿using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -13,10 +14,10 @@ public class DeleteTemplateRequestValidator : Validator<DeleteTemplateRequest>
 
     public override Result ValidateNotNull(DeleteTemplateRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(DeleteTemplateRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(DeleteTemplateRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         return Result.Ok;

@@ -42,11 +42,11 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
     protected override async ValueTask RunAsync(GetDocumentRequest data, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(data.TemplateId);
+        var template = await _templateManager.GetAsync(data.TemplateName);
 
         if (template is null)
         {
-            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
+            throw new ValidationException(nameof(GetDocumentRequest.TemplateName), $"Template {data.TemplateName} not found");
         }
 
         var documentManager = _documentManagerStore.GetManager(template.Id);
@@ -62,7 +62,7 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
         if (_document is null)
         {
-            throw new ValidationException(nameof(data.DocumentId), $"Document with id {data.DocumentId} not found");
+            throw new ValidationException(nameof(GetDocumentRequest.DocumentId), $"Document with id {data.DocumentId} not found");
         }
     }
 

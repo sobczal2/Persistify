@@ -1,6 +1,7 @@
 ﻿using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
@@ -14,10 +15,10 @@ public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
 
     public override Result ValidateNotNull(GetDocumentRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(GetDocumentRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(GetDocumentRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.DocumentId <= 0)
