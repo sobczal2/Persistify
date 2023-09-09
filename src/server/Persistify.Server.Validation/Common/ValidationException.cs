@@ -1,12 +1,14 @@
-﻿using Grpc.Core;
-using Persistify.Helpers.ErrorHandling;
+﻿using System;
 
 namespace Persistify.Server.Validation.Common;
 
-public class ValidationException : ExceptionWithStatus
+// TODO: Change when creating not grpc interface
+public class ValidationException : Exception
 {
-    public ValidationException(string property, string message)
-        : base(new Status(StatusCode.InvalidArgument, $"{property}: {message}"))
+    public string PropertyName { get; }
+    public ValidationException(string propertyName, string message)
+        : base(message)
     {
+        PropertyName = propertyName;
     }
 }

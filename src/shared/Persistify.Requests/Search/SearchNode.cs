@@ -13,5 +13,4 @@ namespace Persistify.Requests.Search;
 [ProtoInclude(8, typeof(BoolSearchNode))]
 public class SearchNode
 {
-
 }

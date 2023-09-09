@@ -1,30 +1,34 @@
-﻿using Persistify.Domain.Templates;
-using Persistify.Helpers.ErrorHandling;
+﻿using System.Text;
+using Microsoft.Extensions.ObjectPool;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
 
-public class NumberFieldValidator : IValidator<NumberField>
+public class NumberFieldValidator : Validator<NumberField>
 {
     public NumberFieldValidator()
     {
-        ErrorPrefix = "NumberField";
+        PropertyName.Push(nameof(NumberField));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(NumberField value)
+    public override Result ValidateNotNull(NumberField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            return new ValidationException($"{ErrorPrefix}.Name", "Name is required");
+            PropertyName.Push(nameof(NumberField.Name));
+            return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
-            return new ValidationException($"{ErrorPrefix}.Name", "Name has a maximum length of 64 characters");
+            PropertyName.Push(nameof(NumberField.Name));
+            return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

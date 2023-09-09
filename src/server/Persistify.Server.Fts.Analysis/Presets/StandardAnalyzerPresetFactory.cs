@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Exceptions;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Fts.Analysis.Presets;
 
@@ -24,7 +24,7 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
     public Result TryCreate(string presetName, out IAnalyzer? analyzer)
     {
         var result = Validate(presetName);
-        if (result.IsFailure)
+        if (result.Failure)
         {
             analyzer = null;
             return result;
@@ -36,7 +36,7 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
                 analyzer = _analyzers.GetOrAdd(presetName,
                     static (_, analyzerFactory) => new StandardAnalyzerPreset().GetAnalyzer(analyzerFactory),
                     _analyzerFactory);
-                return Result.Success;
+                return Result.Ok;
             default:
                 analyzer = null;
                 return new UnsupportedPresetException(presetName, AvailablePresets);
@@ -50,6 +50,6 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
             return new UnsupportedPresetException(presetName, AvailablePresets);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

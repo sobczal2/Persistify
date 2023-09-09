@@ -1,30 +1,31 @@
 ﻿using Persistify.Domain.Documents;
-using Persistify.Helpers.ErrorHandling;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Documents;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Domain;
 
-public class TextFieldValueValidator : IValidator<TextFieldValue>
+public class TextFieldValueValidator : Validator<TextFieldValue>
 {
     public TextFieldValueValidator()
     {
-        ErrorPrefix = "TextFieldValue";
+        PropertyName.Push(nameof(TextFieldValue));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(TextFieldValue value)
+    public override Result ValidateNotNull(TextFieldValue value)
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            return new ValidationException($"{ErrorPrefix}.Value", "Value must not be empty");
+            PropertyName.Push(nameof(TextFieldValue.FieldName));
+            return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            return new ValidationException($"{ErrorPrefix}.Value", "Value must not be longer than 64 characters");
+            PropertyName.Push(nameof(TextFieldValue.FieldName));
+            return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

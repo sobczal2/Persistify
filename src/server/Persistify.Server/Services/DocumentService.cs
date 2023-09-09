@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Pipelines.Documents.GetDocument;
-using Persistify.Server.Pipelines.Documents.IndexDocument;
-using Persistify.Server.Pipelines.Documents.SearchDocuments;
+using Persistify.Server.Commands.Documents;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 
@@ -12,38 +10,41 @@ namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    private readonly GetDocumentPipeline _getDocumentPipeline;
-    private readonly SearchDocumentsPipeline _searchDocumentsPipeline;
-    private readonly IndexDocumentPipeline _indexDocumentPipeline;
+    private readonly CreateDocumentCommand _createDocumentCommand;
+    private readonly DeleteDocumentCommand _deleteDocumentCommand;
+    private readonly GetDocumentCommand _getDocumentCommand;
 
     public DocumentService(
-        IndexDocumentPipeline indexDocumentPipeline,
-        GetDocumentPipeline getDocumentPipeline,
-        SearchDocumentsPipeline searchDocumentsPipeline
+        CreateDocumentCommand createDocumentCommand,
+        GetDocumentCommand getDocumentCommand,
+        // ListDocumentsCommand listDocumentsCommand,
+        DeleteDocumentCommand deleteDocumentCommand
     )
     {
-        _indexDocumentPipeline = indexDocumentPipeline;
-        _getDocumentPipeline = getDocumentPipeline;
-        _searchDocumentsPipeline = searchDocumentsPipeline;
+        _createDocumentCommand = createDocumentCommand;
+        _getDocumentCommand = getDocumentCommand;
+        _deleteDocumentCommand = deleteDocumentCommand;
     }
 
-    public async ValueTask<IndexDocumentResponse> IndexDocumentAsync(IndexDocumentRequest request, CallContext context)
+    public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request,
+        CallContext context)
     {
-        return await _indexDocumentPipeline.ProcessAsync(request);
+        return await _createDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 
     public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
     {
-        return await _getDocumentPipeline.ProcessAsync(request);
+        return await _getDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 
-    public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
-    {
-        return await _searchDocumentsPipeline.ProcessAsync(request);
-    }
-
-    public ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext context)
+    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
     {
         throw new NotImplementedException();
+    }
+
+    public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request,
+        CallContext context)
+    {
+        return await _deleteDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
     }
 }

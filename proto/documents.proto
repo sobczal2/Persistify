@@ -12,6 +12,15 @@ message BoolSearchNode {
    string FieldName = 1;
    bool Value = 2;
 }
+message CreateDocumentRequest {
+   int32 TemplateId = 1;
+   repeated TextFieldValue TextFieldValues = 2;
+   repeated NumberFieldValue NumberFieldValues = 3;
+   repeated BoolFieldValue BoolFieldValues = 4;
+}
+message CreateDocumentResponse {
+   int32 DocumentId = 1;
+}
 message DeleteDocumentRequest {
    int32 TemplateId = 1;
    int64 DocumentId = 2;
@@ -19,7 +28,7 @@ message DeleteDocumentRequest {
 message DeleteDocumentResponse {
 }
 message Document {
-   int64 Id = 1;
+   int32 Id = 1;
    repeated TextFieldValue TextFieldValues = 2;
    repeated NumberFieldValue NumberFieldValues = 3;
    repeated BoolFieldValue BoolFieldValues = 4;
@@ -37,19 +46,10 @@ message FtsSearchNode {
 }
 message GetDocumentRequest {
    int32 TemplateId = 1;
-   int64 DocumentId = 2;
+   int32 DocumentId = 2;
 }
 message GetDocumentResponse {
    Document Document = 1;
-}
-message IndexDocumentRequest {
-   int32 TemplateId = 1;
-   repeated TextFieldValue TextFieldValues = 2;
-   repeated NumberFieldValue NumberFieldValues = 3;
-   repeated BoolFieldValue BoolFieldValues = 4;
-}
-message IndexDocumentResponse {
-   int64 DocumentId = 1;
 }
 message NotSearchNode {
 }
@@ -114,8 +114,8 @@ message TextSearchNode {
    string Value = 2;
 }
 service DocumentService {
+   rpc CreateDocument (CreateDocumentRequest) returns (CreateDocumentResponse);
    rpc DeleteDocument (DeleteDocumentRequest) returns (DeleteDocumentResponse);
    rpc GetDocument (GetDocumentRequest) returns (GetDocumentResponse);
-   rpc IndexDocument (IndexDocumentRequest) returns (IndexDocumentResponse);
    rpc SearchDocuments (SearchDocumentsRequest) returns (SearchDocumentsResponse);
 }

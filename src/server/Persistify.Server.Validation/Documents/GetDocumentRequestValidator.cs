@@ -1,30 +1,31 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Documents;
+﻿using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 
-public class GetDocumentRequestValidator : IValidator<GetDocumentRequest>
+public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
 {
     public GetDocumentRequestValidator()
     {
-        ErrorPrefix = "GetDocumentRequest";
+        PropertyName.Push(nameof(GetDocumentRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(GetDocumentRequest value)
+    public override Result ValidateNotNull(GetDocumentRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            PropertyName.Push(nameof(GetDocumentRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
         if (value.DocumentId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.DocumentId", "DocumentId must be greater than 0");
+            PropertyName.Push(nameof(GetDocumentRequest.DocumentId));
+            return ValidationException(DocumentErrorMessages.InvalidDocumentId);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

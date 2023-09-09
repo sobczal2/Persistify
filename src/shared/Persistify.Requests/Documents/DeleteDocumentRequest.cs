@@ -9,5 +9,5 @@ public class DeleteDocumentRequest
     public int TemplateId { get; set; }
 
     [ProtoMember(2)]
-    public long DocumentId { get; set; }
+    public int DocumentId { get; set; }
 }

@@ -1,12 +1,17 @@
-﻿using Persistify.Helpers.ErrorHandling;
+﻿using System;
+using System.Text;
+using Microsoft.Extensions.ObjectPool;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 
-public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest>
+public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
 {
     private readonly IValidator<Pagination> _paginationValidator;
     private readonly IValidator<SearchNode> _searchNodeValidator;
@@ -16,40 +21,51 @@ public class SearchDocumentsRequestValidator : IValidator<SearchDocumentsRequest
         IValidator<SearchNode> searchNodeValidator
     )
     {
-        _paginationValidator = paginationValidator;
-        _searchNodeValidator = searchNodeValidator;
-        ErrorPrefix = "SearchDocumentsRequest";
+        _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
+        _paginationValidator.PropertyName = PropertyName;
+        _searchNodeValidator = searchNodeValidator ?? throw new ArgumentNullException(nameof(searchNodeValidator));
+        _searchNodeValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(SearchDocumentsRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(SearchDocumentsRequest value)
+    public override Result ValidateNotNull(SearchDocumentsRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            PropertyName.Push(nameof(SearchDocumentsRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
-        _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (value.Pagination == null)
+        {
+            PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
+            return ValidationException(SharedErrorMessages.ValueNull);
+        }
+
+        PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
         var paginationValidator = _paginationValidator.Validate(value.Pagination);
-        if (paginationValidator.IsFailure)
+        PropertyName.Pop();
+        if (paginationValidator.Failure)
         {
             return paginationValidator;
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if(value.SearchNode == null)
+        if (value.SearchNode == null)
         {
-            return new ValidationException($"{ErrorPrefix}.SearchNode", "SearchNode is required");
+            PropertyName.Push(nameof(SearchDocumentsRequest.SearchNode));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
-        
-        _searchNodeValidator.ErrorPrefix = $"{ErrorPrefix}.SearchNode";
+
+        PropertyName.Push(nameof(SearchDocumentsRequest.SearchNode));
         var searchNodeValidator = _searchNodeValidator.Validate(value.SearchNode);
-        if (searchNodeValidator.IsFailure)
+        PropertyName.Pop();
+        if (searchNodeValidator.Failure)
         {
             return searchNodeValidator;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

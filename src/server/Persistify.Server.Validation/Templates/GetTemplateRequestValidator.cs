@@ -1,25 +1,24 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Templates;
+﻿using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
-public class GetTemplateRequestValidator : IValidator<GetTemplateRequest>
+public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 {
     public GetTemplateRequestValidator()
     {
-        ErrorPrefix = "GetTemplateRequest";
+        PropertyName.Push(nameof(GetTemplateRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(GetTemplateRequest value)
+    public override Result ValidateNotNull(GetTemplateRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            PropertyName.Push(nameof(GetTemplateRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

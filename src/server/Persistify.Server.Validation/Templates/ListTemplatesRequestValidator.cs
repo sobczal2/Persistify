@@ -1,31 +1,39 @@
-﻿using Persistify.Helpers.ErrorHandling;
+﻿using System;
 using Persistify.Requests.Shared;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
-public class ListTemplatesRequestValidator : IValidator<ListTemplatesRequest>
+public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 {
     private readonly IValidator<Pagination> _paginationValidator;
 
     public ListTemplatesRequestValidator(IValidator<Pagination> paginationValidator)
     {
-        _paginationValidator = paginationValidator;
-        ErrorPrefix = "ListTemplatesRequest";
+        _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
+        _paginationValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(ListTemplatesRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(ListTemplatesRequest value)
+    public override Result ValidateNotNull(ListTemplatesRequest value)
     {
-        _paginationValidator.ErrorPrefix = $"{ErrorPrefix}.Pagination";
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (value.Pagination == null)
+        {
+            PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
+            return ValidationException(SharedErrorMessages.ValueNull);
+        }
+        PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
         var paginationResult = _paginationValidator.Validate(value.Pagination);
-        if (paginationResult.IsFailure)
+        PropertyName.Pop();
+        if (paginationResult.Failure)
         {
             return paginationResult;
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ProtoBuf;
 
 namespace Persistify.Domain.Documents;
@@ -7,14 +6,19 @@ namespace Persistify.Domain.Documents;
 [ProtoContract]
 public class Document
 {
+    private List<BoolFieldValue>? _boolFieldValues;
+    private List<NumberFieldValue>? _numberFieldValues;
+    private List<TextFieldValue>? _textFieldValues;
+
     public Document()
     {
         TextFieldValuesByFieldName = new Dictionary<string, TextFieldValue>();
         NumberFieldValuesByFieldName = new Dictionary<string, NumberFieldValue>();
         BoolFieldValuesByFieldName = new Dictionary<string, BoolFieldValue>();
     }
+
     [ProtoMember(1)]
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     [ProtoMember(2)]
     public List<TextFieldValue> TextFieldValues
@@ -30,7 +34,6 @@ public class Document
             }
         }
     }
-    private List<TextFieldValue>? _textFieldValues;
 
     [ProtoMember(3)]
     public List<NumberFieldValue> NumberFieldValues
@@ -46,7 +49,6 @@ public class Document
             }
         }
     }
-    private List<NumberFieldValue>? _numberFieldValues;
 
     [ProtoMember(4)]
     public List<BoolFieldValue> BoolFieldValues
@@ -62,11 +64,10 @@ public class Document
             }
         }
     }
-    private List<BoolFieldValue>? _boolFieldValues;
 
-    public IDictionary<string, TextFieldValue> TextFieldValuesByFieldName { get; private set; }
+    public IDictionary<string, TextFieldValue> TextFieldValuesByFieldName { get; }
 
-    public IDictionary<string, NumberFieldValue> NumberFieldValuesByFieldName { get; private set; }
+    public IDictionary<string, NumberFieldValue> NumberFieldValuesByFieldName { get; }
 
-    public IDictionary<string, BoolFieldValue> BoolFieldValuesByFieldName { get; private set; }
+    public IDictionary<string, BoolFieldValue> BoolFieldValuesByFieldName { get; }
 }

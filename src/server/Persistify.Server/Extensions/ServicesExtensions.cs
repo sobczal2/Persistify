@@ -1,22 +1,16 @@
 using System;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Server.Commands;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Fts.Analysis;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.HostedServices;
-using Persistify.Server.Management.Domain;
-using Persistify.Server.Management.Types;
-using Persistify.Server.Persistence.Core;
-using Persistify.Server.Persistence.DataStructures;
-using Persistify.Server.Pipelines;
-using Persistify.Server.Pipelines.Documents;
-using Persistify.Server.Pipelines.Templates;
+using Persistify.Server.Management;
 using Persistify.Server.Serialization;
 using Persistify.Server.Validation;
 using ProtoBuf.Grpc.Server;
@@ -73,15 +67,10 @@ public static class ServicesExtensions
 
         services.AddSerialization(configuration);
         services.AddValidation();
-        services.AddPipelines();
-        services.AddPipelinesTemplates();
-        services.AddPipelinesDocuments();
-        services.AddFtsAnalysis();
-        services.AddManagementDomain();
-        services.AddManagementTypes();
-        services.AddPersistenceCore(configuration);
-        services.AddHostedServices(AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
-            assembly.FullName?.StartsWith("Persistify") ?? false).ToArray());
+        services.AddCommands();
+        services.AddManagement();
+        services.AddHostedServices();
+        services.AddErrorHandling();
 
         return services;
     }

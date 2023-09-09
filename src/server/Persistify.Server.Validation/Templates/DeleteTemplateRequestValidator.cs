@@ -1,25 +1,24 @@
-﻿using Persistify.Helpers.ErrorHandling;
-using Persistify.Requests.Templates;
+﻿using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
 
-public class DeleteTemplateRequestValidator : IValidator<DeleteTemplateRequest>
+public class DeleteTemplateRequestValidator : Validator<DeleteTemplateRequest>
 {
     public DeleteTemplateRequestValidator()
     {
-        ErrorPrefix = "DeleteTemplateRequest";
+        PropertyName.Push(nameof(DeleteTemplateRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(DeleteTemplateRequest value)
+    public override Result ValidateNotNull(DeleteTemplateRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            PropertyName.Push(nameof(DeleteTemplateRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }

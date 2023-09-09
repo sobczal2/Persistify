@@ -1,30 +1,32 @@
-﻿using Persistify.Helpers.ErrorHandling;
+﻿using System;
 using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 
-public class DeleteDocumentRequestValidator : IValidator<DeleteDocumentRequest>
+public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
 {
     public DeleteDocumentRequestValidator()
     {
-        ErrorPrefix = "DeleteDocumentRequest";
+        PropertyName.Push(nameof(DeleteDocumentRequest));
     }
 
-    public string ErrorPrefix { get; set; }
-
-    public Result Validate(DeleteDocumentRequest value)
+    public override Result ValidateNotNull(DeleteDocumentRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.TemplateId", "TemplateId must be greater than 0");
+            PropertyName.Push(nameof(DeleteDocumentRequest.TemplateId));
+            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
         if (value.DocumentId <= 0)
         {
-            return new ValidationException($"{ErrorPrefix}.DocumentId", "DocumentId must be greater than 0");
+            PropertyName.Push(nameof(DeleteDocumentRequest.DocumentId));
+            return ValidationException(DocumentErrorMessages.InvalidDocumentId);
         }
 
-        return Result.Success;
+        return Result.Ok;
     }
 }
