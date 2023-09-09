@@ -9,20 +9,20 @@ public class TextFieldValueValidator : Validator<TextFieldValue>
 {
     public TextFieldValueValidator()
     {
-        PropertyNames.Push(nameof(TextFieldValue));
+        PropertyName.Push(nameof(TextFieldValue));
     }
 
-    public override Result Validate(TextFieldValue value)
+    public override Result ValidateNotNull(TextFieldValue value)
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(TextFieldValue.FieldName));
+            PropertyName.Push(nameof(TextFieldValue.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(TextFieldValue.FieldName));
+            PropertyName.Push(nameof(TextFieldValue.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 

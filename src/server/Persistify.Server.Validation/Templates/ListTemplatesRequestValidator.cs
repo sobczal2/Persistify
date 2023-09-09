@@ -1,7 +1,9 @@
-﻿using Persistify.Requests.Shared;
+﻿using System;
+using Persistify.Requests.Shared;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -11,16 +13,22 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 
     public ListTemplatesRequestValidator(IValidator<Pagination> paginationValidator)
     {
-        _paginationValidator = paginationValidator;
-        _paginationValidator.PropertyNames = PropertyNames;
-        PropertyNames.Push(nameof(ListTemplatesRequest));
+        _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
+        _paginationValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(ListTemplatesRequest));
     }
 
-    public override Result Validate(ListTemplatesRequest value)
+    public override Result ValidateNotNull(ListTemplatesRequest value)
     {
-        PropertyNames.Push(nameof(ListTemplatesRequest.Pagination));
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (value.Pagination == null)
+        {
+            PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
+            return ValidationException(SharedErrorMessages.ValueNull);
+        }
+        PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
         var paginationResult = _paginationValidator.Validate(value.Pagination);
-        PropertyNames.Pop();
+        PropertyName.Pop();
         if (paginationResult.Failure)
         {
             return paginationResult;

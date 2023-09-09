@@ -10,10 +10,10 @@ public class EmptyRequestValidator : Validator<EmptyRequest>
 {
     public EmptyRequestValidator()
     {
-        PropertyNames.Push(nameof(EmptyRequest));
+        PropertyName.Push(nameof(EmptyRequest));
     }
 
-    public override Result Validate(EmptyRequest value)
+    public override Result ValidateNotNull(EmptyRequest value)
     {
         return Result.Ok;
     }

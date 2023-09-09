@@ -18,7 +18,7 @@ public class ValidationExceptionTests
         var result = new ValidationException(property, message);
 
         // Assert
-        result.Property.Should().Be(property);
+        result.PropertyName.Should().Be(property);
         result.Message.Should().Be(message);
     }
 }

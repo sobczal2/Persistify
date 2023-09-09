@@ -8,14 +8,14 @@ public class DeleteTemplateRequestValidator : Validator<DeleteTemplateRequest>
 {
     public DeleteTemplateRequestValidator()
     {
-        PropertyNames.Push(nameof(DeleteTemplateRequest));
+        PropertyName.Push(nameof(DeleteTemplateRequest));
     }
 
-    public override Result Validate(DeleteTemplateRequest value)
+    public override Result ValidateNotNull(DeleteTemplateRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            PropertyNames.Push(nameof(DeleteTemplateRequest.TemplateId));
+            PropertyName.Push(nameof(DeleteTemplateRequest.TemplateId));
             return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 

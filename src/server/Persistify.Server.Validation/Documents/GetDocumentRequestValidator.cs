@@ -9,20 +9,20 @@ public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
 {
     public GetDocumentRequestValidator()
     {
-        PropertyNames.Push(nameof(GetDocumentRequest));
+        PropertyName.Push(nameof(GetDocumentRequest));
     }
 
-    public override Result Validate(GetDocumentRequest value)
+    public override Result ValidateNotNull(GetDocumentRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            PropertyNames.Push(nameof(GetDocumentRequest.TemplateId));
+            PropertyName.Push(nameof(GetDocumentRequest.TemplateId));
             return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
         if (value.DocumentId <= 0)
         {
-            PropertyNames.Push(nameof(GetDocumentRequest.DocumentId));
+            PropertyName.Push(nameof(GetDocumentRequest.DocumentId));
             return ValidationException(DocumentErrorMessages.InvalidDocumentId);
         }
 

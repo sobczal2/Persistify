@@ -11,10 +11,10 @@ public class SearchNodeValidator : Validator<SearchNode>
 {
     public SearchNodeValidator()
     {
-        PropertyNames.Push(nameof(SearchNode));
+        PropertyName.Push(nameof(SearchNode));
     }
 
-    public override Result Validate(SearchNode value)
+    public override Result ValidateNotNull(SearchNode value)
     {
         return ValidateSearchNode(value);
     }
@@ -24,28 +24,28 @@ public class SearchNodeValidator : Validator<SearchNode>
         switch (value)
         {
             case AndSearchNode andSearchNode:
-                PropertyNames.Push(nameof(AndSearchNode));
+                PropertyName.Push(nameof(AndSearchNode));
                 return ValidateAndSearchNode(andSearchNode);
             case OrSearchNode orSearchNode:
-                PropertyNames.Push(nameof(OrSearchNode));
+                PropertyName.Push(nameof(OrSearchNode));
                 return ValidateOrSearchNode(orSearchNode);
             case NotSearchNode notSearchNode:
-                PropertyNames.Push(nameof(NotSearchNode));
+                PropertyName.Push(nameof(NotSearchNode));
                 return ValidateNotSearchNode(notSearchNode);
             case TextSearchNode textSearchNode:
-                PropertyNames.Push(nameof(TextSearchNode));
+                PropertyName.Push(nameof(TextSearchNode));
                 return ValidateTextSearchNode(textSearchNode);
             case FtsSearchNode ftsSearchNode:
-                PropertyNames.Push(nameof(FtsSearchNode));
+                PropertyName.Push(nameof(FtsSearchNode));
                 return ValidateFtsSearchNode(ftsSearchNode);
             case NumberSearchNode numberSearchNode:
-                PropertyNames.Push(nameof(NumberSearchNode));
+                PropertyName.Push(nameof(NumberSearchNode));
                 return ValidateNumberSearchNode(numberSearchNode);
             case NumberRangeSearchNode numberRangeSearchNode:
-                PropertyNames.Push(nameof(NumberRangeSearchNode));
+                PropertyName.Push(nameof(NumberRangeSearchNode));
                 return ValidateNumberRangeSearchNode(numberRangeSearchNode);
             case BoolSearchNode boolSearchNode:
-                PropertyNames.Push(nameof(BoolSearchNode));
+                PropertyName.Push(nameof(BoolSearchNode));
                 return ValidateBoolSearchNode(boolSearchNode);
             default:
                 return ValidationException("Unknown SearchNode type");
@@ -61,9 +61,9 @@ public class SearchNodeValidator : Validator<SearchNode>
 
         for (var i = 0; i < value.Nodes.Count; i++)
         {
-            PropertyNames.Push($"{nameof(AndSearchNode.Nodes)}[{i}]");
+            PropertyName.Push($"{nameof(AndSearchNode.Nodes)}[{i}]");
             var result = ValidateSearchNode(value.Nodes[i]);
-            PropertyNames.Pop();
+            PropertyName.Pop();
             if (result.Failure)
             {
                 return result;
@@ -82,9 +82,9 @@ public class SearchNodeValidator : Validator<SearchNode>
 
         for (var i = 0; i < value.Nodes.Count; i++)
         {
-            PropertyNames.Push($"{nameof(OrSearchNode.Nodes)}[{i}]");
+            PropertyName.Push($"{nameof(OrSearchNode.Nodes)}[{i}]");
             var result = ValidateSearchNode(value.Nodes[i]);
-            PropertyNames.Pop();
+            PropertyName.Pop();
             if (result.Failure)
             {
                 return result;
@@ -109,19 +109,19 @@ public class SearchNodeValidator : Validator<SearchNode>
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(TextSearchNode.FieldName));
+            PropertyName.Push(nameof(TextSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(TextSearchNode.FieldName));
+            PropertyName.Push(nameof(TextSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
         if (string.IsNullOrEmpty(value.Value))
         {
-            PropertyNames.Push(nameof(TextSearchNode.Value));
+            PropertyName.Push(nameof(TextSearchNode.Value));
             return ValidationException(DocumentErrorMessages.ValueEmpty);
         }
 
@@ -132,13 +132,13 @@ public class SearchNodeValidator : Validator<SearchNode>
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(FtsSearchNode.FieldName));
+            PropertyName.Push(nameof(FtsSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(FtsSearchNode.FieldName));
+            PropertyName.Push(nameof(FtsSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
@@ -154,13 +154,13 @@ public class SearchNodeValidator : Validator<SearchNode>
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(NumberSearchNode.FieldName));
+            PropertyName.Push(nameof(NumberSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(NumberSearchNode.FieldName));
+            PropertyName.Push(nameof(NumberSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
@@ -171,13 +171,13 @@ public class SearchNodeValidator : Validator<SearchNode>
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(NumberRangeSearchNode.FieldName));
+            PropertyName.Push(nameof(NumberRangeSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(NumberRangeSearchNode.FieldName));
+            PropertyName.Push(nameof(NumberRangeSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 
@@ -188,13 +188,13 @@ public class SearchNodeValidator : Validator<SearchNode>
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(BoolSearchNode.FieldName));
+            PropertyName.Push(nameof(BoolSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(BoolSearchNode.FieldName));
+            PropertyName.Push(nameof(BoolSearchNode.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 

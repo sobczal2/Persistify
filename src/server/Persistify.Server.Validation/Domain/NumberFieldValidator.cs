@@ -12,20 +12,20 @@ public class NumberFieldValidator : Validator<NumberField>
 {
     public NumberFieldValidator()
     {
-        PropertyNames.Push(nameof(NumberField));
+        PropertyName.Push(nameof(NumberField));
     }
 
-    public override Result Validate(NumberField value)
+    public override Result ValidateNotNull(NumberField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            PropertyNames.Push(nameof(NumberField.Name));
+            PropertyName.Push(nameof(NumberField.Name));
             return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
-            PropertyNames.Push(nameof(NumberField.Name));
+            PropertyName.Push(nameof(NumberField.Name));
             return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 

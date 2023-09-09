@@ -7,6 +7,7 @@ public readonly struct Result
     public static Result Ok => new();
 
     private readonly Exception? _exception;
+    public Exception Exception => _exception ?? throw new InvalidOperationException();
 
     public Result(Exception exception)
     {

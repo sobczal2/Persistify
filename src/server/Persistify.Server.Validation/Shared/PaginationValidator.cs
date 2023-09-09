@@ -10,20 +10,20 @@ public class PaginationValidator : Validator<Pagination>
 {
     public PaginationValidator()
     {
-        PropertyNames.Push(nameof(Pagination));
+        PropertyName.Push(nameof(Pagination));
     }
 
-    public override Result Validate(Pagination value)
+    public override Result ValidateNotNull(Pagination value)
     {
         if (value.PageNumber < 0)
         {
-            PropertyNames.Push(nameof(value.PageNumber));
+            PropertyName.Push(nameof(value.PageNumber));
             return ValidationException(SharedErrorMessages.PageNumberLessThanZero);
         }
 
         if (value.PageSize <= 0)
         {
-            PropertyNames.Push(nameof(value.PageSize));
+            PropertyName.Push(nameof(value.PageSize));
             return ValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero);
         }
 

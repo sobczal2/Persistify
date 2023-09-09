@@ -1,6 +1,11 @@
-﻿using Persistify.Domain.Templates;
+﻿using System;
+using System.Collections.Generic;
+using Persistify.Domain.Documents;
+using Persistify.Domain.Templates;
+using Persistify.Requests.Documents;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Documents;
 using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
@@ -17,40 +22,40 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         IValidator<BoolField> boolFieldValidator
     )
     {
-        _textFieldValidator = textFieldValidator;
-        _textFieldValidator.PropertyNames = PropertyNames;
-        _numberFieldValidator = numberFieldValidator;
-        _numberFieldValidator.PropertyNames = PropertyNames;
-        _boolFieldValidator = boolFieldValidator;
-        _textFieldValidator.PropertyNames = PropertyNames;
-        PropertyNames.Push(nameof(CreateTemplateRequest));
+        _textFieldValidator = textFieldValidator ?? throw new ArgumentNullException(nameof(textFieldValidator));
+        _textFieldValidator.PropertyName = PropertyName;
+        _numberFieldValidator = numberFieldValidator ?? throw new ArgumentNullException(nameof(numberFieldValidator));
+        _numberFieldValidator.PropertyName = PropertyName;
+        _boolFieldValidator = boolFieldValidator ?? throw new ArgumentNullException(nameof(boolFieldValidator));
+        _boolFieldValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(CreateTemplateRequest));
     }
 
-    public override Result Validate(CreateTemplateRequest value)
+    public override Result ValidateNotNull(CreateTemplateRequest value)
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyNames.Push(nameof(CreateTemplateRequest.TemplateName));
+            PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
             return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.TemplateName.Length > 64)
         {
-            PropertyNames.Push(nameof(CreateTemplateRequest.TemplateName));
+            PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
             return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 
         if (value.TextFields.Count + value.NumberFields.Count + value.BoolFields.Count == 0)
         {
-            PropertyNames.Push("*Fields");
+            PropertyName.Push("*Fields");
             return ValidationException(TemplateErrorMessages.NoFields);
         }
 
         for (var i = 0; i < value.TextFields.Count; i++)
         {
-            PropertyNames.Push($"{nameof(CreateTemplateRequest.TextFields)}[{i}]");
+            PropertyName.Push($"{nameof(CreateTemplateRequest.TextFields)}[{i}]");
             var textFieldValidationResult = _textFieldValidator.Validate(value.TextFields[i]);
-            PropertyNames.Pop();
+            PropertyName.Pop();
             if (textFieldValidationResult.Failure)
             {
                 return textFieldValidationResult;
@@ -59,9 +64,9 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 
         for (var i = 0; i < value.NumberFields.Count; i++)
         {
-            PropertyNames.Push($"{nameof(CreateTemplateRequest.NumberFields)}[{i}]");
+            PropertyName.Push($"{nameof(CreateTemplateRequest.NumberFields)}[{i}]");
             var numberFieldValidationResult = _numberFieldValidator.Validate(value.NumberFields[i]);
-            PropertyNames.Pop();
+            PropertyName.Pop();
             if (numberFieldValidationResult.Failure)
             {
                 return numberFieldValidationResult;
@@ -70,13 +75,55 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 
         for (var i = 0; i < value.BoolFields.Count; i++)
         {
-            PropertyNames.Push($"{nameof(CreateTemplateRequest.BoolFields)}[{i}]");
+            PropertyName.Push($"{nameof(CreateTemplateRequest.BoolFields)}[{i}]");
             var boolFieldValidationResult = _boolFieldValidator.Validate(value.BoolFields[i]);
-            PropertyNames.Pop();
+            PropertyName.Pop();
             if (boolFieldValidationResult.Failure)
             {
                 return boolFieldValidationResult;
             }
+        }
+
+        var allNames = new HashSet<string>(value.TextFields.Count + value.NumberFields.Count +
+                                                value.BoolFields.Count);
+
+        for (var i = 0; i < value.TextFields.Count; i++)
+        {
+            var name = value.TextFields[i].Name;
+            if (allNames.Contains(name))
+            {
+                PropertyName.Push($"{nameof(CreateTemplateRequest.TextFields)}[{i}]");
+                PropertyName.Push(nameof(TextField.Name));
+                return ValidationException(TemplateErrorMessages.FieldNameNotUnique);
+            }
+
+            allNames.Add(name);
+        }
+
+        for (var i = 0; i < value.NumberFields.Count; i++)
+        {
+            var name = value.NumberFields[i].Name;
+            if (allNames.Contains(name))
+            {
+                PropertyName.Push($"{nameof(CreateTemplateRequest.NumberFields)}[{i}]");
+                PropertyName.Push(nameof(NumberField.Name));
+                return ValidationException(TemplateErrorMessages.FieldNameNotUnique);
+            }
+
+            allNames.Add(name);
+        }
+
+        for (var i = 0; i < value.BoolFields.Count; i++)
+        {
+            var name = value.BoolFields[i].Name;
+            if (allNames.Contains(name))
+            {
+                PropertyName.Push($"{nameof(CreateTemplateRequest.BoolFields)}[{i}]");
+                PropertyName.Push(nameof(BoolField.Name));
+                return ValidationException(TemplateErrorMessages.FieldNameNotUnique);
+            }
+
+            allNames.Add(name);
         }
 
         return Result.Ok;

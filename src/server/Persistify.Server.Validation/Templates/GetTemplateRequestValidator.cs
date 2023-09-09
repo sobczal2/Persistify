@@ -8,14 +8,14 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 {
     public GetTemplateRequestValidator()
     {
-        PropertyNames.Push(nameof(GetTemplateRequest));
+        PropertyName.Push(nameof(GetTemplateRequest));
     }
 
-    public override Result Validate(GetTemplateRequest value)
+    public override Result ValidateNotNull(GetTemplateRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            PropertyNames.Push(nameof(GetTemplateRequest.TemplateId));
+            PropertyName.Push(nameof(GetTemplateRequest.TemplateId));
             return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 

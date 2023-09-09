@@ -7,6 +7,9 @@ public readonly struct Result<T>
     private readonly T? _value;
     private readonly Exception? _exception;
 
+    public T Value => _value ?? throw new InvalidOperationException();
+    public Exception Exception => _exception ?? throw new InvalidOperationException();
+
     public Result(T value)
     {
         _value = value;
@@ -44,9 +47,9 @@ public readonly struct Result<T>
 
     public Result<T> OnSuccess(Action<T> action)
     {
-        var value = _value ?? throw new InvalidOperationException();
         if (Success)
         {
+            var value = _value ?? throw new InvalidOperationException();
             action(value);
         }
 
@@ -55,9 +58,9 @@ public readonly struct Result<T>
 
     public Result<T> OnFailure(Action<Exception> action)
     {
-        var exception = _exception ?? throw new InvalidOperationException();
         if (Failure)
         {
+            var exception = _exception ?? throw new InvalidOperationException();
             action(exception);
         }
 

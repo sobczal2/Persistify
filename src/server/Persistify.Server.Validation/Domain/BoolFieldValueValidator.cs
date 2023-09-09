@@ -10,20 +10,20 @@ public class BoolFieldValueValidator : Validator<BoolFieldValue>
 {
     public BoolFieldValueValidator()
     {
-        PropertyNames.Push(nameof(BoolFieldValue));
+        PropertyName.Push(nameof(BoolFieldValue));
     }
 
-    public override Result Validate(BoolFieldValue value)
+    public override Result ValidateNotNull(BoolFieldValue value)
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(BoolFieldValue.FieldName));
+            PropertyName.Push(nameof(BoolFieldValue.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(BoolFieldValue.FieldName));
+            PropertyName.Push(nameof(BoolFieldValue.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 

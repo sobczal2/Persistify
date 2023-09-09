@@ -15,21 +15,21 @@ public class TextFieldValidator : Validator<TextField>
     public TextFieldValidator(IValidator<AnalyzerDescriptor> analyzerDescriptorValidator)
     {
         _analyzerDescriptorValidator = analyzerDescriptorValidator;
-        _analyzerDescriptorValidator.PropertyNames = PropertyNames;
-        PropertyNames.Push(nameof(TextField));
+        _analyzerDescriptorValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(TextField));
     }
 
-    public override Result Validate(TextField value)
+    public override Result ValidateNotNull(TextField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            PropertyNames.Push(nameof(TextField.Name));
+            PropertyName.Push(nameof(TextField.Name));
             return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
-            PropertyNames.Push(nameof(TextField.Name));
+            PropertyName.Push(nameof(TextField.Name));
             return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 
@@ -37,27 +37,27 @@ public class TextFieldValidator : Validator<TextField>
         var analyzerDescriptorNull = value.AnalyzerDescriptor is null;
         if ((analyzerPresetNameNull && analyzerDescriptorNull) || (!analyzerPresetNameNull && !analyzerDescriptorNull))
         {
-            PropertyNames.Push(nameof(TextField.AnalyzerPresetName));
+            PropertyName.Push(nameof(TextField.AnalyzerPresetName));
             return ValidationException(TemplateErrorMessages.AnalyzerPresetNameOrAnalyzerDescriptorRequired);
         }
 
         if (value.AnalyzerPresetName is not null && value.AnalyzerPresetName.Length == 0)
         {
-            PropertyNames.Push(nameof(TextField.AnalyzerPresetName));
+            PropertyName.Push(nameof(TextField.AnalyzerPresetName));
             return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.AnalyzerPresetName is not null && value.AnalyzerPresetName.Length > 64)
         {
-            PropertyNames.Push(nameof(TextField.AnalyzerPresetName));
+            PropertyName.Push(nameof(TextField.AnalyzerPresetName));
             return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 
         if (value.AnalyzerDescriptor is not null)
         {
-            PropertyNames.Push(nameof(TextField.AnalyzerDescriptor));
+            PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
             var analyzerDescriptorValidationResult = _analyzerDescriptorValidator.Validate(value.AnalyzerDescriptor);
-            PropertyNames.Pop();
+            PropertyName.Pop();
             if (analyzerDescriptorValidationResult.Failure)
             {
                 return analyzerDescriptorValidationResult;

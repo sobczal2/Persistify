@@ -9,20 +9,20 @@ public class NumberFieldValueValidator : Validator<NumberFieldValue>
 {
     public NumberFieldValueValidator()
     {
-        PropertyNames.Push(nameof(NumberFieldValue));
+        PropertyName.Push(nameof(NumberFieldValue));
     }
 
-    public override Result Validate(NumberFieldValue value)
+    public override Result ValidateNotNull(NumberFieldValue value)
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyNames.Push(nameof(NumberFieldValue.FieldName));
+            PropertyName.Push(nameof(NumberFieldValue.FieldName));
             return ValidationException(DocumentErrorMessages.NameEmpty);
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyNames.Push(nameof(NumberFieldValue.FieldName));
+            PropertyName.Push(nameof(NumberFieldValue.FieldName));
             return ValidationException(DocumentErrorMessages.NameTooLong);
         }
 

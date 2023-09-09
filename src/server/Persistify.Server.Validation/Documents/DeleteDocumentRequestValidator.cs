@@ -10,20 +10,20 @@ public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
 {
     public DeleteDocumentRequestValidator()
     {
-        PropertyNames.Push(nameof(DeleteDocumentRequest));
+        PropertyName.Push(nameof(DeleteDocumentRequest));
     }
 
-    public override Result Validate(DeleteDocumentRequest value)
+    public override Result ValidateNotNull(DeleteDocumentRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            PropertyNames.Push(nameof(DeleteDocumentRequest.TemplateId));
+            PropertyName.Push(nameof(DeleteDocumentRequest.TemplateId));
             return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
         if (value.DocumentId <= 0)
         {
-            PropertyNames.Push(nameof(DeleteDocumentRequest.DocumentId));
+            PropertyName.Push(nameof(DeleteDocumentRequest.DocumentId));
             return ValidationException(DocumentErrorMessages.InvalidDocumentId);
         }
 

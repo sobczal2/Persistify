@@ -12,20 +12,20 @@ public class BoolFieldValidator : Validator<BoolField>
 {
     public BoolFieldValidator()
     {
-        PropertyNames.Push(nameof(BoolField));
+        PropertyName.Push(nameof(BoolField));
     }
 
-    public override Result Validate(BoolField value)
+    public override Result ValidateNotNull(BoolField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            PropertyNames.Push(nameof(BoolField.Name));
+            PropertyName.Push(nameof(BoolField.Name));
             return ValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
-            PropertyNames.Push(nameof(BoolField.Name));
+            PropertyName.Push(nameof(BoolField.Name));
             return ValidationException(TemplateErrorMessages.NameTooLong);
         }
 

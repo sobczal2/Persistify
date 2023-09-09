@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Microsoft.Extensions.ObjectPool;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Search;
@@ -20,23 +21,31 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         IValidator<SearchNode> searchNodeValidator
     )
     {
-        _paginationValidator = paginationValidator;
-        _paginationValidator.PropertyNames = PropertyNames;
-        _searchNodeValidator = searchNodeValidator;
-        _searchNodeValidator.PropertyNames = PropertyNames;
+        _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
+        _paginationValidator.PropertyName = PropertyName;
+        _searchNodeValidator = searchNodeValidator ?? throw new ArgumentNullException(nameof(searchNodeValidator));
+        _searchNodeValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(SearchDocumentsRequest));
     }
 
-    public override Result Validate(SearchDocumentsRequest value)
+    public override Result ValidateNotNull(SearchDocumentsRequest value)
     {
         if (value.TemplateId <= 0)
         {
-            PropertyNames.Push(nameof(SearchDocumentsRequest.TemplateId));
+            PropertyName.Push(nameof(SearchDocumentsRequest.TemplateId));
             return ValidationException(TemplateErrorMessages.InvalidTemplateId);
         }
 
-        PropertyNames.Push(nameof(SearchDocumentsRequest.Pagination));
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (value.Pagination == null)
+        {
+            PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
+            return ValidationException(SharedErrorMessages.ValueNull);
+        }
+
+        PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
         var paginationValidator = _paginationValidator.Validate(value.Pagination);
-        PropertyNames.Pop();
+        PropertyName.Pop();
         if (paginationValidator.Failure)
         {
             return paginationValidator;
@@ -45,12 +54,13 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value.SearchNode == null)
         {
-            return ValidationException(DocumentErrorMessages.SearchNodeNull);
+            PropertyName.Push(nameof(SearchDocumentsRequest.SearchNode));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
-        PropertyNames.Push(nameof(SearchDocumentsRequest.SearchNode));
+        PropertyName.Push(nameof(SearchDocumentsRequest.SearchNode));
         var searchNodeValidator = _searchNodeValidator.Validate(value.SearchNode);
-        PropertyNames.Pop();
+        PropertyName.Pop();
         if (searchNodeValidator.Failure)
         {
             return searchNodeValidator;

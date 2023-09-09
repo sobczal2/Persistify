@@ -11,7 +11,7 @@ public class RpcExceptionHandler : IExceptionHandler
         switch (exception)
         {
             case ValidationException validationException:
-                throw new RpcException(new Status(StatusCode.InvalidArgument, $"{validationException.Property}: {validationException.Message}"));
+                throw new RpcException(new Status(StatusCode.InvalidArgument, $"{validationException.PropertyName}: {validationException.Message}"));
         }
     }
 }
