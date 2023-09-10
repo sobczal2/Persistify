@@ -8,6 +8,7 @@ public interface IUserManager : IManager
 {
     ValueTask<User?> GetAsync(string username);
     ValueTask<User?> GetAsync(int id);
+    bool Exists(string username);
     ValueTask<List<User>> ListAsync(int take, int skip);
     int Count();
     void Add(User user);

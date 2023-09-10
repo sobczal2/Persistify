@@ -33,19 +33,4 @@ public static class HostExtensions
 
         return host;
     }
-
-    // TODO: Change for background service
-    public static void LoadServices(this WebApplication app)
-    {
-        using var scope = app.Services.CreateScope();
-        var services = scope.ServiceProvider;
-        var fileManager = services.GetService<IFileManager>();
-
-        if (fileManager is null)
-        {
-            throw new InvalidOperationException("File manager is not configured");
-        }
-
-        fileManager.EnsureRequiredFiles();
-    }
 }

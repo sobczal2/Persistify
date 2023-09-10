@@ -19,7 +19,7 @@ namespace Persistify.Server.Management.Managers.Templates;
 public class TemplateManager : Manager, ITemplateManager
 {
     private readonly IDocumentManagerStore _documentManagerStore;
-    private readonly IFileManager _fileManager;
+    private readonly IFileHandler _fileHandler;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<Template> _templateRepository;
     private readonly ConcurrentDictionary<string, int> _templateNameIdDictionary;
@@ -27,7 +27,7 @@ public class TemplateManager : Manager, ITemplateManager
 
     public TemplateManager(
         ITransactionState transactionState,
-        IFileManager fileManager,
+        IFileHandler fileHandler,
         IDocumentManagerStore documentManagerStore,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
@@ -36,7 +36,7 @@ public class TemplateManager : Manager, ITemplateManager
         transactionState
     )
     {
-        _fileManager = fileManager;
+        _fileHandler = fileHandler;
         _documentManagerStore = documentManagerStore;
         var identifierFileStream =
             fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.IdentifierRepositoryFileName);
@@ -171,7 +171,7 @@ public class TemplateManager : Manager, ITemplateManager
 
             await _templateRepository.WriteAsync(currentId, template, true);
 
-            _fileManager.CreateFilesForTemplate(currentId);
+            _fileHandler.CreateFilesForTemplate(currentId);
             _documentManagerStore.AddManager(currentId);
 
             var documentManager = _documentManagerStore.GetManager(currentId);
@@ -219,7 +219,7 @@ public class TemplateManager : Manager, ITemplateManager
                 await TransactionState.GetCurrentTransaction()
                     .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-                _fileManager.DeleteFilesForTemplate(id);
+                _fileHandler.DeleteFilesForTemplate(id);
                 _documentManagerStore.DeleteManager(id);
 
                 _templateNameIdDictionary.TryRemove(template.Name, out _);

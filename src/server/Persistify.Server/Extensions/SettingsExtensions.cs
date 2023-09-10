@@ -19,14 +19,6 @@ public static class SettingsExtensions
                                                    $"Could not load {GrpcSettings.SectionName} from configuration"));
         services.Configure<GrpcSettings>(grpcSettingsSection);
 
-        var authSettingsSection = configuration
-            .GetRequiredSection(AuthSettings.SectionName);
-        var authSettingsValidator = new AuthSettingsValidator();
-        authSettingsValidator.ValidateAndThrow(authSettingsSection.Get<AuthSettings>() ??
-                                               throw new InvalidOperationException(
-                                                   $"Could not load {AuthSettings.SectionName} from configuration"));
-        services.Configure<AuthSettings>(authSettingsSection);
-
         var storageSettingsSection = configuration
             .GetRequiredSection(StorageSettings.SectionName);
         var storageSettingsValidator = new StorageSettingsValidator();
@@ -84,6 +76,26 @@ public static class SettingsExtensions
                                                          $"Could not load {RepositorySettings.SectionName} from configuration"));
 
         services.Configure<RepositorySettings>(repositorySettingsSection);
+
+        var passwordSettingsSection = configuration
+            .GetRequiredSection(PasswordSettings.SectionName);
+
+        var passwordSettingsValidator = new PasswordSettingsValidator();
+        passwordSettingsValidator.ValidateAndThrow(passwordSettingsSection.Get<PasswordSettings>() ??
+                                                   throw new InvalidOperationException(
+                                                       $"Could not load {PasswordSettings.SectionName} from configuration"));
+
+        services.Configure<PasswordSettings>(passwordSettingsSection);
+
+        var tokenSettingsSection = configuration
+            .GetRequiredSection(TokenSettings.SectionName);
+
+        var tokenSettingsValidator = new TokenSettingsValidator();
+        tokenSettingsValidator.ValidateAndThrow(tokenSettingsSection.Get<TokenSettings>() ??
+                                                 throw new InvalidOperationException(
+                                                     $"Could not load {TokenSettings.SectionName} from configuration"));
+
+        services.Configure<TokenSettings>(tokenSettingsSection);
 
         return services;
     }

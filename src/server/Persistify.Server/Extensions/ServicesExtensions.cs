@@ -6,11 +6,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Persistify.Helpers;
+using Persistify.Helpers.Time;
 using Persistify.Server.Commands;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
 using Persistify.Server.HostedServices;
 using Persistify.Server.Management;
+using Persistify.Server.Security;
 using Persistify.Server.Serialization;
 using Persistify.Server.Validation;
 using ProtoBuf.Grpc.Server;
@@ -46,22 +49,29 @@ public static class ServicesExtensions
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
-                var authSettings = configuration
-                                       .GetRequiredSection(AuthSettings.SectionName)
-                                       .Get<AuthSettings>() ??
+                var tokenSettings = configuration
+                                       .GetRequiredSection(TokenSettings.SectionName)
+                                       .Get<TokenSettings>() ??
                                    throw new InvalidOperationException(
-                                       $"Could not load {AuthSettings.SectionName} from configuration");
+                                       $"Could not load {TokenSettings.SectionName} from configuration");
+
+                var clock = services.BuildServiceProvider().GetRequiredService<IClock>();
 
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = authSettings.ValidateIssuer,
-                    ValidateAudience = authSettings.ValidateAudience,
-                    ValidateLifetime = authSettings.ValidateLifetime,
-                    ValidateIssuerSigningKey = authSettings.ValidateIssuerSigningKey,
-                    ValidIssuer = authSettings.ValidIssuer,
-                    ValidAudience = authSettings.ValidAudience,
-                    IssuerSigningKey =
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.IssuerSigningKey))
+                    ValidateLifetime = true,
+                    LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                    {
+                        var now = clock.UtcNow;
+                        return notBefore <= now && expires >= now;
+                    },
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Secret)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    RequireExpirationTime = true,
+                    RequireSignedTokens = true,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
 
@@ -71,6 +81,8 @@ public static class ServicesExtensions
         services.AddManagement();
         services.AddHostedServices();
         services.AddErrorHandling();
+        services.AddSecurity();
+        services.AddHelpers();
 
         return services;
     }

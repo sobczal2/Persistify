@@ -12,13 +12,13 @@ namespace Persistify.Server.Management.Tests.Unit.Files;
 public class FileManagerTests
 {
     private readonly IFileProvider _fileProvider;
-    private readonly ILogger<FileManager> _logger;
-    private FileManager _sut;
+    private readonly ILogger<FileHandler> _logger;
+    private FileHandler _sut;
 
     public FileManagerTests()
     {
         _fileProvider = Substitute.For<IFileProvider>();
-        _logger = Substitute.For<ILogger<FileManager>>();
+        _logger = Substitute.For<ILogger<FileHandler>>();
         _sut = null!;
     }
 
@@ -27,7 +27,7 @@ public class FileManagerTests
         IEnumerable<IFileGroupForTemplate> fileGroupsForTemplate
     )
     {
-        _sut = new FileManager(
+        _sut = new FileHandler(
             _logger,
             _fileProvider,
             requiredFileGroups,
@@ -39,14 +39,14 @@ public class FileManagerTests
     public void Ctor_WhenLoggerIsNull_ThrowsArgumentNullException()
     {
         // Arrange
-        ILogger<FileManager> logger = null!;
+        ILogger<FileHandler> logger = null!;
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         var fileGroupsForTemplate = Substitute.For<IEnumerable<IFileGroupForTemplate>>();
 
         // Act
         var action = new Action(() =>
         {
-            var unused = new FileManager(
+            var unused = new FileHandler(
                 logger,
                 _fileProvider,
                 requiredFileGroups,
@@ -69,7 +69,7 @@ public class FileManagerTests
         // Act
         var action = new Action(() =>
         {
-            var unused = new FileManager(
+            var unused = new FileHandler(
                 _logger,
                 fileProvider,
                 requiredFileGroups,
@@ -91,7 +91,7 @@ public class FileManagerTests
         // Act
         var action = new Action(() =>
         {
-            var unused = new FileManager(
+            var unused = new FileHandler(
                 _logger,
                 _fileProvider,
                 requiredFileGroups,
@@ -113,7 +113,7 @@ public class FileManagerTests
         // Act
         var action = new Action(() =>
         {
-            var unused = new FileManager(
+            var unused = new FileHandler(
                 _logger,
                 _fileProvider,
                 requiredFileGroups,

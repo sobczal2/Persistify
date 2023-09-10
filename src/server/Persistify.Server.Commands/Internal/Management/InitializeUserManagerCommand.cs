@@ -7,32 +7,32 @@ using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
-using Persistify.Server.Management.Managers.Templates;
+using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.Commands.Internal.Management;
 
-public class InitializeTemplateManagerCommand : Command
+public class InitializeUserManagerCommand : Command
 {
-    private readonly ITemplateManager _templateManager;
+    private readonly IUserManager _userManager;
 
-    public InitializeTemplateManagerCommand(
+    public InitializeUserManagerCommand(
         ILoggerFactory loggerFactory,
         ITransactionState transactionState,
         IExceptionHandler exceptionHandler,
-        ITemplateManager templateManager
+        IUserManager userManager
     ) : base(
         loggerFactory,
         transactionState,
         exceptionHandler
     )
     {
-        _templateManager = templateManager;
+        _userManager = userManager;
     }
 
     protected override ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
     {
-        _templateManager.Initialize();
+        _userManager.Initialize();
 
         return ValueTask.CompletedTask;
     }
@@ -47,7 +47,7 @@ public class InitializeTemplateManagerCommand : Command
         return new TransactionDescriptor(
             false,
             new List<IManager>(),
-            new List<IManager> { _templateManager }
+            new List<IManager> { _userManager }
         );
     }
 }

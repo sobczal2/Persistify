@@ -6,35 +6,35 @@ using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling.ExceptionHandlers;
+using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers;
-using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.Commands.Internal.Management;
 
-public class InitializeTemplateManagerCommand : Command
+public class SetupFileSystemCommand : Command
 {
-    private readonly ITemplateManager _templateManager;
+    private readonly IFileHandler _fileHandler;
 
-    public InitializeTemplateManagerCommand(
+    public SetupFileSystemCommand(
         ILoggerFactory loggerFactory,
         ITransactionState transactionState,
         IExceptionHandler exceptionHandler,
-        ITemplateManager templateManager
+        IFileHandler fileHandler
     ) : base(
         loggerFactory,
         transactionState,
         exceptionHandler
     )
     {
-        _templateManager = templateManager;
+        _fileHandler = fileHandler;
     }
 
-    protected override ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
     {
-        _templateManager.Initialize();
+        _fileHandler.EnsureRequiredFiles();
 
-        return ValueTask.CompletedTask;
+        await ValueTask.CompletedTask;
     }
 
     protected override EmptyResponse GetResponse()
@@ -45,9 +45,9 @@ public class InitializeTemplateManagerCommand : Command
     protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
     {
         return new TransactionDescriptor(
-            false,
+            true,
             new List<IManager>(),
-            new List<IManager> { _templateManager }
+            new List<IManager>()
         );
     }
 }

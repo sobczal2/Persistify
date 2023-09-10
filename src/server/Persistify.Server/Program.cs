@@ -27,7 +27,6 @@ try
     var app = builder.Build();
 
     app.UsePersistify();
-    app.LoadServices();
 
     app.Run();
 }

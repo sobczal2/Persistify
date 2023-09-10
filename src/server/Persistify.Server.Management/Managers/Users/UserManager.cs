@@ -17,7 +17,6 @@ namespace Persistify.Server.Management.Managers.Users;
 
 public class UserManager : Manager, IUserManager
 {
-    private readonly IFileManager _fileManager;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<User> _userRepository;
     private readonly ConcurrentDictionary<string, int> _usernameIdDictionary;
@@ -25,7 +24,6 @@ public class UserManager : Manager, IUserManager
 
     public UserManager(
         ITransactionState transactionState,
-        IFileManager fileManager,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions
@@ -33,8 +31,6 @@ public class UserManager : Manager, IUserManager
         transactionState
     )
     {
-        _fileManager = fileManager;
-
         var identifierFileStream =
             fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.IdentifierRepositoryFileName);
         var userRepositoryMainFileStream =
@@ -112,6 +108,14 @@ public class UserManager : Manager, IUserManager
         ThrowIfCannotRead();
 
         return await _userRepository.ReadAsync(id, true);
+    }
+
+    public bool Exists(string username)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        return _usernameIdDictionary.ContainsKey(username);
     }
 
     public async ValueTask<List<User>> ListAsync(int take, int skip)

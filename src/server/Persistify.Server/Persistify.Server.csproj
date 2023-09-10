@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Persistence.DataStructures\Persistify.Server.Persistence.DataStructures.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Security\Persistify.Server.Security.csproj" />
     <ProjectReference Include="..\Persistify.Server.Serialization\Persistify.Server.Serialization.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
     <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj"/>
@@ -28,5 +29,6 @@
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2"/>
     <PackageReference Include="System.ServiceModel.Primitives" Version="6.0.0"/>
   </ItemGroup>
+
 
 </Project>

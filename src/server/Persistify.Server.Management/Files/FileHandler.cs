@@ -5,15 +5,15 @@ using Persistify.Server.Management.Files.Exceptions;
 
 namespace Persistify.Server.Management.Files;
 
-public class FileManager : IFileManager
+public class FileHandler : IFileHandler
 {
     private readonly IEnumerable<IFileGroupForTemplate> _fileGroupsForTemplate;
     private readonly IFileProvider _fileProvider;
-    private readonly ILogger<FileManager> _logger;
+    private readonly ILogger<FileHandler> _logger;
     private readonly IEnumerable<IRequiredFileGroup> _requiredFileGroups;
 
-    public FileManager(
-        ILogger<FileManager> logger,
+    public FileHandler(
+        ILogger<FileHandler> logger,
         IFileProvider fileProvider,
         IEnumerable<IRequiredFileGroup> requiredFileGroups,
         IEnumerable<IFileGroupForTemplate> fileGroupsForTemplate

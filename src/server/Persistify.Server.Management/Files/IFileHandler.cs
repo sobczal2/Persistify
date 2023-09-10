@@ -1,6 +1,6 @@
 ﻿namespace Persistify.Server.Management.Files;
 
-public interface IFileManager
+public interface IFileHandler
 {
     void EnsureRequiredFiles();
     void CreateFilesForTemplate(int templateId);

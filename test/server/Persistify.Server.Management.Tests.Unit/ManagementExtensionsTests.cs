@@ -40,7 +40,7 @@ public class ManagementExtensionsTests
         services.Should().HaveCount(8);
         services.Should().Contain(x => x.ServiceType == typeof(ITemplateManager));
         services.Should().Contain(x => x.ServiceType == typeof(IFileStreamFactory));
-        services.Should().Contain(x => x.ServiceType == typeof(IFileManager));
+        services.Should().Contain(x => x.ServiceType == typeof(IFileHandler));
         services.Should().Contain(x => x.ServiceType == typeof(IFileProvider));
         services.Should().Contain(x => x.ServiceType == typeof(IRequiredFileGroup));
         services.Should().Contain(x => x.ServiceType == typeof(IDocumentManagerStore));
