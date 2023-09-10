@@ -97,6 +97,16 @@ public static class SettingsExtensions
 
         services.Configure<TokenSettings>(tokenSettingsSection);
 
+        var rootSettingsSection = configuration
+            .GetRequiredSection(RootSettings.SectionName);
+
+        var rootSettingsValidator = new RootSettingsValidator();
+        rootSettingsValidator.ValidateAndThrow(rootSettingsSection.Get<RootSettings>() ??
+                                                 throw new InvalidOperationException(
+                                                     $"Could not load {RootSettings.SectionName} from configuration"));
+
+        services.Configure<RootSettings>(rootSettingsSection);
+
         return services;
     }
 }

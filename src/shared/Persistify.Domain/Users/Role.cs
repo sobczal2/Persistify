@@ -11,5 +11,7 @@ public enum Role
     TemplateRead = 4,
     TemplateWrite = 8,
     UserRead = 16,
-    UserWrite = 32
+    UserWrite = 32,
+    Root = 64,
+    All = DocumentRead | DocumentWrite | TemplateRead | TemplateWrite | UserRead | UserWrite | Root
 }

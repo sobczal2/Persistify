@@ -14,13 +14,15 @@ public class StartupActionHostedService : BackgroundService
     private readonly InitializeTemplateManagerCommand _initializeTemplateManagerCommand;
     private readonly InitializeDocumentManagersCommand _initializeDocumentManagersCommand;
     private readonly InitializeUserManagerCommand _initializeUserManagerCommand;
+    private readonly EnsureRootUserExistsCommand _ensureRootUserExistsCommand;
 
     public StartupActionHostedService(
         ILogger<StartupActionHostedService> logger,
         SetupFileSystemCommand setupFileSystemCommand,
         InitializeTemplateManagerCommand initializeTemplateManagerCommand,
         InitializeDocumentManagersCommand initializeDocumentManagersCommand,
-        InitializeUserManagerCommand initializeUserManagerCommand
+        InitializeUserManagerCommand initializeUserManagerCommand,
+        EnsureRootUserExistsCommand ensureRootUserExistsCommand
     )
     {
         _logger = logger;
@@ -28,6 +30,7 @@ public class StartupActionHostedService : BackgroundService
         _initializeTemplateManagerCommand = initializeTemplateManagerCommand;
         _initializeDocumentManagersCommand = initializeDocumentManagersCommand;
         _initializeUserManagerCommand = initializeUserManagerCommand;
+        _ensureRootUserExistsCommand = ensureRootUserExistsCommand;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -37,6 +40,7 @@ public class StartupActionHostedService : BackgroundService
         await _initializeTemplateManagerCommand.RunInTransactionAsync(new EmptyRequest(), stoppingToken);
         await _initializeDocumentManagersCommand.RunInTransactionAsync(new EmptyRequest(), stoppingToken);
         await _initializeUserManagerCommand.RunInTransactionAsync(new EmptyRequest(), stoppingToken);
+        await _ensureRootUserExistsCommand.RunInTransactionAsync(new EmptyRequest(), stoppingToken);
         _logger.LogInformation("Startup actions executed");
     }
 }

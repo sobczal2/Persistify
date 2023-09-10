@@ -5,9 +5,9 @@ using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Users;
 
-public class CreateUserRequestValidator : Validator<CreateUserRequest>
+public class GetUserRequestValidator : Validator<GetUserRequest>
 {
-    public override Result ValidateNotNull(CreateUserRequest value)
+    public override Result ValidateNotNull(GetUserRequest value)
     {
         if (string.IsNullOrEmpty(value.Username))
         {
@@ -18,18 +18,6 @@ public class CreateUserRequestValidator : Validator<CreateUserRequest>
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(CreateUserRequest.Username));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
-        }
-
-        if (string.IsNullOrEmpty(value.Password))
-        {
-            PropertyName.Push(nameof(CreateUserRequest.Password));
-            return ValidationException(SharedErrorMessages.ValueNull);
-        }
-
-        if (value.Password.Length > 1024)
-        {
-            PropertyName.Push(nameof(CreateUserRequest.Password));
             return ValidationException(SharedErrorMessages.ValueTooLong);
         }
 

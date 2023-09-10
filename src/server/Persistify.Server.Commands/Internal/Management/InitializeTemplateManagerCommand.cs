@@ -37,11 +37,6 @@ public class InitializeTemplateManagerCommand : Command
         return ValueTask.CompletedTask;
     }
 
-    protected override EmptyResponse GetResponse()
-    {
-        return new EmptyResponse();
-    }
-
     protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
     {
         return new TransactionDescriptor(

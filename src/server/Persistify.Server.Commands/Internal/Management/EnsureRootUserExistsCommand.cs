@@ -2,25 +2,32 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
-using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
+using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Security;
 
 namespace Persistify.Server.Commands.Internal.Management;
 
-public class InitializeUserManagerCommand : Command
+public class EnsureRootUserExistsCommand : Command
 {
     private readonly IUserManager _userManager;
+    private readonly IPasswordService _passwordService;
+    private readonly IOptions<RootSettings> _rootSettingsOptions;
 
-    public InitializeUserManagerCommand(
+    public EnsureRootUserExistsCommand(
         ILoggerFactory loggerFactory,
         ITransactionState transactionState,
         IExceptionHandler exceptionHandler,
-        IUserManager userManager
+        IUserManager userManager,
+        IPasswordService passwordService,
+        IOptions<RootSettings> rootSettingsOptions
     ) : base(
         loggerFactory,
         transactionState,
@@ -28,11 +35,26 @@ public class InitializeUserManagerCommand : Command
     )
     {
         _userManager = userManager;
+        _passwordService = passwordService;
+        _rootSettingsOptions = rootSettingsOptions;
     }
 
     protected override ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
     {
-        _userManager.Initialize();
+        if (!_userManager.Exists(_rootSettingsOptions.Value.Username))
+        {
+            var (hash, salt) = _passwordService.HashPassword(_rootSettingsOptions.Value.Password);
+
+            var user = new User
+            {
+                Username = _rootSettingsOptions.Value.Username,
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                Role = Role.All
+            };
+
+            _userManager.Add(user);
+        }
 
         return ValueTask.CompletedTask;
     }

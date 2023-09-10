@@ -87,4 +87,9 @@ public abstract class Command : Command<EmptyRequest, EmptyResponse>
     )
     {
     }
+
+    protected override EmptyResponse GetResponse()
+    {
+        return new();
+    }
 }

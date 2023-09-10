@@ -21,11 +21,13 @@ public static class CommandsExtensions
         services.AddTransient<DeleteDocumentCommand>();
 
         services.AddTransient<CreateUserCommand>();
+        services.AddTransient<GetUserCommand>();
 
         services.AddTransient<InitializeTemplateManagerCommand>();
         services.AddTransient<InitializeDocumentManagersCommand>();
         services.AddTransient<InitializeUserManagerCommand>();
         services.AddTransient<SetupFileSystemCommand>();
+        services.AddTransient<EnsureRootUserExistsCommand>();
 
         return services;
     }

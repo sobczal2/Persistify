@@ -159,6 +159,8 @@ public class UserManager : Manager, IUserManager
 
             await _userRepository.WriteAsync(currentId, user, true);
 
+            _usernameIdDictionary.TryAdd(user.Username, currentId);
+
             Interlocked.Increment(ref _count);
         });
 
@@ -170,7 +172,9 @@ public class UserManager : Manager, IUserManager
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
-        if (!await _userRepository.ExistsAsync(id, true))
+        var user = await _userRepository.ReadAsync(id, true);
+
+        if (user == null)
         {
             return false;
         }
@@ -179,6 +183,8 @@ public class UserManager : Manager, IUserManager
         {
             if (await _userRepository.DeleteAsync(id, true))
             {
+                _usernameIdDictionary.TryRemove(user.Username, out _);
+
                 Interlocked.Decrement(ref _count);
             }
             else

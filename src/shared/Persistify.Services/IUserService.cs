@@ -11,4 +11,7 @@ public interface IUserService
 {
     [OperationContract]
     ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext context);
+
+    [OperationContract]
+    ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext context);
 }
