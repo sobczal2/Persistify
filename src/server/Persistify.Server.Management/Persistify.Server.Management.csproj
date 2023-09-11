@@ -10,9 +10,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Concurrency\Persistify.Concurrency.csproj"/>
     <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
     <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj" />
     <ProjectReference Include="..\Persistify.Server.Persistence.DataStructures\Persistify.Server.Persistence.DataStructures.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Persistence\Persistify.Server.Persistence.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Security\Persistify.Server.Security.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -13,4 +13,5 @@ public interface IUserManager : IManager
     int Count();
     void Add(User user);
     ValueTask<bool> RemoveAsync(int id);
+    ValueTask<(string accessToken, string refreshToken)> CreateTokens(int id);
 }

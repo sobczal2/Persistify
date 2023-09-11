@@ -11,14 +11,17 @@ public class UserService : IUserService
 {
     private readonly CreateUserCommand _createUserCommand;
     private readonly GetUserCommand _getUserCommand;
+    private readonly SignInCommand _signInCommand;
 
     public UserService(
         CreateUserCommand createUserCommand,
-        GetUserCommand getUserCommand
+        GetUserCommand getUserCommand,
+        SignInCommand signInCommand
         )
     {
         _createUserCommand = createUserCommand;
         _getUserCommand = getUserCommand;
+        _signInCommand = signInCommand;
     }
     public async ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext context)
     {
@@ -28,5 +31,10 @@ public class UserService : IUserService
     public async ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext context)
     {
         return await _getUserCommand.RunInTransactionAsync(request, context.CancellationToken).ConfigureAwait(false);
+    }
+
+    public async ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext context)
+    {
+        return await _signInCommand.RunInTransactionAsync(request, context.CancellationToken).ConfigureAwait(false);
     }
 }

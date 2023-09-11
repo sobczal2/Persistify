@@ -55,7 +55,7 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
         return new GetUserResponse
         {
             Username = _user.Username,
-            Role = _user.Role
+            Role = (int)_user.Role
         };
     }
 

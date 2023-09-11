@@ -9,13 +9,19 @@ public class UserManagerRequiredFileGroup : IRequiredFileGroup
     public static string IdentifierRepositoryFileName => Path.Join("User", "identifier.bin");
     public static string UserRepositoryMainFileName => Path.Join("User", "object.bin");
     public static string UserRepositoryOffsetLengthFileName => Path.Join("User", "offsetLength.bin");
+    public static string RefreshTokenRepositoryMainFileName => Path.Join("RefreshToken", "object.bin");
+    public static string RefreshTokenRepositoryOffsetLengthFileName => Path.Join("RefreshToken", "offsetLength.bin");
     public string FileGroupName => "UserManager";
 
     public List<string> GetFileNames()
     {
         return new List<string>
         {
-            IdentifierRepositoryFileName, UserRepositoryMainFileName, UserRepositoryOffsetLengthFileName
+            IdentifierRepositoryFileName,
+            UserRepositoryMainFileName,
+            UserRepositoryOffsetLengthFileName,
+            RefreshTokenRepositoryMainFileName,
+            RefreshTokenRepositoryOffsetLengthFileName
         };
     }
 }

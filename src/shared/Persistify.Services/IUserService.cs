@@ -14,4 +14,7 @@ public interface IUserService
 
     [OperationContract]
     ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext context);
+
+    [OperationContract]
+    ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext context);
 }

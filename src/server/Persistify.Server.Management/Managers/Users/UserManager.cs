@@ -5,20 +5,26 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Users;
+using Persistify.Helpers.Time;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
+using Persistify.Server.Security;
 using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Management.Managers.Users;
 
 public class UserManager : Manager, IUserManager
 {
+    private readonly IClock _clock;
+    private readonly ITokenService _tokenService;
+    private readonly TokenSettings _tokenSettings;
     private readonly IntStreamRepository _identifierRepository;
     private readonly ObjectStreamRepository<User> _userRepository;
+    private readonly ObjectStreamRepository<RefreshToken> _refreshTokenRepository;
     private readonly ConcurrentDictionary<string, int> _usernameIdDictionary;
     private volatile int _count;
 
@@ -26,17 +32,27 @@ public class UserManager : Manager, IUserManager
         ITransactionState transactionState,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
-        IOptions<RepositorySettings> repositorySettingsOptions
+        IOptions<RepositorySettings> repositorySettingsOptions,
+        IClock clock,
+        ITokenService tokenService,
+        IOptions<TokenSettings> tokenSettingsOptions
     ) : base(
         transactionState
     )
     {
+        _clock = clock;
+        _tokenService = tokenService;
+        _tokenSettings = tokenSettingsOptions.Value;
         var identifierFileStream =
             fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.IdentifierRepositoryFileName);
         var userRepositoryMainFileStream =
             fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.UserRepositoryMainFileName);
         var userRepositoryOffsetLengthFileStream =
             fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.UserRepositoryOffsetLengthFileName);
+        var refreshTokenRepositoryMainFileStream =
+            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.RefreshTokenRepositoryMainFileName);
+        var refreshTokenRepositoryOffsetLengthFileStream =
+            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.RefreshTokenRepositoryOffsetLengthFileName);
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _userRepository = new ObjectStreamRepository<User>(
@@ -44,6 +60,13 @@ public class UserManager : Manager, IUserManager
             userRepositoryOffsetLengthFileStream,
             serializer,
             repositorySettingsOptions.Value.UserRepositorySectorSize
+        );
+
+        _refreshTokenRepository = new ObjectStreamRepository<RefreshToken>(
+            refreshTokenRepositoryMainFileStream,
+            refreshTokenRepositoryOffsetLengthFileStream,
+            serializer,
+            repositorySettingsOptions.Value.RefreshTokenRepositorySectorSize
         );
 
         _usernameIdDictionary = new ConcurrentDictionary<string, int>();
@@ -196,5 +219,38 @@ public class UserManager : Manager, IUserManager
         PendingActions.Enqueue(removeAction);
 
         return true;
+    }
+
+    public async ValueTask<(string accessToken, string refreshToken)> CreateTokens(int id)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotWrite();
+
+        var user = await _userRepository.ReadAsync(id, true);
+
+        if (user is null)
+        {
+            throw new PersistifyInternalException();
+        }
+
+        var accessToken = _tokenService.GenerateAccessToken(user);
+
+        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        var refreshTokenObject = new RefreshToken
+        {
+            Value = refreshToken,
+            Created = _clock.UtcNow,
+            Expires = _clock.UtcNow.Add(_tokenSettings.RefreshTokenLifetime)
+        };
+
+        var saveAction = new Func<ValueTask>(async () =>
+        {
+            await _refreshTokenRepository.WriteAsync(id, refreshTokenObject, true);
+        });
+
+        PendingActions.Enqueue(saveAction);
+
+        return (accessToken, refreshToken);
     }
 }
