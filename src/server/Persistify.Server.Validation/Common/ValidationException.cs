@@ -2,7 +2,6 @@
 
 namespace Persistify.Server.Validation.Common;
 
-// TODO: Change when creating not grpc interface
 public class ValidationException : Exception
 {
     public string PropertyName { get; }

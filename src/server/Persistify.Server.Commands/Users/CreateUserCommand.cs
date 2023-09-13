@@ -47,7 +47,7 @@ public class CreateUserCommand : Command<CreateUserRequest, CreateUserResponse>
 
         var (hash, salt) = _passwordService.HashPassword(data.Password);
 
-        var user = new User { Username = data.Username, PasswordHash = hash, PasswordSalt = salt, Role = Role.None };
+        var user = new User { Username = data.Username, PasswordHash = hash, PasswordSalt = salt, Permission = Permission.None };
 
         _userManager.Add(user);
 
@@ -66,5 +66,10 @@ public class CreateUserCommand : Command<CreateUserRequest, CreateUserResponse>
             new List<IManager>(),
             new List<IManager> { _userManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(CreateUserRequest data)
+    {
+        return Permission.UserWrite;
     }
 }

@@ -18,5 +18,5 @@ public class User
     public byte[] PasswordSalt { get; set; } = default!;
 
     [ProtoMember(5)]
-    public Role Role { get; set; }
+    public Permission Permission { get; set; }
 }

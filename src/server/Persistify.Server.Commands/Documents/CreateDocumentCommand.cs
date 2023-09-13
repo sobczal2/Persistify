@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
@@ -85,5 +86,10 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
             new List<IManager> { _templateManager },
             new List<IManager>()
         );
+    }
+
+    protected override Permission GetRequiredPermission(CreateDocumentRequest data)
+    {
+        return Permission.DocumentWrite;
     }
 }

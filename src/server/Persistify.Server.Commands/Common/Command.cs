@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
 using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Security;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
 
@@ -40,9 +43,21 @@ public abstract class Command<TData, TResponse>
     protected abstract ValueTask RunAsync(TData data, CancellationToken cancellationToken);
     protected abstract TResponse GetResponse();
     protected abstract TransactionDescriptor GetTransactionDescriptor(TData data);
-
-    public async ValueTask<TResponse> RunInTransactionAsync(TData data, CancellationToken cancellationToken)
+    protected abstract Permission GetRequiredPermission(TData data);
+    protected virtual void Authorize(ClaimsPrincipal claimsPrincipal, TData data)
     {
+        var requiredPermission = GetRequiredPermission(data);
+        var userPermission = claimsPrincipal.GetPermission();
+        if (!userPermission.HasFlag(requiredPermission))
+        {
+            throw new InsufficientPermissionException(requiredPermission);
+        }
+    }
+
+    public async ValueTask<TResponse> RunInTransactionAsync(TData data, ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
+    {
+        Authorize(claimsPrincipal, data);
+
         _validator.Validate(data).OnFailure(exception => _exceptionHandler.Handle(exception));
 
         var transactionDescriptor = GetTransactionDescriptor(data);

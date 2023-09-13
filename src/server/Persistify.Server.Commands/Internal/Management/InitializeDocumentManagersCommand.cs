@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
@@ -50,5 +51,10 @@ public class InitializeDocumentManagersCommand : Command
             new List<IManager>(),
             new List<IManager>()
         );
+    }
+
+    protected override Permission GetRequiredPermission(EmptyRequest data)
+    {
+        return Permission.DocumentWrite;
     }
 }

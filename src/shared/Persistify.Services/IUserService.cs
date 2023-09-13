@@ -10,11 +10,11 @@ namespace Persistify.Services;
 public interface IUserService
 {
     [OperationContract]
-    ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext context);
+    ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext callContext);
 
     [OperationContract]
-    ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext context);
+    ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext callContext);
 
     [OperationContract]
-    ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext context);
+    ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext callContext);
 }

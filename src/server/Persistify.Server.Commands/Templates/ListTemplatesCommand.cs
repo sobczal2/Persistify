@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
+using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
@@ -62,5 +63,10 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
             new List<IManager> { _templateManager },
             new List<IManager>()
         );
+    }
+
+    protected override Permission GetRequiredPermission(ListTemplatesRequest data)
+    {
+        return Permission.TemplateRead;
     }
 }

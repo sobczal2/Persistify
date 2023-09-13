@@ -3,7 +3,7 @@
 namespace Persistify.Domain.Users;
 
 [Flags]
-public enum Role
+public enum Permission
 {
     None = 0,
     DocumentRead = 1,

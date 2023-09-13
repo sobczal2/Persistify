@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Users;
+using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 
@@ -23,18 +25,21 @@ public class UserService : IUserService
         _getUserCommand = getUserCommand;
         _signInCommand = signInCommand;
     }
-    public async ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext context)
+
+    [Authorize]
+    public async ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext callContext)
     {
-        return await _createUserCommand.RunInTransactionAsync(request, context.CancellationToken).ConfigureAwait(false);
+        return await _createUserCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken).ConfigureAwait(false);
     }
 
-    public async ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext context)
+    [Authorize]
+    public async ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext callContext)
     {
-        return await _getUserCommand.RunInTransactionAsync(request, context.CancellationToken).ConfigureAwait(false);
+        return await _getUserCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken).ConfigureAwait(false);
     }
 
-    public async ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext context)
+    public async ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext callContext)
     {
-        return await _signInCommand.RunInTransactionAsync(request, context.CancellationToken).ConfigureAwait(false);
+        return await _signInCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken).ConfigureAwait(false);
     }
 }

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
@@ -60,7 +61,7 @@ public class SignInCommand : Command<SignInRequest, SignInResponse>
 
         _response = new SignInResponse
         {
-            Username = user.Username, Role = user.Role, AccessToken = accessToken, RefreshToken = refreshToken
+            Username = user.Username, Permission = (int)user.Permission, AccessToken = accessToken, RefreshToken = refreshToken
         };
     }
 
@@ -76,5 +77,10 @@ public class SignInCommand : Command<SignInRequest, SignInResponse>
             new List<IManager>(),
             new List<IManager> { _userManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(SignInRequest data)
+    {
+        return Permission.None;
     }
 }

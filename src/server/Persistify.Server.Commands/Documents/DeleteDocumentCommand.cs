@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
@@ -76,5 +77,10 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
             new List<IManager> { _templateManager },
             new List<IManager>()
         );
+    }
+
+    protected override Permission GetRequiredPermission(DeleteDocumentRequest data)
+    {
+        return Permission.DocumentWrite;
     }
 }

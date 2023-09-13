@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
@@ -63,5 +64,10 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
             new List<IManager>(),
             new List<IManager> { _templateManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(DeleteTemplateRequest data)
+    {
+        return Permission.TemplateWrite;
     }
 }

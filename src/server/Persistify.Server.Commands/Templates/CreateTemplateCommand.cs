@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
+using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
@@ -12,6 +13,7 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Validation.Common;
+using ProtoBuf.Grpc;
 
 namespace Persistify.Server.Commands.Templates;
 
@@ -73,5 +75,10 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
             new List<IManager>(),
             new List<IManager> { _templateManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(CreateTemplateRequest data)
+    {
+        return Permission.TemplateWrite;
     }
 }

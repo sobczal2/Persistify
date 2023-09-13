@@ -50,7 +50,7 @@ public class EnsureRootUserExistsCommand : Command
                 Username = _rootSettingsOptions.Value.Username,
                 PasswordHash = hash,
                 PasswordSalt = salt,
-                Role = Role.All
+                Permission = Permission.None
             };
 
             _userManager.Add(user);
@@ -66,5 +66,10 @@ public class EnsureRootUserExistsCommand : Command
             new List<IManager>(),
             new List<IManager> { _userManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(EmptyRequest data)
+    {
+        return Permission.UserWrite;
     }
 }

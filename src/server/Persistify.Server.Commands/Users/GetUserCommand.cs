@@ -55,7 +55,7 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
         return new GetUserResponse
         {
             Username = _user.Username,
-            Role = (int)_user.Role
+            Permission = (int)_user.Permission
         };
     }
 
@@ -66,5 +66,10 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
             new List<IManager> { _userManager },
             new List<IManager>()
         );
+    }
+
+    protected override Permission GetRequiredPermission(GetUserRequest data)
+    {
+        return Permission.UserRead;
     }
 }

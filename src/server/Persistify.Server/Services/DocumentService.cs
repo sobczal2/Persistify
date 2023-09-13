@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Documents;
+using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 
@@ -26,25 +28,29 @@ public class DocumentService : IDocumentService
         _deleteDocumentCommand = deleteDocumentCommand;
     }
 
+    [Authorize]
     public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request,
-        CallContext context)
+        CallContext callContext)
     {
-        return await _createDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
+        return await _createDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
-    public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext context)
+    [Authorize]
+    public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext callContext)
     {
-        return await _getDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
+        return await _getDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
-    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext context)
+    [Authorize]
+    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext callContext)
     {
         throw new NotImplementedException();
     }
 
+    [Authorize]
     public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request,
-        CallContext context)
+        CallContext callContext)
     {
-        return await _deleteDocumentCommand.RunInTransactionAsync(request, context.CancellationToken);
+        return await _deleteDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 }

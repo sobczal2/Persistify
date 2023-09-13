@@ -12,6 +12,9 @@ public class RpcExceptionHandler : IExceptionHandler
         {
             case ValidationException validationException:
                 throw new RpcException(new Status(StatusCode.InvalidArgument, $"{validationException.PropertyName}: {validationException.Message}"));
+            case InsufficientPermissionException insufficientPermissionException:
+                throw new RpcException(new Status(StatusCode.PermissionDenied,
+                    insufficientPermissionException.Message));
         }
     }
 }

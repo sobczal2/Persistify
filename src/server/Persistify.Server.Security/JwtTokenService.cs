@@ -30,9 +30,9 @@ public class JwtTokenService : ITokenService
     {
         var claims = new List<Claim>
         {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, ((int)user.Role).ToString()),
+            new(ClaimTypes.Id, user.Id.ToString()),
+            new(ClaimTypes.Username, user.Username),
+            new(ClaimTypes.Permission, ((int)user.Permission).ToString()),
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Secret));
