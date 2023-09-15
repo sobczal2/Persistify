@@ -20,4 +20,10 @@ public interface IUserService
 
     [OperationContract]
     ValueTask<SetPermissionResponse> SetPermissionAsync(SetPermissionRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request, CallContext callContext);
 }

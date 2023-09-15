@@ -44,7 +44,7 @@ public class EnsureRootUserExistsCommand : Command
                 Username = _rootSettingsOptions.Value.Username,
                 PasswordHash = hash,
                 PasswordSalt = salt,
-                Permission = Permission.None
+                Permission = Permission.All
             };
 
             _userManager.Add(user);

@@ -12,7 +12,6 @@
     <ProjectReference Include="..\Persistify.Server.Commands\Persistify.Server.Commands.csproj"/>
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Persistence.DataStructures\Persistify.Server.Persistence.DataStructures.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Security\Persistify.Server.Security.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Serialization\Persistify.Server.Serialization.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>

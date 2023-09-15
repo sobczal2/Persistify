@@ -1,5 +1,8 @@
-﻿namespace Persistify.Responses.Users;
+﻿using ProtoBuf;
 
+namespace Persistify.Responses.Users;
+
+[ProtoContract]
 public class SetPermissionResponse
 {
 }

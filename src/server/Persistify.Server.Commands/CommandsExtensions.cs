@@ -28,6 +28,8 @@ public static class CommandsExtensions
         services.AddTransient<GetUserCommand>();
         services.AddTransient<SignInCommand>();
         services.AddTransient<SetPermissionCommand>();
+        services.AddTransient<DeleteUserCommand>();
+        services.AddTransient<RefreshTokenCommand>();
 
         services.AddTransient<InitializeTemplateManagerCommand>();
         services.AddTransient<InitializeDocumentManagersCommand>();
