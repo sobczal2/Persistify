@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Persistify.Server.Security;
+﻿namespace Persistify.Server.Security;
 
 public interface IPasswordService
 {

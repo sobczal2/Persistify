@@ -5,7 +5,6 @@ using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
-using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -21,11 +20,14 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         IValidator<BoolFieldValue> boolFieldValueValidator
     )
     {
-        _textFieldValueValidator = textFieldValueValidator ?? throw new ArgumentNullException(nameof(textFieldValueValidator));
+        _textFieldValueValidator =
+            textFieldValueValidator ?? throw new ArgumentNullException(nameof(textFieldValueValidator));
         _textFieldValueValidator.PropertyName = PropertyName;
-        _numberFieldValueValidator = numberFieldValueValidator ?? throw new ArgumentNullException(nameof(numberFieldValueValidator));
+        _numberFieldValueValidator = numberFieldValueValidator ??
+                                     throw new ArgumentNullException(nameof(numberFieldValueValidator));
         _numberFieldValueValidator.PropertyName = PropertyName;
-        _boolFieldValueValidator = boolFieldValueValidator ?? throw new ArgumentNullException(nameof(boolFieldValueValidator));
+        _boolFieldValueValidator =
+            boolFieldValueValidator ?? throw new ArgumentNullException(nameof(boolFieldValueValidator));
         _boolFieldValueValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(CreateDocumentRequest));
     }

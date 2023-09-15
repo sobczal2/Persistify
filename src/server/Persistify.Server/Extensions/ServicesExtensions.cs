@@ -50,10 +50,10 @@ public static class ServicesExtensions
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 var tokenSettings = configuration
-                                       .GetRequiredSection(TokenSettings.SectionName)
-                                       .Get<TokenSettings>() ??
-                                   throw new InvalidOperationException(
-                                       $"Could not load {TokenSettings.SectionName} from configuration");
+                                        .GetRequiredSection(TokenSettings.SectionName)
+                                        .Get<TokenSettings>() ??
+                                    throw new InvalidOperationException(
+                                        $"Could not load {TokenSettings.SectionName} from configuration");
 
                 var clock = services.BuildServiceProvider().GetRequiredService<IClock>();
 

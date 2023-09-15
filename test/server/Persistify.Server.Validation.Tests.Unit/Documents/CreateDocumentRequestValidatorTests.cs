@@ -12,11 +12,11 @@ namespace Persistify.Server.Validation.Tests.Unit.Documents;
 
 public class CreateDocumentRequestValidatorTests
 {
+    private readonly IValidator<BoolFieldValue> _boolFieldValueValidator;
+    private readonly IValidator<NumberFieldValue> _numberFieldValueValidator;
     private readonly CreateDocumentRequestValidator _sut;
 
     private readonly IValidator<TextFieldValue> _textFieldValueValidator;
-    private readonly IValidator<NumberFieldValue> _numberFieldValueValidator;
-    private readonly IValidator<BoolFieldValue> _boolFieldValueValidator;
 
     public CreateDocumentRequestValidatorTests()
     {
@@ -37,7 +37,7 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () =>
+        var act = () =>
         {
             var unused = new CreateDocumentRequestValidator(
                 null!,

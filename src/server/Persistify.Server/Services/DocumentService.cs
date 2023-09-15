@@ -32,17 +32,20 @@ public class DocumentService : IDocumentService
     public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request,
         CallContext callContext)
     {
-        return await _createDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _createDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext callContext)
     {
-        return await _getDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _getDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 
     [Authorize]
-    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request, CallContext callContext)
+    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request,
+        CallContext callContext)
     {
         throw new NotImplementedException();
     }
@@ -51,6 +54,7 @@ public class DocumentService : IDocumentService
     public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request,
         CallContext callContext)
     {
-        return await _deleteDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _deleteDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 }

@@ -5,6 +5,6 @@ namespace Persistify.Server.Validation.Common;
 
 public interface IValidator<in T>
 {
-    Result Validate(T value);
     Stack<string> PropertyName { get; set; }
+    Result Validate(T value);
 }

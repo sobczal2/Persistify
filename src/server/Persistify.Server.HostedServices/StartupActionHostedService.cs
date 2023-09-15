@@ -10,12 +10,12 @@ namespace Persistify.Server.HostedServices;
 
 public class StartupActionHostedService : BackgroundService
 {
+    private readonly EnsureRootUserExistsCommand _ensureRootUserExistsCommand;
+    private readonly InitializeDocumentManagersCommand _initializeDocumentManagersCommand;
+    private readonly InitializeTemplateManagerCommand _initializeTemplateManagerCommand;
+    private readonly InitializeUserManagerCommand _initializeUserManagerCommand;
     private readonly ILogger<StartupActionHostedService> _logger;
     private readonly SetupFileSystemCommand _setupFileSystemCommand;
-    private readonly InitializeTemplateManagerCommand _initializeTemplateManagerCommand;
-    private readonly InitializeDocumentManagersCommand _initializeDocumentManagersCommand;
-    private readonly InitializeUserManagerCommand _initializeUserManagerCommand;
-    private readonly EnsureRootUserExistsCommand _ensureRootUserExistsCommand;
 
     public StartupActionHostedService(
         ILogger<StartupActionHostedService> logger,
@@ -39,10 +39,14 @@ public class StartupActionHostedService : BackgroundService
         _logger.LogInformation("Executing startup actions");
         var internalClaimsPrincipal = ClaimsPrincipalExtensions.InternalClaimsPrincipal;
         await _setupFileSystemCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal, stoppingToken);
-        await _initializeTemplateManagerCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal, stoppingToken);
-        await _initializeDocumentManagersCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal, stoppingToken);
-        await _initializeUserManagerCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal, stoppingToken);
-        await _ensureRootUserExistsCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal, stoppingToken);
+        await _initializeTemplateManagerCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
+            stoppingToken);
+        await _initializeDocumentManagersCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
+            stoppingToken);
+        await _initializeUserManagerCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
+            stoppingToken);
+        await _ensureRootUserExistsCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
+            stoppingToken);
         _logger.LogInformation("Startup actions executed");
     }
 }

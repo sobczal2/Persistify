@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
@@ -21,27 +20,21 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
     private User? _user;
 
     public GetUserCommand(
-        IValidator<GetUserRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<GetUserRequest> commandContext,
         IUserManager userManager
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _userManager = userManager;
     }
 
-    protected override async ValueTask RunAsync(GetUserRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(GetUserRequest request, CancellationToken cancellationToken)
     {
-        _user = await _userManager.GetAsync(data.Username);
+        _user = await _userManager.GetAsync(request.Username);
         if (_user is null)
         {
-            throw new ValidationException(nameof(GetUserRequest.Username), $"User {data.Username} not found");
+            throw new ValidationException(nameof(GetUserRequest.Username), UserErrorMessages.UserNotFound);
         }
     }
 
@@ -52,14 +45,10 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
             throw new PersistifyInternalException();
         }
 
-        return new GetUserResponse
-        {
-            Username = _user.Username,
-            Permission = (int)_user.Permission
-        };
+        return new GetUserResponse { Username = _user.Username, Permission = (int)_user.Permission };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(GetUserRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(GetUserRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -68,7 +57,7 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
         );
     }
 
-    protected override Permission GetRequiredPermission(GetUserRequest data)
+    protected override Permission GetRequiredPermission(GetUserRequest request)
     {
         return Permission.UserRead;
     }

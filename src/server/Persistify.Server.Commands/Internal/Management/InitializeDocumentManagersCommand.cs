@@ -2,12 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
-using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Transactions;
@@ -20,31 +17,29 @@ public class InitializeDocumentManagersCommand : Command
     private readonly IDocumentManagerStore _documentManagerStore;
 
     public InitializeDocumentManagersCommand(
-        ILoggerFactory loggerFactory,
-        IDocumentManagerStore documentManagerStore,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler
+        ICommandContext commandContext,
+        IDocumentManagerStore documentManagerStore
     ) : base(
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         var documentManagers = _documentManagerStore.GetManagers().ToList();
 
         foreach (var documentManager in documentManagers)
         {
-            await TransactionState.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
+            await CommandContext
+                .CurrentTransaction
+                .PromoteManagerAsync(documentManager, true, TransactionTimeout);
             documentManager.Initialize();
         }
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -53,7 +48,7 @@ public class InitializeDocumentManagersCommand : Command
         );
     }
 
-    protected override Permission GetRequiredPermission(EmptyRequest data)
+    protected override Permission GetRequiredPermission(EmptyRequest request)
     {
         return Permission.DocumentWrite;
     }

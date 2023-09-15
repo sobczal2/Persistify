@@ -25,6 +25,12 @@ public class Argon2PasswordService : IPasswordService
         return (hash, salt);
     }
 
+    public bool VerifyPassword(string password, byte[] hash, byte[] salt)
+    {
+        var newHash = HashPasswordInternal(password, salt);
+        return hash.SequenceEqual(newHash);
+    }
+
     private byte[] HashPasswordInternal(string password, byte[] salt)
     {
         var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
@@ -35,12 +41,6 @@ public class Argon2PasswordService : IPasswordService
             Salt = salt
         };
         return argon2.GetBytes(_passwordSettings.HashSize);
-    }
-
-    public bool VerifyPassword(string password, byte[] hash, byte[] salt)
-    {
-        var newHash = HashPasswordInternal(password, salt);
-        return hash.SequenceEqual(newHash);
     }
 
     private byte[] CreateSalt()

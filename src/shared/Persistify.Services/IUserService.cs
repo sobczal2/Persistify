@@ -17,4 +17,7 @@ public interface IUserService
 
     [OperationContract]
     ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<SetPermissionResponse> SetPermissionAsync(SetPermissionRequest request, CallContext callContext);
 }

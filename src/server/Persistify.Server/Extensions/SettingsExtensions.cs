@@ -92,8 +92,8 @@ public static class SettingsExtensions
 
         var tokenSettingsValidator = new TokenSettingsValidator();
         tokenSettingsValidator.ValidateAndThrow(tokenSettingsSection.Get<TokenSettings>() ??
-                                                 throw new InvalidOperationException(
-                                                     $"Could not load {TokenSettings.SectionName} from configuration"));
+                                                throw new InvalidOperationException(
+                                                    $"Could not load {TokenSettings.SectionName} from configuration"));
 
         services.Configure<TokenSettings>(tokenSettingsSection);
 
@@ -102,8 +102,8 @@ public static class SettingsExtensions
 
         var rootSettingsValidator = new RootSettingsValidator();
         rootSettingsValidator.ValidateAndThrow(rootSettingsSection.Get<RootSettings>() ??
-                                                 throw new InvalidOperationException(
-                                                     $"Could not load {RootSettings.SectionName} from configuration"));
+                                               throw new InvalidOperationException(
+                                                   $"Could not load {RootSettings.SectionName} from configuration"));
 
         services.Configure<RootSettings>(rootSettingsSection);
 

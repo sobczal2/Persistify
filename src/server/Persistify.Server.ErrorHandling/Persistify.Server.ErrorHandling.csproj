@@ -10,7 +10,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj"/>
   </ItemGroup>
 
 </Project>

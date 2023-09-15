@@ -20,7 +20,7 @@ public class JwtTokenService : ITokenService
     public JwtTokenService(
         IOptions<TokenSettings> tokenSettingsOptions,
         IClock clock
-        )
+    )
     {
         _clock = clock;
         _tokenSettings = tokenSettingsOptions.Value;
@@ -32,7 +32,7 @@ public class JwtTokenService : ITokenService
         {
             new(ClaimTypes.Id, user.Id.ToString()),
             new(ClaimTypes.Username, user.Username),
-            new(ClaimTypes.Permission, ((int)user.Permission).ToString()),
+            new(ClaimTypes.Permission, ((int)user.Permission).ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenSettings.Secret));

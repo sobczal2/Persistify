@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
-using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions;
@@ -18,27 +15,23 @@ public class SetupFileSystemCommand : Command
     private readonly IFileHandler _fileHandler;
 
     public SetupFileSystemCommand(
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext commandContext,
         IFileHandler fileHandler
     ) : base(
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _fileHandler = fileHandler;
     }
 
-    protected override async ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         _fileHandler.EnsureRequiredFiles();
 
         await ValueTask.CompletedTask;
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest request)
     {
         return new TransactionDescriptor(
             true,
@@ -47,7 +40,7 @@ public class SetupFileSystemCommand : Command
         );
     }
 
-    protected override Permission GetRequiredPermission(EmptyRequest data)
+    protected override Permission GetRequiredPermission(EmptyRequest request)
     {
         return Permission.Root;
     }

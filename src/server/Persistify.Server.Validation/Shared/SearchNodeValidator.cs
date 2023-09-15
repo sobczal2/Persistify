@@ -1,6 +1,4 @@
-﻿using System.Text;
-using Microsoft.Extensions.ObjectPool;
-using Persistify.Requests.Search;
+﻿using Persistify.Requests.Search;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Documents;
 using Persistify.Server.Validation.Results;

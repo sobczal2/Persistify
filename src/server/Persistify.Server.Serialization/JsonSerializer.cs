@@ -21,7 +21,7 @@ public class JsonSerializer : ISerializer
         {
             throw new InvalidDataException();
         }
-        
+
         return System.Text.Json.JsonSerializer.Deserialize<T>(bytes.Span) ?? throw new InvalidOperationException();
     }
 }

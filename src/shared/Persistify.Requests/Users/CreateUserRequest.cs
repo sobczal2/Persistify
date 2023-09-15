@@ -1,5 +1,4 @@
-﻿using Persistify.Domain.Users;
-using ProtoBuf;
+﻿using ProtoBuf;
 
 namespace Persistify.Requests.Users;
 
@@ -8,6 +7,7 @@ public class CreateUserRequest
 {
     [ProtoMember(1)]
     public string Username { get; set; } = default!;
+
     [ProtoMember(2)]
     public string Password { get; set; } = default!;
 }

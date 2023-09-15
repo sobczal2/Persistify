@@ -26,6 +26,7 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
             PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
             return ValidationException(SharedErrorMessages.ValueNull);
         }
+
         PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
         var paginationResult = _paginationValidator.Validate(value.Pagination);
         PropertyName.Pop();

@@ -47,10 +47,7 @@ public class DeleteTemplateRequestValidatorTests
     public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteTemplateRequest
-        {
-            TemplateName = null!
-        };
+        var request = new DeleteTemplateRequest { TemplateName = null! };
 
         // Act
         var result = _sut.Validate(request);
@@ -67,10 +64,7 @@ public class DeleteTemplateRequestValidatorTests
     public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteTemplateRequest
-        {
-            TemplateName = string.Empty
-        };
+        var request = new DeleteTemplateRequest { TemplateName = string.Empty };
 
         // Act
         var result = _sut.Validate(request);
@@ -87,10 +81,7 @@ public class DeleteTemplateRequestValidatorTests
     public void Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new DeleteTemplateRequest
-        {
-            TemplateName = "Test"
-        };
+        var request = new DeleteTemplateRequest { TemplateName = "Test" };
 
         // Act
         var result = _sut.Validate(request);

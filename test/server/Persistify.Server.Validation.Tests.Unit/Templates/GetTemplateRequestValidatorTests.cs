@@ -47,10 +47,7 @@ public class GetTemplateRequestValidatorTests
     public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetTemplateRequest
-        {
-            TemplateName = null!
-        };
+        var request = new GetTemplateRequest { TemplateName = null! };
 
         // Act
         var result = _sut.Validate(request);
@@ -67,10 +64,7 @@ public class GetTemplateRequestValidatorTests
     public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetTemplateRequest
-        {
-            TemplateName = string.Empty
-        };
+        var request = new GetTemplateRequest { TemplateName = string.Empty };
 
         // Act
         var result = _sut.Validate(request);
@@ -87,10 +81,7 @@ public class GetTemplateRequestValidatorTests
     public void Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new GetTemplateRequest
-        {
-            TemplateName = "Test"
-        };
+        var request = new GetTemplateRequest { TemplateName = "Test" };
 
         // Act
         var result = _sut.Validate(request);

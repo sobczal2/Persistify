@@ -13,10 +13,9 @@ namespace Persistify.Server.Validation.Tests.Unit.Documents;
 
 public class SearchDocumentsRequestValidatorTests
 {
-    private readonly SearchDocumentsRequestValidator _sut;
-
     private readonly IValidator<Pagination> _paginationValidator;
     private readonly IValidator<SearchNode> _searchNodeValidator;
+    private readonly SearchDocumentsRequestValidator _sut;
 
     public SearchDocumentsRequestValidatorTests()
     {
@@ -32,7 +31,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () =>
+        var act = () =>
         {
             var unused = new SearchDocumentsRequestValidator(null!, _searchNodeValidator);
         };
@@ -47,7 +46,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () =>
+        var act = () =>
         {
             var unused = new SearchDocumentsRequestValidator(_paginationValidator, null!);
         };
@@ -89,10 +88,7 @@ public class SearchDocumentsRequestValidatorTests
     public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = null!
-        };
+        var request = new SearchDocumentsRequest { TemplateName = null! };
 
         // Act
         var result = _sut.Validate(request);
@@ -109,10 +105,7 @@ public class SearchDocumentsRequestValidatorTests
     public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = string.Empty
-        };
+        var request = new SearchDocumentsRequest { TemplateName = string.Empty };
 
         // Act
         var result = _sut.Validate(request);
@@ -129,10 +122,7 @@ public class SearchDocumentsRequestValidatorTests
     public void Validate_WhenPaginationIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = "Test"
-        };
+        var request = new SearchDocumentsRequest { TemplateName = "Test" };
 
         // Act
         var result = _sut.Validate(request);
@@ -149,11 +139,7 @@ public class SearchDocumentsRequestValidatorTests
     public void Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = "Test",
-            Pagination = new Pagination()
-        };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
 
         List<string> propertyNameAtCall = null!;
         _paginationValidator
@@ -172,11 +158,7 @@ public class SearchDocumentsRequestValidatorTests
     public void Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = "Test",
-            Pagination = new Pagination()
-        };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
 
         var validationException = new ValidationException("Test", "Test");
         _paginationValidator.Validate(Arg.Any<Pagination>()).Returns(validationException);
@@ -193,11 +175,7 @@ public class SearchDocumentsRequestValidatorTests
     public void Validate_WhenSearchNodeIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = "Test",
-            Pagination = new Pagination()
-        };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
 
         // Act
         var result = _sut.Validate(request);
@@ -216,9 +194,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test",
-            Pagination = new Pagination(),
-            SearchNode = new SearchNode()
+            TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
         };
 
         List<string> propertyNameAtCall = null!;
@@ -240,9 +216,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test",
-            Pagination = new Pagination(),
-            SearchNode = new SearchNode()
+            TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
         };
 
         var validationException = new ValidationException("Test", "Test");
@@ -262,9 +236,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test",
-            Pagination = new Pagination(),
-            SearchNode = new SearchNode()
+            TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
         };
 
         // Act

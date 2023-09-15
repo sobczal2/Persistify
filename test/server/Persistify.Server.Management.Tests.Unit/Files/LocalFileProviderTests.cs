@@ -129,14 +129,16 @@ public class LocalFileProviderTests : IDisposable
         // Arrange
         var relativePath = "test/test.txt";
         var absolutePath = Path.Combine(_tempDirectoryPath, relativePath);
-        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should().BeFalse();
+        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should()
+            .BeFalse();
         File.Exists(absolutePath).Should().BeFalse();
 
         // Act
         _sut.Create(relativePath);
 
         // Assert
-        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should().BeTrue();
+        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should()
+            .BeTrue();
         File.Exists(absolutePath).Should().BeTrue();
     }
 

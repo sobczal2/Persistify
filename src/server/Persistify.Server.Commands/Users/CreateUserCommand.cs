@@ -1,53 +1,49 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
 using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
 public class CreateUserCommand : Command<CreateUserRequest, CreateUserResponse>
 {
-    private readonly IUserManager _userManager;
     private readonly IPasswordService _passwordService;
+    private readonly IUserManager _userManager;
 
     public CreateUserCommand(
-        IValidator<CreateUserRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<CreateUserRequest> commandContext,
         IUserManager userManager,
         IPasswordService passwordService
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _userManager = userManager;
         _passwordService = passwordService;
     }
 
-    protected override ValueTask RunAsync(CreateUserRequest data, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(CreateUserRequest request, CancellationToken cancellationToken)
     {
-        if (_userManager.Exists(data.Username))
+        if (_userManager.Exists(request.Username))
         {
-            throw new ValidationException(nameof(CreateUserRequest.Username), $"User {data.Username} already exists");
+            throw new ValidationException(nameof(CreateUserRequest.Username), UserErrorMessages.UserAlreadyExists);
         }
 
-        var (hash, salt) = _passwordService.HashPassword(data.Password);
+        var (hash, salt) = _passwordService.HashPassword(request.Password);
 
-        var user = new User { Username = data.Username, PasswordHash = hash, PasswordSalt = salt, Permission = Permission.None };
+        var user = new User
+        {
+            Username = request.Username, PasswordHash = hash, PasswordSalt = salt, Permission = Permission.None
+        };
 
         _userManager.Add(user);
 
@@ -59,7 +55,7 @@ public class CreateUserCommand : Command<CreateUserRequest, CreateUserResponse>
         return new CreateUserResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateUserRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(CreateUserRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -68,7 +64,7 @@ public class CreateUserCommand : Command<CreateUserRequest, CreateUserResponse>
         );
     }
 
-    protected override Permission GetRequiredPermission(CreateUserRequest data)
+    protected override Permission GetRequiredPermission(CreateUserRequest request)
     {
         return Permission.UserWrite;
     }

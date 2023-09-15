@@ -7,22 +7,6 @@ namespace Persistify.Server.Validation.Tests.Unit.Common;
 
 public class ValidatorTests
 {
-    private class TestValidator : Validator<string>
-    {
-        public bool Success { get; set; }
-        public override Result ValidateNotNull(string value)
-        {
-            if (Success)
-            {
-                return Result.Ok;
-            }
-            else
-            {
-                return ValidationException("Test");
-            }
-        }
-    }
-
     [Fact]
     public void Validate_WithNullValue_ReturnsValidationException()
     {
@@ -68,5 +52,20 @@ public class ValidatorTests
         var exception = (ValidationException)result.Exception;
         exception.Message.Should().Be("Test");
         exception.PropertyName.Should().Be(string.Empty);
+    }
+
+    private class TestValidator : Validator<string>
+    {
+        public bool Success { get; set; }
+
+        public override Result ValidateNotNull(string value)
+        {
+            if (Success)
+            {
+                return Result.Ok;
+            }
+
+            return ValidationException("Test");
+        }
     }
 }

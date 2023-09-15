@@ -2,51 +2,38 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
-using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Commands.Common;
 
-public abstract class Command<TData, TResponse>
+public abstract class Command<TRequest, TResponse>
 {
-    private readonly IValidator<TData> _validator;
-    protected readonly ILoggerFactory LoggerFactory;
-
-    protected readonly ITransactionState TransactionState;
-    private readonly IExceptionHandler _exceptionHandler;
+    protected readonly ICommandContext<TRequest> CommandContext;
 
     public Command(
-        IValidator<TData> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler
+        ICommandContext<TRequest> commandContext
     )
     {
-        _validator = validator;
-        LoggerFactory = loggerFactory;
-        TransactionState = transactionState;
-        _exceptionHandler = exceptionHandler;
+        CommandContext = commandContext;
     }
 
     // TODO: move to config
     protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
-    protected abstract ValueTask RunAsync(TData data, CancellationToken cancellationToken);
+    protected abstract ValueTask RunAsync(TRequest request, CancellationToken cancellationToken);
     protected abstract TResponse GetResponse();
-    protected abstract TransactionDescriptor GetTransactionDescriptor(TData data);
-    protected abstract Permission GetRequiredPermission(TData data);
-    protected virtual void Authorize(ClaimsPrincipal claimsPrincipal, TData data)
+    protected abstract TransactionDescriptor GetTransactionDescriptor(TRequest request);
+    protected abstract Permission GetRequiredPermission(TRequest request);
+
+    protected virtual void Authorize(ClaimsPrincipal claimsPrincipal, TRequest request)
     {
-        var requiredPermission = GetRequiredPermission(data);
+        var requiredPermission = GetRequiredPermission(request);
         var userPermission = claimsPrincipal.GetPermission();
         if (!userPermission.HasFlag(requiredPermission))
         {
@@ -54,34 +41,35 @@ public abstract class Command<TData, TResponse>
         }
     }
 
-    public async ValueTask<TResponse> RunInTransactionAsync(TData data, ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
+    public async ValueTask<TResponse> RunInTransactionAsync(TRequest request, ClaimsPrincipal claimsPrincipal,
+        CancellationToken cancellationToken)
     {
-        Authorize(claimsPrincipal, data);
+        Authorize(claimsPrincipal, request);
 
-        _validator.Validate(data).OnFailure(exception => _exceptionHandler.Handle(exception));
+        CommandContext.Validate(request);
 
-        var transactionDescriptor = GetTransactionDescriptor(data);
+        var transactionDescriptor = GetTransactionDescriptor(request);
 
         var transaction = new Transaction(
             transactionDescriptor,
-            TransactionState,
-            LoggerFactory.CreateLogger<Transaction>()
+            CommandContext.TransactionState,
+            CommandContext.CreateLogger<Transaction>()
         );
 
-        TransactionState.CurrentTransaction.Value = transaction;
+        CommandContext.TransactionState.CurrentTransaction.Value = transaction;
 
         await transaction.BeginAsync(TransactionTimeout, cancellationToken)
             .ConfigureAwait(false);
         try
         {
-            await RunAsync(data, cancellationToken).ConfigureAwait(false);
+            await RunAsync(request, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync().ConfigureAwait(false);
             return GetResponse();
         }
         catch (Exception exception)
         {
             await transaction.RollbackAsync().ConfigureAwait(false);
-            _exceptionHandler.Handle(exception);
+            CommandContext.HandleException(exception);
         }
 
         throw new PersistifyInternalException();
@@ -91,20 +79,15 @@ public abstract class Command<TData, TResponse>
 public abstract class Command : Command<EmptyRequest, EmptyResponse>
 {
     protected Command(
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler
+        ICommandContext commandContext
     ) : base(
-        new EmptyRequestValidator(),
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
     }
 
     protected override EmptyResponse GetResponse()
     {
-        return new();
+        return new EmptyResponse();
     }
 }

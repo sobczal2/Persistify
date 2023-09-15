@@ -33,25 +33,29 @@ public class TemplateService : ITemplateService
     public async ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request,
         CallContext callContext)
     {
-        return await _createTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _createTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext callContext)
     {
-        return await _getTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _getTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 
     [Authorize]
     public ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext callContext)
     {
-        return _listTemplatesCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return _listTemplatesCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request,
         CallContext callContext)
     {
-        return await _deleteTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _deleteTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 }

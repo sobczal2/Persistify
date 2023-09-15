@@ -1,9 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Management.Files;
 using Serilog;
 
 namespace Persistify.Server.Extensions;

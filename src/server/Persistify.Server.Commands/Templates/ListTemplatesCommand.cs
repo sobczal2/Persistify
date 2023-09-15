@@ -1,18 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Templates;
 
@@ -23,25 +20,19 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
     private int _totalCount;
 
     public ListTemplatesCommand(
-        IValidator<ListTemplatesRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<ListTemplatesRequest> commandContext,
         ITemplateManager templateManager
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(ListTemplatesRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(ListTemplatesRequest request, CancellationToken cancellationToken)
     {
-        var skip = data.Pagination.PageNumber * data.Pagination.PageSize;
-        var take = data.Pagination.PageSize;
+        var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
+        var take = request.Pagination.PageSize;
         _templates = await _templateManager.ListAsync(take, skip);
         _totalCount = _templateManager.Count();
     }
@@ -56,7 +47,7 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
         return new ListTemplatesResponse(_templates, _totalCount);
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -65,7 +56,7 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
         );
     }
 
-    protected override Permission GetRequiredPermission(ListTemplatesRequest data)
+    protected override Permission GetRequiredPermission(ListTemplatesRequest request)
     {
         return Permission.TemplateRead;
     }

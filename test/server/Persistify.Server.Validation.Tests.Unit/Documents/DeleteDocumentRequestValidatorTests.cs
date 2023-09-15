@@ -47,11 +47,7 @@ public class DeleteDocumentRequestValidatorTests
     public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteDocumentRequest
-        {
-            TemplateName = null!,
-            DocumentId = 1
-        };
+        var request = new DeleteDocumentRequest { TemplateName = null!, DocumentId = 1 };
 
         // Act
         var result = _sut.Validate(request);
@@ -68,11 +64,7 @@ public class DeleteDocumentRequestValidatorTests
     public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteDocumentRequest
-        {
-            TemplateName = string.Empty,
-            DocumentId = 1
-        };
+        var request = new DeleteDocumentRequest { TemplateName = string.Empty, DocumentId = 1 };
 
         // Act
         var result = _sut.Validate(request);
@@ -89,11 +81,7 @@ public class DeleteDocumentRequestValidatorTests
     public void Validate_WhenDocumentIdIsZero_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteDocumentRequest
-        {
-            TemplateName = "Test",
-            DocumentId = 0
-        };
+        var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 0 };
 
         // Act
         var result = _sut.Validate(request);
@@ -110,11 +98,7 @@ public class DeleteDocumentRequestValidatorTests
     public void Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new DeleteDocumentRequest
-        {
-            TemplateName = "Test",
-            DocumentId = 1
-        };
+        var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 1 };
 
         // Act
         var result = _sut.Validate(request);

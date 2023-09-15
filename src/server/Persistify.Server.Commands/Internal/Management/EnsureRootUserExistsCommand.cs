@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
@@ -17,21 +15,17 @@ namespace Persistify.Server.Commands.Internal.Management;
 
 public class EnsureRootUserExistsCommand : Command
 {
-    private readonly IUserManager _userManager;
     private readonly IPasswordService _passwordService;
     private readonly IOptions<RootSettings> _rootSettingsOptions;
+    private readonly IUserManager _userManager;
 
     public EnsureRootUserExistsCommand(
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext commandContext,
         IUserManager userManager,
         IPasswordService passwordService,
         IOptions<RootSettings> rootSettingsOptions
     ) : base(
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _userManager = userManager;
@@ -39,7 +33,7 @@ public class EnsureRootUserExistsCommand : Command
         _rootSettingsOptions = rootSettingsOptions;
     }
 
-    protected override ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         if (!_userManager.Exists(_rootSettingsOptions.Value.Username))
         {
@@ -59,7 +53,7 @@ public class EnsureRootUserExistsCommand : Command
         return ValueTask.CompletedTask;
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -68,7 +62,7 @@ public class EnsureRootUserExistsCommand : Command
         );
     }
 
-    protected override Permission GetRequiredPermission(EmptyRequest data)
+    protected override Permission GetRequiredPermission(EmptyRequest request)
     {
         return Permission.UserWrite;
     }

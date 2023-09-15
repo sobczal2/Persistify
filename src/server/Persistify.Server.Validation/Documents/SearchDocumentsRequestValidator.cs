@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Text;
-using Microsoft.Extensions.ObjectPool;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
-using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 

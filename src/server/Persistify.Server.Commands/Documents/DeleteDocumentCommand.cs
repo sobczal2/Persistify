@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
@@ -22,30 +20,25 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
     private readonly ITemplateManager _templateManager;
 
     public DeleteDocumentCommand(
-        IValidator<DeleteDocumentRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<DeleteDocumentRequest> commandContext,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(DeleteDocumentRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(DeleteDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(data.TemplateName);
+        var template = await _templateManager.GetAsync(request.TemplateName);
 
         if (template is null)
         {
-            throw new ValidationException(nameof(DeleteDocumentRequest.TemplateName), $"Template {data.TemplateName} not found");
+            throw new ValidationException(nameof(DeleteDocumentRequest.TemplateName),
+                $"Template {request.TemplateName} not found");
         }
 
         var documentManager = _documentManagerStore.GetManager(template.Id);
@@ -55,13 +48,16 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
             throw new PersistifyInternalException();
         }
 
-        await TransactionState.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await CommandContext
+            .CurrentTransaction
+            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        var result = await documentManager.RemoveAsync(data.DocumentId);
+        var result = await documentManager.RemoveAsync(request.DocumentId);
 
         if (!result)
         {
-            throw new ValidationException(nameof(data.DocumentId), $"Document with id {data.DocumentId} not found");
+            throw new ValidationException(nameof(request.DocumentId),
+                $"Document with id {request.DocumentId} not found");
         }
     }
 
@@ -70,7 +66,7 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
         return new DeleteDocumentResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(DeleteDocumentRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(DeleteDocumentRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -79,7 +75,7 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
         );
     }
 
-    protected override Permission GetRequiredPermission(DeleteDocumentRequest data)
+    protected override Permission GetRequiredPermission(DeleteDocumentRequest request)
     {
         return Permission.DocumentWrite;
     }

@@ -20,12 +20,12 @@ namespace Persistify.Server.Management.Managers.Users;
 public class UserManager : Manager, IUserManager
 {
     private readonly IClock _clock;
+    private readonly IntStreamRepository _identifierRepository;
+    private readonly ObjectStreamRepository<RefreshToken> _refreshTokenRepository;
     private readonly ITokenService _tokenService;
     private readonly TokenSettings _tokenSettings;
-    private readonly IntStreamRepository _identifierRepository;
-    private readonly ObjectStreamRepository<User> _userRepository;
-    private readonly ObjectStreamRepository<RefreshToken> _refreshTokenRepository;
     private readonly ConcurrentDictionary<string, int> _usernameIdDictionary;
+    private readonly ObjectStreamRepository<User> _userRepository;
     private volatile int _count;
 
     public UserManager(
@@ -252,5 +252,52 @@ public class UserManager : Manager, IUserManager
         PendingActions.Enqueue(saveAction);
 
         return (accessToken, refreshToken);
+    }
+
+    public async ValueTask<bool> CheckRefreshToken(int id, string refreshToken)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        var savedRefreshToken = await _refreshTokenRepository.ReadAsync(id, true);
+
+        if (savedRefreshToken is null)
+        {
+            return false;
+        }
+
+        if (_clock.UtcNow > savedRefreshToken.Expires)
+        {
+            return false;
+        }
+
+        if (_clock.UtcNow < savedRefreshToken.Created)
+        {
+            throw new PersistifyInternalException();
+        }
+
+        return refreshToken == savedRefreshToken.Value;
+    }
+
+    public async ValueTask UpdatePermissions(int id, Permission permission)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotWrite();
+
+        var user = await _userRepository.ReadAsync(id, true);
+
+        if (user is null)
+        {
+            throw new PersistifyInternalException();
+        }
+
+        user.Permission = permission;
+
+        var updatePermissionAction = new Func<ValueTask>(async () =>
+        {
+            await _userRepository.WriteAsync(user.Id, user, true);
+        });
+
+        PendingActions.Enqueue(updatePermissionAction);
     }
 }

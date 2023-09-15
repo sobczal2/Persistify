@@ -9,15 +9,15 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj" />
-    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
-    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
-    <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj"/>
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
   </ItemGroup>
 
 
   <ItemGroup>
-    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
+    <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0"/>
   </ItemGroup>
 
 </Project>

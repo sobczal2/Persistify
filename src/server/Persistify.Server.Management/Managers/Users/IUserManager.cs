@@ -14,4 +14,6 @@ public interface IUserManager : IManager
     void Add(User user);
     ValueTask<bool> RemoveAsync(int id);
     ValueTask<(string accessToken, string refreshToken)> CreateTokens(int id);
+    ValueTask<bool> CheckRefreshToken(int id, string refreshToken);
+    ValueTask UpdatePermissions(int id, Permission permission);
 }

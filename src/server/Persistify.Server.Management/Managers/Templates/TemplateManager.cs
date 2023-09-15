@@ -21,8 +21,8 @@ public class TemplateManager : Manager, ITemplateManager
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly IFileHandler _fileHandler;
     private readonly IntStreamRepository _identifierRepository;
-    private readonly ObjectStreamRepository<Template> _templateRepository;
     private readonly ConcurrentDictionary<string, int> _templateNameIdDictionary;
+    private readonly ObjectStreamRepository<Template> _templateRepository;
     private volatile int _count;
 
     public TemplateManager(

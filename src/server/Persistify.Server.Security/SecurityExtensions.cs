@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Persistify.Server.Configuration.Settings;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Persistify.Server.Security;
 

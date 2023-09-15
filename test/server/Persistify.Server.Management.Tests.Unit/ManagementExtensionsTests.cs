@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
+using Persistify.Server.Management.Managers.Users;
+using Persistify.Server.Management.Transactions;
 using Xunit;
 
 namespace Persistify.Server.Management.Tests.Unit;
@@ -37,13 +39,16 @@ public class ManagementExtensionsTests
 
         // Assert
         actual.Should().BeSameAs(services);
-        services.Should().HaveCount(8);
-        services.Should().Contain(x => x.ServiceType == typeof(ITemplateManager));
-        services.Should().Contain(x => x.ServiceType == typeof(IFileStreamFactory));
-        services.Should().Contain(x => x.ServiceType == typeof(IFileHandler));
-        services.Should().Contain(x => x.ServiceType == typeof(IFileProvider));
-        services.Should().Contain(x => x.ServiceType == typeof(IRequiredFileGroup));
-        services.Should().Contain(x => x.ServiceType == typeof(IDocumentManagerStore));
-        services.Should().Contain(x => x.ServiceType == typeof(IFileGroupForTemplate));
+        services.Should().HaveCount(10);
+        services.Should().Contain(x => x.ImplementationType == typeof(TemplateManager));
+        services.Should().Contain(x => x.ImplementationType == typeof(IdleTimeoutFileStreamFactory));
+        services.Should().Contain(x => x.ImplementationType == typeof(FileHandler));
+        services.Should().Contain(x => x.ImplementationType == typeof(LocalFileProvider));
+        services.Should().Contain(x => x.ImplementationType == typeof(TemplateManagerRequiredFileGroup));
+        services.Should().Contain(x => x.ImplementationType == typeof(DocumentManagerStore));
+        services.Should().Contain(x => x.ImplementationType == typeof(DocumentManagerFileGroupForTemplate));
+        services.Should().Contain(x => x.ImplementationType == typeof(TransactionState));
+        services.Should().Contain(x => x.ImplementationType == typeof(UserManager));
+        services.Should().Contain(x => x.ImplementationType == typeof(UserManagerRequiredFileGroup));
     }
 }

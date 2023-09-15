@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
-using Persistify.Requests.Documents;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Documents;
 using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Templates;
@@ -85,7 +82,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         }
 
         var allNames = new HashSet<string>(value.TextFields.Count + value.NumberFields.Count +
-                                                value.BoolFields.Count);
+                                           value.BoolFields.Count);
 
         for (var i = 0; i < value.TextFields.Count; i++)
         {

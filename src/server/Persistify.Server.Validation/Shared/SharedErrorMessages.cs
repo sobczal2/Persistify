@@ -6,5 +6,4 @@ public static class SharedErrorMessages
     public const string PageSizeLessThanOrEqualToZero = "Page size less than or equal to zero";
     public const string ValueNull = "Value null";
     public const string ValueTooLong = "Value too long";
-    public const string InvalidCredentials = "Invalid credentials";
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Persistify.Server.Commands.Common;
 using Persistify.Server.Commands.Documents;
 using Persistify.Server.Commands.Internal.Management;
 using Persistify.Server.Commands.Templates;
@@ -10,6 +11,9 @@ public static class CommandsExtensions
 {
     public static IServiceCollection AddCommands(this IServiceCollection services)
     {
+        services.AddTransient(typeof(ICommandContext<>), typeof(CommandContext<>));
+        services.AddTransient<ICommandContext, CommandContext>();
+
         services.AddTransient<CreateTemplateCommand>();
         services.AddTransient<GetTemplateCommand>();
         services.AddTransient<ListTemplatesCommand>();
@@ -23,6 +27,7 @@ public static class CommandsExtensions
         services.AddTransient<CreateUserCommand>();
         services.AddTransient<GetUserCommand>();
         services.AddTransient<SignInCommand>();
+        services.AddTransient<SetPermissionCommand>();
 
         services.AddTransient<InitializeTemplateManagerCommand>();
         services.AddTransient<InitializeDocumentManagersCommand>();

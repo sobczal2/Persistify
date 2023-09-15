@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -22,28 +20,23 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
     private Template? _template;
 
     public GetTemplateCommand(
-        IValidator<GetTemplateRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<GetTemplateRequest> commandContext,
         ITemplateManager templateManager
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(GetTemplateRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(GetTemplateRequest request, CancellationToken cancellationToken)
     {
-        _template = await _templateManager.GetAsync(data.TemplateName);
+        _template = await _templateManager.GetAsync(request.TemplateName);
 
         if (_template is null)
         {
-            throw new ValidationException(nameof(GetTemplateRequest.TemplateName), $"Template {data.TemplateName} not found");
+            throw new ValidationException(nameof(GetTemplateRequest.TemplateName),
+                $"Template {request.TemplateName} not found");
         }
     }
 
@@ -57,7 +50,7 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
         return new GetTemplateResponse(_template);
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -66,7 +59,7 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
         );
     }
 
-    protected override Permission GetRequiredPermission(GetTemplateRequest data)
+    protected override Permission GetRequiredPermission(GetTemplateRequest request)
     {
         return Permission.TemplateRead;
     }

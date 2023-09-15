@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.ObjectPool;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation;

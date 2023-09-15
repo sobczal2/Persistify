@@ -5,5 +5,4 @@ namespace Persistify.Responses.Users;
 [ProtoContract]
 public class CreateUserResponse
 {
-
 }

@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
-using Persistify.Responses.Shared;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
@@ -18,27 +15,23 @@ public class InitializeUserManagerCommand : Command
     private readonly IUserManager _userManager;
 
     public InitializeUserManagerCommand(
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext commandContext,
         IUserManager userManager
     ) : base(
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _userManager = userManager;
     }
 
-    protected override ValueTask RunAsync(EmptyRequest data, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(EmptyRequest request, CancellationToken cancellationToken)
     {
         _userManager.Initialize();
 
         return ValueTask.CompletedTask;
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(EmptyRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -47,7 +40,7 @@ public class InitializeUserManagerCommand : Command
         );
     }
 
-    protected override Permission GetRequiredPermission(EmptyRequest data)
+    protected override Permission GetRequiredPermission(EmptyRequest request)
     {
         return Permission.UserWrite;
     }

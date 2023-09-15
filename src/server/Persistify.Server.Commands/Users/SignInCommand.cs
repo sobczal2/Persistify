@@ -1,67 +1,63 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
+using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
 public class SignInCommand : Command<SignInRequest, SignInResponse>
 {
-    private readonly IUserManager _userManager;
     private readonly IPasswordService _passwordService;
+    private readonly IUserManager _userManager;
     private SignInResponse? _response;
 
     public SignInCommand(
-        IValidator<SignInRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<SignInRequest> commandContext,
         IUserManager userManager,
         IPasswordService passwordService
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _userManager = userManager;
         _passwordService = passwordService;
     }
 
-    protected override async ValueTask RunAsync(SignInRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(SignInRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetAsync(data.Username);
+        var user = await _userManager.GetAsync(request.Username);
 
         if (user is null)
         {
-            throw new ValidationException(nameof(SignInRequest.Username), SharedErrorMessages.InvalidCredentials);
+            throw new ValidationException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
         }
 
-        var passwordCorrect = _passwordService.VerifyPassword(data.Password, user.PasswordHash, user.PasswordSalt);
+        var passwordCorrect = _passwordService.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt);
 
         if (!passwordCorrect)
         {
-            throw new ValidationException(nameof(SignInRequest.Username), SharedErrorMessages.InvalidCredentials);
+            throw new ValidationException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
         }
 
         var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);
 
         _response = new SignInResponse
         {
-            Username = user.Username, Permission = (int)user.Permission, AccessToken = accessToken, RefreshToken = refreshToken
+            Username = user.Username,
+            Permission = (int)user.Permission,
+            AccessToken = accessToken,
+            RefreshToken = refreshToken
         };
     }
 
@@ -70,7 +66,7 @@ public class SignInCommand : Command<SignInRequest, SignInResponse>
         return _response ?? throw new PersistifyInternalException();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(SignInRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(SignInRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -79,7 +75,7 @@ public class SignInCommand : Command<SignInRequest, SignInResponse>
         );
     }
 
-    protected override Permission GetRequiredPermission(SignInRequest data)
+    protected override Permission GetRequiredPermission(SignInRequest request)
     {
         return Permission.None;
     }

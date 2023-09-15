@@ -11,9 +11,8 @@ namespace Persistify.Server.Validation.Tests.Unit.Domain;
 // TODO: Add tests for AnalyzerDescriptorValidator
 public class TextFieldValidatorTests
 {
-    private readonly TextFieldValidator _sut;
-
     private readonly IValidator<AnalyzerDescriptor> _analyzerDescriptorValidator;
+    private readonly TextFieldValidator _sut;
 
     public TextFieldValidatorTests()
     {
@@ -104,11 +103,7 @@ public class TextFieldValidatorTests
     public void Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var value = new TextField
-        {
-            Name = "Name",
-            AnalyzerDescriptor = new AnalyzerDescriptor()
-        };
+        var value = new TextField { Name = "Name", AnalyzerDescriptor = new AnalyzerDescriptor() };
 
         // Act
         var result = _sut.Validate(value);
