@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
@@ -23,30 +22,25 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
     private Document? _document;
 
     public CreateDocumentCommand(
-        IValidator<CreateDocumentRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<CreateDocumentRequest> commandContext,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(CreateDocumentRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(CreateDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(data.TemplateId);
+        var template = await _templateManager.GetAsync(request.TemplateName);
 
         if (template is null)
         {
-            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
+            throw new ValidationException(nameof(CreateDocumentRequest.TemplateName),
+                $"Template {request.TemplateName} not found");
         }
 
         var documentManager = _documentManagerStore.GetManager(template.Id);
@@ -56,13 +50,14 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
             throw new PersistifyInternalException();
         }
 
-        await TransactionState.GetCurrentTransaction().PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await CommandContext.CurrentTransaction
+            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
         _document = new Document
         {
-            TextFieldValues = data.TextFieldValues,
-            NumberFieldValues = data.NumberFieldValues,
-            BoolFieldValues = data.BoolFieldValues
+            TextFieldValues = request.TextFieldValues,
+            NumberFieldValues = request.NumberFieldValues,
+            BoolFieldValues = request.BoolFieldValues
         };
 
         documentManager.Add(_document);
@@ -78,12 +73,17 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
         return new CreateDocumentResponse(_document.Id);
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest request)
     {
         return new TransactionDescriptor(
             false,
             new List<IManager> { _templateManager },
             new List<IManager>()
         );
+    }
+
+    protected override Permission GetRequiredPermission(CreateDocumentRequest request)
+    {
+        return Permission.DocumentWrite;
     }
 }

@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Persistify.Server.Commands\Persistify.Server.Commands.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
   </ItemGroup>
 
 

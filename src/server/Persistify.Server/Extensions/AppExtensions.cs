@@ -14,5 +14,6 @@ public static class AppExtensions
         app.MapCodeFirstGrpcReflectionService();
         app.MapGrpcService<DocumentService>();
         app.MapGrpcService<TemplateService>();
+        app.MapGrpcService<UserService>();
     }
 }

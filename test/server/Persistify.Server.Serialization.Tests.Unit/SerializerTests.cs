@@ -10,13 +10,6 @@ public abstract class SerializerTests<TSerializer> where TSerializer : ISerializ
 {
     private readonly TSerializer _sut;
 
-    [ProtoContract]
-    private class TestClass
-    {
-        [ProtoMember(1)]
-        public string? Property { get; set; }
-    }
-
     public SerializerTests()
     {
         // ReSharper disable once VirtualMemberCallInConstructor
@@ -87,5 +80,12 @@ public abstract class SerializerTests<TSerializer> where TSerializer : ISerializ
 
         // Assert
         act.Should().Throw<Exception>();
+    }
+
+    [ProtoContract]
+    private class TestClass
+    {
+        [ProtoMember(1)]
+        public string? Property { get; set; }
     }
 }

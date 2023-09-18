@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
+using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -21,29 +20,29 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
     private Template? _template;
 
     public CreateTemplateCommand(
-        IValidator<CreateTemplateRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<CreateTemplateRequest> commandContext,
         ITemplateManager templateManager
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _templateManager = templateManager;
     }
 
-    protected override ValueTask RunAsync(CreateTemplateRequest data, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(CreateTemplateRequest request, CancellationToken cancellationToken)
     {
+        if (_templateManager.Exists(request.TemplateName))
+        {
+            throw new ValidationException(nameof(CreateTemplateRequest.TemplateName),
+                $"Template {request.TemplateName} already exists");
+        }
+
         _template = new Template
         {
-            Name = data.TemplateName,
-            TextFields = data.TextFields,
-            NumberFields = data.NumberFields,
-            BoolFields = data.BoolFields
+            Name = request.TemplateName,
+            TextFields = request.TextFields,
+            NumberFields = request.NumberFields,
+            BoolFields = request.BoolFields
         };
 
         _templateManager.Add(_template);
@@ -61,12 +60,17 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
         return new CreateTemplateResponse(_template.Id);
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateTemplateRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(CreateTemplateRequest request)
     {
         return new TransactionDescriptor(
             false,
             new List<IManager>(),
             new List<IManager> { _templateManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(CreateTemplateRequest request)
+    {
+        return Permission.TemplateWrite;
     }
 }

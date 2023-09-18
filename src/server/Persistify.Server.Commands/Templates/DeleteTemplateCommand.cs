@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+using Persistify.Domain.Users;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling.ExceptionHandlers;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -18,28 +18,30 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
     private readonly ITemplateManager _templateManager;
 
     public DeleteTemplateCommand(
-        IValidator<DeleteTemplateRequest> validator,
-        ILoggerFactory loggerFactory,
-        ITransactionState transactionState,
-        IExceptionHandler exceptionHandler,
+        ICommandContext<DeleteTemplateRequest> commandContext,
         ITemplateManager templateManager
     ) : base(
-        validator,
-        loggerFactory,
-        transactionState,
-        exceptionHandler
+        commandContext
     )
     {
         _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(DeleteTemplateRequest data, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(DeleteTemplateRequest request, CancellationToken cancellationToken)
     {
-        var result = await _templateManager.RemoveAsync(data.TemplateId);
+        var template = await _templateManager.GetAsync(request.TemplateName);
+
+        if (template is null)
+        {
+            throw new ValidationException(nameof(DeleteTemplateRequest.TemplateName),
+                $"Template {request.TemplateName} not found");
+        }
+
+        var result = await _templateManager.RemoveAsync(template.Id);
 
         if (!result)
         {
-            throw new ValidationException(nameof(data.TemplateId), $"Template with id {data.TemplateId} not found");
+            throw new PersistifyInternalException();
         }
     }
 
@@ -48,12 +50,17 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
         return new DeleteTemplateResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(DeleteTemplateRequest data)
+    protected override TransactionDescriptor GetTransactionDescriptor(DeleteTemplateRequest request)
     {
         return new TransactionDescriptor(
             false,
             new List<IManager>(),
             new List<IManager> { _templateManager }
         );
+    }
+
+    protected override Permission GetRequiredPermission(DeleteTemplateRequest request)
+    {
+        return Permission.TemplateWrite;
     }
 }

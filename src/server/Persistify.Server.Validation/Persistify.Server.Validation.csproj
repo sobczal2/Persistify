@@ -9,12 +9,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Requests\Persistify.Requests.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.10" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="7.0.10"/>
   </ItemGroup>
 
 

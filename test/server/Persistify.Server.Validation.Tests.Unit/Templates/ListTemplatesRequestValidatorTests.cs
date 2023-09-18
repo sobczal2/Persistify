@@ -12,9 +12,8 @@ namespace Persistify.Server.Validation.Tests.Unit.Templates;
 
 public class ListTemplatesRequestValidatorTests
 {
-    private readonly ListTemplatesRequestValidator _sut;
-
     private readonly IValidator<Pagination> _paginationValidator;
+    private readonly ListTemplatesRequestValidator _sut;
 
     public ListTemplatesRequestValidatorTests()
     {
@@ -84,10 +83,7 @@ public class ListTemplatesRequestValidatorTests
     public void Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new ListTemplatesRequest
-        {
-            Pagination = new Pagination()
-        };
+        var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
         List<string> propertyNameAtCall = null!;
         _paginationValidator
@@ -106,10 +102,7 @@ public class ListTemplatesRequestValidatorTests
     public void Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new ListTemplatesRequest
-        {
-            Pagination = new Pagination()
-        };
+        var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
         var validationException = new ValidationException("Test", "Test");
         _paginationValidator.Validate(Arg.Any<Pagination>()).Returns(validationException);
@@ -126,10 +119,7 @@ public class ListTemplatesRequestValidatorTests
     public void Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new ListTemplatesRequest
-        {
-            Pagination = new Pagination()
-        };
+        var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
         // Act
         var result = _sut.Validate(request);

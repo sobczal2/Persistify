@@ -6,4 +6,6 @@ public class RepositorySettings
 
     public int TemplateRepositorySectorSize { get; set; }
     public int DocumentRepositorySectorSize { get; set; }
+    public int UserRepositorySectorSize { get; set; }
+    public int RefreshTokenRepositorySectorSize { get; set; }
 }

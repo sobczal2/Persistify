@@ -4,7 +4,7 @@ using Persistify.Domain.Documents;
 using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
-using Persistify.Server.Validation.Templates;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -20,21 +20,24 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         IValidator<BoolFieldValue> boolFieldValueValidator
     )
     {
-        _textFieldValueValidator = textFieldValueValidator ?? throw new ArgumentNullException(nameof(textFieldValueValidator));
+        _textFieldValueValidator =
+            textFieldValueValidator ?? throw new ArgumentNullException(nameof(textFieldValueValidator));
         _textFieldValueValidator.PropertyName = PropertyName;
-        _numberFieldValueValidator = numberFieldValueValidator ?? throw new ArgumentNullException(nameof(numberFieldValueValidator));
+        _numberFieldValueValidator = numberFieldValueValidator ??
+                                     throw new ArgumentNullException(nameof(numberFieldValueValidator));
         _numberFieldValueValidator.PropertyName = PropertyName;
-        _boolFieldValueValidator = boolFieldValueValidator ?? throw new ArgumentNullException(nameof(boolFieldValueValidator));
+        _boolFieldValueValidator =
+            boolFieldValueValidator ?? throw new ArgumentNullException(nameof(boolFieldValueValidator));
         _boolFieldValueValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(CreateDocumentRequest));
     }
 
     public override Result ValidateNotNull(CreateDocumentRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(CreateDocumentRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count == 0)

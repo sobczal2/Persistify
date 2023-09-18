@@ -1,8 +1,7 @@
-﻿using System;
-using Persistify.Requests.Documents;
+﻿using Persistify.Requests.Documents;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
-using Persistify.Server.Validation.Templates;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -15,10 +14,10 @@ public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
 
     public override Result ValidateNotNull(DeleteDocumentRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(DeleteDocumentRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.DocumentId <= 0)

@@ -3,5 +3,4 @@
 // TODO: Add tests
 public class SearchNodeValidatorTests
 {
-
 }

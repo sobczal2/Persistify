@@ -165,8 +165,6 @@ public class ResultTTests
         result.Exception.Should().Be(exception);
     }
 
-    private class TestClassForResult { }
-
     [Fact]
     public void ImplicitValue_WithSuccessResultT_ReturnsValue()
     {
@@ -291,8 +289,8 @@ public class ResultTTests
 
         // Act
         var actual = result.Match(
-            onSuccess: _ => expected,
-            onFailure: _ => new object());
+            _ => expected,
+            _ => new object());
 
         // Assert
         actual.Should().Be(expected);
@@ -308,10 +306,14 @@ public class ResultTTests
 
         // Act
         var actual = result.Match(
-            onSuccess: _ => new object(),
-            onFailure: _ => expected);
+            _ => new object(),
+            _ => expected);
 
         // Assert
         actual.Should().Be(expected);
+    }
+
+    private class TestClassForResult
+    {
     }
 }

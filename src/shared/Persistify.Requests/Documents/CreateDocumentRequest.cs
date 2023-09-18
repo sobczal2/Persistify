@@ -15,7 +15,7 @@ public class CreateDocumentRequest
     }
 
     [ProtoMember(1)]
-    public int TemplateId { get; set; }
+    public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
     public List<TextFieldValue> TextFieldValues { get; set; }

@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\shared\Persistify.Concurrency\Persistify.Concurrency.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Serialization\Persistify.Server.Serialization.csproj"/>
   </ItemGroup>
 

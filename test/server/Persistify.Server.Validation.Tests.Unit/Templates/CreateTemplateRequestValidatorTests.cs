@@ -12,11 +12,11 @@ namespace Persistify.Server.Validation.Tests.Unit.Templates;
 
 public class CreateTemplateRequestValidatorTests
 {
+    private readonly IValidator<BoolField> _boolFieldValidator;
+    private readonly IValidator<NumberField> _numberFieldValidator;
     private CreateTemplateRequestValidator _sut;
 
-    private IValidator<TextField> _textFieldValidator;
-    private IValidator<NumberField> _numberFieldValidator;
-    private IValidator<BoolField> _boolFieldValidator;
+    private readonly IValidator<TextField> _textFieldValidator;
 
     public CreateTemplateRequestValidatorTests()
     {

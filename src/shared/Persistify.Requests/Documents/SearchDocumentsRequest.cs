@@ -8,7 +8,7 @@ namespace Persistify.Requests.Documents;
 public class SearchDocumentsRequest
 {
     [ProtoMember(1)]
-    public int TemplateId { get; set; }
+    public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
     public Pagination Pagination { get; set; } = default!;

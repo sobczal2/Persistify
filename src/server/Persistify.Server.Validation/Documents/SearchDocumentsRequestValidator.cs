@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Text;
-using Microsoft.Extensions.ObjectPool;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
-using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Documents;
 
@@ -30,10 +27,10 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
 
     public override Result ValidateNotNull(SearchDocumentsRequest value)
     {
-        if (value.TemplateId <= 0)
+        if (string.IsNullOrEmpty(value.TemplateName))
         {
-            PropertyName.Push(nameof(SearchDocumentsRequest.TemplateId));
-            return ValidationException(TemplateErrorMessages.InvalidTemplateId);
+            PropertyName.Push(nameof(SearchDocumentsRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract

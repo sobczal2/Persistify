@@ -21,6 +21,7 @@ public class ProtobufSerializer : ISerializer
     {
         _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
     }
+
     public ReadOnlyMemory<byte> Serialize<T>(T obj)
     {
         if (obj == null)

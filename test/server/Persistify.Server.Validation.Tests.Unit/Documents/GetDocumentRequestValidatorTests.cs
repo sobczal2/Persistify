@@ -44,14 +44,10 @@ public class GetDocumentRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateIdIsZero_ReturnsValidationException()
+    public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetDocumentRequest
-        {
-            TemplateId = 0,
-            DocumentId = 1
-        };
+        var request = new GetDocumentRequest { TemplateName = null!, DocumentId = 1 };
 
         // Act
         var result = _sut.Validate(request);
@@ -60,19 +56,32 @@ public class GetDocumentRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Invalid template id");
-        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateId");
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
+    }
+
+    [Fact]
+    public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new GetDocumentRequest { TemplateName = string.Empty, DocumentId = 1 };
+
+        // Act
+        var result = _sut.Validate(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
     }
 
     [Fact]
     public void Validate_WhenDocumentIdIsZero_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetDocumentRequest
-        {
-            TemplateId = 1,
-            DocumentId = 0
-        };
+        var request = new GetDocumentRequest { TemplateName = "Test", DocumentId = 0 };
 
         // Act
         var result = _sut.Validate(request);
@@ -89,11 +98,7 @@ public class GetDocumentRequestValidatorTests
     public void Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new GetDocumentRequest
-        {
-            TemplateId = 1,
-            DocumentId = 1
-        };
+        var request = new GetDocumentRequest { TemplateName = "Test", DocumentId = 1 };
 
         // Act
         var result = _sut.Validate(request);

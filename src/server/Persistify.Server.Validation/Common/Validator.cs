@@ -22,6 +22,7 @@ public abstract class Validator<T> : IValidator<T>
 
         return ValidateNotNull(value);
     }
+
     public abstract Result ValidateNotNull(T value);
 
     protected ValidationException ValidationException(string message)
