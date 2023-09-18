@@ -1,6 +1,6 @@
 ﻿using System;
 using Grpc.Core;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.ErrorHandling.Exceptions;
 
 namespace Persistify.Server.ErrorHandling.ExceptionHandlers;
 

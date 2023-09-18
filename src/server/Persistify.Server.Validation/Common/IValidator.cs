@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Common;
@@ -6,5 +7,5 @@ namespace Persistify.Server.Validation.Common;
 public interface IValidator<in T>
 {
     Stack<string> PropertyName { get; set; }
-    Result Validate(T value);
+    ValueTask<Result> ValidateAsync(T value);
 }

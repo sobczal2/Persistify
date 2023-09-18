@@ -5,19 +5,18 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
-using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
 public class ChangeUserPasswordCommand : Command<ChangeUserPasswordRequest, ChangeUserPasswordResponse>
 {
-    private readonly IUserManager _userManager;
     private readonly IPasswordService _passwordService;
+    private readonly IUserManager _userManager;
 
     public ChangeUserPasswordCommand(
         ICommandContext<ChangeUserPasswordRequest> commandContext,
@@ -34,12 +33,7 @@ public class ChangeUserPasswordCommand : Command<ChangeUserPasswordRequest, Chan
     protected override async ValueTask RunAsync(ChangeUserPasswordRequest request, CancellationToken cancellationToken)
     {
         var user = await _userManager
-            .GetAsync(request.Username);
-
-        if (user is null)
-        {
-            throw new ValidationException(nameof(ChangeUserPasswordRequest.Username), UserErrorMessages.UserNotFound);
-        }
+            .GetAsync(request.Username) ?? throw new PersistifyInternalException();
 
         var (hash, salt) = _passwordService.HashPassword(request.Password);
 

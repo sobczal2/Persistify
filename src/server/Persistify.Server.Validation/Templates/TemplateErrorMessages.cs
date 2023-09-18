@@ -10,4 +10,6 @@ public static class TemplateErrorMessages
 
     public const string NoFields = "No fields";
     public const string FieldNameNotUnique = "Field name not unique";
+    public const string NameNotUnique = "Name not unique";
+    public const string TemplateNotFound = "Template not found";
 }

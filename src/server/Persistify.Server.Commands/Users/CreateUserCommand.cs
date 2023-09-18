@@ -9,8 +9,6 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
-using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
@@ -33,11 +31,6 @@ public class CreateUserCommand : Command<CreateUserRequest, CreateUserResponse>
 
     protected override ValueTask RunAsync(CreateUserRequest request, CancellationToken cancellationToken)
     {
-        if (_userManager.Exists(request.Username))
-        {
-            throw new ValidationException(nameof(CreateUserRequest.Username), UserErrorMessages.UserAlreadyExists);
-        }
-
         var (hash, salt) = _passwordService.HashPassword(request.Password);
 
         var user = new User

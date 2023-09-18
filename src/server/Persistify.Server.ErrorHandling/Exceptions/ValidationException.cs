@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Validation.Common;
+namespace Persistify.Server.ErrorHandling.Exceptions;
 
 public class ValidationException : Exception
 {

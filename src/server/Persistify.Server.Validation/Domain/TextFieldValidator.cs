@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Threading.Tasks;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Templates;
@@ -16,7 +17,7 @@ public class TextFieldValidator : Validator<TextField>
         PropertyName.Push(nameof(TextField));
     }
 
-    public override Result ValidateNotNull(TextField value)
+    public override async ValueTask<Result> ValidateNotNullAsync(TextField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
@@ -53,7 +54,8 @@ public class TextFieldValidator : Validator<TextField>
         if (value.AnalyzerDescriptor is not null)
         {
             PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
-            var analyzerDescriptorValidationResult = _analyzerDescriptorValidator.Validate(value.AnalyzerDescriptor);
+            var analyzerDescriptorValidationResult =
+                await _analyzerDescriptorValidator.ValidateAsync(value.AnalyzerDescriptor);
             PropertyName.Pop();
             if (analyzerDescriptorValidationResult.Failure)
             {

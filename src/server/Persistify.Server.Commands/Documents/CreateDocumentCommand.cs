@@ -11,7 +11,6 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Documents;
 
@@ -39,9 +38,15 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
         if (template is null)
         {
-            throw new ValidationException(nameof(CreateDocumentRequest.TemplateName),
-                $"Template {request.TemplateName} not found");
+            throw new PersistifyInternalException();
         }
+
+        _document = new Document
+        {
+            TextFieldValues = request.TextFieldValues,
+            NumberFieldValues = request.NumberFieldValues,
+            BoolFieldValues = request.BoolFieldValues
+        };
 
         var documentManager = _documentManagerStore.GetManager(template.Id);
 
@@ -53,24 +58,12 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        _document = new Document
-        {
-            TextFieldValues = request.TextFieldValues,
-            NumberFieldValues = request.NumberFieldValues,
-            BoolFieldValues = request.BoolFieldValues
-        };
-
         documentManager.Add(_document);
     }
 
     protected override CreateDocumentResponse GetResponse()
     {
-        if (_document is null)
-        {
-            throw new PersistifyInternalException();
-        }
-
-        return new CreateDocumentResponse(_document.Id);
+        return new CreateDocumentResponse(_document?.Id ?? throw new PersistifyInternalException());
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest request)

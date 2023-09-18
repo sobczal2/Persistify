@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Threading.Tasks;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Templates;
@@ -13,7 +14,7 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
         PropertyName.Push(nameof(AnalyzerDescriptor));
     }
 
-    public override Result ValidateNotNull(AnalyzerDescriptor value)
+    public override ValueTask<Result> ValidateNotNullAsync(AnalyzerDescriptor value)
     {
         if (value.CharacterFilterNames.Count > 0)
         {
@@ -22,13 +23,13 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
                 if (string.IsNullOrEmpty(value.CharacterFilterNames[i]))
                 {
                     PropertyName.Push($"{nameof(AnalyzerDescriptor.CharacterFilterNames)}[{i}]");
-                    return ValidationException(TemplateErrorMessages.NameEmpty);
+                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
                 }
 
                 if (value.CharacterFilterNames[i].Length > 64)
                 {
                     PropertyName.Push($"{nameof(AnalyzerDescriptor.CharacterFilterNames)}[{i}]");
-                    return ValidationException(TemplateErrorMessages.NameTooLong);
+                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
                 }
             }
         }
@@ -36,13 +37,13 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
         if (string.IsNullOrEmpty(value.TokenizerName))
         {
             PropertyName.Push(nameof(AnalyzerDescriptor.TokenizerName));
-            return ValidationException(TemplateErrorMessages.NameEmpty);
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.TokenizerName.Length > 64)
         {
             PropertyName.Push(nameof(AnalyzerDescriptor.TokenizerName));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
         }
 
         if (value.TokenFilterNames.Count > 0)
@@ -52,17 +53,17 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
                 if (string.IsNullOrEmpty(value.TokenFilterNames[i]))
                 {
                     PropertyName.Push($"{nameof(AnalyzerDescriptor.TokenFilterNames)}[{i}]");
-                    return ValidationException(TemplateErrorMessages.NameEmpty);
+                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
                 }
 
                 if (value.TokenFilterNames[i].Length > 64)
                 {
                     PropertyName.Push($"{nameof(AnalyzerDescriptor.TokenFilterNames)}[{i}]");
-                    return ValidationException(TemplateErrorMessages.NameTooLong);
+                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
                 }
             }
         }
 
-        return Result.Ok;
+        return ValueTask.FromResult(Result.Ok);
     }
 }

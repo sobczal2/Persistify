@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Domain.Templates;
 using Persistify.Requests.Templates;
+using Persistify.Server.ErrorHandling.Exceptions;
+using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Templates;
 using Xunit;
@@ -14,17 +17,20 @@ public class CreateTemplateRequestValidatorTests
 {
     private readonly IValidator<BoolField> _boolFieldValidator;
     private readonly IValidator<NumberField> _numberFieldValidator;
-    private CreateTemplateRequestValidator _sut;
-
+    private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextField> _textFieldValidator;
+
+    private CreateTemplateRequestValidator _sut;
 
     public CreateTemplateRequestValidatorTests()
     {
         _textFieldValidator = Substitute.For<IValidator<TextField>>();
         _numberFieldValidator = Substitute.For<IValidator<NumberField>>();
         _boolFieldValidator = Substitute.For<IValidator<BoolField>>();
+        _templateManager = Substitute.For<ITemplateManager>();
 
-        _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, _boolFieldValidator);
+        _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, _boolFieldValidator,
+            _templateManager);
     }
 
     [Fact]
@@ -33,7 +39,9 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () => _sut = new CreateTemplateRequestValidator(null!, _numberFieldValidator, _boolFieldValidator);
+        Action act = () =>
+            _sut = new CreateTemplateRequestValidator(null!, _numberFieldValidator, _boolFieldValidator,
+                _templateManager);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -45,7 +53,9 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () => _sut = new CreateTemplateRequestValidator(_textFieldValidator, null!, _boolFieldValidator);
+        Action act = () =>
+            _sut = new CreateTemplateRequestValidator(_textFieldValidator, null!, _boolFieldValidator,
+                _templateManager);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -57,7 +67,23 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () => _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, null!);
+        Action act = () =>
+            _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, null!,
+                _templateManager);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Ctor_WhenTemplateManagerIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+
+        // Act
+        Action act = () =>
+            _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, _boolFieldValidator,
+                null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -78,12 +104,12 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenValueIsNull_ReturnsValidationException()
+    public async Task Validate_WhenValueIsNull_ReturnsValidationException()
     {
         // Arrange
 
         // Act
-        var result = _sut.Validate(null!);
+        var result = await _sut.ValidateAsync(null!);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -94,7 +120,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateNameIsNull_ReturnsValidationException()
+    public async Task Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -106,7 +132,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -117,7 +143,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    public async Task Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -129,7 +155,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -140,7 +166,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -152,7 +178,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -163,7 +189,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNoFields_ReturnsValidationException()
+    public async Task Validate_WhenNoFields_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -175,7 +201,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -186,7 +212,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTextFieldsHasOneValue_CallsTextFieldValidatorWithCorrectPropertyName()
+    public async Task Validate_WhenTextFieldsHasOneValue_CallsTextFieldValidatorWithCorrectPropertyName()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -198,18 +224,18 @@ public class CreateTemplateRequestValidatorTests
         };
         List<string> propertyNameAtCall = null!;
         _textFieldValidator
-            .When(x => x.Validate(Arg.Any<TextField>()))
+            .When(x => x.ValidateAsync(Arg.Any<TextField>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
-        _sut.Validate(request);
+        await _sut.ValidateAsync(request);
 
         // Assert
         propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "TextFields[0]" });
     }
 
     [Fact]
-    public void Validate_WhenTextFieldsValidatorReturnsValidationException_ReturnsValidationException()
+    public async void Validate_WhenTextFieldsValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -221,11 +247,11 @@ public class CreateTemplateRequestValidatorTests
         };
         var validationException = new ValidationException("Test", "Test");
         _textFieldValidator
-            .Validate(Arg.Any<TextField>())
+            .ValidateAsync(Arg.Any<TextField>())
             .Returns(validationException);
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -233,7 +259,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNumberFieldsHasOneValue_CallsNumberFieldValidatorWithCorrectPropertyName()
+    public async Task Validate_WhenNumberFieldsHasOneValue_CallsNumberFieldValidatorWithCorrectPropertyName()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -245,18 +271,18 @@ public class CreateTemplateRequestValidatorTests
         };
         List<string> propertyNameAtCall = null!;
         _numberFieldValidator
-            .When(x => x.Validate(Arg.Any<NumberField>()))
+            .When(x => x.ValidateAsync(Arg.Any<NumberField>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
-        _sut.Validate(request);
+        await _sut.ValidateAsync(request);
 
         // Assert
         propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "NumberFields[0]" });
     }
 
     [Fact]
-    public void Validate_WhenNumberFieldsValidatorReturnsValidationException_ReturnsValidationException()
+    public async Task Validate_WhenNumberFieldsValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -268,11 +294,11 @@ public class CreateTemplateRequestValidatorTests
         };
         var validationException = new ValidationException("Test", "Test");
         _numberFieldValidator
-            .Validate(Arg.Any<NumberField>())
+            .ValidateAsync(Arg.Any<NumberField>())
             .Returns(validationException);
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -280,7 +306,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenBoolFieldsHasOneValue_CallsBoolFieldValidatorWithCorrectPropertyName()
+    public async Task Validate_WhenBoolFieldsHasOneValue_CallsBoolFieldValidatorWithCorrectPropertyName()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -292,18 +318,18 @@ public class CreateTemplateRequestValidatorTests
         };
         List<string> propertyNameAtCall = null!;
         _boolFieldValidator
-            .When(x => x.Validate(Arg.Any<BoolField>()))
+            .When(x => x.ValidateAsync(Arg.Any<BoolField>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
-        _sut.Validate(request);
+        await _sut.ValidateAsync(request);
 
         // Assert
         propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "BoolFields[0]" });
     }
 
     [Fact]
-    public void Validate_WhenBoolFieldsValidatorReturnsValidationException_ReturnsValidationException()
+    public async Task Validate_WhenBoolFieldsValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -315,11 +341,11 @@ public class CreateTemplateRequestValidatorTests
         };
         var validationException = new ValidationException("Test", "Test");
         _boolFieldValidator
-            .Validate(Arg.Any<BoolField>())
+            .ValidateAsync(Arg.Any<BoolField>())
             .Returns(validationException);
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -327,7 +353,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTextFieldsContainsDuplicateNames_ReturnsValidationException()
+    public async Task Validate_WhenTextFieldsContainsDuplicateNames_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -339,7 +365,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -350,7 +376,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNumberFieldsContainsDuplicateNames_ReturnsValidationException()
+    public async Task Validate_WhenNumberFieldsContainsDuplicateNames_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -362,7 +388,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -373,7 +399,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenBoolFieldsContainsDuplicateNames_ReturnsValidationException()
+    public async Task Validate_WhenBoolFieldsContainsDuplicateNames_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -385,7 +411,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -396,7 +422,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTextAndNumberFieldsContainsDuplicateNames_ReturnsValidationException()
+    public async Task Validate_WhenTextAndNumberFieldsContainsDuplicateNames_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -408,7 +434,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -419,7 +445,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTextAndBoolFieldsContainsDuplicateNames_ReturnsValidationException()
+    public async Task Validate_WhenTextAndBoolFieldsContainsDuplicateNames_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -431,7 +457,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -442,7 +468,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNumberAndBoolFieldsContainsDuplicateNames_ReturnsValidationException()
+    public async Task Validate_WhenNumberAndBoolFieldsContainsDuplicateNames_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -454,7 +480,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -465,7 +491,7 @@ public class CreateTemplateRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenCorrect_ReturnsOk()
+    public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
         var request = new CreateTemplateRequest
@@ -477,7 +503,7 @@ public class CreateTemplateRequestValidatorTests
         };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeFalse();

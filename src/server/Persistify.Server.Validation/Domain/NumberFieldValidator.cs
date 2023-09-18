@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Threading.Tasks;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Templates;
@@ -12,20 +13,20 @@ public class NumberFieldValidator : Validator<NumberField>
         PropertyName.Push(nameof(NumberField));
     }
 
-    public override Result ValidateNotNull(NumberField value)
+    public override ValueTask<Result> ValidateNotNullAsync(NumberField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
             PropertyName.Push(nameof(NumberField.Name));
-            return ValidationException(TemplateErrorMessages.NameEmpty);
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.Name.Length > 64)
         {
             PropertyName.Push(nameof(NumberField.Name));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
         }
 
-        return Result.Ok;
+        return ValueTask.FromResult(Result.Ok);
     }
 }

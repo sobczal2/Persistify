@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Requests.Documents;
+using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
@@ -12,12 +14,14 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
     private readonly IValidator<BoolFieldValue> _boolFieldValueValidator;
     private readonly IValidator<NumberFieldValue> _numberFieldValueValidator;
+    private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldValue> _textFieldValueValidator;
 
     public CreateDocumentRequestValidator(
         IValidator<TextFieldValue> textFieldValueValidator,
         IValidator<NumberFieldValue> numberFieldValueValidator,
-        IValidator<BoolFieldValue> boolFieldValueValidator
+        IValidator<BoolFieldValue> boolFieldValueValidator,
+        ITemplateManager templateManager
     )
     {
         _textFieldValueValidator =
@@ -28,16 +32,29 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         _numberFieldValueValidator.PropertyName = PropertyName;
         _boolFieldValueValidator =
             boolFieldValueValidator ?? throw new ArgumentNullException(nameof(boolFieldValueValidator));
+        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         _boolFieldValueValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(CreateDocumentRequest));
     }
 
-    public override Result ValidateNotNull(CreateDocumentRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(CreateDocumentRequest value)
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
             return ValidationException(SharedErrorMessages.ValueNull);
+        }
+
+        if (value.TemplateName.Length > 64)
+        {
+            PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
+            return ValidationException(SharedErrorMessages.ValueTooLong);
+        }
+
+        if (!_templateManager.Exists(value.TemplateName))
+        {
+            PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
+            return ValidationException(DocumentErrorMessages.TemplateNotFound);
         }
 
         if (value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count == 0)
@@ -49,7 +66,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         for (var i = 0; i < value.TextFieldValues.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateDocumentRequest.TextFieldValues)}[{i}]");
-            var result = _textFieldValueValidator.Validate(value.TextFieldValues[i]);
+            var result = await _textFieldValueValidator.ValidateAsync(value.TextFieldValues[i]);
             PropertyName.Pop();
             if (result.Failure)
             {
@@ -60,7 +77,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         for (var i = 0; i < value.NumberFieldValues.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateDocumentRequest.NumberFieldValues)}[{i}]");
-            var result = _numberFieldValueValidator.Validate(value.NumberFieldValues[i]);
+            var result = await _numberFieldValueValidator.ValidateAsync(value.NumberFieldValues[i]);
             PropertyName.Pop();
             if (result.Failure)
             {
@@ -71,7 +88,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         for (var i = 0; i < value.BoolFieldValues.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateDocumentRequest.BoolFieldValues)}[{i}]");
-            var result = _boolFieldValueValidator.Validate(value.BoolFieldValues[i]);
+            var result = await _boolFieldValueValidator.ValidateAsync(value.BoolFieldValues[i]);
             PropertyName.Pop();
             if (result.Failure)
             {

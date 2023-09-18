@@ -9,7 +9,7 @@ public class TextField
     public string Name { get; set; } = default!;
 
     [ProtoMember(2)]
-    public bool IsRequired { get; set; }
+    public bool Required { get; set; }
 
     [ProtoMember(3)]
     public string? AnalyzerPresetName { get; set; }

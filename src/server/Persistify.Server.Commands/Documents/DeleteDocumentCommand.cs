@@ -10,7 +10,7 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Documents;
 
 namespace Persistify.Server.Commands.Documents;
 
@@ -33,20 +33,9 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
 
     protected override async ValueTask RunAsync(DeleteDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName);
+        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
 
-        if (template is null)
-        {
-            throw new ValidationException(nameof(DeleteDocumentRequest.TemplateName),
-                $"Template {request.TemplateName} not found");
-        }
-
-        var documentManager = _documentManagerStore.GetManager(template.Id);
-
-        if (documentManager is null)
-        {
-            throw new PersistifyInternalException();
-        }
+        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
 
         await CommandContext
             .CurrentTransaction
@@ -56,8 +45,8 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
 
         if (!result)
         {
-            throw new ValidationException(nameof(request.DocumentId),
-                $"Document with id {request.DocumentId} not found");
+            throw ValidationException(nameof(DeleteDocumentRequest.DocumentId),
+                DocumentErrorMessages.InvalidDocumentId);
         }
     }
 

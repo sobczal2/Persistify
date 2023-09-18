@@ -2,11 +2,11 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
 using Persistify.Responses.Shared;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
 
@@ -46,8 +46,6 @@ public abstract class Command<TRequest, TResponse>
     {
         Authorize(claimsPrincipal, request);
 
-        CommandContext.Validate(request);
-
         var transactionDescriptor = GetTransactionDescriptor(request);
 
         var transaction = new Transaction(
@@ -62,6 +60,7 @@ public abstract class Command<TRequest, TResponse>
             .ConfigureAwait(false);
         try
         {
+            await CommandContext.ValidateAsync(request).ConfigureAwait(false);
             await RunAsync(request, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync().ConfigureAwait(false);
             return GetResponse();
@@ -73,6 +72,11 @@ public abstract class Command<TRequest, TResponse>
         }
 
         throw new PersistifyInternalException();
+    }
+
+    protected ValidationException ValidationException(string fieldName, string message)
+    {
+        return new ValidationException($"{typeof(TRequest).Name}.{fieldName}", message);
     }
 }
 

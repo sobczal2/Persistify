@@ -11,7 +11,7 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Documents;
 
 namespace Persistify.Server.Commands.Documents;
 
@@ -35,20 +35,9 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
     protected override async ValueTask RunAsync(GetDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName);
+        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
 
-        if (template is null)
-        {
-            throw new ValidationException(nameof(GetDocumentRequest.TemplateName),
-                $"Template {request.TemplateName} not found");
-        }
-
-        var documentManager = _documentManagerStore.GetManager(template.Id);
-
-        if (documentManager is null)
-        {
-            throw new PersistifyInternalException();
-        }
+        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
 
         await CommandContext
             .CurrentTransaction
@@ -58,19 +47,13 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
         if (_document is null)
         {
-            throw new ValidationException(nameof(GetDocumentRequest.DocumentId),
-                $"Document with id {request.DocumentId} not found");
+            throw ValidationException(nameof(GetDocumentRequest.DocumentId), DocumentErrorMessages.InvalidDocumentId);
         }
     }
 
     protected override GetDocumentResponse GetResponse()
     {
-        if (_document is null)
-        {
-            throw new PersistifyInternalException();
-        }
-
-        return new GetDocumentResponse(_document);
+        return new GetDocumentResponse(_document ?? throw new PersistifyInternalException());
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest request)

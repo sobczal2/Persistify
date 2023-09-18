@@ -11,4 +11,6 @@ public static class DocumentErrorMessages
     public const string OrSearchNodeMustHaveAtLeastTwoNodes = "Or search node must have at least two nodes";
     public const string NotSearchNodeMustHaveOneNode = "Not search node must have one node";
     public const string ValueEmpty = "Value empty";
+    public const string RequiredFieldMissing = "Required field missing";
+    public const string TemplateNotFound = "Template not found";
 }

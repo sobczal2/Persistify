@@ -10,7 +10,6 @@ using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Templates;
 
@@ -32,22 +31,11 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
     protected override async ValueTask RunAsync(GetTemplateRequest request, CancellationToken cancellationToken)
     {
         _template = await _templateManager.GetAsync(request.TemplateName);
-
-        if (_template is null)
-        {
-            throw new ValidationException(nameof(GetTemplateRequest.TemplateName),
-                $"Template {request.TemplateName} not found");
-        }
     }
 
     protected override GetTemplateResponse GetResponse()
     {
-        if (_template is null)
-        {
-            throw new PersistifyInternalException();
-        }
-
-        return new GetTemplateResponse(_template);
+        return new GetTemplateResponse(_template ?? throw new PersistifyInternalException());
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest request)

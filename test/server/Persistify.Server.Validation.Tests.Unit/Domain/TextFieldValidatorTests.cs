@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Domain.Templates;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Domain;
 using Xunit;
@@ -33,12 +35,12 @@ public class TextFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenValueIsNull_ReturnsValidationException()
+    public async Task Validate_WhenValueIsNull_ReturnsValidationException()
     {
         // Arrange
 
         // Act
-        var result = _sut.Validate(null!);
+        var result = await _sut.ValidateAsync(null!);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -49,13 +51,13 @@ public class TextFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNameIsNull_ReturnsValidationException()
+    public async Task Validate_WhenNameIsNull_ReturnsValidationException()
     {
         // Arrange
         var value = new TextField { Name = null! };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -66,13 +68,13 @@ public class TextFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNameIsEmpty_ReturnsValidationException()
+    public async Task Validate_WhenNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
         var value = new TextField { Name = string.Empty };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -83,13 +85,13 @@ public class TextFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNameIsTooLong_ReturnsValidationException()
+    public async Task Validate_WhenNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
         var value = new TextField { Name = new string('a', 65) };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -100,13 +102,13 @@ public class TextFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenCorrect_ReturnsOk()
+    public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
         var value = new TextField { Name = "Name", AnalyzerDescriptor = new AnalyzerDescriptor() };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeFalse();

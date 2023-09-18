@@ -1,4 +1,6 @@
-﻿using Persistify.Requests.Users;
+﻿using System.Threading.Tasks;
+using Persistify.Requests.Users;
+using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
@@ -7,20 +9,35 @@ namespace Persistify.Server.Validation.Users;
 
 public class GetUserRequestValidator : Validator<GetUserRequest>
 {
-    public override Result ValidateNotNull(GetUserRequest value)
+    private readonly IUserManager _userManager;
+
+    public GetUserRequestValidator(
+        IUserManager userManager
+    )
+    {
+        _userManager = userManager;
+    }
+
+    public override ValueTask<Result> ValidateNotNullAsync(GetUserRequest value)
     {
         if (string.IsNullOrEmpty(value.Username))
         {
-            PropertyName.Push(nameof(CreateUserRequest.Username));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            PropertyName.Push(nameof(GetUserRequest.Username));
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.Username.Length > 64)
         {
-            PropertyName.Push(nameof(CreateUserRequest.Username));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
+            PropertyName.Push(nameof(GetUserRequest.Username));
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
         }
 
-        return Result.Ok;
+        if (!_userManager.Exists(value.Username))
+        {
+            PropertyName.Push(nameof(GetUserRequest.Username));
+            return ValueTask.FromResult<Result>(ValidationException(UserErrorMessages.UserNotFound));
+        }
+
+        return ValueTask.FromResult(Result.Ok);
     }
 }

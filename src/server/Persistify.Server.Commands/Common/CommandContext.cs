@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Persistify.Requests.Shared;
 using Persistify.Server.ErrorHandling.ExceptionHandlers;
@@ -9,10 +10,9 @@ namespace Persistify.Server.Commands.Common;
 
 public class CommandContext<TRequest> : ICommandContext<TRequest>
 {
-    private readonly IValidator<TRequest> _validator;
-    private readonly ILoggerFactory _loggerFactory;
     private readonly IExceptionHandler _exceptionHandler;
-    public ITransactionState TransactionState { get; }
+    private readonly ILoggerFactory _loggerFactory;
+    private readonly IValidator<TRequest> _validator;
 
     public CommandContext(
         IValidator<TRequest> validator,
@@ -27,6 +27,8 @@ public class CommandContext<TRequest> : ICommandContext<TRequest>
         _exceptionHandler = exceptionHandler;
     }
 
+    public ITransactionState TransactionState { get; }
+
     public void HandleException(Exception exception)
     {
         _exceptionHandler.Handle(exception);
@@ -34,9 +36,9 @@ public class CommandContext<TRequest> : ICommandContext<TRequest>
 
     public ITransaction CurrentTransaction => TransactionState.GetCurrentTransaction();
 
-    public void Validate(TRequest request)
+    public async ValueTask ValidateAsync(TRequest request)
     {
-        _validator.Validate(request).OnFailure(ex => _exceptionHandler.Handle(ex));
+        (await _validator.ValidateAsync(request)).OnFailure(ex => throw ex);
     }
 
     public ILogger<T> CreateLogger<T>()

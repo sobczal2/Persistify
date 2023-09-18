@@ -10,7 +10,6 @@ using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Templates;
 
@@ -31,12 +30,6 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
 
     protected override ValueTask RunAsync(CreateTemplateRequest request, CancellationToken cancellationToken)
     {
-        if (_templateManager.Exists(request.TemplateName))
-        {
-            throw new ValidationException(nameof(CreateTemplateRequest.TemplateName),
-                $"Template {request.TemplateName} already exists");
-        }
-
         _template = new Template
         {
             Name = request.TemplateName,

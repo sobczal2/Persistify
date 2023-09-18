@@ -20,12 +20,12 @@ message CreateTemplateResponse {
    int32 TemplateId = 1;
 }
 message DeleteTemplateRequest {
-   int32 TemplateId = 1;
+   string TemplateName = 1;
 }
 message DeleteTemplateResponse {
 }
 message GetTemplateRequest {
-   int32 TemplateId = 1;
+   string TemplateName = 1;
 }
 message GetTemplateResponse {
    Template Template = 1;

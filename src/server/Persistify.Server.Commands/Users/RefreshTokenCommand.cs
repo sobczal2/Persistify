@@ -6,10 +6,10 @@ using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
@@ -31,18 +31,13 @@ public class RefreshTokenCommand : Command<RefreshTokenRequest, RefreshTokenResp
 
     protected override async ValueTask RunAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetAsync(request.Username);
-
-        if (user is null)
-        {
-            throw new ValidationException(nameof(RefreshTokenRequest.Username), UserErrorMessages.UserNotFound);
-        }
+        var user = await _userManager.GetAsync(request.Username) ?? throw new PersistifyInternalException();
 
         if (await _userManager.CheckRefreshToken(user.Id, request.RefreshToken))
         {
             var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);
 
-            _response = new RefreshTokenResponse() { AccessToken = accessToken, RefreshToken = refreshToken };
+            _response = new RefreshTokenResponse { AccessToken = accessToken, RefreshToken = refreshToken };
         }
         else
         {
