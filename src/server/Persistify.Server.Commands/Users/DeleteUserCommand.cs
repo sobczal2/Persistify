@@ -5,9 +5,12 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Validation.Common;
+using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
@@ -25,14 +28,24 @@ public class DeleteUserCommand : Command<DeleteUserRequest, DeleteUserResponse>
         _userManager = userManager;
     }
 
-    protected override ValueTask RunAsync(DeleteUserRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(DeleteUserRequest request, CancellationToken cancellationToken)
     {
-        throw new System.NotImplementedException();
+        var user = await _userManager.GetAsync(request.Username);
+
+        if (user is null)
+        {
+            throw new ValidationException(nameof(GetUserRequest.Username), UserErrorMessages.UserNotFound);
+        }
+
+        if(!await _userManager.RemoveAsync(user.Id))
+        {
+            throw new PersistifyInternalException();
+        }
     }
 
     protected override DeleteUserResponse GetResponse()
     {
-        throw new System.NotImplementedException();
+        return new DeleteUserResponse();
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(DeleteUserRequest request)

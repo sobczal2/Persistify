@@ -16,6 +16,7 @@ public class UserService : IUserService
     private readonly SetPermissionCommand _setPermissionCommand;
     private readonly DeleteUserCommand _deleteUserCommand;
     private readonly RefreshTokenCommand _refreshTokenCommand;
+    private readonly ChangeUserPasswordCommand _changeUserPasswordCommand;
     private readonly SignInCommand _signInCommand;
 
     public UserService(
@@ -24,7 +25,8 @@ public class UserService : IUserService
         SignInCommand signInCommand,
         SetPermissionCommand setPermissionCommand,
         DeleteUserCommand deleteUserCommand,
-        RefreshTokenCommand refreshTokenCommand
+        RefreshTokenCommand refreshTokenCommand,
+        ChangeUserPasswordCommand changeUserPasswordCommand
     )
     {
         _createUserCommand = createUserCommand;
@@ -33,6 +35,7 @@ public class UserService : IUserService
         _setPermissionCommand = setPermissionCommand;
         _deleteUserCommand = deleteUserCommand;
         _refreshTokenCommand = refreshTokenCommand;
+        _changeUserPasswordCommand = changeUserPasswordCommand;
     }
 
     [Authorize]
@@ -78,6 +81,14 @@ public class UserService : IUserService
     public async ValueTask<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request, CallContext callContext)
     {
         return await _refreshTokenCommand
+            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    [Authorize]
+    public async ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request, CallContext callContext)
+    {
+        return await _changeUserPasswordCommand
             .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
             .ConfigureAwait(false);
     }

@@ -279,25 +279,21 @@ public class UserManager : Manager, IUserManager
         return refreshToken == savedRefreshToken.Value;
     }
 
-    public async ValueTask UpdatePermissions(int id, Permission permission)
+    public async ValueTask Update(User user)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
-        var user = await _userRepository.ReadAsync(id, true);
-
-        if (user is null)
+        if (await _userRepository.ReadAsync(user.Id, true) is not null)
         {
             throw new PersistifyInternalException();
         }
 
-        user.Permission = permission;
-
-        var updatePermissionAction = new Func<ValueTask>(async () =>
+        var updateAction = new Func<ValueTask>(async () =>
         {
             await _userRepository.WriteAsync(user.Id, user, true);
         });
 
-        PendingActions.Enqueue(updatePermissionAction);
+        PendingActions.Enqueue(updateAction);
     }
 }

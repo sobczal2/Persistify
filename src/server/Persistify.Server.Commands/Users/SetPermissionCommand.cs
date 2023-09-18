@@ -36,7 +36,9 @@ public class SetPermissionCommand : Command<SetPermissionRequest, SetPermissionR
             throw new ValidationException(nameof(GetUserRequest.Username), UserErrorMessages.UserNotFound);
         }
 
-        await _userManager.UpdatePermissions(user.Id, (Permission)request.Permission);
+        user.Permission = (Permission)request.Permission;
+
+        await _userManager.Update(user);
     }
 
     protected override SetPermissionResponse GetResponse()
