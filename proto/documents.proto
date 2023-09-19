@@ -13,7 +13,7 @@ message BoolSearchNode {
    bool Value = 2;
 }
 message CreateDocumentRequest {
-   int32 TemplateId = 1;
+   string TemplateName = 1;
    repeated TextFieldValue TextFieldValues = 2;
    repeated NumberFieldValue NumberFieldValues = 3;
    repeated BoolFieldValue BoolFieldValues = 4;
@@ -22,8 +22,8 @@ message CreateDocumentResponse {
    int32 DocumentId = 1;
 }
 message DeleteDocumentRequest {
-   int32 TemplateId = 1;
-   int64 DocumentId = 2;
+   string TemplateName = 1;
+   int32 DocumentId = 2;
 }
 message DeleteDocumentResponse {
 }
@@ -45,7 +45,7 @@ message FtsSearchNode {
    FtsSearchMode Mode = 3;
 }
 message GetDocumentRequest {
-   int32 TemplateId = 1;
+   string TemplateName = 1;
    int32 DocumentId = 2;
 }
 message GetDocumentResponse {
@@ -85,7 +85,7 @@ message Pagination {
    int32 PageSize = 2;
 }
 message SearchDocumentsRequest {
-   int32 TemplateId = 1;
+   string TemplateName = 1;
    Pagination Pagination = 2;
    SearchNode SearchNode = 3;
 }

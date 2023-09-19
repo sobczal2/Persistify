@@ -1,4 +1,5 @@
-﻿using Persistify.Requests.Search;
+﻿using System.Threading.Tasks;
+using Persistify.Requests.Search;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Documents;
 using Persistify.Server.Validation.Results;
@@ -12,9 +13,9 @@ public class SearchNodeValidator : Validator<SearchNode>
         PropertyName.Push(nameof(SearchNode));
     }
 
-    public override Result ValidateNotNull(SearchNode value)
+    public override ValueTask<Result> ValidateNotNullAsync(SearchNode value)
     {
-        return ValidateSearchNode(value);
+        return ValueTask.FromResult(ValidateSearchNode(value));
     }
 
     private Result ValidateSearchNode(SearchNode value)

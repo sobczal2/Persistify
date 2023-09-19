@@ -28,5 +28,6 @@ public interface IUserService
     ValueTask<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request, CallContext callContext);
 
     [OperationContract]
-    ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request, CallContext callContext);
+    ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request,
+        CallContext callContext);
 }

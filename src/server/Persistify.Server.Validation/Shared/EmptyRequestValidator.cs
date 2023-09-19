@@ -1,4 +1,5 @@
-﻿using Persistify.Requests.Shared;
+﻿using System.Threading.Tasks;
+using Persistify.Requests.Shared;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 
@@ -11,8 +12,8 @@ public class EmptyRequestValidator : Validator<EmptyRequest>
         PropertyName.Push(nameof(EmptyRequest));
     }
 
-    public override Result ValidateNotNull(EmptyRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(EmptyRequest value)
     {
-        return Result.Ok;
+        return ValueTask.FromResult(Result.Ok);
     }
 }

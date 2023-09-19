@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Documents;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Domain;
 using Xunit;
 
@@ -28,12 +29,12 @@ public class BoolFieldValueValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenValueIsNull_ReturnsValidationException()
+    public async Task Validate_WhenValueIsNull_ReturnsValidationException()
     {
         // Arrange
 
         // Act
-        var result = _sut.Validate(null!);
+        var result = await _sut.ValidateAsync(null!);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -44,13 +45,13 @@ public class BoolFieldValueValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenFieldNameIsNull_ReturnsValidationException()
+    public async Task Validate_WhenFieldNameIsNull_ReturnsValidationException()
     {
         // Arrange
         var value = new BoolFieldValue { FieldName = null! };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -61,13 +62,13 @@ public class BoolFieldValueValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenFieldNameIsEmpty_ReturnsValidationException()
+    public async Task Validate_WhenFieldNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
         var value = new BoolFieldValue { FieldName = string.Empty };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -78,13 +79,13 @@ public class BoolFieldValueValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenFieldNameIsTooLong_ReturnsValidationException()
+    public async Task Validate_WhenFieldNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
         var value = new BoolFieldValue { FieldName = new string('a', 65) };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -95,13 +96,13 @@ public class BoolFieldValueValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenCorrect_ReturnsOk()
+    public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
         var value = new BoolFieldValue { FieldName = "Name" };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeFalse();

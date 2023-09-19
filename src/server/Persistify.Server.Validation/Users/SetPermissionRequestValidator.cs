@@ -1,5 +1,8 @@
-﻿using Persistify.Domain.Users;
+﻿using System;
+using System.Threading.Tasks;
+using Persistify.Domain.Users;
 using Persistify.Requests.Users;
+using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
@@ -8,26 +11,42 @@ namespace Persistify.Server.Validation.Users;
 
 public class SetPermissionRequestValidator : Validator<SetPermissionRequest>
 {
-    public override Result ValidateNotNull(SetPermissionRequest value)
+    private readonly IUserManager _userManager;
+
+    public SetPermissionRequestValidator(
+        IUserManager userManager
+    )
+    {
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        PropertyName.Push(nameof(SetPermissionRequest));
+    }
+
+    public override ValueTask<Result> ValidateNotNullAsync(SetPermissionRequest value)
     {
         if (string.IsNullOrEmpty(value.Username))
         {
             PropertyName.Push(nameof(SetPermissionRequest.Username));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(SetPermissionRequest.Username));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+        }
+
+        if (!_userManager.Exists(value.Username))
+        {
+            PropertyName.Push(nameof(SetPermissionRequest.Username));
+            return ValueTask.FromResult<Result>(ValidationException(UserErrorMessages.UserNotFound));
         }
 
         if ((value.Permission & (int)Permission.All) != value.Permission)
         {
             PropertyName.Push(nameof(SetPermissionRequest.Permission));
-            return ValidationException(UserErrorMessages.InvalidPermission);
+            return ValueTask.FromResult<Result>(ValidationException(UserErrorMessages.InvalidPermission));
         }
 
-        return Result.Ok;
+        return ValueTask.FromResult(Result.Ok);
     }
 }

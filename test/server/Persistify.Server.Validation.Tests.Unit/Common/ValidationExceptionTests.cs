@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Common;

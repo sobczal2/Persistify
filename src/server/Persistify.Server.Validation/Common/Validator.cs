@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
 
@@ -13,17 +15,17 @@ public abstract class Validator<T> : IValidator<T>
 
     public Stack<string> PropertyName { get; set; }
 
-    public Result Validate(T value)
+    public async ValueTask<Result> ValidateAsync(T value)
     {
         if (value == null)
         {
             return ValidationException(SharedErrorMessages.ValueNull);
         }
 
-        return ValidateNotNull(value);
+        return await ValidateNotNullAsync(value);
     }
 
-    public abstract Result ValidateNotNull(T value);
+    public abstract ValueTask<Result> ValidateNotNullAsync(T value);
 
     protected ValidationException ValidationException(string message)
     {

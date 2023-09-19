@@ -25,7 +25,6 @@ public static class SerializationExtensions
                 throw new ArgumentOutOfRangeException();
         }
 
-        services.AddSingleton<ISerializer, ProtobufSerializer>();
         services.AddSingleton<RecyclableMemoryStreamManager>();
 
         return services;

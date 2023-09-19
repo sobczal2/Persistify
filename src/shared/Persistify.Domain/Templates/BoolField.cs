@@ -9,5 +9,5 @@ public class BoolField
     public string Name { get; set; } = default!;
 
     [ProtoMember(2)]
-    public bool IsRequired { get; set; }
+    public bool Required { get; set; }
 }

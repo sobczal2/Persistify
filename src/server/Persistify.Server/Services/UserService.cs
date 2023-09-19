@@ -11,12 +11,12 @@ namespace Persistify.Server.Services;
 
 public class UserService : IUserService
 {
-    private readonly CreateUserCommand _createUserCommand;
-    private readonly GetUserCommand _getUserCommand;
-    private readonly SetPermissionCommand _setPermissionCommand;
-    private readonly DeleteUserCommand _deleteUserCommand;
-    private readonly RefreshTokenCommand _refreshTokenCommand;
     private readonly ChangeUserPasswordCommand _changeUserPasswordCommand;
+    private readonly CreateUserCommand _createUserCommand;
+    private readonly DeleteUserCommand _deleteUserCommand;
+    private readonly GetUserCommand _getUserCommand;
+    private readonly RefreshTokenCommand _refreshTokenCommand;
+    private readonly SetPermissionCommand _setPermissionCommand;
     private readonly SignInCommand _signInCommand;
 
     public UserService(
@@ -86,7 +86,8 @@ public class UserService : IUserService
     }
 
     [Authorize]
-    public async ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request, CallContext callContext)
+    public async ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request,
+        CallContext callContext)
     {
         return await _changeUserPasswordCommand
             .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)

@@ -8,9 +8,13 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.Domain\Persistify.Domain.csproj"/>
+  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj"/>
+    <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
   </ItemGroup>
 
 </Project>

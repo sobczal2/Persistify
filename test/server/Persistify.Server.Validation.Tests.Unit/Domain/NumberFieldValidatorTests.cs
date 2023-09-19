@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Domain;
 using Xunit;
 
@@ -28,12 +29,12 @@ public class NumberFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenValueIsNull_ReturnsValidationException()
+    public async Task Validate_WhenValueIsNull_ReturnsValidationException()
     {
         // Arrange
 
         // Act
-        var result = _sut.Validate(null!);
+        var result = await _sut.ValidateAsync(null!);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -44,13 +45,13 @@ public class NumberFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNameIsNull_ReturnsValidationException()
+    public async Task Validate_WhenNameIsNull_ReturnsValidationException()
     {
         // Arrange
         var value = new NumberField { Name = null! };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -61,13 +62,13 @@ public class NumberFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNameIsEmpty_ReturnsValidationException()
+    public async Task Validate_WhenNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
         var value = new NumberField { Name = string.Empty };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -78,30 +79,30 @@ public class NumberFieldValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenNameIsTooLong_ReturnsValidationException()
+    public async Task Validate_WhenNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
         var value = new NumberField { Name = new string('a', 65) };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Name too long");
+        exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("NumberField.Name");
     }
 
     [Fact]
-    public void Validate_WhenNameIsCorrect_ReturnsOk()
+    public async Task Validate_WhenNameIsCorrect_ReturnsOk()
     {
         // Arrange
         var value = new NumberField { Name = "Name" };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeFalse();

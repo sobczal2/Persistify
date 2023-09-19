@@ -10,8 +10,6 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
-using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
@@ -36,18 +34,13 @@ public class SignInCommand : Command<SignInRequest, SignInResponse>
 
     protected override async ValueTask RunAsync(SignInRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetAsync(request.Username);
-
-        if (user is null)
-        {
-            throw new ValidationException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
-        }
+        var user = await _userManager.GetAsync(request.Username) ?? throw new PersistifyInternalException();
 
         var passwordCorrect = _passwordService.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt);
 
         if (!passwordCorrect)
         {
-            throw new ValidationException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
+            throw ValidationException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
         }
 
         var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Requests.Shared;
 using Persistify.Requests.Templates;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Templates;
 using Xunit;
@@ -47,12 +49,12 @@ public class ListTemplatesRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenValueIsNull_ReturnsValidationException()
+    public async Task Validate_WhenValueIsNull_ReturnsValidationException()
     {
         // Arrange
 
         // Act
-        var result = _sut.Validate(null!);
+        var result = await _sut.ValidateAsync(null!);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -63,13 +65,13 @@ public class ListTemplatesRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenPaginationIsNull_ReturnsValidationException()
+    public async Task Validate_WhenPaginationIsNull_ReturnsValidationException()
     {
         // Arrange
         var request = new ListTemplatesRequest { Pagination = null! };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -80,18 +82,18 @@ public class ListTemplatesRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
+    public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
         var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
         List<string> propertyNameAtCall = null!;
         _paginationValidator
-            .When(x => x.Validate(Arg.Any<Pagination>()))
+            .When(x => x.ValidateAsync(Arg.Any<Pagination>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
-        _sut.Validate(request);
+        await _sut.ValidateAsync(request);
 
         // Assert
         propertyNameAtCall.Should()
@@ -99,16 +101,16 @@ public class ListTemplatesRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
+    public async Task Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
         var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
         var validationException = new ValidationException("Test", "Test");
-        _paginationValidator.Validate(Arg.Any<Pagination>()).Returns(validationException);
+        _paginationValidator.ValidateAsync(Arg.Any<Pagination>()).Returns(validationException);
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -116,13 +118,13 @@ public class ListTemplatesRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenCorrect_ReturnsOk()
+    public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
         var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
         // Act
-        var result = _sut.Validate(request);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeFalse();

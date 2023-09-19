@@ -1,6 +1,8 @@
-﻿using Persistify.Domain.Templates;
+﻿using System.Threading.Tasks;
+using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
@@ -12,20 +14,20 @@ public class BoolFieldValidator : Validator<BoolField>
         PropertyName.Push(nameof(BoolField));
     }
 
-    public override Result ValidateNotNull(BoolField value)
+    public override ValueTask<Result> ValidateNotNullAsync(BoolField value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
             PropertyName.Push(nameof(BoolField.Name));
-            return ValidationException(TemplateErrorMessages.NameEmpty);
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.Name.Length > 64)
         {
             PropertyName.Push(nameof(BoolField.Name));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
         }
 
-        return Result.Ok;
+        return ValueTask.FromResult(Result.Ok);
     }
 }

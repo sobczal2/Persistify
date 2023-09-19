@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Requests.Shared;
-using Persistify.Server.Validation.Common;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Shared;
 using Xunit;
 
@@ -28,12 +29,12 @@ public class PaginationValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenValueIsNull_ReturnsValidationException()
+    public async Task Validate_WhenValueIsNull_ReturnsValidationException()
     {
         // Arrange
 
         // Act
-        var result = _sut.Validate(null!);
+        var result = await _sut.ValidateAsync(null!);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -44,13 +45,13 @@ public class PaginationValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenPageNumberLessThanZero_ReturnsValidationException()
+    public async Task Validate_WhenPageNumberLessThanZero_ReturnsValidationException()
     {
         // Arrange
         var value = new Pagination { PageNumber = -1, PageSize = 1 };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -61,13 +62,13 @@ public class PaginationValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenPageSizeLessThanOrEqualToZero_ReturnsValidationException()
+    public async Task Validate_WhenPageSizeLessThanOrEqualToZero_ReturnsValidationException()
     {
         // Arrange
         var value = new Pagination { PageNumber = 1, PageSize = 0 };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeTrue();
@@ -78,13 +79,13 @@ public class PaginationValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenCorrect_ReturnsOk()
+    public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
         var value = new Pagination { PageNumber = 1, PageSize = 1 };
 
         // Act
-        var result = _sut.Validate(value);
+        var result = await _sut.ValidateAsync(value);
 
         // Assert
         result.Failure.Should().BeFalse();

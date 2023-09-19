@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Requests.Templates;
+using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -11,12 +14,14 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 {
     private readonly IValidator<BoolField> _boolFieldValidator;
     private readonly IValidator<NumberField> _numberFieldValidator;
+    private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextField> _textFieldValidator;
 
     public CreateTemplateRequestValidator(
         IValidator<TextField> textFieldValidator,
         IValidator<NumberField> numberFieldValidator,
-        IValidator<BoolField> boolFieldValidator
+        IValidator<BoolField> boolFieldValidator,
+        ITemplateManager templateManager
     )
     {
         _textFieldValidator = textFieldValidator ?? throw new ArgumentNullException(nameof(textFieldValidator));
@@ -24,11 +29,12 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         _numberFieldValidator = numberFieldValidator ?? throw new ArgumentNullException(nameof(numberFieldValidator));
         _numberFieldValidator.PropertyName = PropertyName;
         _boolFieldValidator = boolFieldValidator ?? throw new ArgumentNullException(nameof(boolFieldValidator));
+        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         _boolFieldValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(CreateTemplateRequest));
     }
 
-    public override Result ValidateNotNull(CreateTemplateRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(CreateTemplateRequest value)
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {
@@ -39,7 +45,13 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValidationException(SharedErrorMessages.ValueTooLong);
+        }
+
+        if (_templateManager.Exists(value.TemplateName))
+        {
+            PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
+            return ValidationException(TemplateErrorMessages.NameNotUnique);
         }
 
         if (value.TextFields.Count + value.NumberFields.Count + value.BoolFields.Count == 0)
@@ -51,7 +63,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         for (var i = 0; i < value.TextFields.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateTemplateRequest.TextFields)}[{i}]");
-            var textFieldValidationResult = _textFieldValidator.Validate(value.TextFields[i]);
+            var textFieldValidationResult = await _textFieldValidator.ValidateAsync(value.TextFields[i]);
             PropertyName.Pop();
             if (textFieldValidationResult.Failure)
             {
@@ -62,7 +74,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         for (var i = 0; i < value.NumberFields.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateTemplateRequest.NumberFields)}[{i}]");
-            var numberFieldValidationResult = _numberFieldValidator.Validate(value.NumberFields[i]);
+            var numberFieldValidationResult = await _numberFieldValidator.ValidateAsync(value.NumberFields[i]);
             PropertyName.Pop();
             if (numberFieldValidationResult.Failure)
             {
@@ -73,7 +85,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         for (var i = 0; i < value.BoolFields.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateTemplateRequest.BoolFields)}[{i}]");
-            var boolFieldValidationResult = _boolFieldValidator.Validate(value.BoolFields[i]);
+            var boolFieldValidationResult = await _boolFieldValidator.ValidateAsync(value.BoolFields[i]);
             PropertyName.Pop();
             if (boolFieldValidationResult.Failure)
             {

@@ -28,9 +28,9 @@ public class Document
         {
             _textFieldValues = value;
             TextFieldValuesByFieldName.Clear();
-            for (var i = 0; i < _textFieldValues.Count; i++)
+            foreach (var textFieldValue in _textFieldValues)
             {
-                TextFieldValuesByFieldName.Add(_textFieldValues[i].FieldName, _textFieldValues[i]);
+                TextFieldValuesByFieldName.Add(textFieldValue.FieldName, textFieldValue);
             }
         }
     }
@@ -43,9 +43,9 @@ public class Document
         {
             _numberFieldValues = value;
             NumberFieldValuesByFieldName.Clear();
-            for (var i = 0; i < _numberFieldValues.Count; i++)
+            foreach (var numberFieldValue in _numberFieldValues)
             {
-                NumberFieldValuesByFieldName.Add(_numberFieldValues[i].FieldName, _numberFieldValues[i]);
+                NumberFieldValuesByFieldName.Add(numberFieldValue.FieldName, numberFieldValue);
             }
         }
     }
@@ -58,9 +58,9 @@ public class Document
         {
             _boolFieldValues = value;
             BoolFieldValuesByFieldName.Clear();
-            for (var i = 0; i < _boolFieldValues.Count; i++)
+            foreach (var boolFieldValue in _boolFieldValues)
             {
-                BoolFieldValuesByFieldName.Add(_boolFieldValues[i].FieldName, _boolFieldValues[i]);
+                BoolFieldValuesByFieldName.Add(boolFieldValue.FieldName, boolFieldValue);
             }
         }
     }

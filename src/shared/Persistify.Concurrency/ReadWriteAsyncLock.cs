@@ -35,7 +35,6 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _readSemaphoreSlim.Dispose();
         _writeSemaphoreSlim.Dispose();
         _accessSemaphoreSlim.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     public async ValueTask<bool> EnterReadLockAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken)

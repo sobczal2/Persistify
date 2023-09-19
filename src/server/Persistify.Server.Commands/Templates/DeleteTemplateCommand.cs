@@ -9,7 +9,6 @@ using Persistify.Server.ErrorHandling;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Commands.Templates;
 
@@ -33,8 +32,7 @@ public class DeleteTemplateCommand : Command<DeleteTemplateRequest, DeleteTempla
 
         if (template is null)
         {
-            throw new ValidationException(nameof(DeleteTemplateRequest.TemplateName),
-                $"Template {request.TemplateName} not found");
+            throw new PersistifyInternalException();
         }
 
         var result = await _templateManager.RemoveAsync(template.Id);
