@@ -67,11 +67,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenUsernameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = null!,
-            Password = "password"
-        };
+        var request = new SignInRequest { Username = null!, Password = "password" };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -88,11 +84,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenUsernameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = string.Empty,
-            Password = "password"
-        };
+        var request = new SignInRequest { Username = string.Empty, Password = "password" };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -109,11 +101,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = new string('a', 65),
-            Password = "password"
-        };
+        var request = new SignInRequest { Username = new string('a', 65), Password = "password" };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -130,11 +118,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = "username",
-            Password = "password"
-        };
+        var request = new SignInRequest { Username = "username", Password = "password" };
         _userManager.Exists(request.Username).Returns(false);
 
         // Act
@@ -152,11 +136,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenPasswordIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = "username",
-            Password = null!
-        };
+        var request = new SignInRequest { Username = "username", Password = null! };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act
@@ -174,11 +154,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenPasswordIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = "username",
-            Password = string.Empty
-        };
+        var request = new SignInRequest { Username = "username", Password = string.Empty };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act
@@ -196,11 +172,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenPasswordIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = "username",
-            Password = new string('a', 1025)
-        };
+        var request = new SignInRequest { Username = "username", Password = new string('a', 1025) };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act
@@ -218,11 +190,7 @@ public class SignInRequestValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = "username",
-            Password = "password"
-        };
+        var request = new SignInRequest { Username = "username", Password = "password" };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act

@@ -500,10 +500,9 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
             TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "2", Required = true } }
         });
@@ -522,10 +521,9 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test",
-            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
             NumberFields = new List<NumberField> { new() { Name = "2", Required = true } }
         });
@@ -544,10 +542,9 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test",
-            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
             BoolFields = new List<BoolField> { new() { Name = "2", Required = true } }
         });
@@ -566,10 +563,9 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
             TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "2", Required = false } }
         });
@@ -587,10 +583,9 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test",
-            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
             NumberFields = new List<NumberField> { new() { Name = "2", Required = false } }
         });
@@ -608,10 +603,9 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test",
-            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
             BoolFields = new List<BoolField> { new() { Name = "2", Required = false } }
         });
@@ -634,9 +628,9 @@ public class CreateDocumentRequestValidatorTests
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "2" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "3" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "1", } },
+            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "1" } },
             NumberFields = new List<NumberField> { new() { Name = "2" } },
             BoolFields = new List<BoolField> { new() { Name = "3" } }
         });

@@ -18,8 +18,8 @@ public class SearchDocumentsRequestValidatorTests
 {
     private readonly IValidator<Pagination> _paginationValidator;
     private readonly IValidator<SearchNode> _searchNodeValidator;
-    private readonly ITemplateManager _templateManager;
     private readonly SearchDocumentsRequestValidator _sut;
+    private readonly ITemplateManager _templateManager;
 
     public SearchDocumentsRequestValidatorTests()
     {

@@ -68,11 +68,7 @@ public class SetPermissionRequestValidatorTests
     public async Task Validate_WhenUsernameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new SetPermissionRequest
-        {
-            Username = null!,
-            Permission = (int)Permission.None
-        };
+        var request = new SetPermissionRequest { Username = null!, Permission = (int)Permission.None };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -89,11 +85,7 @@ public class SetPermissionRequestValidatorTests
     public async Task Validate_WhenUsernameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new SetPermissionRequest
-        {
-            Username = string.Empty,
-            Permission = (int)Permission.None
-        };
+        var request = new SetPermissionRequest { Username = string.Empty, Permission = (int)Permission.None };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -110,11 +102,7 @@ public class SetPermissionRequestValidatorTests
     public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new SetPermissionRequest
-        {
-            Username = new string('a', 65),
-            Permission = (int)Permission.None
-        };
+        var request = new SetPermissionRequest { Username = new string('a', 65), Permission = (int)Permission.None };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -131,11 +119,7 @@ public class SetPermissionRequestValidatorTests
     public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
     {
         // Arrange
-        var request = new SetPermissionRequest
-        {
-            Username = "username",
-            Permission = (int)Permission.None
-        };
+        var request = new SetPermissionRequest { Username = "username", Permission = (int)Permission.None };
         _userManager.Exists(request.Username).Returns(false);
 
         // Act
@@ -155,11 +139,7 @@ public class SetPermissionRequestValidatorTests
     public async Task Validate_WhenPermissionIsInvalid_ReturnsValidationException(int permission)
     {
         // Arrange
-        var request = new SetPermissionRequest
-        {
-            Username = "username",
-            Permission = permission
-        };
+        var request = new SetPermissionRequest { Username = "username", Permission = permission };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act
@@ -177,11 +157,7 @@ public class SetPermissionRequestValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new SetPermissionRequest
-        {
-            Username = "username",
-            Permission = (int)Permission.None
-        };
+        var request = new SetPermissionRequest { Username = "username", Permission = (int)Permission.None };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act

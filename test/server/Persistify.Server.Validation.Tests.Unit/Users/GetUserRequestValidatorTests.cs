@@ -67,10 +67,7 @@ public class GetUserRequestValidatorTests
     public async Task Validate_WhenUsernameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetUserRequest
-        {
-            Username = null!
-        };
+        var request = new GetUserRequest { Username = null! };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -87,10 +84,7 @@ public class GetUserRequestValidatorTests
     public async Task Validate_WhenUsernameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetUserRequest
-        {
-            Username = string.Empty
-        };
+        var request = new GetUserRequest { Username = string.Empty };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -107,10 +101,7 @@ public class GetUserRequestValidatorTests
     public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetUserRequest
-        {
-            Username = new string('a', 65)
-        };
+        var request = new GetUserRequest { Username = new string('a', 65) };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -127,10 +118,7 @@ public class GetUserRequestValidatorTests
     public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
     {
         // Arrange
-        var request = new GetUserRequest
-        {
-            Username = "username"
-        };
+        var request = new GetUserRequest { Username = "username" };
         _userManager.Exists(request.Username).Returns(false);
 
         // Act
@@ -148,10 +136,7 @@ public class GetUserRequestValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new GetUserRequest
-        {
-            Username = "username"
-        };
+        var request = new GetUserRequest { Username = "username" };
         _userManager.Exists(request.Username).Returns(true);
 
         // Act

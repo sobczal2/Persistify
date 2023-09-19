@@ -15,8 +15,8 @@ namespace Persistify.Server.Validation.Tests.Unit.Users;
 
 public class RefreshTokenRequestValidatorTests
 {
-    private readonly IUserManager _userManager;
     private readonly IOptions<TokenSettings> _tokenOptions;
+    private readonly IUserManager _userManager;
 
     private RefreshTokenRequestValidator _sut;
 
@@ -47,7 +47,8 @@ public class RefreshTokenRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () => _sut = new RefreshTokenRequestValidator(Substitute.For<IOptions<TokenSettings>>(), _userManager);
+        Action act = () =>
+            _sut = new RefreshTokenRequestValidator(Substitute.For<IOptions<TokenSettings>>(), _userManager);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -96,11 +97,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenUsernameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = null!,
-            RefreshToken = "refreshToken"
-        };
+        var request = new RefreshTokenRequest { Username = null!, RefreshToken = "refreshToken" };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -117,11 +114,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenUsernameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = string.Empty,
-            RefreshToken = "refreshToken"
-        };
+        var request = new RefreshTokenRequest { Username = string.Empty, RefreshToken = "refreshToken" };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -138,11 +131,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = new string('a', 65),
-            RefreshToken = "refreshToken"
-        };
+        var request = new RefreshTokenRequest { Username = new string('a', 65), RefreshToken = "refreshToken" };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -159,11 +148,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = "username",
-            RefreshToken = "refreshToken"
-        };
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = "refreshToken" };
 
         _userManager.Exists(request.Username).Returns(false);
 
@@ -182,11 +167,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenRefreshTokenIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = "username",
-            RefreshToken = null!
-        };
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = null! };
 
         _userManager.Exists(request.Username).Returns(true);
 
@@ -205,11 +186,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenRefreshTokenIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = "username",
-            RefreshToken = string.Empty
-        };
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = string.Empty };
 
         _userManager.Exists(request.Username).Returns(true);
 
@@ -228,11 +205,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenRefreshTokensLengthIsInvalid_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = "username",
-            RefreshToken = new string('a', 129)
-        };
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = new string('a', 129) };
 
         _userManager.Exists(request.Username).Returns(true);
         _tokenOptions.Value.Returns(new TokenSettings { RefreshTokenLength = 128 });
@@ -252,11 +225,7 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new RefreshTokenRequest
-        {
-            Username = "username",
-            RefreshToken = new string('a', 128)
-        };
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = new string('a', 128) };
 
         _userManager.Exists(request.Username).Returns(true);
         _tokenOptions.Value.Returns(new TokenSettings { RefreshTokenLength = 128 });

@@ -13,8 +13,8 @@ namespace Persistify.Server.Validation.Tests.Unit.Templates;
 
 public class DeleteTemplateRequestValidatorTests
 {
-    private DeleteTemplateRequestValidator _sut;
     private readonly ITemplateManager _templateManager;
+    private DeleteTemplateRequestValidator _sut;
 
     public DeleteTemplateRequestValidatorTests()
     {
