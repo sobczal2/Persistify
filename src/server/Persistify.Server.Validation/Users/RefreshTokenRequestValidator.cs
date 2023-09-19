@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Requests.Users;
 using Persistify.Server.Configuration.Settings;
@@ -19,8 +20,9 @@ public class RefreshTokenRequestValidator : Validator<RefreshTokenRequest>
         IUserManager userManager
     )
     {
-        _userManager = userManager;
-        _tokenSettings = tokenSettingsOptions.Value;
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+        _tokenSettings = tokenSettingsOptions?.Value ?? throw new ArgumentNullException(nameof(tokenSettingsOptions));
         PropertyName.Push(nameof(RefreshTokenRequest));
     }
 

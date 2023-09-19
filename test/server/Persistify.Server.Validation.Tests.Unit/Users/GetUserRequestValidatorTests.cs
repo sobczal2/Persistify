@@ -3,48 +3,48 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Persistify.Requests.Templates;
+using Persistify.Requests.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Management.Managers.Templates;
-using Persistify.Server.Validation.Templates;
+using Persistify.Server.Management.Managers.Users;
+using Persistify.Server.Validation.Users;
 using Xunit;
 
-namespace Persistify.Server.Validation.Tests.Unit.Templates;
+namespace Persistify.Server.Validation.Tests.Unit.Users;
 
-public class DeleteTemplateRequestValidatorTests
+public class GetUserRequestValidatorTests
 {
-    private DeleteTemplateRequestValidator _sut;
-    private readonly ITemplateManager _templateManager;
+    private readonly IUserManager _userManager;
 
-    public DeleteTemplateRequestValidatorTests()
+    private GetUserRequestValidator _sut;
+
+    public GetUserRequestValidatorTests()
     {
-        _templateManager = Substitute.For<ITemplateManager>();
+        _userManager = Substitute.For<IUserManager>();
 
-        _sut = new DeleteTemplateRequestValidator(_templateManager);
+        _sut = new GetUserRequestValidator(_userManager);
     }
 
     [Fact]
-    public void Ctor_WhenTemplateManagerIsNull_ThrowsArgumentNullException()
+    public void Ctor_WhenUserManagerIsNull_ThrowsArgumentNullException()
     {
         // Arrange
 
         // Act
-        Action act = () =>
-            _sut = new DeleteTemplateRequestValidator(null!);
+        Action act = () => _sut = new GetUserRequestValidator(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
-    public void Ctor_WhenCorrect_SetsPropertyName()
+    public void Ctor_WhenCorrect_SetsPropertyNamesCorrectly()
     {
         // Arrange
 
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "DeleteTemplateRequest" });
+        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "GetUserRequest" });
     }
 
     [Fact]
@@ -60,14 +60,17 @@ public class DeleteTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
         exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("DeleteTemplateRequest");
+        exception.PropertyName.Should().Be("GetUserRequest");
     }
 
     [Fact]
-    public async Task Validate_WhenTemplateNameIsNull_ReturnsValidationException()
+    public async Task Validate_WhenUsernameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteTemplateRequest { TemplateName = null! };
+        var request = new GetUserRequest
+        {
+            Username = null!
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -77,14 +80,17 @@ public class DeleteTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
         exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateName");
+        exception.PropertyName.Should().Be("GetUserRequest.Username");
     }
 
     [Fact]
-    public async Task Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
+    public async Task Validate_WhenUsernameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteTemplateRequest { TemplateName = string.Empty };
+        var request = new GetUserRequest
+        {
+            Username = string.Empty
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -94,14 +100,17 @@ public class DeleteTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
         exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateName");
+        exception.PropertyName.Should().Be("GetUserRequest.Username");
     }
 
     [Fact]
-    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteTemplateRequest { TemplateName = new string('a', 65) };
+        var request = new GetUserRequest
+        {
+            Username = new string('a', 65)
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -111,15 +120,18 @@ public class DeleteTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
         exception.Message.Should().Be("Value too long");
-        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateName");
+        exception.PropertyName.Should().Be("GetUserRequest.Username");
     }
 
     [Fact]
-    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteTemplateRequest { TemplateName = "Test" };
-        _templateManager.Exists(request.TemplateName).Returns(false);
+        var request = new GetUserRequest
+        {
+            Username = "username"
+        };
+        _userManager.Exists(request.Username).Returns(false);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -128,16 +140,19 @@ public class DeleteTemplateRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Template not found");
-        exception.PropertyName.Should().Be("DeleteTemplateRequest.TemplateName");
+        exception.Message.Should().Be("User not found");
+        exception.PropertyName.Should().Be("GetUserRequest.Username");
     }
 
     [Fact]
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new DeleteTemplateRequest { TemplateName = "Test" };
-        _templateManager.Exists(request.TemplateName).Returns(true);
+        var request = new GetUserRequest
+        {
+            Username = "username"
+        };
+        _userManager.Exists(request.Username).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);

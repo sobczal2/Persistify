@@ -139,10 +139,46 @@ public class SearchDocumentsRequestValidatorTests
     }
 
     [Fact]
+    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new SearchDocumentsRequest { TemplateName = new string('a', 65) };
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value too long");
+        exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
+    }
+
+    [Fact]
+    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new SearchDocumentsRequest { TemplateName = "Test" };
+        _templateManager.Exists(request.TemplateName).Returns(false);
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Template not found");
+        exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
+    }
+
+    [Fact]
     public async Task Validate_WhenPaginationIsNull_ReturnsValidationException()
     {
         // Arrange
         var request = new SearchDocumentsRequest { TemplateName = "Test" };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -160,6 +196,7 @@ public class SearchDocumentsRequestValidatorTests
     {
         // Arrange
         var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         List<string> propertyNameAtCall = null!;
         _paginationValidator
@@ -179,6 +216,7 @@ public class SearchDocumentsRequestValidatorTests
     {
         // Arrange
         var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         var validationException = new ValidationException("Test", "Test");
         _paginationValidator.ValidateAsync(Arg.Any<Pagination>()).Returns(validationException);
@@ -196,6 +234,7 @@ public class SearchDocumentsRequestValidatorTests
     {
         // Arrange
         var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -216,6 +255,7 @@ public class SearchDocumentsRequestValidatorTests
         {
             TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
         };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         List<string> propertyNameAtCall = null!;
         _searchNodeValidator
@@ -238,6 +278,7 @@ public class SearchDocumentsRequestValidatorTests
         {
             TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
         };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         var validationException = new ValidationException("Test", "Test");
         _searchNodeValidator.ValidateAsync(Arg.Any<SearchNode>()).Returns(validationException);
@@ -258,6 +299,7 @@ public class SearchDocumentsRequestValidatorTests
         {
             TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
         };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);

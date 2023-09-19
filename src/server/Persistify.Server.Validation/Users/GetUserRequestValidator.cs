@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Requests.Users;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Common;
@@ -15,7 +16,8 @@ public class GetUserRequestValidator : Validator<GetUserRequest>
         IUserManager userManager
     )
     {
-        _userManager = userManager;
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        PropertyName.Push(nameof(GetUserRequest));
     }
 
     public override ValueTask<Result> ValidateNotNullAsync(GetUserRequest value)

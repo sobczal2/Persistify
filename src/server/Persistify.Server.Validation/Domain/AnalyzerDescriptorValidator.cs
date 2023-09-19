@@ -2,6 +2,7 @@
 using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
@@ -29,7 +30,7 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
                 if (value.CharacterFilterNames[i].Length > 64)
                 {
                     PropertyName.Push($"{nameof(AnalyzerDescriptor.CharacterFilterNames)}[{i}]");
-                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
+                    return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
                 }
             }
         }
@@ -43,7 +44,7 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
         if (value.TokenizerName.Length > 64)
         {
             PropertyName.Push(nameof(AnalyzerDescriptor.TokenizerName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         if (value.TokenFilterNames.Count > 0)
@@ -59,7 +60,7 @@ public class AnalyzerDescriptorValidator : Validator<AnalyzerDescriptor>
                 if (value.TokenFilterNames[i].Length > 64)
                 {
                     PropertyName.Push($"{nameof(AnalyzerDescriptor.TokenFilterNames)}[{i}]");
-                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
+                    return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
                 }
             }
         }

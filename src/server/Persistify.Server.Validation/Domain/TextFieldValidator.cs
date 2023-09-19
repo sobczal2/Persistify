@@ -2,6 +2,7 @@
 using Persistify.Domain.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
@@ -28,7 +29,7 @@ public class TextFieldValidator : Validator<TextField>
         if (value.Name.Length > 64)
         {
             PropertyName.Push(nameof(TextField.Name));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         var analyzerPresetNameNull = value.AnalyzerPresetName is null;
@@ -48,7 +49,7 @@ public class TextFieldValidator : Validator<TextField>
         if (value.AnalyzerPresetName is not null && value.AnalyzerPresetName.Length > 64)
         {
             PropertyName.Push(nameof(TextField.AnalyzerPresetName));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         if (value.AnalyzerDescriptor is not null)

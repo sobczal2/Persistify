@@ -80,10 +80,46 @@ public class DeleteDocumentRequestValidatorTests
     }
 
     [Fact]
+    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new DeleteDocumentRequest { TemplateName = new string('a', 65), DocumentId = 1 };
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value too long");
+        exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
+    }
+
+    [Fact]
+    public void Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 1 };
+        _templateManager.Exists(request.TemplateName).Returns(false);
+
+        // Act
+        var result = _sut.ValidateAsync(request).Result;
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Template not found");
+        exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
+    }
+
+    [Fact]
     public async Task Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = string.Empty, DocumentId = 1 };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -101,6 +137,7 @@ public class DeleteDocumentRequestValidatorTests
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 0 };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -118,6 +155,7 @@ public class DeleteDocumentRequestValidatorTests
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 1 };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);

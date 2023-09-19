@@ -25,7 +25,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
         _paginationValidator.PropertyName = PropertyName;
         _searchNodeValidator = searchNodeValidator ?? throw new ArgumentNullException(nameof(searchNodeValidator));
-        _templateManager = templateManager;
+        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         _searchNodeValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(SearchDocumentsRequest));
     }

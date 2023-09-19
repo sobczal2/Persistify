@@ -51,7 +51,9 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             return ValidationException(SharedErrorMessages.ValueTooLong);
         }
 
-        if (!_templateManager.Exists(value.TemplateName))
+        var template = await _templateManager.GetAsync(value.TemplateName);
+
+        if (template is null)
         {
             PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
             return ValidationException(DocumentErrorMessages.TemplateNotFound);
@@ -96,46 +98,77 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             }
         }
 
-        var allFieldNames = new HashSet<string>(value.TextFieldValues.Count + value.NumberFieldValues.Count +
-                                                value.BoolFieldValues.Count);
+        var textFieldNames = new HashSet<string>(value.TextFieldValues.Count);
+        var numberFieldNames = new HashSet<string>(value.NumberFieldValues.Count);
+        var boolFieldNames = new HashSet<string>(value.BoolFieldValues.Count);
 
         for (var i = 0; i < value.TextFieldValues.Count; i++)
         {
             var fieldName = value.TextFieldValues[i].FieldName;
-            if (allFieldNames.Contains(fieldName))
+            if (textFieldNames.Contains(fieldName) || numberFieldNames.Contains(fieldName) ||
+                boolFieldNames.Contains(fieldName))
             {
                 PropertyName.Push($"{nameof(CreateDocumentRequest.TextFieldValues)}[{i}]");
                 PropertyName.Push(nameof(TextFieldValue.FieldName));
                 return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
-            allFieldNames.Add(fieldName);
+            textFieldNames.Add(fieldName);
         }
 
         for (var i = 0; i < value.NumberFieldValues.Count; i++)
         {
             var fieldName = value.NumberFieldValues[i].FieldName;
-            if (allFieldNames.Contains(fieldName))
+            if (textFieldNames.Contains(fieldName) || numberFieldNames.Contains(fieldName) ||
+                boolFieldNames.Contains(fieldName))
             {
                 PropertyName.Push($"{nameof(CreateDocumentRequest.NumberFieldValues)}[{i}]");
                 PropertyName.Push(nameof(NumberFieldValue.FieldName));
                 return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
-            allFieldNames.Add(fieldName);
+            numberFieldNames.Add(fieldName);
         }
 
         for (var i = 0; i < value.BoolFieldValues.Count; i++)
         {
             var fieldName = value.BoolFieldValues[i].FieldName;
-            if (allFieldNames.Contains(fieldName))
+            if (textFieldNames.Contains(fieldName) || numberFieldNames.Contains(fieldName) ||
+                boolFieldNames.Contains(fieldName))
             {
                 PropertyName.Push($"{nameof(CreateDocumentRequest.BoolFieldValues)}[{i}]");
                 PropertyName.Push(nameof(BoolFieldValue.FieldName));
                 return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
-            allFieldNames.Add(fieldName);
+            boolFieldNames.Add(fieldName);
+        }
+
+        foreach (var textField in template.TextFields)
+        {
+            if (textField.Required && !textFieldNames.Contains(textField.Name))
+            {
+                PropertyName.Push(nameof(CreateDocumentRequest.TextFieldValues));
+                return ValidationException(DocumentErrorMessages.RequiredFieldMissing);
+            }
+        }
+
+        foreach (var numberField in template.NumberFields)
+        {
+            if (numberField.Required && !numberFieldNames.Contains(numberField.Name))
+            {
+                PropertyName.Push(nameof(CreateDocumentRequest.NumberFieldValues));
+                return ValidationException(DocumentErrorMessages.RequiredFieldMissing);
+            }
+        }
+
+        foreach (var boolField in template.BoolFields)
+        {
+            if (boolField.Required && !boolFieldNames.Contains(boolField.Name))
+            {
+                PropertyName.Push(nameof(CreateDocumentRequest.BoolFieldValues));
+                return ValidationException(DocumentErrorMessages.RequiredFieldMissing);
+            }
         }
 
         return Result.Ok;

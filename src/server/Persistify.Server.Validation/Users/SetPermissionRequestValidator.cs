@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Server.Management.Managers.Users;
@@ -16,7 +17,7 @@ public class SetPermissionRequestValidator : Validator<SetPermissionRequest>
         IUserManager userManager
     )
     {
-        _userManager = userManager;
+        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(SetPermissionRequest));
     }
 

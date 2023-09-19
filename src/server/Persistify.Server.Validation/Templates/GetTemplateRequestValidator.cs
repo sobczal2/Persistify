@@ -21,12 +21,6 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 
     public override ValueTask<Result> ValidateNotNullAsync(GetTemplateRequest value)
     {
-        if (!_templateManager.Exists(value.TemplateName))
-        {
-            PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.TemplateNotFound));
-        }
-
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
@@ -36,7 +30,13 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+        }
+
+        if (!_templateManager.Exists(value.TemplateName))
+        {
+            PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.TemplateNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

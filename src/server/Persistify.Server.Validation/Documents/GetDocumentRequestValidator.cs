@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Requests.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -15,7 +16,7 @@ public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
         ITemplateManager templateManager
     )
     {
-        _templateManager = templateManager;
+        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(GetDocumentRequest));
     }
 

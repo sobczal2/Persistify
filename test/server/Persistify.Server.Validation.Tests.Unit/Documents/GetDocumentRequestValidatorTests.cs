@@ -97,10 +97,46 @@ public class GetDocumentRequestValidatorTests
     }
 
     [Fact]
+    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new GetDocumentRequest { TemplateName = new string('a', 65), DocumentId = 1 };
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value too long");
+        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
+    }
+
+    [Fact]
+    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new GetDocumentRequest { TemplateName = "Test", DocumentId = 1 };
+        _templateManager.Exists(request.TemplateName).Returns(false);
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Template not found");
+        exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
+    }
+
+    [Fact]
     public async Task Validate_WhenDocumentIdIsZero_ReturnsValidationException()
     {
         // Arrange
         var request = new GetDocumentRequest { TemplateName = "Test", DocumentId = 0 };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -118,6 +154,7 @@ public class GetDocumentRequestValidatorTests
     {
         // Arrange
         var request = new GetDocumentRequest { TemplateName = "Test", DocumentId = 1 };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);

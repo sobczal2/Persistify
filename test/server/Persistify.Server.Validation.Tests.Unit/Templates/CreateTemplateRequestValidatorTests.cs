@@ -184,7 +184,7 @@ public class CreateTemplateRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<ValidationException>();
         var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Name too long");
+        exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("CreateTemplateRequest.TemplateName");
     }
 

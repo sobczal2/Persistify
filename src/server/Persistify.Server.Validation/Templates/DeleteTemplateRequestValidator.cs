@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Requests.Templates;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -15,18 +16,12 @@ public class DeleteTemplateRequestValidator : Validator<DeleteTemplateRequest>
         ITemplateManager templateManager
     )
     {
-        _templateManager = templateManager;
+        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(DeleteTemplateRequest));
     }
 
     public override ValueTask<Result> ValidateNotNullAsync(DeleteTemplateRequest value)
     {
-        if (!_templateManager.Exists(value.TemplateName))
-        {
-            PropertyName.Push(nameof(DeleteTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.TemplateNotFound));
-        }
-
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(DeleteTemplateRequest.TemplateName));
@@ -36,7 +31,13 @@ public class DeleteTemplateRequestValidator : Validator<DeleteTemplateRequest>
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(DeleteTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameTooLong));
+            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+        }
+
+        if (!_templateManager.Exists(value.TemplateName))
+        {
+            PropertyName.Push(nameof(DeleteTemplateRequest.TemplateName));
+            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.TemplateNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

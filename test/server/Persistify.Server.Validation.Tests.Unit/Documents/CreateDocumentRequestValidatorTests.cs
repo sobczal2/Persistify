@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Templates;
 using Persistify.Requests.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
@@ -174,10 +175,46 @@ public class CreateDocumentRequestValidatorTests
     }
 
     [Fact]
+    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest { TemplateName = new string('a', 65) };
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value too long");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
+    }
+
+    [Fact]
+    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest { TemplateName = "Test" };
+        _templateManager.Exists(request.TemplateName).Returns(false);
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Template not found");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
+    }
+
+    [Fact]
     public async Task Validate_WhenNoFieldValues_ReturnsValidationException()
     {
         // Arrange
         var request = new CreateDocumentRequest { TemplateName = "Test" };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -198,6 +235,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         List<string> propertyNameAtCall = null!;
         _textFieldValueValidator
             .When(x => x.ValidateAsync(Arg.Any<TextFieldValue>()))
@@ -219,6 +257,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         var validationException = new ValidationException("Test", "Test");
         _textFieldValueValidator
             .ValidateAsync(Arg.Any<TextFieldValue>())
@@ -240,6 +279,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         List<string> propertyNameAtCall = null!;
         _numberFieldValueValidator
             .When(x => x.ValidateAsync(Arg.Any<NumberFieldValue>()))
@@ -261,6 +301,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         var validationException = new ValidationException("Test", "Test");
         _numberFieldValueValidator
             .ValidateAsync(Arg.Any<NumberFieldValue>())
@@ -282,7 +323,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
         };
-
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         List<string> propertyNameAtCall = null!;
         _boolFieldValueValidator
             .When(x => x.ValidateAsync(Arg.Any<BoolFieldValue>()))
@@ -304,6 +345,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         var validationException = new ValidationException("Test", "Test");
         _boolFieldValueValidator
             .ValidateAsync(Arg.Any<BoolFieldValue>())
@@ -326,6 +368,7 @@ public class CreateDocumentRequestValidatorTests
             TemplateName = "Test",
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -347,6 +390,7 @@ public class CreateDocumentRequestValidatorTests
             TemplateName = "Test",
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -368,6 +412,7 @@ public class CreateDocumentRequestValidatorTests
             TemplateName = "Test",
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -390,6 +435,7 @@ public class CreateDocumentRequestValidatorTests
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -412,6 +458,7 @@ public class CreateDocumentRequestValidatorTests
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -434,6 +481,7 @@ public class CreateDocumentRequestValidatorTests
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -447,19 +495,154 @@ public class CreateDocumentRequestValidatorTests
     }
 
     [Fact]
+    public async Task Validate_WhenRequiredTextFieldIsMissing_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest
+        {
+            TemplateName = "Test",
+            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
+        };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "2", Required = true } }
+        });
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+    }
+
+    [Fact]
+    public async Task Validate_WhenRequiredNumberFieldIsMissing_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest
+        {
+            TemplateName = "Test",
+            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+        };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            NumberFields = new List<NumberField> { new() { Name = "2", Required = true } }
+        });
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+    }
+
+    [Fact]
+    public async Task Validate_WhenRequiredBoolFieldIsMissing_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest
+        {
+            TemplateName = "Test",
+            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+        };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            BoolFields = new List<BoolField> { new() { Name = "2", Required = true } }
+        });
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+    }
+
+    [Fact]
+    public async Task Validate_WhenNotRequiredTextFieldIsMissing_ReturnsOk()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest
+        {
+            TemplateName = "Test",
+            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
+        };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "2", Required = false } }
+        });
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Validate_WhenNotRequiredNumberFieldIsMissing_ReturnsOk()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest
+        {
+            TemplateName = "Test",
+            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+        };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            NumberFields = new List<NumberField> { new() { Name = "2", Required = false } }
+        });
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task Validate_WhenNotRequiredBoolFieldIsMissing_ReturnsOk()
+    {
+        // Arrange
+        var request = new CreateDocumentRequest
+        {
+            TemplateName = "Test",
+            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+        };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            BoolFields = new List<BoolField> { new() { Name = "2", Required = false } }
+        });
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var value = new CreateDocumentRequest
+        var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
             TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
             NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "2" } },
             BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "3" } }
         };
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "1", } },
+            NumberFields = new List<NumberField> { new() { Name = "2" } },
+            BoolFields = new List<BoolField> { new() { Name = "3" } }
+        });
 
         // Act
-        var result = await _sut.ValidateAsync(value);
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeFalse();

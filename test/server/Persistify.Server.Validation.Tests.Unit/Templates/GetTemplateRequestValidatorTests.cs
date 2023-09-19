@@ -84,10 +84,46 @@ public class GetTemplateRequestValidatorTests
     }
 
     [Fact]
+    public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new GetTemplateRequest { TemplateName = new string('a', 65) };
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Value too long");
+        exception.PropertyName.Should().Be("GetTemplateRequest.TemplateName");
+    }
+
+    [Fact]
+    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    {
+        // Arrange
+        var request = new GetTemplateRequest { TemplateName = "Test" };
+        _templateManager.Exists(request.TemplateName).Returns(false);
+
+        // Act
+        var result = await _sut.ValidateAsync(request);
+
+        // Assert
+        result.Failure.Should().BeTrue();
+        result.Exception.Should().BeOfType<ValidationException>();
+        var exception = (ValidationException)result.Exception;
+        exception.Message.Should().Be("Template not found");
+        exception.PropertyName.Should().Be("GetTemplateRequest.TemplateName");
+    }
+
+    [Fact]
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
         var request = new GetTemplateRequest { TemplateName = "Test" };
+        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);

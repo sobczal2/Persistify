@@ -6,6 +6,7 @@ using Persistify.Requests.Templates;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Results;
+using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -28,7 +29,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         _numberFieldValidator = numberFieldValidator ?? throw new ArgumentNullException(nameof(numberFieldValidator));
         _numberFieldValidator.PropertyName = PropertyName;
         _boolFieldValidator = boolFieldValidator ?? throw new ArgumentNullException(nameof(boolFieldValidator));
-        _templateManager = templateManager;
+        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         _boolFieldValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(CreateTemplateRequest));
     }
@@ -44,7 +45,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
-            return ValidationException(TemplateErrorMessages.NameTooLong);
+            return ValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         if (_templateManager.Exists(value.TemplateName))
