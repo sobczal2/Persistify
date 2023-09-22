@@ -10,6 +10,5 @@ public class CreateTemplateResponse
         TemplateId = templateId;
     }
 
-    [ProtoMember(1)]
-    public int TemplateId { get; set; }
+    [ProtoMember(1)] public int TemplateId { get; set; }
 }

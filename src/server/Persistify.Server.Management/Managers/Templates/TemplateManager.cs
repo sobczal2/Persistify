@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Concurrency;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;

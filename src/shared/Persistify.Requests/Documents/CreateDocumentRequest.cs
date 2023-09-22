@@ -14,15 +14,11 @@ public class CreateDocumentRequest
         BoolFieldValues = new List<BoolFieldValue>(0);
     }
 
-    [ProtoMember(1)]
-    public string TemplateName { get; set; } = default!;
+    [ProtoMember(1)] public string TemplateName { get; set; } = default!;
 
-    [ProtoMember(2)]
-    public List<TextFieldValue> TextFieldValues { get; set; }
+    [ProtoMember(2)] public List<TextFieldValue> TextFieldValues { get; set; }
 
-    [ProtoMember(3)]
-    public List<NumberFieldValue> NumberFieldValues { get; set; }
+    [ProtoMember(3)] public List<NumberFieldValue> NumberFieldValues { get; set; }
 
-    [ProtoMember(4)]
-    public List<BoolFieldValue> BoolFieldValues { get; set; }
+    [ProtoMember(4)] public List<BoolFieldValue> BoolFieldValues { get; set; }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Concurrency;
 using Persistify.Domain.Documents;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Management.Files;

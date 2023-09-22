@@ -11,6 +11,5 @@ public class AndSearchNode : SearchNode
         Nodes = new List<SearchNode>(0);
     }
 
-    [ProtoMember(1)]
-    public List<SearchNode> Nodes { get; set; }
+    [ProtoMember(1)] public List<SearchNode> Nodes { get; set; }
 }

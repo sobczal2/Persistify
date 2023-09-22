@@ -13,9 +13,7 @@ public class ListTemplatesResponse
         TotalCount = totalCount;
     }
 
-    [ProtoMember(1)]
-    public IEnumerable<Template> Templates { get; set; } = default!;
+    [ProtoMember(1)] public IEnumerable<Template> Templates { get; set; } = default!;
 
-    [ProtoMember(2)]
-    public int TotalCount { get; set; }
+    [ProtoMember(2)] public int TotalCount { get; set; }
 }
