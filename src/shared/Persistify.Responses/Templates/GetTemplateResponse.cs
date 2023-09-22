@@ -11,6 +11,5 @@ public class GetTemplateResponse
         Template = template;
     }
 
-    [ProtoMember(1)]
-    public Template Template { get; set; }
+    [ProtoMember(1)] public Template Template { get; set; }
 }

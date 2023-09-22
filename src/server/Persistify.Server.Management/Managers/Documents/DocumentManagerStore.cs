@@ -23,7 +23,8 @@ public class DocumentManagerStore : IDocumentManagerStore
         ITransactionState transactionState,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
-        IOptions<RepositorySettings> repositorySettingsOptions)
+        IOptions<RepositorySettings> repositorySettingsOptions
+    )
     {
         _transactionState = transactionState;
         _fileStreamFactory = fileStreamFactory;

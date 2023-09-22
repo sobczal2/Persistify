@@ -15,11 +15,9 @@ public class Template
 
     private IDictionary<string, TextField>? _textFieldsByName;
 
-    [ProtoMember(1)]
-    public int Id { get; set; }
+    [ProtoMember(1)] public int Id { get; set; }
 
-    [ProtoMember(2)]
-    public string Name { get; set; } = default!;
+    [ProtoMember(2)] public string Name { get; set; } = default!;
 
     [ProtoMember(3)]
     public List<TextField> TextFields

@@ -10,6 +10,5 @@ public class CreateDocumentResponse
         DocumentId = documentId;
     }
 
-    [ProtoMember(1)]
-    public int DocumentId { get; set; }
+    [ProtoMember(1)] public int DocumentId { get; set; }
 }

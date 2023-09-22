@@ -27,14 +27,22 @@ public sealed class Transaction : ITransaction
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         Id = Guid.NewGuid();
+        Phase = TransactionPhase.Ready;
     }
 
     public Guid Id { get; }
+
+    public TransactionPhase Phase { get; private set; }
 
     public async ValueTask BeginAsync(TimeSpan timeOut,
         CancellationToken cancellationToken)
     {
         _logger.LogDebug("Begin transaction {TransactionId}", Id);
+
+        if (Phase != TransactionPhase.Ready)
+        {
+            throw new InvalidOperationException("Transaction already started");
+        }
 
         if (_transactionState.GetCurrentTransaction() != this)
         {
@@ -60,6 +68,8 @@ public sealed class Transaction : ITransaction
             await writeManager.BeginWriteAsync(timeOut, cancellationToken).ConfigureAwait(false);
         }
 
+        Phase = TransactionPhase.Started;
+
         _logger.LogDebug("Transaction {TransactionId} started", Id);
     }
 
@@ -68,19 +78,24 @@ public sealed class Transaction : ITransaction
         _logger.LogDebug("Promote manager {ManagerName} to {Write} in transaction {TransactionId}",
             manager.Name, write ? "write" : "read", Id);
 
+        if (Phase != TransactionPhase.Started)
+        {
+            throw new InvalidOperationException("Transaction not started");
+        }
+
         if (_transactionState.GetCurrentTransaction() != this)
         {
             throw new TransactionStateCorruptedException();
         }
 
-        if (_transactionDescriptor.WriteManagers.Contains(manager))
-        {
-            throw new InvalidOperationException("Manager already promoted to write");
-        }
-
         if (_transactionDescriptor.ReadManagers.Contains(manager))
         {
             throw new InvalidOperationException("Manager already promoted to read");
+        }
+
+        if (_transactionDescriptor.WriteManagers.Contains(manager))
+        {
+            throw new InvalidOperationException("Manager already promoted to write");
         }
 
         if (write)
@@ -101,6 +116,11 @@ public sealed class Transaction : ITransaction
     public async ValueTask CommitAsync()
     {
         _logger.LogDebug("Commit transaction {TransactionId}", Id);
+
+        if (Phase != TransactionPhase.Started)
+        {
+            throw new InvalidOperationException("Transaction not started");
+        }
 
         if (_transactionState.GetCurrentTransaction() != this)
         {
@@ -142,7 +162,7 @@ public sealed class Transaction : ITransaction
             await _transactionState.ExitReadGlobalLockAsync(Id).ConfigureAwait(false);
         }
 
-        _transactionState.CurrentTransaction.Value = null;
+        Phase = TransactionPhase.Committed;
 
         _logger.LogDebug("Transaction {TransactionId} committed", Id);
     }
@@ -150,6 +170,11 @@ public sealed class Transaction : ITransaction
     public async ValueTask RollbackAsync()
     {
         _logger.LogDebug("Rollback transaction {TransactionId}", Id);
+
+        if (Phase != TransactionPhase.Started)
+        {
+            throw new InvalidOperationException("Transaction not started");
+        }
 
         if (_transactionState.GetCurrentTransaction() != this)
         {
@@ -176,7 +201,7 @@ public sealed class Transaction : ITransaction
             await _transactionState.ExitReadGlobalLockAsync(Id).ConfigureAwait(false);
         }
 
-        _transactionState.CurrentTransaction.Value = null;
+        Phase = TransactionPhase.RolledBack;
 
         _logger.LogDebug("Transaction {TransactionId} rolled back", Id);
     }
