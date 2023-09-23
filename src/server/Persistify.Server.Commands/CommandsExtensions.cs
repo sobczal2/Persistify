@@ -21,7 +21,7 @@ public static class CommandsExtensions
 
         services.AddTransient<CreateDocumentCommand>();
         services.AddTransient<GetDocumentCommand>();
-        // services.AddTransient<ListDocumentsCommand>();
+        services.AddTransient<SearchDocumentsCommand>();
         services.AddTransient<DeleteDocumentCommand>();
 
         services.AddTransient<CreateUserCommand>();

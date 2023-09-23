@@ -7,8 +7,8 @@ namespace Persistify.Server.Indexes.Indexers;
 
 public interface IIndexer
 {
-    IndexerKey Key { get; }
+    string FieldName { get; }
     ValueTask IndexAsync(Document document);
-    ValueTask<IEnumerable<ISearchResult>> SearchAsync(ISearchQuery query);
+    ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query);
     ValueTask DeleteAsync(Document document);
 }

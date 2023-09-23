@@ -83,7 +83,7 @@ public class TemplateManager : Manager, ITemplateManager
 
                 foreach (var kv in kvList)
                 {
-                    _documentManagerStore.AddManager(kv.Key);
+                    _documentManagerStore.AddManager(kv.Value);
                     _templateNameIdDictionary.TryAdd(kv.Value.Name, kv.Key);
                 }
 
@@ -171,8 +171,8 @@ public class TemplateManager : Manager, ITemplateManager
 
             await _templateRepository.WriteAsync(currentId, template, true);
 
-            _fileHandler.CreateFilesForTemplate(currentId);
-            _documentManagerStore.AddManager(currentId);
+            _fileHandler.CreateFilesForTemplate(template);
+            _documentManagerStore.AddManager(template);
 
             var documentManager = _documentManagerStore.GetManager(currentId);
 
@@ -219,7 +219,7 @@ public class TemplateManager : Manager, ITemplateManager
                 await TransactionState.GetCurrentTransaction()
                     .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-                _fileHandler.DeleteFilesForTemplate(id);
+                _fileHandler.DeleteFilesForTemplate(template);
                 _documentManagerStore.DeleteManager(id);
 
                 _templateNameIdDictionary.TryRemove(template.Name, out _);

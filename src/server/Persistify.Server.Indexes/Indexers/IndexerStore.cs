@@ -2,68 +2,61 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Persistify.Domain.Documents;
+using Persistify.Domain.Templates;
 using Persistify.Server.Indexes.Searches;
 
 namespace Persistify.Server.Indexes.Indexers;
 
-public class IndexerStore : IIndexerStore
+public class IndexerStore
 {
-    private readonly IIndexerFactory _indexerFactory;
-    private readonly ConcurrentDictionary<IndexerKey, IIndexer> _indexers;
-    private bool _initialized;
+    private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
     public IndexerStore(
-        IIndexerFactory indexerFactory
-        )
+        Template template
+    )
     {
-        _indexerFactory = indexerFactory;
-        _indexers = new ConcurrentDictionary<IndexerKey, IIndexer>();
+        _indexers = new ConcurrentDictionary<string, IIndexer>();
+        foreach (var field in template.TextFields)
+        {
+            _indexers.TryAdd(field.Name, new TextIndexer(field.Name));
+        }
+
+        foreach (var field in template.NumberFields)
+        {
+            _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
+        }
+
+        foreach (var field in template.BooleanFields)
+        {
+            _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
+        }
     }
 
-    public ValueTask InitializeAsync()
+    public async ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query)
     {
-        // TODO: Load indexers
-        _initialized = true;
-        return ValueTask.CompletedTask;
-    }
-
-    public async ValueTask<IEnumerable<ISearchResult>> Search(ISearchQuery query)
-    {
-        ThrowIfNotInitialized();
-        _indexers.TryGetValue(query.IndexerKey, out var indexer);
+        _indexers.TryGetValue(query.FieldName, out var indexer);
         if (indexer == null)
         {
-            throw new InvalidOperationException($"Indexer {query.IndexerKey} not found.");
+            throw new InvalidOperationException($"Indexer for field {query.FieldName} not found");
         }
 
         return await indexer.SearchAsync(query);
     }
 
-    public void Add(IndexerKey key)
+    public async ValueTask IndexAsync(Document document)
     {
-        ThrowIfNotInitialized();
-        var result = _indexers.TryAdd(key, _indexerFactory.Create(key));
-        if (!result)
+        foreach (var indexer in _indexers.Values)
         {
-            throw new InvalidOperationException($"Indexer {key} already exists.");
+            await indexer.IndexAsync(document);
         }
     }
 
-    public void Remove(IndexerKey key)
+    public async ValueTask DeleteAsync(Document document)
     {
-        ThrowIfNotInitialized();
-        var result = _indexers.TryRemove(key, out var indexer);
-        if (!result)
+        foreach (var indexer in _indexers.Values)
         {
-            throw new InvalidOperationException($"Indexer {key} not found.");
-        }
-    }
-
-    private void ThrowIfNotInitialized()
-    {
-        if (!_initialized)
-        {
-            throw new InvalidOperationException("Indexer store is not initialized.");
+            await indexer.DeleteAsync(document);
         }
     }
 }

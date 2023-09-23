@@ -35,7 +35,7 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
             Name = request.TemplateName,
             TextFields = request.TextFields,
             NumberFields = request.NumberFields,
-            BoolFields = request.BoolFields
+            BooleanFields = request.BoolFields
         };
 
         _templateManager.Add(_template);

@@ -7,8 +7,8 @@ namespace Persistify.Domain.Templates;
 [ProtoContract]
 public class Template
 {
-    private List<BoolField>? _boolFields;
-    private IDictionary<string, BoolField>? _boolFieldsByName;
+    private List<BoolField>? _booleanFields;
+    private IDictionary<string, BoolField>? _booleanFieldsByName;
     private List<NumberField>? _numberFields;
     private IDictionary<string, NumberField>? _numberFieldsByName;
     private List<TextField>? _textFields;
@@ -42,13 +42,13 @@ public class Template
     }
 
     [ProtoMember(5)]
-    public List<BoolField> BoolFields
+    public List<BoolField> BooleanFields
     {
-        get => _boolFields ??= new List<BoolField>(0);
+        get => _booleanFields ??= new List<BoolField>(0);
         set
         {
-            _boolFields = value;
-            _boolFieldsByName = null;
+            _booleanFields = value;
+            _booleanFieldsByName = null;
         }
     }
 
@@ -59,5 +59,5 @@ public class Template
         _numberFieldsByName ??= NumberFields.ToDictionary(x => x.Name);
 
     public IDictionary<string, BoolField> BoolFieldsByName =>
-        _boolFieldsByName ??= BoolFields.ToDictionary(x => x.Name);
+        _booleanFieldsByName ??= BooleanFields.ToDictionary(x => x.Name);
 }

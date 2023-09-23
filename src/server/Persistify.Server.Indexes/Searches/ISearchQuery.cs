@@ -4,6 +4,6 @@ namespace Persistify.Server.Indexes.Searches;
 
 public interface ISearchQuery
 {
-    IndexerKey IndexerKey { get; }
+    string FieldName { get; }
     float Boost { get; }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Persistify.Domain.Templates;
 using Persistify.Server.Management.Files.Exceptions;
 
 namespace Persistify.Server.Management.Files;
@@ -48,13 +49,13 @@ public class FileHandler : IFileHandler
         }
     }
 
-    public void CreateFilesForTemplate(int templateId)
+    public void CreateFilesForTemplate(Template template)
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {
-            _logger.LogTrace("Creating files for template {TemplateId} for {FileGroupName}", templateId,
+            _logger.LogTrace("Creating files for template {TemplateId} for {FileGroupName}", template.Id,
                 fileGroup.FileGroupName);
-            var fileNames = fileGroup.GetFileNamesForTemplate(templateId);
+            var fileNames = fileGroup.GetFileNamesForTemplate(template);
             foreach (var fileName in fileNames)
             {
                 _logger.LogTrace("Creating file {FileName}", fileName);
@@ -69,13 +70,13 @@ public class FileHandler : IFileHandler
         }
     }
 
-    public void DeleteFilesForTemplate(int templateId)
+    public void DeleteFilesForTemplate(Template template)
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {
-            _logger.LogTrace("Deleting files for template {TemplateId} for {FileGroupName}", templateId,
+            _logger.LogTrace("Deleting files for template {TemplateId} for {FileGroupName}", template.Id,
                 fileGroup.FileGroupName);
-            var fileNames = fileGroup.GetFileNamesForTemplate(templateId);
+            var fileNames = fileGroup.GetFileNamesForTemplate(template);
             foreach (var fileName in fileNames)
             {
                 _logger.LogTrace("Deleting file {FileName}", fileName);

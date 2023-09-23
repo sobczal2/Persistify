@@ -7,11 +7,11 @@ namespace Persistify.Server.Indexes.Indexers;
 
 public class TextIndexer : IIndexer
 {
-    public IndexerKey Key { get; }
+    public string FieldName { get; }
 
-    public TextIndexer(int templateId, string fieldName)
+    public TextIndexer(string fieldName)
     {
-        Key = new IndexerKey(IndexType.Text, templateId, fieldName);
+        FieldName = fieldName;
     }
 
     public ValueTask IndexAsync(Document document)
@@ -19,7 +19,7 @@ public class TextIndexer : IIndexer
         throw new System.NotImplementedException();
     }
 
-    public ValueTask<IEnumerable<ISearchResult>> SearchAsync(ISearchQuery query)
+    public ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query)
     {
         throw new System.NotImplementedException();
     }

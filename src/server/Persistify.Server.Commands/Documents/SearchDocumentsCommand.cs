@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
 using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
@@ -14,49 +13,47 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.Commands.Documents;
 
-public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, CreateDocumentResponse>
+public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocumentsResponse>
 {
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly ITemplateManager _templateManager;
-    private Document? _document;
+    private SearchDocumentsResponse? _response;
 
-    public CreateDocumentCommand(
-        ICommandContext<CreateDocumentRequest> commandContext,
-        ITemplateManager templateManager,
-        IDocumentManagerStore documentManagerStore
+    public SearchDocumentsCommand(
+        ICommandContext<SearchDocumentsRequest> commandContext,
+        IDocumentManagerStore documentManagerStore,
+        ITemplateManager templateManager
     ) : base(
         commandContext
     )
     {
-        _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
+        _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(CreateDocumentRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(SearchDocumentsRequest request, CancellationToken cancellationToken)
     {
         var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
 
-        _document = new Document
-        {
-            TextFieldValues = request.TextFieldValues,
-            NumberFieldValues = request.NumberFieldValues,
-            BoolFieldValues = request.BoolFieldValues
-        };
+        var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
+        var take = request.Pagination.PageSize;
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
 
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        documentManager.Add(_document);
+        var (documents, count) = await documentManager.SearchAsync(request.SearchNode, take, skip);
+
+        _response = new SearchDocumentsResponse(documents, count);
     }
 
-    protected override CreateDocumentResponse GetResponse()
+    protected override SearchDocumentsResponse GetResponse()
     {
-        return new CreateDocumentResponse(_document?.Id ?? throw new PersistifyInternalException());
+        return _response ?? throw new PersistifyInternalException();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(SearchDocumentsRequest request)
     {
         return new TransactionDescriptor(
             false,
@@ -65,8 +62,8 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
         );
     }
 
-    protected override Permission GetRequiredPermission(CreateDocumentRequest request)
+    protected override Permission GetRequiredPermission(SearchDocumentsRequest request)
     {
-        return Permission.DocumentWrite;
+        return Permission.DocumentRead;
     }
 }
