@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search.Queries;
+using Persistify.Domain.Search.Queries.Text;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Indexes.Searches.Queries.Text;
 
 namespace Persistify.Server.Indexes.Indexers;
 
 public class TextIndexer : IIndexer
 {
-    public string FieldName { get; }
     public SortedList<int, string> _documentValues;
 
     public TextIndexer(string fieldName)
@@ -16,6 +17,8 @@ public class TextIndexer : IIndexer
         FieldName = fieldName;
         _documentValues = new SortedList<int, string>();
     }
+
+    public string FieldName { get; }
 
     public ValueTask IndexAsync(Document document)
     {
@@ -25,11 +28,11 @@ public class TextIndexer : IIndexer
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query)
+    public ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
         if (query is not TextSearchQuery textSearchQuery || textSearchQuery.FieldName != FieldName)
         {
-            throw new System.Exception("Invalid search query");
+            throw new Exception("Invalid search query");
         }
 
         var results = new List<ISearchResult>();

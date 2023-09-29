@@ -4,5 +4,5 @@ public enum IndexType
 {
     Text,
     Number,
-    Boolean,
+    Boolean
 }

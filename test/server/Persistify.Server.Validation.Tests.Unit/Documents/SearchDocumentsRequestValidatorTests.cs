@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Requests.Documents;
-using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;

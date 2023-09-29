@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search.Queries;
+using Persistify.Domain.Search.Queries.Number;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Indexes.Searches.Queries.Number;
 
 namespace Persistify.Server.Indexes.Indexers;
 
 public class NumberIndexer : IIndexer
 {
-    public string FieldName { get; }
     public SortedList<int, double> _documentValues;
 
     public NumberIndexer(string fieldName)
@@ -18,6 +18,8 @@ public class NumberIndexer : IIndexer
         FieldName = fieldName;
         _documentValues = new SortedList<int, double>();
     }
+
+    public string FieldName { get; }
 
     public ValueTask IndexAsync(Document document)
     {
@@ -27,11 +29,11 @@ public class NumberIndexer : IIndexer
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query)
+    public ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
         if (query is not NumberSearchQuery numberSearchQuery || numberSearchQuery.FieldName != FieldName)
         {
-            throw new System.Exception("Invalid search query");
+            throw new Exception("Invalid search query");
         }
 
         switch (query)
@@ -60,7 +62,8 @@ public class NumberIndexer : IIndexer
             case RangeNumberSearchQuery rangeNumberSearchQuery:
                 return ValueTask.FromResult(
                     _documentValues
-                        .Where(x => x.Value < rangeNumberSearchQuery.MinValue && x.Value > rangeNumberSearchQuery.MaxValue)
+                        .Where(x => x.Value < rangeNumberSearchQuery.MinValue &&
+                                    x.Value > rangeNumberSearchQuery.MaxValue)
                         .Select(x => new SearchResult(x.Key, rangeNumberSearchQuery.Boost) as ISearchResult)
                         .ToList()
                 );
@@ -71,6 +74,6 @@ public class NumberIndexer : IIndexer
 
     public ValueTask DeleteAsync(Document document)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }

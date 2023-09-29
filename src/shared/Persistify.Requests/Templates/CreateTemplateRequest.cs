@@ -14,11 +14,15 @@ public class CreateTemplateRequest
         BoolFields = new List<BoolField>(0);
     }
 
-    [ProtoMember(1)] public string TemplateName { get; set; } = default!;
+    [ProtoMember(1)]
+    public string TemplateName { get; set; } = default!;
 
-    [ProtoMember(2)] public List<TextField> TextFields { get; set; } = default!;
+    [ProtoMember(2)]
+    public List<TextField> TextFields { get; set; } = default!;
 
-    [ProtoMember(3)] public List<NumberField> NumberFields { get; set; } = default!;
+    [ProtoMember(3)]
+    public List<NumberField> NumberFields { get; set; } = default!;
 
-    [ProtoMember(4)] public List<BoolField> BoolFields { get; set; } = default!;
+    [ProtoMember(4)]
+    public List<BoolField> BoolFields { get; set; } = default!;
 }

@@ -14,11 +14,6 @@ public abstract class Manager : IManager
     private readonly ReadWriteAsyncLock _readWriteAsyncLock;
     protected readonly ITransactionState TransactionState;
     private bool _isInitialized;
-    protected Queue<Func<ValueTask>> PendingActions { get; }
-    private Guid TransactionId => TransactionState.GetCurrentTransaction().Id;
-    // TODO: move to config
-    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
-    public abstract string Name { get; }
 
     protected Manager(
         ITransactionState transactionState
@@ -29,6 +24,14 @@ public abstract class Manager : IManager
         PendingActions = new Queue<Func<ValueTask>>();
         _isInitialized = false;
     }
+
+    protected Queue<Func<ValueTask>> PendingActions { get; }
+
+    private Guid TransactionId => TransactionState.GetCurrentTransaction().Id;
+
+    // TODO: move to config
+    protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
+    public abstract string Name { get; }
 
 
     public virtual void Initialize()

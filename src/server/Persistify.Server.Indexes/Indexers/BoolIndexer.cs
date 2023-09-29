@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search.Queries;
+using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Indexes.Searches.Queries.Bool;
 
 namespace Persistify.Server.Indexes.Indexers;
 
 public class BoolIndexer : IIndexer
 {
-    public string FieldName { get; }
-    private readonly SortedList<int, int> _trueDocuments;
     private readonly SortedList<int, int> _falseDocuments;
+    private readonly SortedList<int, int> _trueDocuments;
 
     public BoolIndexer(string fieldName)
     {
@@ -19,6 +20,8 @@ public class BoolIndexer : IIndexer
         _trueDocuments = new SortedList<int, int>();
         _falseDocuments = new SortedList<int, int>();
     }
+
+    public string FieldName { get; }
 
     public ValueTask IndexAsync(Document document)
     {
@@ -35,21 +38,21 @@ public class BoolIndexer : IIndexer
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query)
+    public ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
         if (query is not BoolSearchQuery boolSearchQuery || boolSearchQuery.FieldName != FieldName)
         {
-            throw new System.Exception("Invalid search query");
+            throw new Exception("Invalid search query");
         }
 
         if (boolSearchQuery.Value)
         {
-            return ValueTask.FromResult(_trueDocuments.Select(x => new SearchResult(x.Key, query.Boost)).Cast<ISearchResult>().ToList());
+            return ValueTask.FromResult(_trueDocuments.Select(x => new SearchResult(x.Key, query.Boost))
+                .Cast<ISearchResult>().ToList());
         }
-        else
-        {
-            return ValueTask.FromResult(_falseDocuments.Select(x => new SearchResult(x.Key, query.Boost)).Cast<ISearchResult>().ToList());
-        }
+
+        return ValueTask.FromResult(_falseDocuments.Select(x => new SearchResult(x.Key, query.Boost))
+            .Cast<ISearchResult>().ToList());
     }
 
     public ValueTask DeleteAsync(Document document)

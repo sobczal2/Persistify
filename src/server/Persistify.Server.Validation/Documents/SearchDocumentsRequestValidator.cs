@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Persistify.Domain.Search.Queries;
 using Persistify.Requests.Documents;
-using Persistify.Requests.Search;
 using Persistify.Requests.Shared;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -13,18 +13,18 @@ namespace Persistify.Server.Validation.Documents;
 public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
 {
     private readonly IValidator<Pagination> _paginationValidator;
-    private readonly IValidator<SearchNode> _searchNodeValidator;
+    private readonly IValidator<SearchQuery> _searchNodeValidator;
     private readonly ITemplateManager _templateManager;
 
     public SearchDocumentsRequestValidator(
         IValidator<Pagination> paginationValidator,
-        IValidator<SearchNode> searchNodeValidator,
+        IValidator<SearchQuery> searchQueryValidator,
         ITemplateManager templateManager
     )
     {
         _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
         _paginationValidator.PropertyName = PropertyName;
-        _searchNodeValidator = searchNodeValidator ?? throw new ArgumentNullException(nameof(searchNodeValidator));
+        _searchNodeValidator = searchQueryValidator ?? throw new ArgumentNullException(nameof(searchQueryValidator));
         _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         _searchNodeValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(SearchDocumentsRequest));
@@ -50,13 +50,6 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             return ValidationException(DocumentErrorMessages.TemplateNotFound);
         }
 
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (value.Pagination == null)
-        {
-            PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
-            return ValidationException(SharedErrorMessages.ValueNull);
-        }
-
         PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
         var paginationValidator = await _paginationValidator.ValidateAsync(value.Pagination);
         PropertyName.Pop();
@@ -65,15 +58,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             return paginationValidator;
         }
 
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (value.SearchNode == null)
-        {
-            PropertyName.Push(nameof(SearchDocumentsRequest.SearchNode));
-            return ValidationException(SharedErrorMessages.ValueNull);
-        }
-
-        PropertyName.Push(nameof(SearchDocumentsRequest.SearchNode));
-        var searchNodeValidator = await _searchNodeValidator.ValidateAsync(value.SearchNode);
+        PropertyName.Push(nameof(SearchDocumentsRequest.SearchQuery));
+        var searchNodeValidator = await _searchNodeValidator.ValidateAsync(value.SearchQuery);
         PropertyName.Pop();
         if (searchNodeValidator.Failure)
         {

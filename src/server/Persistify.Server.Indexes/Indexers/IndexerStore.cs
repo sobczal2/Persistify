@@ -1,9 +1,13 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search.Queries;
+using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Algorithms;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Indexes.Searches;
 
 namespace Persistify.Server.Indexes.Indexers;
@@ -33,15 +37,43 @@ public class IndexerStore
         }
     }
 
-    public async ValueTask<List<ISearchResult>> SearchAsync(ISearchQuery query)
+    public async ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
-        _indexers.TryGetValue(query.FieldName, out var indexer);
-        if (indexer == null)
+        IEnumerable<ISearchResult>[]? results;
+        switch (query)
         {
-            throw new InvalidOperationException($"Indexer for field {query.FieldName} not found");
+            case FieldSearchQuery fieldSearchQuery:
+                if (_indexers.TryGetValue(fieldSearchQuery.FieldName, out var indexer))
+                {
+                    return await indexer.SearchAsync(query);
+                }
+
+                throw new PersistifyInternalException();
+            case AndSearchQuery andSearchQuery:
+                results = new IEnumerable<ISearchResult>[andSearchQuery.Queries.Count];
+
+                for (var i = 0; i < results.Length; i++)
+                {
+                    results[i] = await SearchAsync(andSearchQuery.Queries[i]);
+                }
+
+                return EnumerableHelpers.IntersectSorted(
+                        Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results)
+                    .ToList();
+            case OrSearchQuery orSearchQuery:
+                results = new IEnumerable<ISearchResult>[orSearchQuery.Queries.Count];
+
+                for (var i = 0; i < results.Length; i++)
+                {
+                    results[i] = await SearchAsync(orSearchQuery.Queries[i]);
+                }
+
+                return EnumerableHelpers.IntersectSorted(
+                        Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results)
+                    .ToList();
         }
 
-        return await indexer.SearchAsync(query);
+        throw new PersistifyInternalException();
     }
 
     public async ValueTask IndexAsync(Document document)

@@ -5,14 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Templates;
-using Persistify.Helpers.Algorithms;
-using Persistify.Requests.Search;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.Indexes.Indexers;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Indexes.Searches.Queries.Bool;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
@@ -23,10 +20,10 @@ namespace Persistify.Server.Management.Managers.Documents;
 
 public class DocumentManager : Manager, IDocumentManager
 {
-    private readonly Template _template;
     private readonly ObjectStreamRepository<Document> _documentRepository;
     private readonly IntStreamRepository _identifierRepository;
     private readonly IndexerStore _indexerStore;
+    private readonly Template _template;
     private volatile int _count;
 
     public DocumentManager(
@@ -110,12 +107,13 @@ public class DocumentManager : Manager, IDocumentManager
         return list;
     }
 
-    public async ValueTask<(List<Document> documents, int count)> SearchAsync(SearchNode searchNode, int take, int skip)
+    public async ValueTask<(List<Document> documents, int count)> SearchAsync(SearchQuery searchQuery, int take,
+        int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var searchResults = await SearchInternalAsync(searchNode);
+        var searchResults = await SearchInternalAsync(searchQuery);
 
         var documents = new List<Document>(searchResults.Count);
 
@@ -131,51 +129,6 @@ public class DocumentManager : Manager, IDocumentManager
         }
 
         return (documents, searchResults.Count);
-    }
-
-    private async ValueTask<List<ISearchResult>> SearchInternalAsync(SearchNode searchNode)
-    {
-        if (searchNode is BoolSearchNode boolSearchNode)
-        {
-            return await _indexerStore.SearchAsync(new BoolSearchQuery(boolSearchNode.FieldName,
-                boolSearchNode.Value, boolSearchNode.Boost));
-        }
-        else if (searchNode is NumberSearchNode numberSearchNode)
-        {
-            return new List<ISearchResult>();
-        }
-        else if (searchNode is TextSearchNode textSearchNode)
-        {
-            return new List<ISearchResult>();
-        }
-        else if (searchNode is AndSearchNode andSearchNode)
-        {
-            var results = new IEnumerable<ISearchResult>[andSearchNode.Nodes.Count];
-            for (var i = 0; i < results.Length; i++)
-            {
-                results[i] = await SearchInternalAsync(andSearchNode.Nodes[i]);
-            }
-
-            return EnumerableHelpers
-                .IntersectSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
-                    results).ToList();
-        }
-        else if (searchNode is OrSearchNode orSearchNode)
-        {
-            var results = new IEnumerable<ISearchResult>[orSearchNode.Nodes.Count];
-            for (var i = 0; i < results.Length; i++)
-            {
-                results[i] = await SearchInternalAsync(orSearchNode.Nodes[i]);
-            }
-
-            return EnumerableHelpers
-                .MergeSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
-                    results).ToList();
-        }
-        else
-        {
-            throw new PersistifyInternalException();
-        }
     }
 
     public int Count()
@@ -235,5 +188,51 @@ public class DocumentManager : Manager, IDocumentManager
         PendingActions.Enqueue(removeAction);
 
         return true;
+    }
+
+    private ValueTask<List<ISearchResult>> SearchInternalAsync(SearchQuery searchQuery)
+    {
+        return ValueTask.FromResult(new List<ISearchResult>());
+        // if (searchNode is BoolSearchNode boolSearchNode)
+        // {
+        //     return await _indexerStore.SearchAsync(new BoolSearchQuery(boolSearchNode.FieldName,
+        //         boolSearchNode.Value, boolSearchNode.Boost));
+        // }
+        // else if (searchNode is NumberSearchNode numberSearchNode)
+        // {
+        //     return new List<ISearchResult>();
+        // }
+        // else if (searchNode is TextSearchNode textSearchNode)
+        // {
+        //     return new List<ISearchResult>();
+        // }
+        // else if (searchNode is AndSearchNode andSearchNode)
+        // {
+        //     var results = new IEnumerable<ISearchResult>[andSearchNode.Nodes.Count];
+        //     for (var i = 0; i < results.Length; i++)
+        //     {
+        //         results[i] = await SearchInternalAsync(andSearchNode.Nodes[i]);
+        //     }
+        //
+        //     return EnumerableHelpers
+        //         .IntersectSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
+        //             results).ToList();
+        // }
+        // else if (searchNode is OrSearchNode orSearchNode)
+        // {
+        //     var results = new IEnumerable<ISearchResult>[orSearchNode.Nodes.Count];
+        //     for (var i = 0; i < results.Length; i++)
+        //     {
+        //         results[i] = await SearchInternalAsync(orSearchNode.Nodes[i]);
+        //     }
+        //
+        //     return EnumerableHelpers
+        //         .MergeSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
+        //             results).ToList();
+        // }
+        // else
+        // {
+        //     throw new PersistifyInternalException();
+        // }
     }
 }

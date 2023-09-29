@@ -5,10 +5,11 @@ namespace Persistify.Helpers.Algorithms;
 
 public static class EnumerableHelpers
 {
-    public static IEnumerable<T> MergeSorted<T> (IComparer<T> comparer, params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> MergeSorted<T>(IComparer<T> comparer, params IEnumerable<T>[] enumerables)
     {
         var enumerators = GetEnumerators(enumerables);
-        var heap = new SortedSet<(T Value, int Index)>(Comparer<(T Value, int Index)>.Create((x, y) => comparer.Compare(x.Value, y.Value)));
+        var heap = new SortedSet<(T Value, int Index)>(
+            Comparer<(T Value, int Index)>.Create((x, y) => comparer.Compare(x.Value, y.Value)));
         for (var i = 0; i < enumerators.Length; i++)
         {
             if (enumerators[i].MoveNext())
@@ -40,21 +41,25 @@ public static class EnumerableHelpers
 
         while (true)
         {
-            bool canAdvance = true;
+            var canAdvance = true;
             foreach (var enumerator in enumerators)
             {
                 canAdvance &= enumerator.MoveNext();
             }
-            if (!canAdvance) break;
 
-            T firstValue = enumerators[0].Current;
+            if (!canAdvance)
+            {
+                break;
+            }
+
+            var firstValue = enumerators[0].Current;
             if (Array.TrueForAll(enumerators, it => comparer.Compare(it.Current, firstValue) == 0))
             {
                 yield return firstValue;
                 continue;
             }
 
-            T minValue = firstValue;
+            var minValue = firstValue;
             foreach (var iterator in enumerators)
             {
                 if (comparer.Compare(iterator.Current, minValue) < 0)
@@ -67,7 +72,10 @@ public static class EnumerableHelpers
             {
                 while (comparer.Compare(iterator.Current, minValue) == 0)
                 {
-                    if (!iterator.MoveNext()) break;
+                    if (!iterator.MoveNext())
+                    {
+                        break;
+                    }
                 }
             }
         }
