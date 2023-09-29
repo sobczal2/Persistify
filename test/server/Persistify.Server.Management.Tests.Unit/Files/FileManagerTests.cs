@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
+using Persistify.Domain.Templates;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Files.Exceptions;
 using Xunit;
@@ -166,14 +167,15 @@ public class FileManagerTests
     {
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
-        fileGroupForTemplate.GetFileNamesForTemplate(Arg.Any<int>()).Returns(new List<string> { "file1" });
+        var template = new Template();
+        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(false);
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        _sut.CreateFilesForTemplate(1);
+        _sut.CreateFilesForTemplate(template);
 
         // Assert
         _fileProvider.Received(1).Create(Arg.Any<string>());
@@ -184,14 +186,15 @@ public class FileManagerTests
     {
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
-        fileGroupForTemplate.GetFileNamesForTemplate(Arg.Any<int>()).Returns(new List<string> { "file1" });
+        var template = new Template();
+        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(true);
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        var action = new Action(() => _sut.CreateFilesForTemplate(1));
+        var action = new Action(() => _sut.CreateFilesForTemplate(template));
 
         // Assert
         action.Should().Throw<FileStructureCorruptedException>();
@@ -202,14 +205,15 @@ public class FileManagerTests
     {
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
-        fileGroupForTemplate.GetFileNamesForTemplate(Arg.Any<int>()).Returns(new List<string> { "file1" });
+        var template = new Template();
+        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(true);
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        _sut.DeleteFilesForTemplate(1);
+        _sut.DeleteFilesForTemplate(template);
 
         // Assert
         _fileProvider.Received(1).Delete(Arg.Any<string>());
@@ -220,14 +224,15 @@ public class FileManagerTests
     {
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
-        fileGroupForTemplate.GetFileNamesForTemplate(Arg.Any<int>()).Returns(new List<string> { "file1" });
+        var template = new Template();
+        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(false);
         CreateSut(requiredFileGroups, fileGroupsForTemplate);
 
         // Act
-        var action = new Action(() => _sut.DeleteFilesForTemplate(1));
+        var action = new Action(() => _sut.DeleteFilesForTemplate(template));
 
         // Assert
         action.Should().Throw<FileStructureCorruptedException>();

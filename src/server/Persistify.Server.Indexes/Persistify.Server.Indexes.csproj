@@ -13,10 +13,6 @@
   </ItemGroup>
 
 
-  <ItemGroup>
-    <Folder Include="Searches\Queries\Number\" />
-    <Folder Include="Searches\Queries\Text\" />
-  </ItemGroup>
 
 
 </Project>

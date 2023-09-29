@@ -1,4 +1,4 @@
-﻿namespace Persistify.Server.Indexes.Searches.Queries.Boolean;
+﻿namespace Persistify.Server.Indexes.Searches.Queries.Bool;
 
 public class BoolSearchQuery : ISearchQuery
 {

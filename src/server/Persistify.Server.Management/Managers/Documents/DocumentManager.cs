@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Algorithms;
 using Persistify.Requests.Search;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Indexes.Indexers;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Indexes.Searches.Queries.Boolean;
+using Persistify.Server.Indexes.Searches.Queries.Bool;
 using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
@@ -135,9 +137,45 @@ public class DocumentManager : Manager, IDocumentManager
     {
         if (searchNode is BoolSearchNode boolSearchNode)
         {
-            return await _indexerStore.SearchAsync(new BoolSearchQuery(boolSearchNode.FieldName, boolSearchNode.Value, boolSearchNode.Boost));
+            return await _indexerStore.SearchAsync(new BoolSearchQuery(boolSearchNode.FieldName,
+                boolSearchNode.Value, boolSearchNode.Boost));
         }
-        throw new NotImplementedException();
+        else if (searchNode is NumberSearchNode numberSearchNode)
+        {
+            return new List<ISearchResult>();
+        }
+        else if (searchNode is TextSearchNode textSearchNode)
+        {
+            return new List<ISearchResult>();
+        }
+        else if (searchNode is AndSearchNode andSearchNode)
+        {
+            var results = new IEnumerable<ISearchResult>[andSearchNode.Nodes.Count];
+            for (var i = 0; i < results.Length; i++)
+            {
+                results[i] = await SearchInternalAsync(andSearchNode.Nodes[i]);
+            }
+
+            return EnumerableHelpers
+                .IntersectSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
+                    results).ToList();
+        }
+        else if (searchNode is OrSearchNode orSearchNode)
+        {
+            var results = new IEnumerable<ISearchResult>[orSearchNode.Nodes.Count];
+            for (var i = 0; i < results.Length; i++)
+            {
+                results[i] = await SearchInternalAsync(orSearchNode.Nodes[i]);
+            }
+
+            return EnumerableHelpers
+                .MergeSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
+                    results).ToList();
+        }
+        else
+        {
+            throw new PersistifyInternalException();
+        }
     }
 
     public int Count()

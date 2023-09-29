@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Indexes.Searches.Queries.Boolean;
+using Persistify.Server.Indexes.Searches.Queries.Bool;
 
 namespace Persistify.Server.Indexes.Indexers;
 
