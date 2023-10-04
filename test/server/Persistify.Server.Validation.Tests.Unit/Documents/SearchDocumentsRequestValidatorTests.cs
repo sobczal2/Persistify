@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
+using Persistify.Domain.Search.Queries;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Shared;
 using Persistify.Server.ErrorHandling.Exceptions;
@@ -16,14 +17,14 @@ namespace Persistify.Server.Validation.Tests.Unit.Documents;
 public class SearchDocumentsRequestValidatorTests
 {
     private readonly IValidator<Pagination> _paginationValidator;
-    private readonly IValidator<SearchNode> _searchNodeValidator;
+    private readonly IValidator<SearchQuery> _searchNodeValidator;
     private readonly SearchDocumentsRequestValidator _sut;
     private readonly ITemplateManager _templateManager;
 
     public SearchDocumentsRequestValidatorTests()
     {
         _paginationValidator = Substitute.For<IValidator<Pagination>>();
-        _searchNodeValidator = Substitute.For<IValidator<SearchNode>>();
+        _searchNodeValidator = Substitute.For<IValidator<SearchQuery>>();
         _templateManager = Substitute.For<ITemplateManager>();
 
         _sut = new SearchDocumentsRequestValidator(_paginationValidator, _searchNodeValidator, _templateManager);
@@ -173,24 +174,6 @@ public class SearchDocumentsRequestValidatorTests
     }
 
     [Fact]
-    public async Task Validate_WhenPaginationIsNull_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test" };
-        _templateManager.Exists(request.TemplateName).Returns(true);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("SearchDocumentsRequest.Pagination");
-    }
-
-    [Fact]
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
@@ -229,36 +212,18 @@ public class SearchDocumentsRequestValidatorTests
     }
 
     [Fact]
-    public async Task Validate_WhenSearchNodeIsNull_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
-        _templateManager.Exists(request.TemplateName).Returns(true);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("SearchDocumentsRequest.SearchNode");
-    }
-
-    [Fact]
     public async Task Validate_WhenCorrect_CallsSearchNodeValidatorWithCorrectPropertyName()
     {
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
+            TemplateName = "Test", Pagination = new Pagination(), SearchQuery = new SearchQuery()
         };
         _templateManager.Exists(request.TemplateName).Returns(true);
 
         List<string> propertyNameAtCall = null!;
         _searchNodeValidator
-            .When(x => x.ValidateAsync(Arg.Any<SearchNode>()))
+            .When(x => x.ValidateAsync(Arg.Any<SearchQuery>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
@@ -266,7 +231,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "SearchNode" }));
+            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "SearchQuery" }));
     }
 
     [Fact]
@@ -275,12 +240,12 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
+            TemplateName = "Test", Pagination = new Pagination(), SearchQuery = new SearchQuery()
         };
         _templateManager.Exists(request.TemplateName).Returns(true);
 
         var validationException = new ValidationException("Test", "Test");
-        _searchNodeValidator.ValidateAsync(Arg.Any<SearchNode>()).Returns(validationException);
+        _searchNodeValidator.ValidateAsync(Arg.Any<SearchQuery>()).Returns(validationException);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -296,7 +261,7 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test", Pagination = new Pagination(), SearchNode = new SearchNode()
+            TemplateName = "Test", Pagination = new Pagination(), SearchQuery = new SearchQuery()
         };
         _templateManager.Exists(request.TemplateName).Returns(true);
 
