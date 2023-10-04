@@ -5,11 +5,14 @@ namespace Persistify.Domain.Search.Queries.Text;
 [ProtoContract]
 public class ExactTextSearchQuery : TextSearchQuery
 {
-    public ExactTextSearchQuery()
-    {
-        Value = null!;
-    }
+    [ProtoMember(2)]
+    public string Value { get; set; } = null!;
 
-    [ProtoMember(11)]
-    public string Value { get; set; }
+    [ProtoMember(3)]
+    public string FieldName { get; set; } = null!;
+
+    public override string GetFieldName()
+    {
+        return FieldName;
+    }
 }

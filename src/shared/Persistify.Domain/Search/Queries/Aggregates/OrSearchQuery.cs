@@ -11,6 +11,6 @@ public class OrSearchQuery : SearchQuery
         Queries = new List<SearchQuery>();
     }
 
-    [ProtoMember(11)]
+    [ProtoMember(2)]
     public List<SearchQuery> Queries { get; set; }
 }

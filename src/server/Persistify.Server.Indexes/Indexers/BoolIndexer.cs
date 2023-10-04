@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Bool;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Indexes.Searches;
 
 namespace Persistify.Server.Indexes.Indexers;
@@ -40,19 +41,16 @@ public class BoolIndexer : IIndexer
 
     public ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
-        if (query is not BoolSearchQuery boolSearchQuery || boolSearchQuery.FieldName != FieldName)
+        if (query is not BoolSearchQuery boolSearchQuery || boolSearchQuery.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
-        if (boolSearchQuery.Value)
+        return boolSearchQuery switch
         {
-            return ValueTask.FromResult(_trueDocuments.Select(x => new SearchResult(x.Key, query.Boost))
-                .Cast<ISearchResult>().ToList());
-        }
-
-        return ValueTask.FromResult(_falseDocuments.Select(x => new SearchResult(x.Key, query.Boost))
-            .Cast<ISearchResult>().ToList());
+            ExactBoolSearchQuery exactBoolSearchQuery => HandleExactBoolSearch(exactBoolSearchQuery),
+            _ => throw new PersistifyInternalException()
+        };
     }
 
     public ValueTask DeleteAsync(Document document)
@@ -68,5 +66,17 @@ public class BoolIndexer : IIndexer
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    private ValueTask<List<ISearchResult>> HandleExactBoolSearch(ExactBoolSearchQuery query)
+    {
+        if (query.Value)
+        {
+            return ValueTask.FromResult(_trueDocuments.Select(x => new SearchResult(x.Key, query.Boost))
+                .Cast<ISearchResult>().ToList());
+        }
+
+        return ValueTask.FromResult(_falseDocuments.Select(x => new SearchResult(x.Key, query.Boost))
+            .Cast<ISearchResult>().ToList());
     }
 }

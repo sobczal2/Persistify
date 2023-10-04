@@ -1,16 +1,12 @@
 syntax = "proto3";
 package Persistify.Services;
 
-message AndSearchNode {
-   repeated SearchNode Nodes = 1;
+message AndSearchQuery {
+   repeated SearchQuery Queries = 2;
 }
 message BoolFieldValue {
    bool Value = 1;
    string FieldName = 2;
-}
-message BoolSearchNode {
-   string FieldName = 1;
-   bool Value = 2;
 }
 message CreateDocumentRequest {
    string TemplateName = 1;
@@ -33,16 +29,21 @@ message Document {
    repeated NumberFieldValue NumberFieldValues = 3;
    repeated BoolFieldValue BoolFieldValues = 4;
 }
-enum FtsSearchMode {
-   Prefix = 0;
-   Suffix = 1;
-   Exact = 2;
-   Contains = 3;
+message ExactBoolSearchQuery {
+   bool Value = 2;
+   string FieldName = 3;
 }
-message FtsSearchNode {
-   string FieldName = 1;
+message ExactNumberSearchQuery {
+   double Value = 2;
+   string FieldName = 3;
+}
+message ExactTextSearchQuery {
    string Value = 2;
-   FtsSearchMode Mode = 3;
+   string FieldName = 3;
+}
+message FullTextSearchQuery {
+   string Value = 2;
+   string FieldName = 3;
 }
 message GetDocumentRequest {
    string TemplateName = 1;
@@ -51,67 +52,65 @@ message GetDocumentRequest {
 message GetDocumentResponse {
    Document Document = 1;
 }
-message NotSearchNode {
+message GreaterNumberSearchQuery {
+   string FieldName = 2;
+   double Value = 3;
+}
+message LessNumberSearchQuery {
+   string FieldName = 2;
+   double Value = 3;
+}
+message NotSearchQuery {
+   repeated SearchQuery Queries = 2;
 }
 message NumberFieldValue {
    double Value = 1;
    string FieldName = 2;
 }
-message NumberRangeSearchNode {
-   string FieldName = 1;
-   double Min = 2;
-   double Max = 3;
-   bool IncludeMin = 4;
-   bool IncludeMax = 5;
-}
-enum NumberSearchMode {
-   Equal = 0;
-   NotEqual = 1;
-   GreaterThan = 2;
-   GreaterThanOrEqual = 3;
-   LessThan = 4;
-   LessThanOrEqual = 5;
-}
-message NumberSearchNode {
-   string FieldName = 1;
-   double Value = 2;
-   NumberSearchMode Mode = 3;
-}
-message OrSearchNode {
-   repeated SearchNode Nodes = 1;
+message OrSearchQuery {
+   repeated SearchQuery Queries = 2;
 }
 message Pagination {
    int32 PageNumber = 1;
    int32 PageSize = 2;
 }
+message PrefixTextSearchQuery {
+   string Value = 2;
+   string FieldName = 3;
+}
+message RangeNumberSearchQuery {
+   string FieldName = 2;
+   double MinValue = 3;
+   double MaxValue = 4;
+}
 message SearchDocumentsRequest {
    string TemplateName = 1;
    Pagination Pagination = 2;
-   SearchNode SearchNode = 3;
+   SearchQuery SearchQuery = 3;
 }
 message SearchDocumentsResponse {
    repeated Document Documents = 1;
    int64 TotalCount = 2;
 }
-message SearchNode {
+message SearchQuery {
+   float Boost = 1;
    oneof subtype {
-      AndSearchNode AndSearchNode = 1;
-      OrSearchNode OrSearchNode = 2;
-      NotSearchNode NotSearchNode = 3;
-      TextSearchNode TextSearchNode = 4;
-      FtsSearchNode FtsSearchNode = 5;
-      NumberSearchNode NumberSearchNode = 6;
-      NumberRangeSearchNode NumberRangeSearchNode = 7;
-      BoolSearchNode BoolSearchNode = 8;
+      AndSearchQuery AndSearchQuery = 100;
+      NotSearchQuery NotSearchQuery = 101;
+      OrSearchQuery OrSearchQuery = 102;
+      ExactBoolSearchQuery ExactBoolSearchQuery = 200;
+      ExactNumberSearchQuery ExactNumberSearchQuery = 300;
+      GreaterNumberSearchQuery GreaterNumberSearchQuery = 301;
+      LessNumberSearchQuery LessNumberSearchQuery = 302;
+      RangeNumberSearchQuery RangeNumberSearchQuery = 303;
+      ExactTextSearchQuery ExactTextSearchQuery = 400;
+      FullTextSearchQuery FullTextSearchQuery = 401;
+      PrefixTextSearchQuery PrefixTextSearchQuery = 402;
    }
 }
 message TextFieldValue {
    string Value = 1;
    string FieldName = 2;
-}
-message TextSearchNode {
-   string FieldName = 1;
-   string Value = 2;
 }
 service DocumentService {
    rpc CreateDocument (CreateDocumentRequest) returns (CreateDocumentResponse);

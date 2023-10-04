@@ -43,7 +43,7 @@ public class IndexerStore
         switch (query)
         {
             case FieldSearchQuery fieldSearchQuery:
-                if (_indexers.TryGetValue(fieldSearchQuery.FieldName, out var indexer))
+                if (_indexers.TryGetValue(fieldSearchQuery.GetFieldName(), out var indexer))
                 {
                     return await indexer.SearchAsync(query);
                 }
@@ -68,7 +68,7 @@ public class IndexerStore
                     results[i] = await SearchAsync(orSearchQuery.Queries[i]);
                 }
 
-                return EnumerableHelpers.IntersectSorted(
+                return EnumerableHelpers.MergeSorted(
                         Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results)
                     .ToList();
         }

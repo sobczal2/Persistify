@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
@@ -30,21 +32,32 @@ public class TextIndexer : IIndexer
 
     public ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
-        if (query is not TextSearchQuery textSearchQuery || textSearchQuery.FieldName != FieldName)
+        if (query is not TextSearchQuery textSearchQuery || textSearchQuery.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
-        var results = new List<ISearchResult>();
-
-        return ValueTask.FromResult(results);
+        return textSearchQuery switch
+        {
+            ExactTextSearchQuery exactTextSearchQuery => HandleExactTextSearch(exactTextSearchQuery),
+            _ => throw new Exception("Invalid search query")
+        };
     }
 
     public ValueTask DeleteAsync(Document document)
     {
-        var textFieldValue = document.TextFieldValuesByFieldName[FieldName];
         _documentValues.Remove(document.Id);
 
         return ValueTask.CompletedTask;
+    }
+
+    private ValueTask<List<ISearchResult>> HandleExactTextSearch(ExactTextSearchQuery query)
+    {
+        return ValueTask.FromResult(
+            _documentValues
+                .Where(x => x.Value == query.Value)
+                .Select(x => new SearchResult(x.Key, query.Boost) as ISearchResult)
+                .ToList()
+        );
     }
 }

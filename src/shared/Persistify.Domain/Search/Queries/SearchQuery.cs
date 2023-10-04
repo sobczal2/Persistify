@@ -7,24 +7,19 @@ using ProtoBuf;
 namespace Persistify.Domain.Search.Queries;
 
 [ProtoContract]
-[ProtoInclude(31, typeof(AndSearchQuery))]
-[ProtoInclude(32, typeof(NotSearchQuery))]
-[ProtoInclude(33, typeof(OrSearchQuery))]
-[ProtoInclude(41, typeof(BoolSearchQuery))]
-[ProtoInclude(51, typeof(EqualNumberSearchQuery))]
-[ProtoInclude(52, typeof(GreaterNumberSearchQuery))]
-[ProtoInclude(53, typeof(LessNumberSearchQuery))]
-[ProtoInclude(54, typeof(RangeNumberSearchQuery))]
-[ProtoInclude(61, typeof(ExactTextSearchQuery))]
-[ProtoInclude(62, typeof(FullTextSearchQuery))]
-[ProtoInclude(63, typeof(PrefixTextSearchQuery))]
-public abstract class SearchQuery
+[ProtoInclude(100, typeof(AndSearchQuery))]
+[ProtoInclude(101, typeof(NotSearchQuery))]
+[ProtoInclude(102, typeof(OrSearchQuery))]
+[ProtoInclude(200, typeof(ExactBoolSearchQuery))]
+[ProtoInclude(300, typeof(ExactNumberSearchQuery))]
+[ProtoInclude(301, typeof(GreaterNumberSearchQuery))]
+[ProtoInclude(302, typeof(LessNumberSearchQuery))]
+[ProtoInclude(303, typeof(RangeNumberSearchQuery))]
+[ProtoInclude(400, typeof(ExactTextSearchQuery))]
+[ProtoInclude(401, typeof(FullTextSearchQuery))]
+[ProtoInclude(402, typeof(PrefixTextSearchQuery))]
+public class SearchQuery
 {
-    public SearchQuery()
-    {
-        Boost = 1f;
-    }
-
     [ProtoMember(1)]
     public float Boost { get; set; }
 }

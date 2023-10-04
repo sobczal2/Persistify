@@ -113,7 +113,7 @@ public class DocumentManager : Manager, IDocumentManager
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var searchResults = await SearchInternalAsync(searchQuery);
+        var searchResults = await _indexerStore.SearchAsync(searchQuery);
 
         var documents = new List<Document>(searchResults.Count);
 
@@ -150,11 +150,11 @@ public class DocumentManager : Manager, IDocumentManager
 
             currentId++;
 
+            document.Id = currentId;
+
             await _identifierRepository.WriteAsync(0, currentId, true);
 
             await _documentRepository.WriteAsync(currentId, document, true);
-
-            document.Id = currentId;
 
             Interlocked.Increment(ref _count);
 
@@ -188,51 +188,5 @@ public class DocumentManager : Manager, IDocumentManager
         PendingActions.Enqueue(removeAction);
 
         return true;
-    }
-
-    private ValueTask<List<ISearchResult>> SearchInternalAsync(SearchQuery searchQuery)
-    {
-        return ValueTask.FromResult(new List<ISearchResult>());
-        // if (searchNode is BoolSearchNode boolSearchNode)
-        // {
-        //     return await _indexerStore.SearchAsync(new BoolSearchQuery(boolSearchNode.FieldName,
-        //         boolSearchNode.Value, boolSearchNode.Boost));
-        // }
-        // else if (searchNode is NumberSearchNode numberSearchNode)
-        // {
-        //     return new List<ISearchResult>();
-        // }
-        // else if (searchNode is TextSearchNode textSearchNode)
-        // {
-        //     return new List<ISearchResult>();
-        // }
-        // else if (searchNode is AndSearchNode andSearchNode)
-        // {
-        //     var results = new IEnumerable<ISearchResult>[andSearchNode.Nodes.Count];
-        //     for (var i = 0; i < results.Length; i++)
-        //     {
-        //         results[i] = await SearchInternalAsync(andSearchNode.Nodes[i]);
-        //     }
-        //
-        //     return EnumerableHelpers
-        //         .IntersectSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
-        //             results).ToList();
-        // }
-        // else if (searchNode is OrSearchNode orSearchNode)
-        // {
-        //     var results = new IEnumerable<ISearchResult>[orSearchNode.Nodes.Count];
-        //     for (var i = 0; i < results.Length; i++)
-        //     {
-        //         results[i] = await SearchInternalAsync(orSearchNode.Nodes[i]);
-        //     }
-        //
-        //     return EnumerableHelpers
-        //         .MergeSorted(Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
-        //             results).ToList();
-        // }
-        // else
-        // {
-        //     throw new PersistifyInternalException();
-        // }
     }
 }

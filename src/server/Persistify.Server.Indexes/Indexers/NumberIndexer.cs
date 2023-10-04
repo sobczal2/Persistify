@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Number;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Indexes.Searches;
 
 namespace Persistify.Server.Indexes.Indexers;
@@ -31,49 +32,66 @@ public class NumberIndexer : IIndexer
 
     public ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
     {
-        if (query is not NumberSearchQuery numberSearchQuery || numberSearchQuery.FieldName != FieldName)
+        if (query is not NumberSearchQuery numberSearchQuery || numberSearchQuery.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
-        switch (query)
+        return query switch
         {
-            case EqualNumberSearchQuery equalNumberSearchQuery:
-                return ValueTask.FromResult(
-                    _documentValues
-                        .Where(x => x.Value == equalNumberSearchQuery.Value)
-                        .Select(x => new SearchResult(x.Key, equalNumberSearchQuery.Boost) as ISearchResult)
-                        .ToList()
-                );
-            case GreaterNumberSearchQuery greaterNumberSearchQuery:
-                return ValueTask.FromResult(
-                    _documentValues
-                        .Where(x => x.Value > greaterNumberSearchQuery.Value)
-                        .Select(x => new SearchResult(x.Key, greaterNumberSearchQuery.Boost) as ISearchResult)
-                        .ToList()
-                );
-            case LessNumberSearchQuery lessNumberSearchQuery:
-                return ValueTask.FromResult(
-                    _documentValues
-                        .Where(x => x.Value < lessNumberSearchQuery.Value)
-                        .Select(x => new SearchResult(x.Key, lessNumberSearchQuery.Boost) as ISearchResult)
-                        .ToList()
-                );
-            case RangeNumberSearchQuery rangeNumberSearchQuery:
-                return ValueTask.FromResult(
-                    _documentValues
-                        .Where(x => x.Value < rangeNumberSearchQuery.MinValue &&
-                                    x.Value > rangeNumberSearchQuery.MaxValue)
-                        .Select(x => new SearchResult(x.Key, rangeNumberSearchQuery.Boost) as ISearchResult)
-                        .ToList()
-                );
-            default:
-                throw new Exception("Invalid search query");
-        }
+            ExactNumberSearchQuery exactNumberSearchQuery => HandleExactNumberSearch(exactNumberSearchQuery),
+            GreaterNumberSearchQuery greaterNumberSearchQuery => HandleGreaterNumberSearch(greaterNumberSearchQuery),
+            LessNumberSearchQuery lessNumberSearchQuery => HandleLessNumberSearch(lessNumberSearchQuery),
+            RangeNumberSearchQuery rangeNumberSearchQuery => HandleRangeNumberSearch(rangeNumberSearchQuery),
+            _ => throw new PersistifyInternalException()
+        };
     }
 
     public ValueTask DeleteAsync(Document document)
     {
-        throw new NotImplementedException();
+        _documentValues.Remove(document.Id);
+
+        return ValueTask.CompletedTask;
+    }
+
+    private ValueTask<List<ISearchResult>> HandleExactNumberSearch(ExactNumberSearchQuery query)
+    {
+        return ValueTask.FromResult(
+            _documentValues
+                .Where(x => x.Value == query.Value)
+                .Select(x => new SearchResult(x.Key, query.Boost) as ISearchResult)
+                .ToList()
+        );
+    }
+
+    private ValueTask<List<ISearchResult>> HandleGreaterNumberSearch(GreaterNumberSearchQuery query)
+    {
+        return ValueTask.FromResult(
+            _documentValues
+                .Where(x => x.Value > query.Value)
+                .Select(x => new SearchResult(x.Key, query.Boost) as ISearchResult)
+                .ToList()
+        );
+    }
+
+    private ValueTask<List<ISearchResult>> HandleLessNumberSearch(LessNumberSearchQuery query)
+    {
+        return ValueTask.FromResult(
+            _documentValues
+                .Where(x => x.Value < query.Value)
+                .Select(x => new SearchResult(x.Key, query.Boost) as ISearchResult)
+                .ToList()
+        );
+    }
+
+    private ValueTask<List<ISearchResult>> HandleRangeNumberSearch(RangeNumberSearchQuery query)
+    {
+        return ValueTask.FromResult(
+            _documentValues
+                .Where(x => x.Value > query.MinValue &&
+                            x.Value < query.MaxValue)
+                .Select(x => new SearchResult(x.Key, query.Boost) as ISearchResult)
+                .ToList()
+        );
     }
 }

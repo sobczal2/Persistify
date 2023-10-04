@@ -1,12 +1,12 @@
 ﻿using ProtoBuf;
 
-namespace Persistify.Domain.Search.Queries.Text;
+namespace Persistify.Domain.Search.Queries.Bool;
 
 [ProtoContract]
-public class PrefixTextSearchQuery : TextSearchQuery
+public class ExactBoolSearchQuery : BoolSearchQuery
 {
     [ProtoMember(2)]
-    public string Value { get; set; } = null!;
+    public bool Value { get; set; }
 
     [ProtoMember(3)]
     public string FieldName { get; set; } = null!;
