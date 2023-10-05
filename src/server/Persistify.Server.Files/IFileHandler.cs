@@ -1,6 +1,6 @@
 ﻿using Persistify.Domain.Templates;
 
-namespace Persistify.Server.Management.Files;
+namespace Persistify.Server.Files;
 
 public interface IFileHandler
 {

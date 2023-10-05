@@ -80,6 +80,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Indexes",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Indexes.DataStructures", "src\server\Persistify.Server.Indexes.DataStructures\Persistify.Server.Indexes.DataStructures.csproj", "{345040E5-58A3-4677-B67D-B6D3231D02EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Files", "src\server\Persistify.Server.Files\Persistify.Server.Files.csproj", "{D0BE229D-EFD6-434E-9B6F-98C99A84F6EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -214,6 +216,10 @@ Global
 		{345040E5-58A3-4677-B67D-B6D3231D02EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{345040E5-58A3-4677-B67D-B6D3231D02EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{345040E5-58A3-4677-B67D-B6D3231D02EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BE229D-EFD6-434E-9B6F-98C99A84F6EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0BE229D-EFD6-434E-9B6F-98C99A84F6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0BE229D-EFD6-434E-9B6F-98C99A84F6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0BE229D-EFD6-434E-9B6F-98C99A84F6EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -253,5 +259,6 @@ Global
 		{89737C89-6F91-4E7D-8E0B-6835AC920D99} = {4FB08BD5-8F08-4B8D-9A5D-083729853CD5}
 		{4FBE7C93-5197-42B2-8F73-CDC2FC2BDDA4} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 		{345040E5-58A3-4677-B67D-B6D3231D02EC} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{D0BE229D-EFD6-434E-9B6F-98C99A84F6EA} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 	EndGlobalSection
 EndGlobal

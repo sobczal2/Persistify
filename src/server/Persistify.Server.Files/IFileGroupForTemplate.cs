@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Persistify.Domain.Templates;
 
-namespace Persistify.Server.Management.Files;
+namespace Persistify.Server.Files;
 
 public interface IFileGroupForTemplate
 {

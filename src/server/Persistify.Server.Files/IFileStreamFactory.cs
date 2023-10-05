@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Persistify.Server.Management.Files;
+namespace Persistify.Server.Files;
 
 public interface IFileStreamFactory
 {

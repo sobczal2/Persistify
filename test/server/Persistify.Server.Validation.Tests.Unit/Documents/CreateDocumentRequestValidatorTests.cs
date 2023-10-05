@@ -546,7 +546,7 @@ public class CreateDocumentRequestValidatorTests
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            BooleanFields = new List<BoolField> { new() { Name = "2", Required = true } }
+            BoolFields = new List<BoolField> { new() { Name = "2", Required = true } }
         });
 
         // Act
@@ -607,7 +607,7 @@ public class CreateDocumentRequestValidatorTests
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            BooleanFields = new List<BoolField> { new() { Name = "2", Required = false } }
+            BoolFields = new List<BoolField> { new() { Name = "2", Required = false } }
         });
 
         // Act
@@ -632,7 +632,7 @@ public class CreateDocumentRequestValidatorTests
         {
             TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "1" } },
             NumberFields = new List<NumberField> { new() { Name = "2" } },
-            BooleanFields = new List<BoolField> { new() { Name = "3" } }
+            BoolFields = new List<BoolField> { new() { Name = "3" } }
         });
 
         // Act

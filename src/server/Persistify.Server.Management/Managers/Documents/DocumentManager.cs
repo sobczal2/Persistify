@@ -8,9 +8,9 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.Files;
 using Persistify.Server.Indexes.Indexers;
 using Persistify.Server.Indexes.Searches;
-using Persistify.Server.Management.Files;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
@@ -38,7 +38,7 @@ public class DocumentManager : Manager, IDocumentManager
     {
         _template = template;
 
-        _indexerStore = new IndexerStore(template);
+        _indexerStore = new IndexerStore(template, fileStreamFactory);
 
         var identifierFileStream =
             fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id));

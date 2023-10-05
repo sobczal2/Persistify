@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.Management.Files;
+using Persistify.Server.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;

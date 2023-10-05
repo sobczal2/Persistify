@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 
-namespace Persistify.Server.Management.Files;
+namespace Persistify.Server.Files;
 
 public class LocalFileProvider : IFileProvider
 {

@@ -162,7 +162,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             }
         }
 
-        foreach (var boolField in template.BooleanFields)
+        foreach (var boolField in template.BoolFields)
         {
             if (boolField.Required && !boolFieldNames.Contains(boolField.Name))
             {

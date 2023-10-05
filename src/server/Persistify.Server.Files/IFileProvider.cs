@@ -1,4 +1,4 @@
-﻿namespace Persistify.Server.Management.Files;
+﻿namespace Persistify.Server.Files;
 
 public interface IFileProvider
 {

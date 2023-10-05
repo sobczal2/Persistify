@@ -8,6 +8,8 @@ using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Algorithms;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.Files;
+using Persistify.Server.Indexes.Files;
 using Persistify.Server.Indexes.Searches;
 
 namespace Persistify.Server.Indexes.Indexers;
@@ -17,7 +19,8 @@ public class IndexerStore
     private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
     public IndexerStore(
-        Template template
+        Template template,
+        IFileStreamFactory fileStreamFactory
     )
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
@@ -31,9 +34,13 @@ public class IndexerStore
             _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
         }
 
-        foreach (var field in template.BooleanFields)
+        foreach (var field in template.BoolFields)
         {
-            _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
+            var trueFileStream = fileStreamFactory.CreateStream(
+                BoolIndexerFileGroupForTemplate.TrueValuesFileName(template.Id, field.Name));
+            var falseFileStream = fileStreamFactory.CreateStream(
+                BoolIndexerFileGroupForTemplate.FalseValuesFileName(template.Id, field.Name));
+            _indexers.TryAdd(field.Name, new BoolIndexer(field.Name, trueFileStream, falseFileStream));
         }
     }
 

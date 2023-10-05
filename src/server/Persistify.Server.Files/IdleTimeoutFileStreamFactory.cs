@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Persistence.Streams;
 
-namespace Persistify.Server.Management.Files;
+namespace Persistify.Server.Files;
 
 public class IdleTimeoutFileStreamFactory : IFileStreamFactory
 {

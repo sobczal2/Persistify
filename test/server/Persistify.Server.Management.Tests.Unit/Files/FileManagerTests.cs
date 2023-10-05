@@ -4,8 +4,8 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Persistify.Domain.Templates;
-using Persistify.Server.Management.Files;
-using Persistify.Server.Management.Files.Exceptions;
+using Persistify.Server.Files;
+using Persistify.Server.Files.Exceptions;
 using Xunit;
 
 namespace Persistify.Server.Management.Tests.Unit.Files;

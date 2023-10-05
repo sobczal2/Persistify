@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using Persistify.Domain.Templates;
-using Persistify.Server.Management.Files.Exceptions;
+using Persistify.Server.Files.Exceptions;
 
-namespace Persistify.Server.Management.Files;
+namespace Persistify.Server.Files;
 
 public class FileHandler : IFileHandler
 {

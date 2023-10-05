@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Management.Files.Exceptions;
+namespace Persistify.Server.Files.Exceptions;
 
 public class FileStructureCorruptedException : Exception
 {
