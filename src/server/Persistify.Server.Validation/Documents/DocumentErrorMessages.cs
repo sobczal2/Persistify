@@ -13,4 +13,5 @@ public static class DocumentErrorMessages
     public const string ValueEmpty = "Value empty";
     public const string RequiredFieldMissing = "Required field missing";
     public const string TemplateNotFound = "Template not found";
+    public const string FieldNotFoundForThisType = "Field not found for this type";
 }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Management.Files;
+using Persistify.Server.Files;
 using Xunit;
 
 namespace Persistify.Server.Management.Tests.Unit.Files;

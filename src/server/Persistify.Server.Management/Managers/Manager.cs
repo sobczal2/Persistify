@@ -31,8 +31,8 @@ public abstract class Manager : IManager
 
     // TODO: move to config
     protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
-
     public abstract string Name { get; }
+
 
     public virtual void Initialize()
     {

@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.Options;
+using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Management.Files;
+using Persistify.Server.Files;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Serialization;
 
@@ -40,27 +41,27 @@ public class DocumentManagerStore : IDocumentManagerStore
         return repository;
     }
 
-    public void AddManager(int templateId)
+    public void AddManager(Template template)
     {
         var lockTaken = false;
         try
         {
             _spinLock.Enter(ref lockTaken);
 
-            if (_repositories.ContainsKey(templateId))
+            if (_repositories.ContainsKey(template.Id))
             {
                 throw new InvalidOperationException();
             }
 
             var repository = new DocumentManager(
                 _transactionState,
-                templateId,
+                template,
                 _fileStreamFactory,
                 _serializer,
                 _repositorySettingsOptions
             );
 
-            _repositories.TryAdd(templateId, repository);
+            _repositories.TryAdd(template.Id, repository);
         }
         finally
         {

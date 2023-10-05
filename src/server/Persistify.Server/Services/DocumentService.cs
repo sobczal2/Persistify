@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
@@ -15,16 +14,18 @@ public class DocumentService : IDocumentService
     private readonly CreateDocumentCommand _createDocumentCommand;
     private readonly DeleteDocumentCommand _deleteDocumentCommand;
     private readonly GetDocumentCommand _getDocumentCommand;
+    private readonly SearchDocumentsCommand _searchDocumentsCommand;
 
     public DocumentService(
         CreateDocumentCommand createDocumentCommand,
         GetDocumentCommand getDocumentCommand,
-        // ListDocumentsCommand listDocumentsCommand,
+        SearchDocumentsCommand searchDocumentsCommand,
         DeleteDocumentCommand deleteDocumentCommand
     )
     {
         _createDocumentCommand = createDocumentCommand;
         _getDocumentCommand = getDocumentCommand;
+        _searchDocumentsCommand = searchDocumentsCommand;
         _deleteDocumentCommand = deleteDocumentCommand;
     }
 
@@ -44,10 +45,11 @@ public class DocumentService : IDocumentService
     }
 
     [Authorize]
-    public ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request,
+    public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request,
         CallContext callContext)
     {
-        throw new NotImplementedException();
+        return await _searchDocumentsCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
     }
 
     [Authorize]

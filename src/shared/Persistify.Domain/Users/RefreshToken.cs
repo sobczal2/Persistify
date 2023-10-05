@@ -6,9 +6,12 @@ namespace Persistify.Domain.Users;
 [ProtoContract]
 public class RefreshToken
 {
-    [ProtoMember(1)] public string Value { get; set; } = default!;
+    [ProtoMember(1)]
+    public string Value { get; set; } = default!;
 
-    [ProtoMember(2)] public DateTime Created { get; set; }
+    [ProtoMember(2)]
+    public DateTime Created { get; set; }
 
-    [ProtoMember(3)] public DateTime Expires { get; set; }
+    [ProtoMember(3)]
+    public DateTime Expires { get; set; }
 }

@@ -34,12 +34,7 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override async ValueTask RunAsync(CreateDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName);
-
-        if (template is null)
-        {
-            throw new PersistifyInternalException();
-        }
+        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
 
         _document = new Document
         {
@@ -48,12 +43,7 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
             BoolFieldValues = request.BoolFieldValues
         };
 
-        var documentManager = _documentManagerStore.GetManager(template.Id);
-
-        if (documentManager is null)
-        {
-            throw new PersistifyInternalException();
-        }
+        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
 
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);

@@ -162,7 +162,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
     private async ValueTask<List<(int key, byte[] value)>> ReadRangeInternalAsync(int take, int skip)
     {
         var length = _stream.Length / _bufferSize;
-        var result = new List<(int key, byte[] value)>(take);
+        var result = new List<(int key, byte[] value)>();
         _stream.Seek(0, SeekOrigin.Begin);
 
         var position = 0;

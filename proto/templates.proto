@@ -8,7 +8,7 @@ message AnalyzerDescriptor {
 }
 message BoolField {
    string Name = 1;
-   bool IsRequired = 2;
+   bool Required = 2;
 }
 message CreateTemplateRequest {
    string TemplateName = 1;
@@ -39,7 +39,7 @@ message ListTemplatesResponse {
 }
 message NumberField {
    string Name = 1;
-   bool IsRequired = 2;
+   bool Required = 2;
 }
 message Pagination {
    int32 PageNumber = 1;
@@ -50,11 +50,11 @@ message Template {
    string Name = 2;
    repeated TextField TextFields = 3;
    repeated NumberField NumberFields = 4;
-   repeated BoolField BoolFields = 5;
+   repeated BoolField BooleanFields = 5;
 }
 message TextField {
    string Name = 1;
-   bool IsRequired = 2;
+   bool Required = 2;
    string AnalyzerPresetName = 3;
    AnalyzerDescriptor AnalyzerDescriptor = 4;
 }

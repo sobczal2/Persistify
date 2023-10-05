@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Persistify.Domain.Users;
 using Persistify.Requests.Shared;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.Management.Files;
+using Persistify.Server.Files;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions;
 

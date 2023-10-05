@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Persistify.Server.Management.Files;
+using Persistify.Domain.Templates;
+using Persistify.Server.Files;
 
 namespace Persistify.Server.Management.Managers.Documents;
 
@@ -8,13 +9,13 @@ public class DocumentManagerFileGroupForTemplate : IFileGroupForTemplate
 {
     public string FileGroupName => "DocumentRepository";
 
-    public List<string> GetFileNamesForTemplate(int templateId)
+    public List<string> GetFileNamesForTemplate(Template template)
     {
         return new List<string>
         {
-            IdentifierFileName(templateId),
-            DocumentRepositoryMainFileName(templateId),
-            DocumentRepositoryOffsetLengthFileName(templateId)
+            IdentifierFileName(template.Id),
+            DocumentRepositoryMainFileName(template.Id),
+            DocumentRepositoryOffsetLengthFileName(template.Id)
         };
     }
 

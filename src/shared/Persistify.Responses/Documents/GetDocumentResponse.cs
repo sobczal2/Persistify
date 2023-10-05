@@ -11,5 +11,6 @@ public class GetDocumentResponse
         Document = document;
     }
 
-    [ProtoMember(1)] public Document Document { get; set; }
+    [ProtoMember(1)]
+    public Document Document { get; set; }
 }

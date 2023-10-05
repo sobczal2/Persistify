@@ -85,6 +85,7 @@ public abstract class SerializerTests<TSerializer> where TSerializer : ISerializ
     [ProtoContract]
     private class TestClass
     {
-        [ProtoMember(1)] public string? Property { get; set; }
+        [ProtoMember(1)]
+        public string? Property { get; set; }
     }
 }

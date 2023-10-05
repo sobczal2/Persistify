@@ -13,7 +13,9 @@ public class SearchDocumentsResponse
         TotalCount = totalCount;
     }
 
-    [ProtoMember(1)] public List<Document> Documents { get; set; }
+    [ProtoMember(1)]
+    public List<Document> Documents { get; set; }
 
-    [ProtoMember(2)] public long TotalCount { get; set; }
+    [ProtoMember(2)]
+    public long TotalCount { get; set; }
 }
