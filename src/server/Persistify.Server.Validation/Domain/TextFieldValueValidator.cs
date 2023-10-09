@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Documents;
+using Persistify.Helpers.Results;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Documents;
-using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Validation.Domain;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Server.Validation.Results;
+namespace Persistify.Helpers.Results;
 
 public readonly struct Result
 {

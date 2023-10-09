@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Results;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 

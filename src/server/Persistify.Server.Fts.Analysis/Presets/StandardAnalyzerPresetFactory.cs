@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq;
+using Persistify.Helpers.Results;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Exceptions;
-using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Fts.Analysis.Presets;
 

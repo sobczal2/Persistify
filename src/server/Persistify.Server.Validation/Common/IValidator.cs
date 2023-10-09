@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Server.Validation.Results;
+using Persistify.Helpers.Results;
 
 namespace Persistify.Server.Validation.Common;
 

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Results;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
 
@@ -9,9 +9,9 @@ namespace Persistify.Server.Validation.Domain;
 
 public class TextFieldValidator : Validator<TextField>
 {
-    private readonly IValidator<AnalyzerDescriptor> _analyzerDescriptorValidator;
+    private readonly IValidator<FullAnalyzerDescriptor> _analyzerDescriptorValidator;
 
-    public TextFieldValidator(IValidator<AnalyzerDescriptor> analyzerDescriptorValidator)
+    public TextFieldValidator(IValidator<FullAnalyzerDescriptor> analyzerDescriptorValidator)
     {
         _analyzerDescriptorValidator = analyzerDescriptorValidator;
         _analyzerDescriptorValidator.PropertyName = PropertyName;
@@ -32,31 +32,26 @@ public class TextFieldValidator : Validator<TextField>
             return ValidationException(SharedErrorMessages.ValueTooLong);
         }
 
-        var analyzerPresetNameNull = value.AnalyzerPresetName is null;
-        var analyzerDescriptorNull = value.AnalyzerDescriptor is null;
-        if ((analyzerPresetNameNull && analyzerDescriptorNull) || (!analyzerPresetNameNull && !analyzerDescriptorNull))
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (value.AnalyzerDescriptor is null)
         {
-            PropertyName.Push(nameof(TextField.AnalyzerPresetName));
-            return ValidationException(TemplateErrorMessages.AnalyzerPresetNameOrAnalyzerDescriptorRequired);
+            PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
+            return ValidationException(SharedErrorMessages.ValueNull);
         }
 
-        if (value.AnalyzerPresetName is not null && value.AnalyzerPresetName.Length == 0)
+        if (value.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor)
         {
-            PropertyName.Push(nameof(TextField.AnalyzerPresetName));
-            return ValidationException(TemplateErrorMessages.NameEmpty);
+            if (string.IsNullOrEmpty(presetAnalyzerDescriptor.PresetName))
+            {
+                PropertyName.Push($"{nameof(TextField.AnalyzerDescriptor)}.{nameof(PresetAnalyzerDescriptor.PresetName)}");
+                return ValidationException(TemplateErrorMessages.NameEmpty);
+            }
         }
-
-        if (value.AnalyzerPresetName is not null && value.AnalyzerPresetName.Length > 64)
-        {
-            PropertyName.Push(nameof(TextField.AnalyzerPresetName));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
-        }
-
-        if (value.AnalyzerDescriptor is not null)
+        else if (value.AnalyzerDescriptor is FullAnalyzerDescriptor fullAnalyzerDescriptor)
         {
             PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
             var analyzerDescriptorValidationResult =
-                await _analyzerDescriptorValidator.ValidateAsync(value.AnalyzerDescriptor);
+                await _analyzerDescriptorValidator.ValidateAsync(fullAnalyzerDescriptor);
             PropertyName.Pop();
             if (analyzerDescriptorValidationResult.Failure)
             {

@@ -11,4 +11,5 @@ public static class TemplateErrorMessages
     public const string FieldNameNotUnique = "Field name not unique";
     public const string NameNotUnique = "Name not unique";
     public const string TemplateNotFound = "Template not found";
+    public const string PresetNotFound = "Preset not found";
 }

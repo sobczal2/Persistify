@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
+using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Results;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Common;

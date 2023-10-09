@@ -6,12 +6,12 @@ using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Domain.Search.Queries.Number;
 using Persistify.Domain.Search.Queries.Text;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Shared;
 using Persistify.Server.Indexes.Indexers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Documents;

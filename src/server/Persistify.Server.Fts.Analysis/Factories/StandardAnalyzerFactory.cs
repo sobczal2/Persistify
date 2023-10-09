@@ -2,12 +2,12 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Results;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Analyzers;
 using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Fts.Analysis.TokenFilters;
 using Persistify.Server.Fts.Analysis.Tokenizers;
-using Persistify.Server.Validation.Results;
 
 namespace Persistify.Server.Fts.Analysis.Factories;
 
@@ -17,7 +17,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
     private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
     private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase" };
 
-    public Result TryCreate(AnalyzerDescriptor descriptor, out IAnalyzer? analyzer)
+    public Result TryCreate(FullAnalyzerDescriptor descriptor, out IAnalyzer? analyzer)
     {
         var result = Validate(descriptor);
         if (result.Failure)
@@ -31,7 +31,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
         return Result.Ok;
     }
 
-    public Result Validate(AnalyzerDescriptor descriptor)
+    public Result Validate(FullAnalyzerDescriptor descriptor)
     {
         foreach (var characterFilter in descriptor.CharacterFilterNames)
         {
@@ -57,7 +57,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
         return Result.Ok;
     }
 
-    public IAnalyzer Create(AnalyzerDescriptor descriptor)
+    public IAnalyzer Create(FullAnalyzerDescriptor descriptor)
     {
         var characterFilters = descriptor.CharacterFilterNames.Select(CreateCharacterFilter).ToList();
         var tokenizer = CreateTokenizer(descriptor.TokenizerName);
