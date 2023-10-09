@@ -11,6 +11,7 @@ using Persistify.Helpers.Time;
 using Persistify.Server.Commands;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.Fts.Analysis;
 using Persistify.Server.HostedServices;
 using Persistify.Server.Management;
 using Persistify.Server.Security;
@@ -83,6 +84,7 @@ public static class ServicesExtensions
         services.AddErrorHandling();
         services.AddSecurity();
         services.AddHelpers();
+        services.AddFtsAnalysis();
 
         return services;
     }

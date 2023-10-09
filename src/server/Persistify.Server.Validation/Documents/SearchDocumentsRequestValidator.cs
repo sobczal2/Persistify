@@ -10,6 +10,7 @@ using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Shared;
 using Persistify.Server.Indexes.Indexers;
+using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;

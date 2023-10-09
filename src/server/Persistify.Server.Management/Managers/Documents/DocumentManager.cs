@@ -9,9 +9,9 @@ using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Files;
-using Persistify.Server.Indexes.Indexers;
-using Persistify.Server.Indexes.Searches;
+using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Persistence.Extensions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
@@ -38,7 +38,7 @@ public class DocumentManager : Manager, IDocumentManager
     {
         _template = template;
 
-        _indexerStore = new IndexerStore(template, fileStreamFactory);
+        _indexerStore = new IndexerStore(template);
 
         var identifierFileStream =
             fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id));
@@ -75,7 +75,18 @@ public class DocumentManager : Manager, IDocumentManager
                 await _identifierRepository.WriteAsync(0, 0, true);
             }
 
-            _count = await _documentRepository.CountAsync(true);
+            var documents = await _documentRepository.ReadAllAsync(true);
+
+            _count = documents.Count;
+
+            var documentList = new List<Document>(documents.Count);
+
+            foreach (var (_, value) in documents)
+            {
+                documentList.Add(value);
+            }
+
+            _indexerStore.Initialize(documentList);
 
             base.Initialize();
         });
@@ -113,11 +124,12 @@ public class DocumentManager : Manager, IDocumentManager
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var searchResults = await _indexerStore.SearchAsync(searchQuery);
+        var searchResults = _indexerStore.Search(searchQuery).ToList();
 
-        var documents = new List<Document>(searchResults.Count);
 
         searchResults.Sort((a, b) => b.Score.CompareTo(a.Score));
+
+        var documents = new List<Document>(take);
 
         foreach (var searchResult in searchResults.Skip(skip).Take(take))
         {
@@ -158,7 +170,7 @@ public class DocumentManager : Manager, IDocumentManager
 
             Interlocked.Increment(ref _count);
 
-            await _indexerStore.IndexAsync(document);
+            _indexerStore.Index(document);
         });
 
         PendingActions.Enqueue(addAction);
@@ -182,7 +194,7 @@ public class DocumentManager : Manager, IDocumentManager
 
             Interlocked.Decrement(ref _count);
 
-            await _indexerStore.DeleteAsync(document);
+            _indexerStore.Delete(document);
         });
 
         PendingActions.Enqueue(removeAction);

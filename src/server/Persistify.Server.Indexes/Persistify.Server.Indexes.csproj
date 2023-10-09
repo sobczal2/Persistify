@@ -13,7 +13,16 @@
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
     <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Files\Persistify.Server.Files.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Indexes.DataStructures\Persistify.Server.Indexes.DataStructures.csproj" />
     <ProjectReference Include="..\Persistify.Server.Persistence\Persistify.Server.Persistence.csproj" />
+
+
+
+
+
+
+
+
   </ItemGroup>
 
 

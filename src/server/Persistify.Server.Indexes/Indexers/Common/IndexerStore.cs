@@ -8,19 +8,19 @@ using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Algorithms;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.Files;
-using Persistify.Server.Indexes.Files;
+using Persistify.Server.Indexes.Indexers.Bool;
+using Persistify.Server.Indexes.Indexers.Number;
+using Persistify.Server.Indexes.Indexers.Text;
 using Persistify.Server.Indexes.Searches;
 
-namespace Persistify.Server.Indexes.Indexers;
+namespace Persistify.Server.Indexes.Indexers.Common;
 
 public class IndexerStore
 {
     private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
     public IndexerStore(
-        Template template,
-        IFileStreamFactory fileStreamFactory
+        Template template
     )
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
@@ -36,15 +36,19 @@ public class IndexerStore
 
         foreach (var field in template.BoolFields)
         {
-            var trueFileStream = fileStreamFactory.CreateStream(
-                BoolIndexerFileGroupForTemplate.TrueValuesFileName(template.Id, field.Name));
-            var falseFileStream = fileStreamFactory.CreateStream(
-                BoolIndexerFileGroupForTemplate.FalseValuesFileName(template.Id, field.Name));
-            _indexers.TryAdd(field.Name, new BoolIndexer(field.Name, trueFileStream, falseFileStream));
+            _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
         }
     }
 
-    public async ValueTask<List<ISearchResult>> SearchAsync(SearchQuery query)
+    public void Initialize(List<Document> documents)
+    {
+        foreach (var indexer in _indexers.Values)
+        {
+            indexer.Initialize(documents);
+        }
+    }
+
+    public IEnumerable<ISearchResult> Search(SearchQuery query)
     {
         IEnumerable<ISearchResult>[]? results;
         switch (query)
@@ -52,7 +56,7 @@ public class IndexerStore
             case FieldSearchQuery fieldSearchQuery:
                 if (_indexers.TryGetValue(fieldSearchQuery.GetFieldName(), out var indexer))
                 {
-                    return await indexer.SearchAsync(query);
+                    return indexer.SearchAsync(query);
                 }
 
                 throw new PersistifyInternalException();
@@ -61,7 +65,7 @@ public class IndexerStore
 
                 for (var i = 0; i < results.Length; i++)
                 {
-                    results[i] = await SearchAsync(andSearchQuery.Queries[i]);
+                    results[i] = Search(andSearchQuery.Queries[i]);
                 }
 
                 return EnumerableHelpers.IntersectSorted(
@@ -72,7 +76,7 @@ public class IndexerStore
 
                 for (var i = 0; i < results.Length; i++)
                 {
-                    results[i] = await SearchAsync(orSearchQuery.Queries[i]);
+                    results[i] = Search(orSearchQuery.Queries[i]);
                 }
 
                 return EnumerableHelpers.MergeSorted(
@@ -83,19 +87,19 @@ public class IndexerStore
         throw new PersistifyInternalException();
     }
 
-    public async ValueTask IndexAsync(Document document)
+    public void Index(Document document)
     {
         foreach (var indexer in _indexers.Values)
         {
-            await indexer.IndexAsync(document);
+            indexer.IndexAsync(document);
         }
     }
 
-    public async ValueTask DeleteAsync(Document document)
+    public void Delete(Document document)
     {
         foreach (var indexer in _indexers.Values)
         {
-            await indexer.DeleteAsync(document);
+            indexer.DeleteAsync(document);
         }
     }
 }

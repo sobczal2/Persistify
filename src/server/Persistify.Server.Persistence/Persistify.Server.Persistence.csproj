@@ -17,4 +17,5 @@
     <ProjectReference Include="..\Persistify.Server.Serialization\Persistify.Server.Serialization.csproj"/>
   </ItemGroup>
 
+
 </Project>
