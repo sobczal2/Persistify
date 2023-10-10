@@ -1,4 +1,4 @@
-﻿using Persistify.Server.Validation.Results;
+﻿using Persistify.Helpers.Results;
 
 namespace Persistify.Server.Fts.Analysis.Abstractions;
 

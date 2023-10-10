@@ -29,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\server\Persistify.Server.Files\Persistify.Server.Files.csproj" />
     <ProjectReference Include="..\..\..\src\server\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
   </ItemGroup>
 

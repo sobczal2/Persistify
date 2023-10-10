@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using Persistify.Server.Validation.Results;
+using Persistify.Helpers.Results;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Results;

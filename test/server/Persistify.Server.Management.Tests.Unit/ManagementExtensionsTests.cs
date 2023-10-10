@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Files;
-using Persistify.Server.Indexes.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Managers.Users;
@@ -40,7 +39,7 @@ public class ManagementExtensionsTests
 
         // Assert
         actual.Should().BeSameAs(services);
-        services.Should().HaveCount(11);
+        services.Should().HaveCount(10);
         services.Should().Contain(x => x.ImplementationType == typeof(TemplateManager));
         services.Should().Contain(x => x.ImplementationType == typeof(IdleTimeoutFileStreamFactory));
         services.Should().Contain(x => x.ImplementationType == typeof(FileHandler));
@@ -48,7 +47,6 @@ public class ManagementExtensionsTests
         services.Should().Contain(x => x.ImplementationType == typeof(TemplateManagerRequiredFileGroup));
         services.Should().Contain(x => x.ImplementationType == typeof(DocumentManagerStore));
         services.Should().Contain(x => x.ImplementationType == typeof(DocumentManagerFileGroupForTemplate));
-        services.Should().Contain(x => x.ImplementationType == typeof(BoolIndexerFileGroupForTemplate));
         services.Should().Contain(x => x.ImplementationType == typeof(TransactionState));
         services.Should().Contain(x => x.ImplementationType == typeof(UserManager));
         services.Should().Contain(x => x.ImplementationType == typeof(UserManagerRequiredFileGroup));

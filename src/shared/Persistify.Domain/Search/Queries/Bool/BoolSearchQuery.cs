@@ -1,8 +1,5 @@
-﻿using ProtoBuf;
-
-namespace Persistify.Domain.Search.Queries.Bool;
+﻿namespace Persistify.Domain.Search.Queries.Bool;
 
 public abstract class BoolSearchQuery : FieldSearchQuery
 {
-
 }

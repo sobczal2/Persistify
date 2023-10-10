@@ -6,12 +6,12 @@ using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Domain.Search.Queries.Number;
 using Persistify.Domain.Search.Queries.Text;
 using Persistify.Domain.Templates;
+using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Shared;
-using Persistify.Server.Indexes.Indexers;
+using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Results;
 using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Documents;
@@ -95,7 +95,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             AndSearchQuery andSearchQuery => await ValidateAndSearchQueryAsync(andSearchQuery, template),
             OrSearchQuery orSearchQuery => await ValidateOrSearchQueryAsync(orSearchQuery, template),
             NotSearchQuery notSearchQuery => await ValidateNotSearchQueryAsync(notSearchQuery, template),
-            ExactBoolSearchQuery exactBoolSearchQuery => await ValidateExactBoolSearchQueryAsync(exactBoolSearchQuery, template),
+            ExactBoolSearchQuery exactBoolSearchQuery => await ValidateExactBoolSearchQueryAsync(exactBoolSearchQuery,
+                template),
             ExactNumberSearchQuery exactNumberSearchQuery => await ValidateExactNumberSearchQueryAsync(
                 exactNumberSearchQuery, template),
             GreaterNumberSearchQuery greaterNumberSearchQuery => await ValidateGreaterNumberSearchQueryAsync(
@@ -104,8 +105,10 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 lessNumberSearchQuery, template),
             RangeNumberSearchQuery rangeNumberSearchQuery => await ValidateRangeNumberSearchQueryAsync(
                 rangeNumberSearchQuery, template),
-            ExactTextSearchQuery exactTextSearchQuery => await ValidateExactTextSearchQueryAsync(exactTextSearchQuery, template),
-            FullTextSearchQuery fullTextSearchQuery => await ValidateFullTextSearchQueryAsync(fullTextSearchQuery, template),
+            ExactTextSearchQuery exactTextSearchQuery => await ValidateExactTextSearchQueryAsync(exactTextSearchQuery,
+                template),
+            FullTextSearchQuery fullTextSearchQuery => await ValidateFullTextSearchQueryAsync(fullTextSearchQuery,
+                template),
             PrefixTextSearchQuery prefixTextSearchQuery => await ValidatePrefixTextSearchQueryAsync(
                 prefixTextSearchQuery, template),
             _ => ValidationException(SharedErrorMessages.InvalidValue)
@@ -189,20 +192,26 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             case IndexType.Text:
                 if (!template.TextFieldsByName.ContainsKey(fieldName))
                 {
-                    return ValueTask.FromResult<Result>(ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
+                    return ValueTask.FromResult<Result>(
+                        ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
                 }
+
                 break;
             case IndexType.Number:
                 if (!template.NumberFieldsByName.ContainsKey(fieldName))
                 {
-                    return ValueTask.FromResult<Result>(ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
+                    return ValueTask.FromResult<Result>(
+                        ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
                 }
+
                 break;
             case IndexType.Boolean:
                 if (!template.BoolFieldsByName.ContainsKey(fieldName))
                 {
-                    return ValueTask.FromResult<Result>(ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
+                    return ValueTask.FromResult<Result>(
+                        ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
                 }
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(indexType), indexType, null);
@@ -239,7 +248,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateGreaterNumberSearchQueryAsync(GreaterNumberSearchQuery query, Template template)
+    private async ValueTask<Result> ValidateGreaterNumberSearchQueryAsync(GreaterNumberSearchQuery query,
+        Template template)
     {
         PropertyName.Push(nameof(GreaterNumberSearchQuery));
         PropertyName.Push(nameof(GreaterNumberSearchQuery.FieldName));

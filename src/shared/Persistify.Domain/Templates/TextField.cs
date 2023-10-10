@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.ComponentModel.DataAnnotations;
+using ProtoBuf;
 
 namespace Persistify.Domain.Templates;
 
@@ -12,8 +13,6 @@ public class TextField
     public bool Required { get; set; }
 
     [ProtoMember(3)]
-    public string? AnalyzerPresetName { get; set; }
-
-    [ProtoMember(4)]
-    public AnalyzerDescriptor? AnalyzerDescriptor { get; set; }
+    [Required]
+    public AnalyzerDescriptor AnalyzerDescriptor { get; set; } = default!;
 }

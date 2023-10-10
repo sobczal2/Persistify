@@ -105,7 +105,7 @@ public class TextFieldValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var value = new TextField { Name = "Name", AnalyzerDescriptor = new AnalyzerDescriptor() };
+        var value = new TextField { Name = "Name", AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test"} };
 
         // Act
         var result = await _sut.ValidateAsync(value);

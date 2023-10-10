@@ -1,4 +1,4 @@
-﻿namespace Persistify.Server.Indexes.Indexers;
+﻿namespace Persistify.Server.Indexes.Indexers.Common;
 
 public enum IndexType
 {

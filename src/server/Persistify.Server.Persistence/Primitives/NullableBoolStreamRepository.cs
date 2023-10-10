@@ -12,6 +12,10 @@ namespace Persistify.Server.Persistence.Primitives;
 // TODO: delete probably
 public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, IDisposable
 {
+    private const byte NullValueInternal = 0x0;
+    private const byte FalseValueInternal = 0x1;
+    private const byte TrueValueInternal = 0x2;
+    private const byte LocalMaskInternal = 0x3;
     private readonly ByteArrayStreamRepository _innerRepository;
     private readonly SemaphoreSlim _semaphoreSlim;
 
@@ -35,17 +39,6 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
         return useLock ? await _semaphoreSlim.WrapAsync(() => ReadInternalAsync(key)) : await ReadInternalAsync(key);
     }
 
-    private async ValueTask<bool?> ReadInternalAsync(int key)
-    {
-        var byteArr = await _innerRepository.ReadAsync(key / 4, false);
-        if (_innerRepository.IsValueEmpty(byteArr))
-        {
-            return EmptyValue;
-        }
-
-        return GetValueFromByte(byteArr[0], key);
-    }
-
     public async ValueTask<List<(int key, bool? value)>> ReadRangeAsync(int take, int skip, bool useLock)
     {
         if (take <= 0)
@@ -63,18 +56,68 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
             : await ReadRangeInternalAsync(take, skip);
     }
 
+    public async ValueTask<int> CountAsync(bool useLock)
+    {
+        return useLock ? await _semaphoreSlim.WrapAsync(CountInternalAsync) : await CountInternalAsync();
+    }
+
+    public async ValueTask WriteAsync(int key, bool? value, bool useLock)
+    {
+        await (useLock
+            ? _semaphoreSlim.WrapAsync(() => WriteInternalAsync(key, value))
+            : WriteInternalAsync(key, value));
+    }
+
+    public ValueTask<bool> DeleteAsync(int key, bool useLock)
+    {
+        throw new NotSupportedException("Use WriteAsync with EmptyValue instead");
+    }
+
+    public void Clear(bool useLock)
+    {
+        if (useLock)
+        {
+            _semaphoreSlim.Wrap(ClearInternal);
+        }
+        else
+        {
+            ClearInternal();
+        }
+    }
+
+    public bool IsValueEmpty(bool? value)
+    {
+        return value == EmptyValue;
+    }
+
+    public bool? EmptyValue => null;
+
+    private async ValueTask<bool?> ReadInternalAsync(int key)
+    {
+        var byteArr = await _innerRepository.ReadAsync(key / 4, false);
+        if (_innerRepository.IsValueEmpty(byteArr))
+        {
+            return EmptyValue;
+        }
+
+        return GetValueFromByte(byteArr[0], key);
+    }
+
     private async ValueTask<List<(int key, bool? value)>> ReadRangeInternalAsync(int take, int skip)
     {
         var values = await _innerRepository.ReadRangeAsync(int.MaxValue, 0, false);
         var result = new List<(int key, bool? value)>(take);
 
-        for(var i = 0; i < values.Count; i++)
+        for (var i = 0; i < values.Count; i++)
         {
             var (currentKey, currentValue) = values[i];
             currentKey *= 4;
             for (var j = 0; j < 4; j++)
             {
-                if (result.Count == take) return result;
+                if (result.Count == take)
+                {
+                    return result;
+                }
 
                 var realKey = currentKey + j;
                 var realValue = GetValueFromByte(currentValue[0], realKey);
@@ -96,17 +139,12 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
         return result;
     }
 
-    public async ValueTask<int> CountAsync(bool useLock)
-    {
-        return useLock ? await _semaphoreSlim.WrapAsync(CountInternalAsync) : await CountInternalAsync();
-    }
-
     private async ValueTask<int> CountInternalAsync()
     {
         var values = await _innerRepository.ReadRangeAsync(int.MaxValue, 0, false);
         var result = 0;
 
-        for(var i = 0; i < values.Count; i++)
+        for (var i = 0; i < values.Count; i++)
         {
             var (currentKey, currentValue) = values[i];
             currentKey *= 4;
@@ -126,13 +164,6 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
         return result;
     }
 
-    public async ValueTask WriteAsync(int key, bool? value, bool useLock)
-    {
-        await (useLock
-            ? _semaphoreSlim.WrapAsync(() => WriteInternalAsync(key, value))
-            : WriteInternalAsync(key, value));
-    }
-
     private async ValueTask WriteInternalAsync(int key, bool? value)
     {
         var byteArr = await _innerRepository.ReadAsync(key / 4, false);
@@ -149,35 +180,14 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
         await _innerRepository.WriteAsync(key / 4, new[] { buffer }, false);
     }
 
-    public ValueTask<bool> DeleteAsync(int key, bool useLock)
-    {
-        throw new NotSupportedException("Use WriteAsync with EmptyValue instead");
-    }
-
-    public void Clear(bool useLock)
-    {
-        if (useLock)
-        {
-            _semaphoreSlim.Wrap(ClearInternal);
-        }
-        else
-        {
-            ClearInternal();
-        }
-    }
-
     private void ClearInternal()
     {
         _innerRepository.Clear(false);
     }
 
-    public bool IsValueEmpty(bool? value) => value == EmptyValue;
-
-    public bool? EmptyValue => null;
-
     private bool? GetValueFromByte(byte buffer, int key)
     {
-        var offset = (key % 4) * 2;
+        var offset = key % 4 * 2;
         buffer >>= offset;
         buffer &= LocalMaskInternal;
 
@@ -192,7 +202,7 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
 
     private byte SetValueInByte(bool? value, byte buffer, int key)
     {
-        var offset = (key % 4) * 2;
+        var offset = key % 4 * 2;
         var bufferToWrite = value switch
         {
             null => NullValueInternal,
@@ -208,9 +218,4 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
 
         return buffer;
     }
-
-    private const byte NullValueInternal = 0x0;
-    private const byte FalseValueInternal = 0x1;
-    private const byte TrueValueInternal = 0x2;
-    private const byte LocalMaskInternal = 0x3;
 }

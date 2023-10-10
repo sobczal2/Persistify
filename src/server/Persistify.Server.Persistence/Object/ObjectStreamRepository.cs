@@ -163,7 +163,7 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
 
     private async ValueTask<List<(int Key, TValue Value)>> ReadRangeInternalAsync(int take, int skip)
     {
-        var result = new List<(int Key, TValue Value)>(take);
+        var result = new List<(int Key, TValue Value)>();
         _mainStream.Seek(0, SeekOrigin.Begin);
 
         var offsetLengths = await _offsetLengthRepository.ReadRangeAsync(take, skip, false);

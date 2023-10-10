@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Files;
-using Persistify.Server.Indexes.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Managers.Users;
@@ -25,7 +24,6 @@ public static class ManagementExtensions
         services.AddSingleton<IRequiredFileGroup, TemplateManagerRequiredFileGroup>();
         services.AddSingleton<IDocumentManagerStore, DocumentManagerStore>();
         services.AddSingleton<IFileGroupForTemplate, DocumentManagerFileGroupForTemplate>();
-        services.AddSingleton<IFileGroupForTemplate, BoolIndexerFileGroupForTemplate>();
         services.AddSingleton<ITransactionState, TransactionState>();
         services.AddSingleton<IUserManager, UserManager>();
         services.AddSingleton<IRequiredFileGroup, UserManagerRequiredFileGroup>();

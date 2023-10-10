@@ -504,7 +504,15 @@ public class CreateDocumentRequestValidatorTests
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "2", Required = true } }
+            TextFields = new List<TextField>
+            {
+                new()
+                {
+                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test" },
+                    Name = "2",
+                    Required = true
+                }
+            }
         });
 
         // Act
@@ -567,7 +575,15 @@ public class CreateDocumentRequestValidatorTests
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "2", Required = false } }
+            TextFields = new List<TextField>
+            {
+                new()
+                {
+                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test" },
+                    Name = "2",
+                    Required = false
+                }
+            }
         });
 
         // Act
@@ -630,7 +646,7 @@ public class CreateDocumentRequestValidatorTests
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField> { new() { AnalyzerPresetName = "Test", Name = "1" } },
+            TextFields = new List<TextField> { new() { AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test"}, Name = "1" } },
             NumberFields = new List<NumberField> { new() { Name = "2" } },
             BoolFields = new List<BoolField> { new() { Name = "3" } }
         });
