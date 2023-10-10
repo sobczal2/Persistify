@@ -53,7 +53,10 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
     protected override GetDocumentResponse GetResponse()
     {
-        return new GetDocumentResponse(_document ?? throw new PersistifyInternalException());
+        return new GetDocumentResponse()
+        {
+            Document = _document ?? throw new PersistifyInternalException()
+        };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest request)

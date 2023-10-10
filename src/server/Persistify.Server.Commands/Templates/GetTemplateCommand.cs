@@ -35,7 +35,10 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
 
     protected override GetTemplateResponse GetResponse()
     {
-        return new GetTemplateResponse(_template ?? throw new PersistifyInternalException());
+        return new GetTemplateResponse
+        {
+            Template = _template ?? throw new PersistifyInternalException()
+        };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest request)

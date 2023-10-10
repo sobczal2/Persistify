@@ -53,7 +53,10 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override CreateDocumentResponse GetResponse()
     {
-        return new CreateDocumentResponse(_document?.Id ?? throw new PersistifyInternalException());
+        return new CreateDocumentResponse()
+        {
+            DocumentId = _document?.Id ?? throw new PersistifyInternalException()
+        };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest request)

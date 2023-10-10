@@ -7,12 +7,6 @@ namespace Persistify.Responses.Templates;
 [ProtoContract]
 public class ListTemplatesResponse
 {
-    public ListTemplatesResponse(IEnumerable<Template> templates, int totalCount)
-    {
-        Templates = templates;
-        TotalCount = totalCount;
-    }
-
     [ProtoMember(1)]
     public IEnumerable<Template> Templates { get; set; } = default!;
 
