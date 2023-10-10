@@ -12,6 +12,7 @@ public class TextField
     [ProtoMember(2)]
     public bool Required { get; set; }
 
-    [ProtoMember(3), Required]
+    [ProtoMember(3)]
+    [Required]
     public AnalyzerDescriptor AnalyzerDescriptor { get; set; } = default!;
 }

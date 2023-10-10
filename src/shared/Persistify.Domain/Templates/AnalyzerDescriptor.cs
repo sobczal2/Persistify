@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using ProtoBuf;
+﻿using ProtoBuf;
 
 namespace Persistify.Domain.Templates;
 
@@ -8,5 +7,4 @@ namespace Persistify.Domain.Templates;
 [ProtoInclude(101, typeof(PresetAnalyzerDescriptor))]
 public abstract class AnalyzerDescriptor
 {
-
 }

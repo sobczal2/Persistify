@@ -14,11 +14,12 @@ public class PresetAnalyzerDescriptorValidator : Validator<PresetAnalyzerDescrip
 
     public PresetAnalyzerDescriptorValidator(
         IAnalyzerPresetFactory analyzerPresetFactory
-        )
+    )
     {
         _analyzerPresetFactory = analyzerPresetFactory;
         PropertyName.Push(nameof(PresetAnalyzerDescriptor));
     }
+
     public override ValueTask<Result> ValidateNotNullAsync(PresetAnalyzerDescriptor value)
     {
         if (string.IsNullOrEmpty(value.PresetName))

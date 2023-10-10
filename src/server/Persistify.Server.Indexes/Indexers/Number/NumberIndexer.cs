@@ -29,8 +29,7 @@ public class NumberIndexer : IIndexer
             var numberFieldValue = document.NumberFieldValuesByFieldName[FieldName];
             _intervalTree.Insert(new NumberIndexerIntervalTreeRecord
             {
-                DocumentId = document.Id,
-                Value = numberFieldValue.Value
+                DocumentId = document.Id, Value = numberFieldValue.Value
             });
         }
     }
@@ -40,8 +39,7 @@ public class NumberIndexer : IIndexer
         var numberFieldValue = document.NumberFieldValuesByFieldName[FieldName];
         _intervalTree.Insert(new NumberIndexerIntervalTreeRecord
         {
-            DocumentId = document.Id,
-            Value = numberFieldValue.Value
+            DocumentId = document.Id, Value = numberFieldValue.Value
         });
     }
 

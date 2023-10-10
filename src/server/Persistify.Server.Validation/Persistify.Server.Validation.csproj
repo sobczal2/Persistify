@@ -11,7 +11,7 @@
     <ProjectReference Include="..\..\shared\Persistify.Requests\Persistify.Requests.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
     <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Fts.Analysis\Persistify.Server.Fts.Analysis.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Fts.Analysis\Persistify.Server.Fts.Analysis.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
   </ItemGroup>
 

@@ -26,37 +26,55 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
     private static IntervalTreeNode<TItem> Insert(IntervalTreeNode<TItem>? node, TItem item)
     {
         if (node == null)
+        {
             return new IntervalTreeNode<TItem>(item, 1);
+        }
 
         if (item.CompareTo(node.Item) < 0)
+        {
             node.Left = Insert(node.Left, item);
+        }
         else
+        {
             node.Right = Insert(node.Right, item);
+        }
 
         UpdateNodeHeight(node);
 
         return BalanceNode(node);
     }
 
-    private static void Search<TValue>(IntervalTreeNode<TItem>? node, TValue min, TValue max, Func<TItem, TValue, int> comparer, ICollection<TItem> result)
+    private static void Search<TValue>(IntervalTreeNode<TItem>? node, TValue min, TValue max,
+        Func<TItem, TValue, int> comparer, ICollection<TItem> result)
     {
         if (node is null)
+        {
             return;
+        }
 
         if (comparer(node.Item, min) < 0)
+        {
             Search(node.Left, min, max, comparer, result);
+        }
 
         if (comparer(node.Item, max) > 0)
+        {
             Search(node.Right, min, max, comparer, result);
+        }
 
         if (comparer(node.Item, min) >= 0 && comparer(node.Item, max) <= 0)
+        {
             result.Add(node.Item);
+        }
     }
 
-    private IntervalTreeNode<TItem>? Remove(IntervalTreeNode<TItem>? node, Predicate<TItem> predicate, ref int removedCount)
+    private IntervalTreeNode<TItem>? Remove(IntervalTreeNode<TItem>? node, Predicate<TItem> predicate,
+        ref int removedCount)
     {
         if (node == null)
+        {
             return null;
+        }
 
         node.Left = Remove(node.Left, predicate, ref removedCount);
         node.Right = Remove(node.Right, predicate, ref removedCount);
@@ -75,10 +93,14 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
     private IntervalTreeNode<TItem>? RemoveNode(IntervalTreeNode<TItem> node)
     {
         if (node.Left == null)
+        {
             return node.Right;
+        }
 
         if (node.Right == null)
+        {
             return node.Left;
+        }
 
         var minNode = FindMinNode(node.Right);
         minNode.Right = RemoveMinNode(node.Right);
@@ -91,7 +113,9 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
     private IntervalTreeNode<TItem>? RemoveMinNode(IntervalTreeNode<TItem> node)
     {
         if (node.Left == null)
+        {
             return node.Right;
+        }
 
         node.Left = RemoveMinNode(node.Left);
         UpdateNodeHeight(node);
@@ -102,7 +126,10 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
     private static IntervalTreeNode<TItem> FindMinNode(IntervalTreeNode<TItem> node)
     {
         while (node.Left != null)
+        {
             node = node.Left;
+        }
+
         return node;
     }
 
@@ -120,14 +147,20 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
         {
             case > 1:
             {
-                if (GetBalance(node.Left) < 0) node.Left = LeftRotate(node.Left!);
+                if (GetBalance(node.Left) < 0)
+                {
+                    node.Left = LeftRotate(node.Left!);
+                }
 
                 node = RightRotate(node);
                 break;
             }
             case < -1:
             {
-                if (GetBalance(node.Right) > 0) node.Right = RightRotate(node.Right!);
+                if (GetBalance(node.Right) > 0)
+                {
+                    node.Right = RightRotate(node.Right!);
+                }
 
                 node = LeftRotate(node);
                 break;
@@ -139,7 +172,10 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
 
     private static int GetBalance(IntervalTreeNode<TItem>? node)
     {
-        if (node == null) return 0;
+        if (node == null)
+        {
+            return 0;
+        }
 
         return GetHeight(node.Left) - GetHeight(node.Right);
     }

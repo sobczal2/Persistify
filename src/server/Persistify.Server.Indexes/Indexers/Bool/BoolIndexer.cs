@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Bool;
@@ -12,10 +11,9 @@ namespace Persistify.Server.Indexes.Indexers.Bool;
 
 public class BoolIndexer : IIndexer
 {
-    public string FieldName { get; }
+    private readonly SortedSet<int> _falseDocuments;
 
-    private SortedSet<int> _trueDocuments;
-    private SortedSet<int> _falseDocuments;
+    private readonly SortedSet<int> _trueDocuments;
 
     public BoolIndexer(string fieldName)
     {
@@ -23,6 +21,8 @@ public class BoolIndexer : IIndexer
         _trueDocuments = new SortedSet<int>();
         _falseDocuments = new SortedSet<int>();
     }
+
+    public string FieldName { get; }
 
     public void Initialize(IEnumerable<Document> documents)
     {
@@ -88,7 +88,6 @@ public class BoolIndexer : IIndexer
             {
                 yield return new SearchResult(documentId, query.Boost);
             }
-
         }
         else
         {

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Server.Indexes.Searches;

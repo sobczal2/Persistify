@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Domain.Templates;
 using Persistify.Requests.Documents;
@@ -201,17 +200,13 @@ public class SearchDocumentsRequestValidatorTests
         // Arrange
         var request = new SearchDocumentsRequest
         {
-            TemplateName = "Test", Pagination = new Pagination(), SearchQuery = new ExactBoolSearchQuery()
-            {
-                FieldName = "Test", Value = true, Boost = 1
-            }
+            TemplateName = "Test",
+            Pagination = new Pagination(),
+            SearchQuery = new ExactBoolSearchQuery { FieldName = "Test", Value = true, Boost = 1 }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            BoolFields = new List<BoolField>()
-            {
-                new() { Name = "Test" }
-            }
+            BoolFields = new List<BoolField> { new() { Name = "Test" } }
         });
 
         // Act

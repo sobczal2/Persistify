@@ -43,7 +43,8 @@ public class TextFieldValidator : Validator<TextField>
         {
             if (string.IsNullOrEmpty(presetAnalyzerDescriptor.PresetName))
             {
-                PropertyName.Push($"{nameof(TextField.AnalyzerDescriptor)}.{nameof(PresetAnalyzerDescriptor.PresetName)}");
+                PropertyName.Push(
+                    $"{nameof(TextField.AnalyzerDescriptor)}.{nameof(PresetAnalyzerDescriptor.PresetName)}");
                 return ValidationException(TemplateErrorMessages.NameEmpty);
             }
         }

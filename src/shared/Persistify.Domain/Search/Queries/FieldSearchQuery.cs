@@ -1,6 +1,4 @@
-﻿using ProtoBuf;
-
-namespace Persistify.Domain.Search.Queries;
+﻿namespace Persistify.Domain.Search.Queries;
 
 public abstract class FieldSearchQuery : SearchQuery
 {

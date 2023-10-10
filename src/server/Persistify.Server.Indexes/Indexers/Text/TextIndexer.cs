@@ -28,8 +28,7 @@ public class TextIndexer : IIndexer
             var textFieldValue = document.TextFieldValuesByFieldName[FieldName];
             _intervalTree.Insert(new TextIndexerIntervalTreeRecord
             {
-                DocumentId = document.Id,
-                Value = textFieldValue.Value
+                DocumentId = document.Id, Value = textFieldValue.Value
             });
         }
     }
@@ -39,8 +38,7 @@ public class TextIndexer : IIndexer
         var textFieldValue = document.TextFieldValuesByFieldName[FieldName];
         _intervalTree.Insert(new TextIndexerIntervalTreeRecord
         {
-            DocumentId = document.Id,
-            Value = textFieldValue.Value
+            DocumentId = document.Id, Value = textFieldValue.Value
         });
     }
 
@@ -65,7 +63,8 @@ public class TextIndexer : IIndexer
 
     private IEnumerable<ISearchResult> HandleExactTextSearch(ExactTextSearchQuery query)
     {
-        var results = _intervalTree.Search(query.Value, query.Value, (a, b) => String.Compare(a.Value, b, StringComparison.Ordinal));
+        var results = _intervalTree.Search(query.Value, query.Value,
+            (a, b) => String.Compare(a.Value, b, StringComparison.Ordinal));
 
         results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
 
