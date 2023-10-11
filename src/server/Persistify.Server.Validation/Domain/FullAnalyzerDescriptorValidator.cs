@@ -1,6 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Results;
+using Persistify.Server.ErrorHandling;
+using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
@@ -10,8 +13,13 @@ namespace Persistify.Server.Validation.Domain;
 // TODO: Add tests
 public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
 {
-    public FullAnalyzerDescriptorValidator()
+    private readonly IAnalyzerFactory _analyzerFactory;
+
+    public FullAnalyzerDescriptorValidator(
+        IAnalyzerFactory analyzerFactory
+        )
     {
+        _analyzerFactory = analyzerFactory;
         PropertyName.Push(nameof(AnalyzerDescriptor));
     }
 
@@ -62,6 +70,25 @@ public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.TokenFilterNames)}[{i}]");
                     return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
                 }
+            }
+        }
+
+        var analyzerFactoryResult = _analyzerFactory.Validate(value);
+        if (analyzerFactoryResult.Failure)
+        {
+            switch (analyzerFactoryResult.Exception)
+            {
+                case UnsupportedCharacterFilterException unsupportedCharacterFilterException:
+                    PropertyName.Push($"{nameof(FullAnalyzerDescriptor.CharacterFilterNames)}");
+                    return ValueTask.FromResult<Result>(ValidationException(unsupportedCharacterFilterException.Message));
+                case UnsupportedTokenizerException unsupportedTokenizerException:
+                    PropertyName.Push(nameof(FullAnalyzerDescriptor.TokenizerName));
+                    return ValueTask.FromResult<Result>(ValidationException(unsupportedTokenizerException.Message));
+                case UnsupportedTokenFilterException unsupportedTokenFilterException:
+                    PropertyName.Push($"{nameof(FullAnalyzerDescriptor.TokenFilterNames)}");
+                    return ValueTask.FromResult<Result>(ValidationException(unsupportedTokenFilterException.Message));
+                default:
+                    throw new PersistifyInternalException();
             }
         }
 

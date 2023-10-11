@@ -7,6 +7,7 @@ using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Algorithms;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;
 using Persistify.Server.Indexes.Indexers.Number;
 using Persistify.Server.Indexes.Indexers.Text;
@@ -19,13 +20,28 @@ public class IndexerStore
     private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
     public IndexerStore(
-        Template template
+        Template template,
+        IAnalyzerFactory analyzerFactory,
+        IAnalyzerPresetFactory analyzerPresetFactory
     )
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
         foreach (var field in template.TextFields)
         {
-            _indexers.TryAdd(field.Name, new TextIndexer(field.Name));
+            IAnalyzer analyzer;
+            if (field.AnalyzerDescriptor is FullAnalyzerDescriptor fullAnalyzerDescriptor)
+            {
+                analyzer = analyzerFactory.Create(fullAnalyzerDescriptor);
+            }
+            else if (field.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor && analyzerPresetFactory.TryCreate(presetAnalyzerDescriptor.PresetName, out var tmpAnalyzer).Success && tmpAnalyzer is not null)
+            {
+                analyzer = tmpAnalyzer;
+            }
+            else
+            {
+                throw new PersistifyInternalException();
+            }
+            _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
         }
 
         foreach (var field in template.NumberFields)

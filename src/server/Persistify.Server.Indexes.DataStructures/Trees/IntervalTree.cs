@@ -1,4 +1,7 @@
-﻿namespace Persistify.Server.Indexes.DataStructures.Trees;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Persistify.Server.Indexes.DataStructures.Trees;
 
 public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
 {

@@ -13,14 +13,16 @@ namespace Persistify.Server.Validation.Tests.Unit.Domain;
 // TODO: Add tests for AnalyzerDescriptorValidator
 public class TextFieldValidatorTests
 {
-    private readonly IValidator<AnalyzerDescriptor> _analyzerDescriptorValidator;
+    private readonly IValidator<FullAnalyzerDescriptor> _fullAnalyzerDescriptorValidator;
+    private readonly IValidator<PresetAnalyzerDescriptor> _presetAnalyzerDescriptorValidator;
     private readonly TextFieldValidator _sut;
 
     public TextFieldValidatorTests()
     {
-        _analyzerDescriptorValidator = Substitute.For<IValidator<AnalyzerDescriptor>>();
+        _fullAnalyzerDescriptorValidator = Substitute.For<IValidator<FullAnalyzerDescriptor>>();
+        _presetAnalyzerDescriptorValidator = Substitute.For<IValidator<PresetAnalyzerDescriptor>>();
 
-        _sut = new TextFieldValidator(_analyzerDescriptorValidator);
+        _sut = new TextFieldValidator(_fullAnalyzerDescriptorValidator, _presetAnalyzerDescriptorValidator);
     }
 
     [Fact]

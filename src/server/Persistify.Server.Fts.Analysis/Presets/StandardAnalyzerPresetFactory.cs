@@ -39,7 +39,7 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
                 return Result.Ok;
             default:
                 analyzer = null;
-                return new UnsupportedPresetException(presetName, AvailablePresets);
+                return new AnalyzerPresetNotFoundException(presetName, AvailablePresets);
         }
     }
 
@@ -47,7 +47,7 @@ public class StandardAnalyzerPresetFactory : IAnalyzerPresetFactory
     {
         if (!AvailablePresets.Contains(presetName))
         {
-            return new UnsupportedPresetException(presetName, AvailablePresets);
+            return new AnalyzerPresetNotFoundException(presetName, AvailablePresets);
         }
 
         return Result.Ok;

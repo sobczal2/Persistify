@@ -10,11 +10,14 @@ namespace Persistify.Server.Validation.Domain;
 public class TextFieldValidator : Validator<TextField>
 {
     private readonly IValidator<FullAnalyzerDescriptor> _analyzerDescriptorValidator;
+    private readonly IValidator<PresetAnalyzerDescriptor> _presetAnalyzerDescriptorValidator;
 
-    public TextFieldValidator(IValidator<FullAnalyzerDescriptor> analyzerDescriptorValidator)
+    public TextFieldValidator(IValidator<FullAnalyzerDescriptor> analyzerDescriptorValidator, IValidator<PresetAnalyzerDescriptor> presetAnalyzerDescriptorValidator)
     {
         _analyzerDescriptorValidator = analyzerDescriptorValidator;
+        _presetAnalyzerDescriptorValidator = presetAnalyzerDescriptorValidator;
         _analyzerDescriptorValidator.PropertyName = PropertyName;
+        _presetAnalyzerDescriptorValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(TextField));
     }
 
@@ -41,11 +44,13 @@ public class TextFieldValidator : Validator<TextField>
 
         if (value.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor)
         {
-            if (string.IsNullOrEmpty(presetAnalyzerDescriptor.PresetName))
+            PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
+            var presetAnalyzerDescriptorValidationResult =
+                await _presetAnalyzerDescriptorValidator.ValidateAsync(presetAnalyzerDescriptor);
+            PropertyName.Pop();
+            if (presetAnalyzerDescriptorValidationResult.Failure)
             {
-                PropertyName.Push(
-                    $"{nameof(TextField.AnalyzerDescriptor)}.{nameof(PresetAnalyzerDescriptor.PresetName)}");
-                return ValidationException(TemplateErrorMessages.NameEmpty);
+                return presetAnalyzerDescriptorValidationResult;
             }
         }
         else if (value.AnalyzerDescriptor is FullAnalyzerDescriptor fullAnalyzerDescriptor)

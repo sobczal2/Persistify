@@ -12,8 +12,4 @@
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CharacterFilters\"/>
-  </ItemGroup>
-
 </Project>
