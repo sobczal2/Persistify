@@ -284,7 +284,7 @@ public class UserManager : Manager, IUserManager
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
-        if (await _userRepository.ReadAsync(user.Id, true) is not null)
+        if (await _userRepository.ReadAsync(user.Id, true) is null)
         {
             throw new PersistifyInternalException();
         }

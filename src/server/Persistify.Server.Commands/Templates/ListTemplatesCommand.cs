@@ -44,7 +44,11 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
             throw new PersistifyInternalException();
         }
 
-        return new ListTemplatesResponse(_templates, _totalCount);
+        return new ListTemplatesResponse
+        {
+            Templates = _templates,
+            TotalCount = _totalCount
+        };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest request)

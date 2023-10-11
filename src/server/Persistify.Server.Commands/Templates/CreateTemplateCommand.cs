@@ -50,7 +50,7 @@ public sealed class CreateTemplateCommand : Command<CreateTemplateRequest, Creat
             throw new PersistifyInternalException();
         }
 
-        return new CreateTemplateResponse(_template.Id);
+        return new CreateTemplateResponse();
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(CreateTemplateRequest request)

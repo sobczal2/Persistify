@@ -45,7 +45,11 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
 
         var (documents, count) = await documentManager.SearchAsync(request.SearchQuery, take, skip);
 
-        _response = new SearchDocumentsResponse(documents, count);
+        _response = new SearchDocumentsResponse()
+        {
+            Documents = documents,
+            TotalCount = count
+        };
     }
 
     protected override SearchDocumentsResponse GetResponse()

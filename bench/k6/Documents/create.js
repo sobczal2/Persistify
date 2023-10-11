@@ -1,7 +1,7 @@
 import grpc from 'k6/net/grpc';
 import {check, sleep} from 'k6';
 
-const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiMTI3IiwibmJmIjoxNjk1MDgwMzk3LCJleHAiOjE2OTc2NzIzOTcsImlhdCI6MTY5NTA4MDM5N30.veuM_iATqGH68pDKXTkTLo2NsA0LMwI2wREx7SD2CWWiUMHJE0z39KJLKr5YkUHOFHH2M-m1PYWJ7PomdeoDjg'
+const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiMTI3IiwibmJmIjoxNjk2OTMyMDE0LCJleHAiOjE2OTk1MjQwMTQsImlhdCI6MTY5NjkzMjAxNH0.nYJc6f1BkY0VlEmS4vgDyDzBctmbI3u8VWMz4uf4urytul-5PtaxKrSOhD4WEIUO3xdKdOsu92ley6vfNOGwng'
 
 const client = new grpc.Client();
 client.load([], '../../../proto/documents.proto');
