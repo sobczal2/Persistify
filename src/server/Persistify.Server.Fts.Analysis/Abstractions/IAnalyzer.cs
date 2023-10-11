@@ -6,4 +6,5 @@ namespace Persistify.Server.Fts.Analysis.Abstractions;
 public interface IAnalyzer
 {
     List<Token> Analyze(string text);
+    int AlphabetLength { get; }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Persistify.Domain.Fts;
 using Persistify.Server.Fts.Analysis.Abstractions;
 
@@ -6,7 +8,7 @@ namespace Persistify.Server.Fts.Analysis.Analyzers;
 
 public class StandardAnalyzer : IAnalyzer
 {
-    private readonly IEnumerable<ICharacterFilter> _characterFilters;
+    private readonly char[] _alphabet;
     private readonly IEnumerable<ITokenFilter> _tokenFilters;
     private readonly ITokenizer _tokenizer;
 
@@ -16,21 +18,25 @@ public class StandardAnalyzer : IAnalyzer
         IEnumerable<ITokenFilter> tokenFilters
     )
     {
-        _characterFilters = characterFilters;
+        _alphabet = characterFilters
+            .SelectMany(x => x.AllowedCharacters)
+            .Distinct()
+            .ToArray();
+
+        Array.Sort(_alphabet);
+
         _tokenizer = tokenizer;
         _tokenFilters = tokenFilters;
     }
 
+    // TODO: Optimize this method
     public List<Token> Analyze(string text)
     {
-        var filteredText = text;
+        var filteredText = new string(text
+            .Where(x => _alphabet.Contains(x))
+            .ToArray());
 
-        foreach (var characterFilter in _characterFilters)
-        {
-            filteredText = characterFilter.Filter(filteredText);
-        }
-
-        var tokens = _tokenizer.Tokenize(filteredText);
+        var tokens = _tokenizer.Tokenize(filteredText, _alphabet);
 
         foreach (var tokenFilter in _tokenFilters)
         {
@@ -39,4 +45,6 @@ public class StandardAnalyzer : IAnalyzer
 
         return tokens;
     }
+
+    public int AlphabetLength => _alphabet.Length;
 }

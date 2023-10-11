@@ -9,6 +9,7 @@ using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Files;
+using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Extensions;
@@ -31,14 +32,16 @@ public class DocumentManager : Manager, IDocumentManager
         Template template,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
-        IOptions<RepositorySettings> repositorySettingsOptions
+        IOptions<RepositorySettings> repositorySettingsOptions,
+        IAnalyzerFactory analyzerFactory,
+        IAnalyzerPresetFactory analyzerPresetFactory
     ) : base(
         transactionState
     )
     {
         _template = template;
 
-        _indexerStore = new IndexerStore(template);
+        _indexerStore = new IndexerStore(template, analyzerFactory, analyzerPresetFactory);
 
         var identifierFileStream =
             fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id));

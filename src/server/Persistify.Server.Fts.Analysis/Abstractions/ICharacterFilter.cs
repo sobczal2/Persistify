@@ -1,6 +1,12 @@
-﻿namespace Persistify.Server.Fts.Analysis.Abstractions;
+﻿using System.Collections.Generic;
 
+namespace Persistify.Server.Fts.Analysis.Abstractions;
+
+/// <summary>
+/// Character filters are used to remove characters from the text before it is tokenized.
+/// Analyzer constructs allowed alphabet from all character filters and uses it to filter out characters.
+/// </summary>
 public interface ICharacterFilter
 {
-    string Filter(string text);
+    IEnumerable<char> AllowedCharacters { get; }
 }

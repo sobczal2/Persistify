@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Text;
+using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Indexes.DataStructures.Trees;
+using Persistify.Server.Indexes.DataStructures.Tries;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Indexes.Searches;
 
@@ -12,11 +14,15 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 public class TextIndexer : IIndexer
 {
     private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
+    private readonly FixedTrie<TextIndexerFixedTrieRecord> _fixedTrie;
+    private readonly IAnalyzer _analyzer;
 
-    public TextIndexer(string fieldName)
+    public TextIndexer(string fieldName, IAnalyzer analyzer)
     {
         FieldName = fieldName;
         _intervalTree = new IntervalTree<TextIndexerIntervalTreeRecord>();
+        _fixedTrie = new FixedTrie<TextIndexerFixedTrieRecord>(analyzer.AlphabetLength);
+        _analyzer = analyzer;
     }
 
     public string FieldName { get; }
@@ -30,6 +36,12 @@ public class TextIndexer : IIndexer
             {
                 DocumentId = document.Id, Value = textFieldValue.Value
             });
+            var tokens = _analyzer.Analyze(textFieldValue.Value);
+
+            foreach (var token in tokens)
+            {
+                _fixedTrie.Insert(new TextIndexerFixedTrieRecord(document.Id, token));
+            }
         }
     }
 
@@ -40,6 +52,12 @@ public class TextIndexer : IIndexer
         {
             DocumentId = document.Id, Value = textFieldValue.Value
         });
+        var tokens = _analyzer.Analyze(textFieldValue.Value);
+
+        foreach (var token in tokens)
+        {
+            _fixedTrie.Insert(new TextIndexerFixedTrieRecord(document.Id, token));
+        }
     }
 
     public IEnumerable<ISearchResult> SearchAsync(SearchQuery query)
@@ -59,6 +77,7 @@ public class TextIndexer : IIndexer
     public void DeleteAsync(Document document)
     {
         _intervalTree.Remove(x => x.DocumentId == document.Id);
+        _fixedTrie.Remove(x => x.DocumentId == document.Id);
     }
 
     private IEnumerable<ISearchResult> HandleExactTextSearch(ExactTextSearchQuery query)

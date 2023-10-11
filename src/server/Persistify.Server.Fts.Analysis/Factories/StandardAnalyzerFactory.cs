@@ -5,6 +5,7 @@ using Persistify.Domain.Templates;
 using Persistify.Helpers.Results;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Analyzers;
+using Persistify.Server.Fts.Analysis.CharacterFilters;
 using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Fts.Analysis.TokenFilters;
 using Persistify.Server.Fts.Analysis.Tokenizers;
@@ -13,9 +14,9 @@ namespace Persistify.Server.Fts.Analysis.Factories;
 
 public class StandardAnalyzerFactory : IAnalyzerFactory
 {
-    private static readonly ConcurrentBag<string> SupportedCharacterFilters = new();
+    private static readonly ConcurrentBag<string> SupportedCharacterFilters = new() { "lowercase_letters", "uppercase_letters", "digits" };
     private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
-    private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase" };
+    private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase", "suffix" };
 
     public Result TryCreate(FullAnalyzerDescriptor descriptor, out IAnalyzer? analyzer)
     {
@@ -70,6 +71,9 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
     {
         return name switch
         {
+            "lowercase_letters" => new LowercaseLettersCharacterFilter(),
+            "uppercase_letters" => new UppercaseLettersCharacterFilter(),
+            "digits" => new DigitsCharacterFilter(),
             _ => throw new NotImplementedException()
         };
     }
@@ -89,6 +93,7 @@ public class StandardAnalyzerFactory : IAnalyzerFactory
         return name switch
         {
             "lowercase" => new LowercaseTokenFilter(),
+            "suffix" => new SuffixTokenFilter(),
             _ => throw new NotImplementedException()
         };
     }

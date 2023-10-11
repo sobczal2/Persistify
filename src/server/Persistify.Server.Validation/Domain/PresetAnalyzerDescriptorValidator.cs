@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Results;
+using Persistify.Server.ErrorHandling;
 using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
 using Persistify.Server.Validation.Templates;
@@ -34,10 +36,18 @@ public class PresetAnalyzerDescriptorValidator : Validator<PresetAnalyzerDescrip
             return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
         }
 
-        if (_analyzerPresetFactory.Validate(value.PresetName).Failure)
+        var analyzerPresetFactoryResult = _analyzerPresetFactory.Validate(value.PresetName);
+
+        if (analyzerPresetFactoryResult.Failure)
         {
-            PropertyName.Push(nameof(PresetAnalyzerDescriptor.PresetName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.PresetNotFound));
+            switch (analyzerPresetFactoryResult.Exception)
+            {
+                case AnalyzerPresetNotFoundException analyzerPresetNotFoundException:
+                    PropertyName.Push(nameof(PresetAnalyzerDescriptor.PresetName));
+                    return ValueTask.FromResult<Result>(ValidationException(analyzerPresetNotFoundException.Message));
+                default:
+                    throw new PersistifyInternalException();
+            }
         }
 
         return ValueTask.FromResult(Result.Ok);
