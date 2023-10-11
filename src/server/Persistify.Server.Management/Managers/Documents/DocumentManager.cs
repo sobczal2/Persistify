@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
@@ -121,7 +123,8 @@ public class DocumentManager : Manager, IDocumentManager
         return list;
     }
 
-    public async ValueTask<(List<Document> documents, int count)> SearchAsync(SearchQuery searchQuery, int take,
+    public async ValueTask<(List<SearchRecord> searchRecords, int count)> SearchAsync(
+        SearchQuery searchQuery, int take,
         int skip)
     {
         ThrowIfNotInitialized();
@@ -129,21 +132,20 @@ public class DocumentManager : Manager, IDocumentManager
 
         var searchResults = _indexerStore.Search(searchQuery).ToList();
 
+        searchResults.Sort((a, b) => b.Metadata.Score.CompareTo(a.Metadata.Score));
 
-        searchResults.Sort((a, b) => b.Score.CompareTo(a.Score));
-
-        var documents = new List<Document>(take);
+        var searchRecords = new List<SearchRecord>();
 
         foreach (var searchResult in searchResults.Skip(skip).Take(take))
         {
             var document = await _documentRepository.ReadAsync(searchResult.DocumentId, true);
             if (document != null)
             {
-                documents.Add(document);
+                searchRecords.Add(new SearchRecord(document, searchResult.Metadata.ToSearchMetadataList()));
             }
         }
 
-        return (documents, searchResults.Count);
+        return (searchRecords, searchResults.Count);
     }
 
     public int Count()

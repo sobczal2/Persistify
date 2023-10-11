@@ -37,54 +37,91 @@ public static class EnumerableHelpers
 
     public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, params IEnumerable<T>[] enumerables)
     {
+        if (enumerables.Length == 0) yield break;
+
         var enumerators = GetEnumerators(enumerables);
 
-        while (true)
+        try
         {
-            var canAdvance = true;
+            bool canAdvance = true;
+
             foreach (var enumerator in enumerators)
             {
-                canAdvance &= enumerator.MoveNext();
-            }
-
-            if (!canAdvance)
-            {
-                break;
-            }
-
-            var firstValue = enumerators[0].Current;
-            if (Array.TrueForAll(enumerators, it => comparer.Compare(it.Current, firstValue) == 0))
-            {
-                yield return firstValue;
-                continue;
-            }
-
-            var minValue = firstValue;
-            foreach (var iterator in enumerators)
-            {
-                if (comparer.Compare(iterator.Current, minValue) < 0)
+                if (!enumerator.MoveNext())
                 {
-                    minValue = iterator.Current;
+                    canAdvance = false;
+                    break;
                 }
             }
 
-            foreach (var iterator in enumerators)
+            if (!canAdvance) yield break;
+
+            while (true)
             {
-                while (comparer.Compare(iterator.Current, minValue) == 0)
+                var firstValue = enumerators[0].Current;
+                var areEqual = true;
+                for (var i = 1; i < enumerators.Length; i++)
                 {
-                    if (!iterator.MoveNext())
+                    if (comparer.Compare(enumerators[i].Current, firstValue) != 0)
                     {
+                        areEqual = false;
                         break;
                     }
                 }
+
+                if (areEqual)
+                {
+                    yield return firstValue;
+                    canAdvance = true;
+                    foreach (var enumerator in enumerators)
+                    {
+                        if (!enumerator.MoveNext())
+                        {
+                            canAdvance = false;
+                            break;
+                        }
+                    }
+                    if (!canAdvance) break;
+                    continue;
+                }
+
+                var minValue = enumerators[0].Current;
+
+                for (var i = 1; i < enumerators.Length; i++)
+                {
+                    if (comparer.Compare(enumerators[i].Current, minValue) < 0)
+                    {
+                        minValue = enumerators[i].Current;
+                    }
+                }
+
+                canAdvance = true;
+                foreach (var enumerator in enumerators)
+                {
+                    while (comparer.Compare(enumerator.Current, minValue) <= 0)
+                    {
+                        if (!enumerator.MoveNext())
+                        {
+                            canAdvance = false;
+                            break;
+                        }
+                    }
+
+                    if (!canAdvance) break;
+                }
+
+                if (!canAdvance) break;
             }
         }
-
-        foreach (var iterator in enumerators)
+        finally
         {
-            iterator.Dispose();
+            foreach (var enumerator in enumerators)
+            {
+                enumerator.Dispose();
+            }
         }
     }
+
 
     public static IEnumerator<T>[] GetEnumerators<T>(IEnumerable<T>[] enumerables)
     {

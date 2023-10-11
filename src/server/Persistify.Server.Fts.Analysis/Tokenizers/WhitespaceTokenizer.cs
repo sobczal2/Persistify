@@ -22,7 +22,7 @@ public class WhitespaceTokenizer : ITokenizer
                 ? textSpan[index..]
                 : textSpan.Slice(index, whitespaceIndex);
 
-            tokens.Add(new Token(token.ToString(), index, token.Length, alphabet));
+            tokens.Add(new Token(token.ToString(), index, 1, alphabet));
             index += token.Length + 1;
         }
 

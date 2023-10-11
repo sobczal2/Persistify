@@ -30,20 +30,38 @@ public class StandardAnalyzer : IAnalyzer
     }
 
     // TODO: Optimize this method
-    public List<Token> Analyze(string text)
+    public List<Token> Analyze(string text, AnalyzerMode mode)
     {
-        var filteredText = new string(text
-            .Where(x => _alphabet.Contains(x))
-            .ToArray());
-
-        var tokens = _tokenizer.Tokenize(filteredText, _alphabet);
+        var tokens = _tokenizer.Tokenize(text, _alphabet);
 
         foreach (var tokenFilter in _tokenFilters)
         {
-            tokens = tokenFilter.Filter(tokens);
+            if (ShouldFilter(tokenFilter.Type, mode))
+            {
+                tokens = tokenFilter.Filter(tokens);
+            }
+        }
+
+        foreach (var token in tokens)
+        {
+            token.Value = new string(token.Value
+                .Where(x => Array.BinarySearch(_alphabet, x) >= 0)
+                .ToArray()
+            );
         }
 
         return tokens;
+    }
+
+    private bool ShouldFilter(TokenFilterType type, AnalyzerMode mode)
+    {
+        return type switch
+        {
+            TokenFilterType.IndexOnly => mode == AnalyzerMode.Index,
+            TokenFilterType.SearchOnly => mode == AnalyzerMode.Search,
+            TokenFilterType.IndexAndSearch => true,
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 
     public int AlphabetLength => _alphabet.Length;

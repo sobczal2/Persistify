@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Persistify.Domain.Documents;
+using Persistify.Domain.Search;
 using ProtoBuf;
 
 namespace Persistify.Responses.Documents;
@@ -8,7 +8,7 @@ namespace Persistify.Responses.Documents;
 public class SearchDocumentsResponse
 {
     [ProtoMember(1)]
-    public List<Document> Documents { get; set; } = default!;
+    public List<SearchRecord> SearchRecords { get; set; } = default!;
 
     [ProtoMember(2)]
     public int TotalCount { get; set; }

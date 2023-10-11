@@ -4,6 +4,7 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Text;
 using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Analysis.Analyzers;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.DataStructures.Tries;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -36,7 +37,7 @@ public class TextIndexer : IIndexer
             {
                 DocumentId = document.Id, Value = textFieldValue.Value
             });
-            var tokens = _analyzer.Analyze(textFieldValue.Value);
+            var tokens = _analyzer.Analyze(textFieldValue.Value, AnalyzerMode.Index);
 
             foreach (var token in tokens)
             {
@@ -52,7 +53,7 @@ public class TextIndexer : IIndexer
         {
             DocumentId = document.Id, Value = textFieldValue.Value
         });
-        var tokens = _analyzer.Analyze(textFieldValue.Value);
+        var tokens = _analyzer.Analyze(textFieldValue.Value, AnalyzerMode.Index);
 
         foreach (var token in tokens)
         {
@@ -70,6 +71,7 @@ public class TextIndexer : IIndexer
         return textSearchQuery switch
         {
             ExactTextSearchQuery exactTextSearchQuery => HandleExactTextSearch(exactTextSearchQuery),
+            FullTextSearchQuery fullTextSearchQuery => HandleFullTextSearch(fullTextSearchQuery),
             _ => throw new Exception("Invalid search query")
         };
     }
@@ -89,7 +91,44 @@ public class TextIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, query.Boost);
+            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
+        }
+    }
+
+    private IEnumerable<ISearchResult> HandleFullTextSearch(FullTextSearchQuery query)
+    {
+        var tokens = _analyzer.Analyze(query.Value, AnalyzerMode.Search);
+        var results = new SortedList<int, SearchResult>();
+
+        foreach (var token in tokens)
+        {
+            var trieResults = _fixedTrie.Search(token);
+            foreach (var trieResult in trieResults)
+            {
+                var score = (trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost) / tokens.Count;
+                if (results.TryGetValue(trieResult.Item.DocumentId, out var result))
+                {
+                    result.Metadata.Score += score;
+                    foreach (var position in trieResult.Item.Token.Positions)
+                    {
+                        result.Metadata.Add($"token_{token.Value}.position", position.ToString());
+                    }
+                }
+                else
+                {
+                    var metadata = new Metadata(score);
+                    foreach (var position in trieResult.Item.Token.Positions)
+                    {
+                        metadata.Add($"token_{token.Value}.position", position.ToString());
+                    }
+                    results.Add(trieResult.Item.DocumentId, new SearchResult(trieResult.Item.DocumentId, metadata));
+                }
+            }
+        }
+
+        foreach (var result in results.Values)
+        {
+            yield return result;
         }
     }
 }

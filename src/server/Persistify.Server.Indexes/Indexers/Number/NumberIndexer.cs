@@ -73,7 +73,7 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, query.Boost);
+            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
         }
     }
 
@@ -85,7 +85,7 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, query.Boost);
+            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
         }
     }
 
@@ -97,7 +97,7 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, query.Boost);
+            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
         }
     }
 
@@ -109,7 +109,7 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, query.Boost);
+            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
         }
     }
 }

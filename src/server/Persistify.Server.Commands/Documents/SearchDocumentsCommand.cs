@@ -43,11 +43,11 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        var (documents, count) = await documentManager.SearchAsync(request.SearchQuery, take, skip);
+        var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQuery, take, skip);
 
-        _response = new SearchDocumentsResponse()
+        _response = new SearchDocumentsResponse
         {
-            Documents = documents,
+            SearchRecords = searchRecords,
             TotalCount = count
         };
     }

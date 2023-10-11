@@ -31,6 +31,28 @@ public class FixedTrie<TItem> : ITrie<TItem>
         node.Insert(item);
     }
 
+    public IEnumerable<(TItem Item, int Distance)> Search(IEnumerable<int> item)
+    {
+        var node = _root;
+        var distance = 0;
+
+        foreach (var index in item)
+        {
+            var child = node.GetChild(index);
+            if (child == null)
+            {
+                yield break;
+            }
+            node = child;
+            distance++;
+        }
+
+        foreach (var child in node.GetAllItems())
+        {
+            yield return (child, distance);
+        }
+    }
+
     public int Remove(Predicate<TItem> predicate)
     {
         return Remove(_root, predicate);
