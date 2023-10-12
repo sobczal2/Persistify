@@ -1,6 +1,7 @@
 using System;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Persistify.Server.Extensions;
 using Serilog;
@@ -28,9 +29,10 @@ public class Program
             builder.Services.AddServicesConfiguration(builder.Configuration);
             builder.Host.AddHostConfiguration();
 
-            Log.Information("Persistify Server {Version} starting up...", version);
-
             var app = builder.Build();
+
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Persistify Server v{Version} started", version);
 
             app.UsePersistify();
 
