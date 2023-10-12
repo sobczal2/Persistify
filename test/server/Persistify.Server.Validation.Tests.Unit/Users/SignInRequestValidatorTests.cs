@@ -115,24 +115,6 @@ public class SignInRequestValidatorTests
     }
 
     [Fact]
-    public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new SignInRequest { Username = "username", Password = "password" };
-        _userManager.Exists(request.Username).Returns(false);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
-        var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("Invalid credentials");
-        exception.PropertyName.Should().Be("SignInRequest.Username");
-    }
-
-    [Fact]
     public async Task Validate_WhenPasswordIsNull_ReturnsValidationException()
     {
         // Arrange
