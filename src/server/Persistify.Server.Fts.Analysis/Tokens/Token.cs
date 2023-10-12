@@ -9,23 +9,23 @@ public class Token : IEnumerable<int>
 {
     public char[] Alphabet { get; }
     public string Value { get; set; }
+    public float Score { get; }
     public int Count { get; set; }
     public List<int> Positions { get; }
-    public int MatchedCharactersCount { get; }
-    public Token(string value, int count, List<int> positions, int matchedCharactersCount, char[] alphabet)
+    public Token(string value, int count, List<int> positions, float score, char[] alphabet)
     {
         Alphabet = alphabet;
         Value = value;
         Count = count;
         Positions = positions;
-        MatchedCharactersCount = matchedCharactersCount;
+        Score = score;
     }
 
-    public Token(string value, int position, int matchedCharactersCount,char[] alphabet)
+    public Token(string value, int position, float score, char[] alphabet)
     {
         Alphabet = alphabet;
         Value = value;
-        MatchedCharactersCount = matchedCharactersCount;
+        Score = score;
         Count = 1;
         Positions = new List<int>(1) { position };
     }

@@ -15,4 +15,6 @@ public class LowercaseTokenFilter : ITokenFilter
 
         return tokens;
     }
+
+    public TokenFilterType Type => TokenFilterType.IndexAndSearch;
 }

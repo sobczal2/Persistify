@@ -86,14 +86,14 @@ public class BoolIndexer : IIndexer
         {
             foreach (var documentId in _trueDocuments)
             {
-                yield return new SearchResult(documentId, query.Boost);
+                yield return new SearchResult(documentId, new Metadata(query.Boost));
             }
         }
         else
         {
             foreach (var documentId in _falseDocuments)
             {
-                yield return new SearchResult(documentId, query.Boost);
+                yield return new SearchResult(documentId, new Metadata(query.Boost));
             }
         }
     }

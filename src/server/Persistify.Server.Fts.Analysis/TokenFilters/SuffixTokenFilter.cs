@@ -14,7 +14,7 @@ public class SuffixTokenFilter : ITokenFilter
         foreach (var token in tokens)
         {
             var value = token.Value;
-            var suffixes = StringHelpers.GetSuffixes(value);
+            var suffixes = StringHelpers.GetNotEmptySuffixes(value);
 
             foreach (var suffix in suffixes)
             {
@@ -23,10 +23,19 @@ public class SuffixTokenFilter : ITokenFilter
                     continue;
                 }
 
-                filteredTokens.Add(new Token(suffix, token.Count, token.Positions, suffix.Length, token.Alphabet));
+                var newPositions = new List<int>();
+
+                foreach (var position in token.Positions)
+                {
+                    newPositions.Add(position + value.Length - suffix.Length);
+                }
+
+                filteredTokens.Add(new Token(suffix, token.Count, newPositions, suffix.Length / (float)token.Value.Length, token.Alphabet));
             }
         }
 
         return filteredTokens;
     }
+
+    public TokenFilterType Type => TokenFilterType.IndexOnly;
 }
