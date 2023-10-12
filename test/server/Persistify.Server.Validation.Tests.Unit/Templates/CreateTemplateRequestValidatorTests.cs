@@ -113,7 +113,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateTemplateRequest");
@@ -136,7 +136,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name empty");
         exception.PropertyName.Should().Be("CreateTemplateRequest.TemplateName");
@@ -159,7 +159,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name empty");
         exception.PropertyName.Should().Be("CreateTemplateRequest.TemplateName");
@@ -182,7 +182,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("CreateTemplateRequest.TemplateName");
@@ -205,7 +205,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("No fields");
         exception.PropertyName.Should().Be("CreateTemplateRequest.*Fields");
@@ -245,7 +245,7 @@ public class CreateTemplateRequestValidatorTests
             NumberFields = new List<NumberField>(),
             BoolFields = new List<BoolField>()
         };
-        var validationException = new PersistifyException("Test", "Test");
+        var validationException = new StaticValidationPersistifyException("Test", "Test");
         _textFieldValidator
             .ValidateAsync(Arg.Any<TextField>())
             .Returns(validationException);
@@ -292,7 +292,7 @@ public class CreateTemplateRequestValidatorTests
             NumberFields = new List<NumberField> { new() },
             BoolFields = new List<BoolField>()
         };
-        var validationException = new PersistifyException("Test", "Test");
+        var validationException = new StaticValidationPersistifyException("Test", "Test");
         _numberFieldValidator
             .ValidateAsync(Arg.Any<NumberField>())
             .Returns(validationException);
@@ -339,7 +339,7 @@ public class CreateTemplateRequestValidatorTests
             NumberFields = new List<NumberField>(),
             BoolFields = new List<BoolField> { new() }
         };
-        var validationException = new PersistifyException("Test", "Test");
+        var validationException = new StaticValidationPersistifyException("Test", "Test");
         _boolFieldValidator
             .ValidateAsync(Arg.Any<BoolField>())
             .Returns(validationException);
@@ -369,7 +369,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateTemplateRequest.TextFields[1].Name");
@@ -392,7 +392,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateTemplateRequest.NumberFields[1].Name");
@@ -415,7 +415,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateTemplateRequest.BoolFields[1].Name");
@@ -438,7 +438,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateTemplateRequest.NumberFields[0].Name");
@@ -461,7 +461,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateTemplateRequest.BoolFields[0].Name");
@@ -484,7 +484,7 @@ public class CreateTemplateRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateTemplateRequest.BoolFields[0].Name");

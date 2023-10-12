@@ -57,7 +57,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateUserRequest");
@@ -74,7 +74,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateUserRequest.Username");
@@ -91,7 +91,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateUserRequest.Username");
@@ -108,7 +108,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("CreateUserRequest.Username");
@@ -126,7 +126,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("User already exists");
         exception.PropertyName.Should().Be("CreateUserRequest.Username");
@@ -143,7 +143,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateUserRequest.Password");
@@ -160,7 +160,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateUserRequest.Password");
@@ -177,7 +177,7 @@ public class CreateUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("CreateUserRequest.Password");

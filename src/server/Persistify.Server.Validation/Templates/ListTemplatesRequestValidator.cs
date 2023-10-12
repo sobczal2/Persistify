@@ -25,7 +25,7 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
         if (value.Pagination == null)
         {
             PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         PropertyName.Push(nameof(ListTemplatesRequest.Pagination));

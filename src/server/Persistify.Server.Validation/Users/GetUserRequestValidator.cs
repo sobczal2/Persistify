@@ -25,19 +25,19 @@ public class GetUserRequestValidator : Validator<GetUserRequest>
         if (string.IsNullOrEmpty(value.Username))
         {
             PropertyName.Push(nameof(GetUserRequest.Username));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(GetUserRequest.Username));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         if (!_userManager.Exists(value.Username))
         {
             PropertyName.Push(nameof(GetUserRequest.Username));
-            return ValueTask.FromResult<Result>(ValidationException(UserErrorMessages.UserNotFound));
+            return ValueTask.FromResult<Result>(DynamicValidationException(UserErrorMessages.UserNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

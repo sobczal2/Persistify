@@ -20,7 +20,7 @@ public class ValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be(string.Empty);
@@ -50,7 +50,7 @@ public class ValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Test");
         exception.PropertyName.Should().Be(string.Empty);
@@ -67,7 +67,7 @@ public class ValidatorTests
                 return ValueTask.FromResult(Result.Ok);
             }
 
-            return ValueTask.FromResult<Result>(ValidationException("Test"));
+            return ValueTask.FromResult<Result>(StaticValidationException("Test"));
         }
     }
 }

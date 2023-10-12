@@ -33,10 +33,23 @@ public class SignInAsyncTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task SignInAsync_WhenCredentialsAreInvalid_ReturnsUnauthorized()
+    public async Task SignInAsync_WhenUserDoesNotExist_ReturnsUnauthenticated()
     {
         // Arrange
         var request = new SignInRequest { Username = "invalid", Password = "invalid" };
+
+        // Act
+        var action = new Func<Task>(async () => await UserService.SignInAsync(request, new CallContext()));
+
+        // Assert
+        await action.Should().ThrowAsync<RpcException>().WithStatusCode(StatusCode.Unauthenticated);
+    }
+
+    [Fact]
+    public async Task SignInAsync_WhenPasswordIsInvalid_ReturnsUnauthenticated()
+    {
+        // Arrange
+        var request = new SignInRequest { Username = RootCredentials.Username, Password = "invalid" };
 
         // Act
         var action = new Func<Task>(async () => await UserService.SignInAsync(request, new CallContext()));

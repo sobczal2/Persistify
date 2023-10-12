@@ -58,7 +58,7 @@ public class SetPermissionRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("SetPermissionRequest");
@@ -75,7 +75,7 @@ public class SetPermissionRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("SetPermissionRequest.Username");
@@ -92,7 +92,7 @@ public class SetPermissionRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("SetPermissionRequest.Username");
@@ -109,7 +109,7 @@ public class SetPermissionRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("SetPermissionRequest.Username");
@@ -127,7 +127,7 @@ public class SetPermissionRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("User not found");
         exception.PropertyName.Should().Be("SetPermissionRequest.Username");
@@ -147,7 +147,7 @@ public class SetPermissionRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Invalid permission");
         exception.PropertyName.Should().Be("SetPermissionRequest.Permission");

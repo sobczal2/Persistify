@@ -19,13 +19,13 @@ public class NumberFieldValidator : Validator<NumberField>
         if (string.IsNullOrEmpty(value.Name))
         {
             PropertyName.Push(nameof(NumberField.Name));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
+            return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.Name.Length > 64)
         {
             PropertyName.Push(nameof(NumberField.Name));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         return ValueTask.FromResult(Result.Ok);

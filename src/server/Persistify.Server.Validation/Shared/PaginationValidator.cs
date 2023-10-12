@@ -17,13 +17,13 @@ public class PaginationValidator : Validator<Pagination>
         if (value.PageNumber < 0)
         {
             PropertyName.Push(nameof(value.PageNumber));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.PageNumberLessThanZero));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.PageNumberLessThanZero));
         }
 
         if (value.PageSize <= 0)
         {
             PropertyName.Push(nameof(value.PageSize));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero));
         }
 
         return ValueTask.FromResult(Result.Ok);

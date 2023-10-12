@@ -56,7 +56,7 @@ public class DeleteDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("DeleteDocumentRequest");
@@ -73,7 +73,7 @@ public class DeleteDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
@@ -90,7 +90,7 @@ public class DeleteDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
@@ -108,7 +108,7 @@ public class DeleteDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Template not found");
         exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
@@ -126,7 +126,7 @@ public class DeleteDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
@@ -144,7 +144,7 @@ public class DeleteDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Invalid document id");
         exception.PropertyName.Should().Be("DeleteDocumentRequest.DocumentId");

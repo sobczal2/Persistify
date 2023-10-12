@@ -38,7 +38,7 @@ public class NumberFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("NumberFieldValue");
@@ -55,7 +55,7 @@ public class NumberFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name empty");
         exception.PropertyName.Should().Be("NumberFieldValue.FieldName");
@@ -72,7 +72,7 @@ public class NumberFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name empty");
         exception.PropertyName.Should().Be("NumberFieldValue.FieldName");
@@ -89,7 +89,7 @@ public class NumberFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name too long");
         exception.PropertyName.Should().Be("NumberFieldValue.FieldName");

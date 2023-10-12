@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Persistify.Server.Tests.Integration.Common;
 
-public class IntegrationTestBase : IClassFixture<PersistifyServerWebApplicationFactory>, IDisposable
+public class IntegrationTestBase : IClassFixture<PersistifyServerWebApplicationFactory>
 {
     private readonly PersistifyServerWebApplicationFactory _factory;
     private readonly GrpcChannel _grpcChannel;
@@ -36,10 +36,4 @@ public class IntegrationTestBase : IClassFixture<PersistifyServerWebApplicationF
     public IDocumentService DocumentService => _grpcChannel.CreateGrpcService<IDocumentService>();
 
     public (string Username, string Password) RootCredentials { get; }
-
-    public void Dispose()
-    {
-        _factory.Dispose();
-        _grpcChannel.Dispose();
-    }
 }

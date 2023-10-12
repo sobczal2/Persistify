@@ -81,7 +81,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("SearchDocumentsRequest");
@@ -98,7 +98,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
@@ -115,7 +115,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
@@ -132,7 +132,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
@@ -150,7 +150,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<PersistifyException>();
+        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Template not found");
         exception.PropertyName.Should().Be("SearchDocumentsRequest.TemplateName");
@@ -183,7 +183,7 @@ public class SearchDocumentsRequestValidatorTests
         var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
-        var validationException = new PersistifyException("Test", "Test");
+        var validationException = new StaticValidationPersistifyException("Test", "Test");
         _paginationValidator.ValidateAsync(Arg.Any<Pagination>()).Returns(validationException);
 
         // Act
