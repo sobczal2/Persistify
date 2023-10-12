@@ -37,36 +37,6 @@ public static class SettingsExtensions
 
         services.Configure<LoggingSettings>(loggingSettingsSection);
 
-        var hostedServicesSettingsSection = configuration
-            .GetRequiredSection(HostedServicesSettings.SectionName);
-
-        var hostedServicesSettingsValidator = new HostedServicesSettingsValidator();
-        hostedServicesSettingsValidator.ValidateAndThrow(hostedServicesSettingsSection.Get<HostedServicesSettings>() ??
-                                                         throw new InvalidOperationException(
-                                                             $"Could not load {HostedServicesSettings.SectionName} from configuration"));
-
-        services.Configure<HostedServicesSettings>(hostedServicesSettingsSection);
-
-        var cacheSettingsSection = configuration
-            .GetRequiredSection(CacheSettings.SectionName);
-
-        var cacheSettingsValidator = new CacheSettingsValidator();
-        cacheSettingsValidator.ValidateAndThrow(cacheSettingsSection.Get<CacheSettings>() ??
-                                                throw new InvalidOperationException(
-                                                    $"Could not load {CacheSettings.SectionName} from configuration"));
-
-        services.Configure<CacheSettings>(cacheSettingsSection);
-
-        var dataStructuresSettingsSection = configuration
-            .GetRequiredSection(DataStructuresSettings.SectionName);
-
-        var dataStructuresSettingsValidator = new DataStructuresSettingsValidator();
-        dataStructuresSettingsValidator.ValidateAndThrow(dataStructuresSettingsSection.Get<DataStructuresSettings>() ??
-                                                         throw new InvalidOperationException(
-                                                             $"Could not load {DataStructuresSettings.SectionName} from configuration"));
-
-        services.Configure<DataStructuresSettings>(dataStructuresSettingsSection);
-
         var repositorySettingsSection = configuration
             .GetRequiredSection(RepositorySettings.SectionName);
 

@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\shared\Persistify.Services\Persistify.Services.csproj" />
+      <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>

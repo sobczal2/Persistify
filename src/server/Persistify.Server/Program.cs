@@ -5,36 +5,44 @@ using Microsoft.Extensions.Logging;
 using Persistify.Server.Extensions;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace Persistify.Server;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
-try
+public class Program
 {
-    var version = Assembly
-        .GetEntryAssembly()!
-        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-        ?.InformationalVersion;
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-    builder.Logging.ClearProviders();
-    builder.Services.AddSettingsConfiguration(builder.Configuration);
-    builder.Services.AddServicesConfiguration(builder.Configuration);
-    builder.Host.AddHostConfiguration();
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateBootstrapLogger();
+        try
+        {
+            var version = Assembly
+                .GetEntryAssembly()!
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                ?.InformationalVersion;
 
-    Log.Information("Persistify Server {Version} starting up...", version);
+            builder.Logging.ClearProviders();
+            builder.Services.AddSettingsConfiguration(builder.Configuration);
+            builder.Services.AddServicesConfiguration(builder.Configuration);
+            builder.Host.AddHostConfiguration();
 
-    var app = builder.Build();
+            Log.Information("Persistify Server {Version} starting up...", version);
 
-    app.UsePersistify();
+            var app = builder.Build();
 
-    app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Persistify Server terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
+            app.UsePersistify();
+
+            app.Run();
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Persistify Server terminated unexpectedly");
+        }
+        finally
+        {
+            Log.CloseAndFlush();
+        }
+    }
 }

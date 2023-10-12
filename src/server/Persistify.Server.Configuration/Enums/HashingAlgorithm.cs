@@ -2,5 +2,5 @@
 
 public enum HashingAlgorithm
 {
-    Argon2
+    Argon2 = 1,
 }
