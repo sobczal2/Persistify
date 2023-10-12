@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Persistify.Helpers.Results;
+using Persistify.Server.ErrorHandling.Codes;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Shared;
 
@@ -19,7 +20,7 @@ public abstract class Validator<T> : IValidator<T>
     {
         if (value == null)
         {
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         return await ValidateNotNullAsync(value);
@@ -27,10 +28,24 @@ public abstract class Validator<T> : IValidator<T>
 
     public abstract ValueTask<Result> ValidateNotNullAsync(T value);
 
-    protected ValidationException ValidationException(string message)
+    protected PersistifyException StaticValidationException(string message)
     {
         var reversedPropertyNames = new List<string>(PropertyName);
         reversedPropertyNames.Reverse();
-        return new ValidationException(string.Join('.', reversedPropertyNames), message);
+        return new StaticValidationPersistifyException(string.Join('.', reversedPropertyNames), message);
+    }
+
+    protected PersistifyException DynamicValidationException(string message)
+    {
+        var reversedPropertyNames = new List<string>(PropertyName);
+        reversedPropertyNames.Reverse();
+        return new DynamicValidationPersistifyException(string.Join('.', reversedPropertyNames), message);
+    }
+
+    protected PersistifyException Exception(string message, PersistifyErrorCode errorCode)
+    {
+        var reversedPropertyNames = new List<string>(PropertyName);
+        reversedPropertyNames.Reverse();
+        return new PersistifyException(string.Join('.', reversedPropertyNames), message, errorCode);
     }
 }

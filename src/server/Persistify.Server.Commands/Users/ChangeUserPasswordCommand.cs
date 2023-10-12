@@ -6,6 +6,7 @@ using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
@@ -33,7 +34,7 @@ public class ChangeUserPasswordCommand : Command<ChangeUserPasswordRequest, Chan
     protected override async ValueTask RunAsync(ChangeUserPasswordRequest request, CancellationToken cancellationToken)
     {
         var user = await _userManager
-            .GetAsync(request.Username) ?? throw new PersistifyInternalException();
+            .GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(ChangeUserPasswordRequest));
 
         var (hash, salt) = _passwordService.HashPassword(request.Password);
 

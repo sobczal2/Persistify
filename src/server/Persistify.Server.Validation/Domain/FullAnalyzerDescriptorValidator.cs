@@ -2,6 +2,7 @@
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -32,13 +33,13 @@ public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
                 if (string.IsNullOrEmpty(value.CharacterFilterNames[i]))
                 {
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.CharacterFilterNames)}[{i}]");
-                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
+                    return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
                 }
 
                 if (value.CharacterFilterNames[i].Length > 64)
                 {
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.CharacterFilterNames)}[{i}]");
-                    return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+                    return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
                 }
             }
         }
@@ -46,13 +47,13 @@ public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
         if (string.IsNullOrEmpty(value.TokenizerName))
         {
             PropertyName.Push(nameof(FullAnalyzerDescriptor.TokenizerName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
+            return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.TokenizerName.Length > 64)
         {
             PropertyName.Push(nameof(FullAnalyzerDescriptor.TokenizerName));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         if (value.TokenFilterNames.Count > 0)
@@ -62,13 +63,13 @@ public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
                 if (string.IsNullOrEmpty(value.TokenFilterNames[i]))
                 {
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.TokenFilterNames)}[{i}]");
-                    return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.NameEmpty));
+                    return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
                 }
 
                 if (value.TokenFilterNames[i].Length > 64)
                 {
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.TokenFilterNames)}[{i}]");
-                    return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+                    return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
                 }
             }
         }
@@ -80,15 +81,15 @@ public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
             {
                 case UnsupportedCharacterFilterException unsupportedCharacterFilterException:
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.CharacterFilterNames)}");
-                    return ValueTask.FromResult<Result>(ValidationException(unsupportedCharacterFilterException.Message));
+                    return ValueTask.FromResult<Result>(DynamicValidationException(unsupportedCharacterFilterException.Message));
                 case UnsupportedTokenizerException unsupportedTokenizerException:
                     PropertyName.Push(nameof(FullAnalyzerDescriptor.TokenizerName));
-                    return ValueTask.FromResult<Result>(ValidationException(unsupportedTokenizerException.Message));
+                    return ValueTask.FromResult<Result>(DynamicValidationException(unsupportedTokenizerException.Message));
                 case UnsupportedTokenFilterException unsupportedTokenFilterException:
                     PropertyName.Push($"{nameof(FullAnalyzerDescriptor.TokenFilterNames)}");
-                    return ValueTask.FromResult<Result>(ValidationException(unsupportedTokenFilterException.Message));
+                    return ValueTask.FromResult<Result>(DynamicValidationException(unsupportedTokenFilterException.Message));
                 default:
-                    throw new PersistifyInternalException();
+                    throw new InternalPersistifyException();
             }
         }
 

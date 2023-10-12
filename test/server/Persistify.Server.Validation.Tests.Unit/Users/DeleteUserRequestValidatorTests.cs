@@ -57,8 +57,8 @@ public class DeleteUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("DeleteUserRequest");
     }
@@ -74,8 +74,8 @@ public class DeleteUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("DeleteUserRequest.Username");
     }
@@ -91,8 +91,8 @@ public class DeleteUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("DeleteUserRequest.Username");
     }
@@ -108,8 +108,8 @@ public class DeleteUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("DeleteUserRequest.Username");
     }
@@ -126,8 +126,8 @@ public class DeleteUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Contain("User not found");
         exception.PropertyName.Should().Be("DeleteUserRequest.Username");
     }

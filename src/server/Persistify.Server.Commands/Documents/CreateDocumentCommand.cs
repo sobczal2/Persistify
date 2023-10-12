@@ -7,6 +7,7 @@ using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
@@ -34,7 +35,7 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override async ValueTask RunAsync(CreateDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
+        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
         _document = new Document
         {
@@ -43,7 +44,7 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
             BoolFieldValues = request.BoolFieldValues
         };
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
+        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
@@ -53,9 +54,9 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override CreateDocumentResponse GetResponse()
     {
-        return new CreateDocumentResponse()
+        return new CreateDocumentResponse
         {
-            DocumentId = _document?.Id ?? throw new PersistifyInternalException()
+            DocumentId = _document?.Id ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest))
         };
     }
 

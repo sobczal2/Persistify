@@ -56,8 +56,8 @@ public class GetDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("GetDocumentRequest");
     }
@@ -73,8 +73,8 @@ public class GetDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
     }
@@ -90,8 +90,8 @@ public class GetDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
     }
@@ -107,8 +107,8 @@ public class GetDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
     }
@@ -125,8 +125,8 @@ public class GetDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Template not found");
         exception.PropertyName.Should().Be("GetDocumentRequest.TemplateName");
     }
@@ -143,8 +143,8 @@ public class GetDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Invalid document id");
         exception.PropertyName.Should().Be("GetDocumentRequest.DocumentId");
     }

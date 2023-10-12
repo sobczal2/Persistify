@@ -6,6 +6,7 @@ using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
@@ -29,14 +30,14 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
 
     protected override async ValueTask RunAsync(GetUserRequest request, CancellationToken cancellationToken)
     {
-        _user = await _userManager.GetAsync(request.Username) ?? throw new PersistifyInternalException();
+        _user = await _userManager.GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(GetUserRequest));
     }
 
     protected override GetUserResponse GetResponse()
     {
         if (_user is null)
         {
-            throw new PersistifyInternalException();
+            throw new InternalPersistifyException(nameof(GetUserRequest));
         }
 
         return new GetUserResponse { Username = _user.Username, Permission = (int)_user.Permission };

@@ -14,7 +14,7 @@ public class ValidationExceptionTests
         var message = "message";
 
         // Act
-        var result = new ValidationException(property, message);
+        var result = new PersistifyException(property, message);
 
         // Assert
         result.PropertyName.Should().Be(property);

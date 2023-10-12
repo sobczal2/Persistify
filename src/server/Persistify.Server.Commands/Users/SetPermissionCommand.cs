@@ -6,6 +6,7 @@ using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
@@ -28,7 +29,7 @@ public class SetPermissionCommand : Command<SetPermissionRequest, SetPermissionR
 
     protected override async ValueTask RunAsync(SetPermissionRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetAsync(request.Username) ?? throw new PersistifyInternalException();
+        var user = await _userManager.GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(SetPermissionRequest));
 
         user.Permission = (Permission)request.Permission;
 

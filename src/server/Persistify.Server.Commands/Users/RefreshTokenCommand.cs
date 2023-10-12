@@ -31,7 +31,7 @@ public class RefreshTokenCommand : Command<RefreshTokenRequest, RefreshTokenResp
 
     protected override async ValueTask RunAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetAsync(request.Username) ?? throw new PersistifyInternalException();
+        var user = await _userManager.GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(RefreshTokenRequest));
 
         if (await _userManager.CheckRefreshToken(user.Id, request.RefreshToken))
         {
@@ -41,14 +41,14 @@ public class RefreshTokenCommand : Command<RefreshTokenRequest, RefreshTokenResp
         }
         else
         {
-            throw new ValidationException(nameof(RefreshTokenRequest.RefreshToken),
+            throw new DynamicValidationPersistifyException(nameof(RefreshTokenRequest.RefreshToken),
                 UserErrorMessages.InvalidRefreshToken);
         }
     }
 
     protected override RefreshTokenResponse GetResponse()
     {
-        return _response ?? throw new PersistifyInternalException();
+        return _response ?? throw new InternalPersistifyException(nameof(RefreshTokenRequest));
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(RefreshTokenRequest request)

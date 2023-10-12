@@ -134,8 +134,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateDocumentRequest");
     }
@@ -151,8 +151,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
     }
@@ -168,8 +168,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
     }
@@ -185,8 +185,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
     }
@@ -203,8 +203,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Template not found");
         exception.PropertyName.Should().Be("CreateDocumentRequest.TemplateName");
     }
@@ -221,8 +221,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("No field values");
         exception.PropertyName.Should().Be("CreateDocumentRequest.*FieldValues");
     }
@@ -258,7 +258,7 @@ public class CreateDocumentRequestValidatorTests
             TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
-        var validationException = new ValidationException("Test", "Test");
+        var validationException = new PersistifyException("Test", "Test");
         _textFieldValueValidator
             .ValidateAsync(Arg.Any<TextFieldValue>())
             .Returns(validationException);
@@ -302,7 +302,7 @@ public class CreateDocumentRequestValidatorTests
             TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
-        var validationException = new ValidationException("Test", "Test");
+        var validationException = new PersistifyException("Test", "Test");
         _numberFieldValueValidator
             .ValidateAsync(Arg.Any<NumberFieldValue>())
             .Returns(validationException);
@@ -346,7 +346,7 @@ public class CreateDocumentRequestValidatorTests
             TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
-        var validationException = new ValidationException("Test", "Test");
+        var validationException = new PersistifyException("Test", "Test");
         _boolFieldValueValidator
             .ValidateAsync(Arg.Any<BoolFieldValue>())
             .Returns(validationException);
@@ -375,8 +375,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateDocumentRequest.TextFieldValues[1].FieldName");
     }
@@ -397,8 +397,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateDocumentRequest.NumberFieldValues[1].FieldName");
     }
@@ -419,8 +419,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateDocumentRequest.BoolFieldValues[1].FieldName");
     }
@@ -442,8 +442,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateDocumentRequest.NumberFieldValues[0].FieldName");
     }
@@ -465,8 +465,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateDocumentRequest.BoolFieldValues[0].FieldName");
     }
@@ -488,8 +488,8 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
         exception.PropertyName.Should().Be("CreateDocumentRequest.BoolFieldValues[0].FieldName");
     }
@@ -520,7 +520,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
+        result.Exception.Should().BeOfType<PersistifyException>();
     }
 
     [Fact]
@@ -541,7 +541,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
+        result.Exception.Should().BeOfType<PersistifyException>();
     }
 
     [Fact]
@@ -562,7 +562,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
+        result.Exception.Should().BeOfType<PersistifyException>();
     }
 
     [Fact]

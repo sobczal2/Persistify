@@ -56,8 +56,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest");
     }
@@ -73,8 +73,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Username");
     }
@@ -90,8 +90,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Username");
     }
@@ -107,8 +107,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Username");
     }
@@ -126,8 +126,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("User not found");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Username");
     }
@@ -145,8 +145,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Password");
     }
@@ -164,8 +164,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Password");
     }
@@ -183,8 +183,8 @@ public class ChangeUserPasswordRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<PersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("ChangeUserPasswordRequest.Password");
     }

@@ -42,13 +42,19 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
+            return StaticValidationException(SharedErrorMessages.ValueTooLong);
+        }
+
+        if (value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count == 0)
+        {
+            PropertyName.Push("*FieldValues");
+            return StaticValidationException(DocumentErrorMessages.NoFieldValues);
         }
 
         var template = await _templateManager.GetAsync(value.TemplateName);
@@ -56,14 +62,9 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         if (template is null)
         {
             PropertyName.Push(nameof(CreateDocumentRequest.TemplateName));
-            return ValidationException(DocumentErrorMessages.TemplateNotFound);
+            return DynamicValidationException(DocumentErrorMessages.TemplateNotFound);
         }
 
-        if (value.TextFieldValues.Count + value.NumberFieldValues.Count + value.BoolFieldValues.Count == 0)
-        {
-            PropertyName.Push("*FieldValues");
-            return ValidationException(DocumentErrorMessages.NoFieldValues);
-        }
 
         for (var i = 0; i < value.TextFieldValues.Count; i++)
         {
@@ -110,7 +111,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             {
                 PropertyName.Push($"{nameof(CreateDocumentRequest.TextFieldValues)}[{i}]");
                 PropertyName.Push(nameof(TextFieldValue.FieldName));
-                return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
+                return DynamicValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
             textFieldNames.Add(fieldName);
@@ -124,7 +125,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             {
                 PropertyName.Push($"{nameof(CreateDocumentRequest.NumberFieldValues)}[{i}]");
                 PropertyName.Push(nameof(NumberFieldValue.FieldName));
-                return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
+                return DynamicValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
             numberFieldNames.Add(fieldName);
@@ -138,7 +139,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             {
                 PropertyName.Push($"{nameof(CreateDocumentRequest.BoolFieldValues)}[{i}]");
                 PropertyName.Push(nameof(BoolFieldValue.FieldName));
-                return ValidationException(DocumentErrorMessages.FieldNameNotUnique);
+                return DynamicValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
             boolFieldNames.Add(fieldName);
@@ -149,7 +150,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             if (textField.Required && !textFieldNames.Contains(textField.Name))
             {
                 PropertyName.Push(nameof(CreateDocumentRequest.TextFieldValues));
-                return ValidationException(DocumentErrorMessages.RequiredFieldMissing);
+                return DynamicValidationException(DocumentErrorMessages.RequiredFieldMissing);
             }
         }
 
@@ -158,7 +159,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             if (numberField.Required && !numberFieldNames.Contains(numberField.Name))
             {
                 PropertyName.Push(nameof(CreateDocumentRequest.NumberFieldValues));
-                return ValidationException(DocumentErrorMessages.RequiredFieldMissing);
+                return DynamicValidationException(DocumentErrorMessages.RequiredFieldMissing);
             }
         }
 
@@ -167,7 +168,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             if (boolField.Required && !boolFieldNames.Contains(boolField.Name))
             {
                 PropertyName.Push(nameof(CreateDocumentRequest.BoolFieldValues));
-                return ValidationException(DocumentErrorMessages.RequiredFieldMissing);
+                return DynamicValidationException(DocumentErrorMessages.RequiredFieldMissing);
             }
         }
 

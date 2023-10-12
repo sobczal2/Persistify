@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Transactions;
@@ -156,7 +156,7 @@ public class TemplateManager : Manager, ITemplateManager
 
         if (_templateNameIdDictionary.ContainsKey(template.Name))
         {
-            throw new PersistifyInternalException();
+            throw new InternalPersistifyException();
         }
 
         var addAction = new Func<ValueTask>(async () =>
@@ -178,7 +178,7 @@ public class TemplateManager : Manager, ITemplateManager
 
             if (documentManager is null)
             {
-                throw new PersistifyInternalException();
+                throw new InternalPersistifyException();
             }
 
             await TransactionState.GetCurrentTransaction()
@@ -213,7 +213,7 @@ public class TemplateManager : Manager, ITemplateManager
                 var documentManager = _documentManagerStore.GetManager(id);
                 if (documentManager is null)
                 {
-                    throw new PersistifyInternalException();
+                    throw new InternalPersistifyException();
                 }
 
                 await TransactionState.GetCurrentTransaction()
@@ -228,7 +228,7 @@ public class TemplateManager : Manager, ITemplateManager
             }
             else
             {
-                throw new PersistifyInternalException();
+                throw new InternalPersistifyException();
             }
         });
 
