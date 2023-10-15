@@ -10,13 +10,8 @@ namespace Persistify.Server.Validation.Users;
 
 public class GetUserRequestValidator : Validator<GetUserRequest>
 {
-    private readonly IUserManager _userManager;
-
-    public GetUserRequestValidator(
-        IUserManager userManager
-    )
+    public GetUserRequestValidator()
     {
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(GetUserRequest));
     }
 
@@ -32,12 +27,6 @@ public class GetUserRequestValidator : Validator<GetUserRequest>
         {
             PropertyName.Push(nameof(GetUserRequest.Username));
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
-        }
-
-        if (!_userManager.Exists(value.Username))
-        {
-            PropertyName.Push(nameof(GetUserRequest.Username));
-            return ValueTask.FromResult<Result>(DynamicValidationException(UserErrorMessages.UserNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

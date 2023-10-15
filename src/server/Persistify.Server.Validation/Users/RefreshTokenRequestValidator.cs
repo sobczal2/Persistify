@@ -13,14 +13,11 @@ namespace Persistify.Server.Validation.Users;
 public class RefreshTokenRequestValidator : Validator<RefreshTokenRequest>
 {
     private readonly TokenSettings _tokenSettings;
-    private readonly IUserManager _userManager;
 
     public RefreshTokenRequestValidator(
-        IOptions<TokenSettings> tokenSettingsOptions,
-        IUserManager userManager
+        IOptions<TokenSettings> tokenSettingsOptions
     )
     {
-        _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _tokenSettings = tokenSettingsOptions?.Value ?? throw new ArgumentNullException(nameof(tokenSettingsOptions));
         PropertyName.Push(nameof(RefreshTokenRequest));
@@ -40,19 +37,20 @@ public class RefreshTokenRequestValidator : Validator<RefreshTokenRequest>
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
-        if (!_userManager.Exists(value.Username))
-        {
-            PropertyName.Push(nameof(RefreshTokenRequest.Username));
-            return ValueTask.FromResult<Result>(DynamicValidationException(UserErrorMessages.UserNotFound));
-        }
-
         if (string.IsNullOrEmpty(value.RefreshToken))
         {
             PropertyName.Push(nameof(RefreshTokenRequest.RefreshToken));
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
-        if (value.RefreshToken.Length != _tokenSettings.RefreshTokenLength)
+        var refreshTokenBytes = new byte[_tokenSettings.RefreshTokenLength];
+        if (!Convert.TryFromBase64String(value.RefreshToken, refreshTokenBytes, out var refreshTokenLength))
+        {
+            PropertyName.Push(nameof(RefreshTokenRequest.RefreshToken));
+            return ValueTask.FromResult<Result>(StaticValidationException(UserErrorMessages.InvalidRefreshToken));
+        }
+
+        if (refreshTokenLength != _tokenSettings.RefreshTokenLength)
         {
             PropertyName.Push(nameof(RefreshTokenRequest.RefreshToken));
             return ValueTask.FromResult<Result>(StaticValidationException(UserErrorMessages.InvalidRefreshToken));

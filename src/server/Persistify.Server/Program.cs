@@ -1,10 +1,12 @@
 using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Persistify.Server.Extensions;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace Persistify.Server;
 
@@ -14,9 +16,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        Log.Logger = new LoggerConfiguration()
+        var tmpLogger = new LoggerConfiguration()
             .WriteTo.Console()
-            .CreateBootstrapLogger();
+            .CreateBootstrapLogger() as ILogger;
         try
         {
             var version = Assembly
@@ -40,11 +42,8 @@ public class Program
         }
         catch (Exception ex)
         {
-            Log.Fatal(ex, "Persistify Server terminated unexpectedly");
-        }
-        finally
-        {
-            Log.CloseAndFlush();
+            File.WriteAllText("fatal.log", ex.ToString());
+            tmpLogger.Fatal(ex, "Persistify Server terminated unexpectedly");
         }
     }
 }

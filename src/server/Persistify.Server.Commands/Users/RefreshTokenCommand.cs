@@ -31,7 +31,7 @@ public class RefreshTokenCommand : Command<RefreshTokenRequest, RefreshTokenResp
 
     protected override async ValueTask RunAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(RefreshTokenRequest));
+        var user = await _userManager.GetAsync(request.Username) ?? throw new NotFoundPersistifyException(nameof(RefreshTokenRequest), UserErrorMessages.UserNotFound);
 
         if (await _userManager.CheckRefreshToken(user.Id, request.RefreshToken))
         {

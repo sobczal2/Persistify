@@ -10,6 +10,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.Commands.Users;
 
@@ -30,7 +31,8 @@ public class GetUserCommand : Command<GetUserRequest, GetUserResponse>
 
     protected override async ValueTask RunAsync(GetUserRequest request, CancellationToken cancellationToken)
     {
-        _user = await _userManager.GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(GetUserRequest));
+        _user = await _userManager.GetAsync(request.Username) ??
+                throw new NotFoundPersistifyException(nameof(GetUserRequest), UserErrorMessages.UserNotFound);
     }
 
     protected override GetUserResponse GetResponse()

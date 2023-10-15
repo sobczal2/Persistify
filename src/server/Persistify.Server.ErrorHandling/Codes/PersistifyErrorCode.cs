@@ -6,5 +6,6 @@ public enum PersistifyErrorCode
     DynamicValidationFailure,
     InsufficientPermission,
     InternalFailure,
-    Unauthenticated
+    Unauthenticated,
+    NotFound,
 }

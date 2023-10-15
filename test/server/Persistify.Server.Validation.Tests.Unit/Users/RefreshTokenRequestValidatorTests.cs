@@ -16,17 +16,15 @@ namespace Persistify.Server.Validation.Tests.Unit.Users;
 public class RefreshTokenRequestValidatorTests
 {
     private readonly IOptions<TokenSettings> _tokenOptions;
-    private readonly IUserManager _userManager;
 
     private RefreshTokenRequestValidator _sut;
 
     public RefreshTokenRequestValidatorTests()
     {
-        _userManager = Substitute.For<IUserManager>();
         _tokenOptions = Substitute.For<IOptions<TokenSettings>>();
         _tokenOptions.Value.Returns(new TokenSettings());
 
-        _sut = new RefreshTokenRequestValidator(_tokenOptions, _userManager);
+        _sut = new RefreshTokenRequestValidator(_tokenOptions);
     }
 
     [Fact]
@@ -35,7 +33,7 @@ public class RefreshTokenRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () => _sut = new RefreshTokenRequestValidator(null!, _userManager);
+        Action act = () => _sut = new RefreshTokenRequestValidator(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -48,19 +46,7 @@ public class RefreshTokenRequestValidatorTests
 
         // Act
         Action act = () =>
-            _sut = new RefreshTokenRequestValidator(Substitute.For<IOptions<TokenSettings>>(), _userManager);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>();
-    }
-
-    [Fact]
-    public void Ctor_WhenUserManagerIsNull_ThrowsArgumentNullException()
-    {
-        // Arrange
-
-        // Act
-        Action act = () => _sut = new RefreshTokenRequestValidator(_tokenOptions, null!);
+            _sut = new RefreshTokenRequestValidator(Substitute.For<IOptions<TokenSettings>>());
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -145,31 +131,10 @@ public class RefreshTokenRequestValidatorTests
     }
 
     [Fact]
-    public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new RefreshTokenRequest { Username = "username", RefreshToken = "refreshToken" };
-
-        _userManager.Exists(request.Username).Returns(false);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
-        var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("User not found");
-        exception.PropertyName.Should().Be("RefreshTokenRequest.Username");
-    }
-
-    [Fact]
     public async Task Validate_WhenRefreshTokenIsNull_ReturnsValidationException()
     {
         // Arrange
         var request = new RefreshTokenRequest { Username = "username", RefreshToken = null! };
-
-        _userManager.Exists(request.Username).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -188,8 +153,6 @@ public class RefreshTokenRequestValidatorTests
         // Arrange
         var request = new RefreshTokenRequest { Username = "username", RefreshToken = string.Empty };
 
-        _userManager.Exists(request.Username).Returns(true);
-
         // Act
         var result = await _sut.ValidateAsync(request);
 
@@ -205,9 +168,11 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenRefreshTokensLengthIsInvalid_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest { Username = "username", RefreshToken = new string('a', 129) };
+        var bytes = new byte[129];
+        Random.Shared.NextBytes(bytes);
+        var refreshToken = Convert.ToBase64String(bytes);
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = refreshToken };
 
-        _userManager.Exists(request.Username).Returns(true);
         _tokenOptions.Value.Returns(new TokenSettings { RefreshTokenLength = 128 });
 
         // Act
@@ -225,12 +190,14 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new RefreshTokenRequest { Username = "username", RefreshToken = new string('a', 128) };
+        var bytes = new byte[128];
+        Random.Shared.NextBytes(bytes);
+        var refreshToken = Convert.ToBase64String(bytes);
+        var request = new RefreshTokenRequest { Username = "username", RefreshToken = refreshToken };
 
-        _userManager.Exists(request.Username).Returns(true);
         _tokenOptions.Value.Returns(new TokenSettings { RefreshTokenLength = 128 });
 
-        _sut = new RefreshTokenRequestValidator(_tokenOptions, _userManager);
+        _sut = new RefreshTokenRequestValidator(_tokenOptions);
 
         // Act
         var result = await _sut.ValidateAsync(request);

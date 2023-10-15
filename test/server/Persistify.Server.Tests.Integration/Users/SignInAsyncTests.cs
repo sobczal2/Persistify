@@ -12,10 +12,6 @@ namespace Persistify.Server.Tests.Integration.Users;
 
 public class SignInAsyncTests : IntegrationTestBase
 {
-    public SignInAsyncTests(PersistifyServerWebApplicationFactory factory) : base(factory)
-    {
-    }
-
     [Fact]
     public async Task SignInAsync_WhenCredentialsAreValid_ReturnsOk()
     {

@@ -1,24 +1,39 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Persistify.Server.Tests.Integration.Common;
 
 public class PersistifyServerWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private const string DataPath = "persistify_test_data";
+    private DirectoryInfo? _dataDirectoryInfo;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        if (!Directory.Exists(DataPath))
-            Directory.CreateDirectory(DataPath);
-        builder.UseEnvironment("Testing");
+        _dataDirectoryInfo = Directory.CreateTempSubdirectory();
+        builder.UseConfiguration(new ConfigurationBuilder()
+            .AddJsonFile("appsettings.Testing.json")
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                {"Storage:DataPath", _dataDirectoryInfo.FullName}
+            }!)
+            .Build()
+        );
+
+        builder.ConfigureLogging(cfg =>
+        {
+            cfg.ClearProviders();
+        });
     }
 
-    protected override void Dispose(bool disposing)
+    public override async ValueTask DisposeAsync()
     {
-        if (Directory.Exists(DataPath))
-            Directory.Delete(DataPath, true);
-        base.Dispose(disposing);
+        _dataDirectoryInfo?.Delete(true);
+        await base.DisposeAsync();
     }
 }
