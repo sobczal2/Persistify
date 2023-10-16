@@ -13,7 +13,7 @@ public class UserManagerRequiredFileGroup : IRequiredFileGroup
     public static string RefreshTokenRepositoryOffsetLengthFileName => Path.Join("RefreshToken", "offsetLength.bin");
     public string FileGroupName => "UserManager";
 
-    public List<string> GetFileNames()
+    public IEnumerable<string> GetFileNames()
     {
         return new List<string>
         {

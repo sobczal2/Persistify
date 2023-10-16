@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Templates;
@@ -17,7 +18,7 @@ namespace Persistify.Server.Commands.Templates;
 public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesResponse>
 {
     private readonly ITemplateManager _templateManager;
-    private List<Template>? _templates;
+    private IEnumerable<Template>? _templates;
     private int _totalCount;
 
     public ListTemplatesCommand(
@@ -34,7 +35,7 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
     {
         var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
         var take = request.Pagination.PageSize;
-        _templates = await _templateManager.ListAsync(take, skip);
+        _templates = await _templateManager.ListAsync(take, skip).ToListAsync(cancellationToken);
         _totalCount = _templateManager.Count();
     }
 
@@ -45,11 +46,7 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
             throw new InternalPersistifyException(nameof(ListTemplatesResponse));
         }
 
-        return new ListTemplatesResponse
-        {
-            Templates = _templates,
-            TotalCount = _totalCount
-        };
+        return new ListTemplatesResponse { Templates = _templates, TotalCount = _totalCount };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest request)

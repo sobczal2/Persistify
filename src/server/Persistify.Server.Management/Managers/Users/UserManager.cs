@@ -11,6 +11,7 @@ using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Persistence.Extensions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Security;
@@ -90,21 +91,10 @@ public class UserManager : Manager, IUserManager
                 await _identifierRepository.WriteAsync(0, 0, true);
             }
 
-            _count = await _userRepository.CountAsync(true);
-
-            var read = 0;
-            const int batchSize = 1000;
-
-            while (read < _count)
+            _count = 0;
+            await foreach (var (key, user) in _userRepository.ReadAllAsync(true))
             {
-                var kvList = await _userRepository.ReadRangeAsync(batchSize, read, true);
-
-                foreach (var kv in kvList)
-                {
-                    _usernameIdDictionary.TryAdd(kv.Value.Username, kv.Key);
-                }
-
-                read += batchSize;
+                _usernameIdDictionary.TryAdd(user.Username, key);
             }
 
             base.Initialize();
@@ -142,20 +132,15 @@ public class UserManager : Manager, IUserManager
         return _usernameIdDictionary.ContainsKey(username);
     }
 
-    public async ValueTask<List<User>> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<User> ListAsync(int take, int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var kvList = await _userRepository.ReadRangeAsync(take, skip, true);
-        var list = new List<User>(kvList.Count);
-
-        foreach (var kv in kvList)
+        await foreach (var (_, user) in _userRepository.ReadRangeAsync(take, skip, true))
         {
-            list.Add(kv.Value);
+            yield return user;
         }
-
-        return list;
     }
 
     public int Count()

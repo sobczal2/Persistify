@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Persistify.Domain.Fts;
 using Persistify.Server.Fts.Analysis.Abstractions;
 
@@ -30,15 +31,30 @@ public class StandardAnalyzer : IAnalyzer
     }
 
     // TODO: Optimize this method
-    public List<Token> Analyze(string text, AnalyzerMode mode)
+    public IEnumerable<Token> Analyze(string text, AnalyzerMode mode)
     {
+        var textSpan = text.AsSpan();
+        var stringBuilder = new StringBuilder(text.Length);
+
+        for (var i = 0; i < textSpan.Length; i++)
+        {
+            var c = textSpan[i];
+
+            if (Array.BinarySearch(_alphabet, c) >= 0)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        text = stringBuilder.ToString();
+
         var tokens = _tokenizer.Tokenize(text, _alphabet);
 
         foreach (var tokenFilter in _tokenFilters)
         {
             if (ShouldFilter(tokenFilter.Type, mode))
             {
-                tokens = tokenFilter.Filter(tokens);
+                tokenFilter.Filter(tokens);
             }
         }
 

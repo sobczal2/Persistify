@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -80,18 +79,14 @@ public class DocumentManager : Manager, IDocumentManager
                 await _identifierRepository.WriteAsync(0, 0, true);
             }
 
-            var documents = await _documentRepository.ReadAllAsync(true);
+            _count = 0;
 
-            _count = documents.Count;
-
-            var documentList = new List<Document>(documents.Count);
-
-            foreach (var (_, value) in documents)
+            await foreach (var (_, value) in _documentRepository.ReadAllAsync(true))
             {
-                documentList.Add(value);
-            }
+                _indexerStore.Index(value);
 
-            _indexerStore.Initialize(documentList);
+                Interlocked.Increment(ref _count);
+            }
 
             base.Initialize();
         });
@@ -107,20 +102,15 @@ public class DocumentManager : Manager, IDocumentManager
         return await _documentRepository.ReadAsync(id, true);
     }
 
-    public async ValueTask<List<Document>> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<Document> ListAsync(int take, int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var kvList = await _documentRepository.ReadRangeAsync(take, skip, true);
-        var list = new List<Document>(kvList.Count);
-
-        foreach (var (_, value) in kvList)
+        await foreach (var (_, value) in _documentRepository.ReadRangeAsync(take, skip, true))
         {
-            list.Add(value);
+            yield return value;
         }
-
-        return list;
     }
 
     public async ValueTask<(List<SearchRecord> searchRecords, int count)> SearchAsync(

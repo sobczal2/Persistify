@@ -49,10 +49,10 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ReadInternalAsync(key)) : await ReadInternalAsync(key);
+        return useLock ? await _semaphore.WrapAsync(() => ReadAsyncImpl(key)) : await ReadAsyncImpl(key);
     }
 
-    public async ValueTask<List<(int key, byte[] value)>> ReadRangeAsync(int take, int skip, bool useLock)
+    public async IAsyncEnumerable<(int key, byte[] value)> ReadRangeAsync(int take, int skip, bool useLock)
     {
         if (take <= 0)
         {
@@ -64,14 +64,33 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentOutOfRangeException(nameof(skip));
         }
 
-        return useLock
-            ? await _semaphore.WrapAsync(() => ReadRangeInternalAsync(take, skip))
-            : await ReadRangeInternalAsync(take, skip);
+        if (useLock)
+        {
+            await _semaphore.WaitAsync();
+            try
+            {
+                await foreach (var result in ReadRangeAsyncImpl(take, skip))
+                {
+                    yield return result;
+                }
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
+            yield break;
+        }
+
+        await foreach (var result in ReadRangeAsyncImpl(take, skip))
+        {
+            yield return result;
+        }
     }
 
     public async ValueTask<int> CountAsync(bool useLock)
     {
-        return useLock ? await _semaphore.WrapAsync(CountInternalAsync) : await CountInternalAsync();
+        return useLock ? await _semaphore.WrapAsync(CountAsyncImpl) : await CountAsyncImpl();
     }
 
     public async ValueTask WriteAsync(int key, byte[] value, bool useLock)
@@ -91,7 +110,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentException(nameof(value));
         }
 
-        await (useLock ? _semaphore.WrapAsync(() => WriteInternalAsync(key, value)) : WriteInternalAsync(key, value));
+        await (useLock ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value)) : WriteAsyncImpl(key, value));
     }
 
     public async ValueTask<bool> DeleteAsync(int key, bool useLock)
@@ -101,18 +120,18 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => DeleteInternalAsync(key)) : await DeleteInternalAsync(key);
+        return useLock ? await _semaphore.WrapAsync(() => DeleteAsyncImpl(key)) : await DeleteAsyncImpl(key);
     }
 
     public void Clear(bool useLock)
     {
         if (useLock)
         {
-            _semaphore.Wrap(ClearInternal);
+            _semaphore.Wrap(ClearImpl);
         }
         else
         {
-            ClearInternal();
+            ClearImpl();
         }
     }
 
@@ -131,7 +150,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
     }
 
-    private async ValueTask<byte[]> ReadInternalAsync(int key)
+    private async ValueTask<byte[]> ReadAsyncImpl(int key)
     {
         if (key * (long)_bufferSize >= _stream.Length)
         {
@@ -159,10 +178,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    private async ValueTask<List<(int key, byte[] value)>> ReadRangeInternalAsync(int take, int skip)
+    private async IAsyncEnumerable<(int key, byte[] value)> ReadRangeAsyncImpl(int take, int skip)
     {
         var length = _stream.Length / _bufferSize;
-        var result = new List<(int key, byte[] value)>();
         _stream.Seek(0, SeekOrigin.Begin);
 
         var position = 0;
@@ -195,7 +213,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             {
                 var value = new byte[_bufferSize];
                 _buffer.AsSpan().CopyTo(value);
-                result.Add((position, value));
+                yield return (position, value);
             }
             else
             {
@@ -204,11 +222,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
 
             position++;
         }
-
-        return result;
     }
 
-    private async ValueTask<int> CountInternalAsync()
+    private async ValueTask<int> CountAsyncImpl()
     {
         var length = _stream.Length / _bufferSize;
         var result = 0;
@@ -231,7 +247,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    private async ValueTask WriteInternalAsync(int key, byte[] value)
+    private async ValueTask WriteAsyncImpl(int key, byte[] value)
     {
         var length = _stream.Length;
         if (key * (long)_bufferSize > length)
@@ -250,7 +266,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         await _stream.FlushAsync();
     }
 
-    private async ValueTask<bool> DeleteInternalAsync(int key)
+    private async ValueTask<bool> DeleteAsyncImpl(int key)
     {
         var length = _stream.Length;
         if (key * (long)_bufferSize >= length)
@@ -284,7 +300,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return true;
     }
 
-    private void ClearInternal()
+    private void ClearImpl()
     {
         _stream.SetLength(0);
     }

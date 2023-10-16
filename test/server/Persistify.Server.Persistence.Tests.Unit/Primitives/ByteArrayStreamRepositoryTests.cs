@@ -152,7 +152,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         // Arrange
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, 0, useLock);
+        var result = await _sut.ReadRangeAsync(1000, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -172,7 +172,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, 0, useLock);
+        var result = await _sut.ReadRangeAsync(1000, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(2);
@@ -189,7 +189,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         var take = 0;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync());
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -204,7 +204,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync());
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -220,7 +220,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -236,7 +236,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -252,7 +252,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(0, new byte[] { 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, useLock);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -269,7 +269,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(1, new byte[] { 2 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, useLock);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -288,7 +288,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(2, new byte[] { 3 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -406,7 +406,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, useLock);
 
         // Assert
-        var result = await _sut.ReadRangeAsync(1000, 0, false);
+        var result = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         result.Should().HaveCount(2);
         result.FirstOrDefault(x => x.key == id1).value.Should().BeEquivalentTo(value1);
         result.FirstOrDefault(x => x.key == id2).value.Should().BeEquivalentTo(value2);
@@ -474,7 +474,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        var allList = await _sut.ReadRangeAsync(1000, 0, false);
+        var allList = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         allList.Should().BeEmpty();
     }
 
@@ -496,7 +496,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        var allList = await _sut.ReadRangeAsync(1000, 0, false);
+        var allList = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         allList.Should().HaveCount(1);
         allList.FirstOrDefault(x => x.key == id2).value.Should().BeEquivalentTo(value2);
     }
@@ -572,7 +572,7 @@ public class ByteArrayStreamRepositoryTests : IDisposable
         _sut.Clear(useLock);
 
         // Assert
-        var result = await _sut.ReadRangeAsync(1000, 0, false);
+        var result = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         result.Should().BeEmpty();
     }
 

@@ -10,6 +10,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Persistence.Extensions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
@@ -72,22 +73,14 @@ public class TemplateManager : Manager, ITemplateManager
                 await _identifierRepository.WriteAsync(0, 0, true);
             }
 
-            _count = await _templateRepository.CountAsync(true);
+            _count = 0;
 
-            var read = 0;
-            const int batchSize = 1000;
-
-            while (read < _count)
+            await foreach (var (key, template) in _templateRepository.ReadAllAsync(true))
             {
-                var kvList = await _templateRepository.ReadRangeAsync(batchSize, read, true);
+                _documentManagerStore.AddManager(template);
+                _templateNameIdDictionary.TryAdd(template.Name, key);
 
-                foreach (var kv in kvList)
-                {
-                    _documentManagerStore.AddManager(kv.Value);
-                    _templateNameIdDictionary.TryAdd(kv.Value.Name, kv.Key);
-                }
-
-                read += batchSize;
+                Interlocked.Increment(ref _count);
             }
 
             base.Initialize();
@@ -125,20 +118,15 @@ public class TemplateManager : Manager, ITemplateManager
         return _templateNameIdDictionary.ContainsKey(templateName);
     }
 
-    public async ValueTask<List<Template>> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<Template> ListAsync(int take, int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var kvList = await _templateRepository.ReadRangeAsync(take, skip, true);
-        var list = new List<Template>(kvList.Count);
-
-        foreach (var kv in kvList)
+        await foreach (var (_, template) in _templateRepository.ReadRangeAsync(take, skip, true))
         {
-            list.Add(kv.Value);
+            yield return template;
         }
-
-        return list;
     }
 
     public int Count()

@@ -9,7 +9,7 @@ public class DocumentManagerFileGroupForTemplate : IFileGroupForTemplate
 {
     public string FileGroupName => "DocumentRepository";
 
-    public List<string> GetFileNamesForTemplate(Template template)
+    public IEnumerable<string> GetFileNamesForTemplate(Template template)
     {
         return new List<string>
         {

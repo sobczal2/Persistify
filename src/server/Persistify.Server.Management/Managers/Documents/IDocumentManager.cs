@@ -9,7 +9,7 @@ namespace Persistify.Server.Management.Managers.Documents;
 public interface IDocumentManager : IManager
 {
     ValueTask<Document?> GetAsync(int id);
-    ValueTask<List<Document>> ListAsync(int take, int skip);
+    IAsyncEnumerable<Document> ListAsync(int take, int skip);
     ValueTask<(List<SearchRecord> searchRecords, int count)> SearchAsync(SearchQuery searchQuery, int take, int skip);
     int Count();
     void Add(Document document);

@@ -7,8 +7,11 @@ namespace Persistify.Server.Fts.Analysis.Presets;
 public class StandardAnalyzerPreset : IAnalyzerPreset
 {
     private const string TokenizerName = "whitespace";
-    private static readonly List<string> CharacterFilterNames = new() { "lowercase_letters", "uppercase_letters", "digits" };
-    private static readonly List<string> TokenFilterNames = new() { "lowercase", "suffix" };
+
+    private static readonly IEnumerable<string> CharacterFilterNames =
+        new List<string> { "lowercase_letters", "uppercase_letters", "digits" };
+
+    private static readonly IEnumerable<string> TokenFilterNames = new List<string> { "lowercase", "suffix" };
 
     public IAnalyzer GetAnalyzer(IAnalyzerFactory analyzerFactory)
     {

@@ -7,7 +7,7 @@ public interface IValueTypeStreamRepository<TValue>
 {
     TValue EmptyValue { get; }
     ValueTask<TValue> ReadAsync(int key, bool useLock);
-    ValueTask<List<(int key, TValue value)>> ReadRangeAsync(int take, int skip, bool useLock);
+    IAsyncEnumerable<(int key, TValue value)> ReadRangeAsync(int take, int skip, bool useLock);
     ValueTask<int> CountAsync(bool useLock);
     ValueTask WriteAsync(int key, TValue value, bool useLock);
     ValueTask<bool> DeleteAsync(int key, bool useLock);

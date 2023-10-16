@@ -23,18 +23,6 @@ public class NumberIndexer : IIndexer
 
     public string FieldName { get; }
 
-    public void Initialize(IEnumerable<Document> documents)
-    {
-        foreach (var document in documents)
-        {
-            var numberFieldValue = document.NumberFieldValuesByFieldName[FieldName];
-            _intervalTree.Insert(new NumberIndexerIntervalTreeRecord
-            {
-                DocumentId = document.Id, Value = numberFieldValue.Value
-            });
-        }
-    }
-
     public void IndexAsync(Document document)
     {
         var numberFieldValue = document.NumberFieldValuesByFieldName[FieldName];
