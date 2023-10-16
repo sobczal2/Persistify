@@ -24,19 +24,19 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         if (!_templateManager.Exists(value.TemplateName))
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(TemplateErrorMessages.TemplateNotFound));
+            return ValueTask.FromResult<Result>(DynamicValidationException(TemplateErrorMessages.TemplateNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

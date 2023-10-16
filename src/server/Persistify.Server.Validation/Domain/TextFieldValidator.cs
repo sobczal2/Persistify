@@ -26,20 +26,20 @@ public class TextFieldValidator : Validator<TextField>
         if (string.IsNullOrEmpty(value.Name))
         {
             PropertyName.Push(nameof(TextField.Name));
-            return ValidationException(TemplateErrorMessages.NameEmpty);
+            return StaticValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
             PropertyName.Push(nameof(TextField.Name));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
+            return StaticValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value.AnalyzerDescriptor is null)
         {
             PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor)

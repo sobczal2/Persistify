@@ -58,8 +58,8 @@ public class ListTemplatesRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ListTemplatesRequest");
     }
@@ -75,8 +75,8 @@ public class ListTemplatesRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ListTemplatesRequest.Pagination");
     }
@@ -106,7 +106,7 @@ public class ListTemplatesRequestValidatorTests
         // Arrange
         var request = new ListTemplatesRequest { Pagination = new Pagination() };
 
-        var validationException = new ValidationException("Test", "Test");
+        var validationException = new StaticValidationPersistifyException("Test", "Test");
         _paginationValidator.ValidateAsync(Arg.Any<Pagination>()).Returns(validationException);
 
         // Act

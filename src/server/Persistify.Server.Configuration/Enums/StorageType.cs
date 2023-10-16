@@ -2,5 +2,5 @@
 
 public enum StorageType
 {
-    FileSystem = 1
+    FileSystem = 1,
 }

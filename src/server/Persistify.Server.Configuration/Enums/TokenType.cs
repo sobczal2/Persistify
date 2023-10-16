@@ -2,5 +2,5 @@
 
 public enum TokenType
 {
-    Jwt
+    Jwt = 1,
 }

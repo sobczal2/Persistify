@@ -37,7 +37,7 @@ public abstract class Command<TRequest, TResponse>
         var userPermission = claimsPrincipal.GetPermission();
         if (!userPermission.HasFlag(requiredPermission))
         {
-            throw new InsufficientPermissionException(requiredPermission);
+            throw new InsufficientPermissionPersistifyException(request?.GetType().Name, requiredPermission);
         }
     }
 
@@ -71,12 +71,7 @@ public abstract class Command<TRequest, TResponse>
             CommandContext.HandleException(exception);
         }
 
-        throw new PersistifyInternalException();
-    }
-
-    protected ValidationException ValidationException(string fieldName, string message)
-    {
-        return new ValidationException($"{typeof(TRequest).Name}.{fieldName}", message);
+        throw new InternalPersistifyException(request?.GetType().Name);
     }
 }
 

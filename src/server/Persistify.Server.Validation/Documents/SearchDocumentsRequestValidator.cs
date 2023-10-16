@@ -37,13 +37,13 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(SearchDocumentsRequest.TemplateName));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(SearchDocumentsRequest.TemplateName));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
+            return StaticValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         var template = await _templateManager.GetAsync(value.TemplateName);
@@ -51,7 +51,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         if (template is null)
         {
             PropertyName.Push(nameof(SearchDocumentsRequest.TemplateName));
-            return ValidationException(DocumentErrorMessages.TemplateNotFound);
+            return DynamicValidationException(DocumentErrorMessages.TemplateNotFound);
         }
 
         PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
@@ -81,13 +81,13 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         if (query is null)
         {
             PropertyName.Push(nameof(SearchQuery));
-            return ValidationException(SharedErrorMessages.ValueNull);
+            return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (query.Boost <= 0)
         {
             PropertyName.Push(nameof(SearchQuery.Boost));
-            return ValidationException(SharedErrorMessages.InvalidValue);
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
 
         return query switch
@@ -111,7 +111,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 template),
             PrefixTextSearchQuery prefixTextSearchQuery => await ValidatePrefixTextSearchQueryAsync(
                 prefixTextSearchQuery, template),
-            _ => ValidationException(SharedErrorMessages.InvalidValue)
+            _ => StaticValidationException(SharedErrorMessages.InvalidValue)
         };
     }
 
@@ -121,7 +121,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         if (query.Queries.Count < 2)
         {
             PropertyName.Push(nameof(AndSearchQuery.Queries));
-            return ValidationException(SharedErrorMessages.InvalidValue);
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
 
         foreach (var subquery in query.Queries)
@@ -144,7 +144,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         if (query.Queries.Count < 2)
         {
             PropertyName.Push(nameof(OrSearchQuery.Queries));
-            return ValidationException(SharedErrorMessages.InvalidValue);
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
 
         foreach (var subquery in query.Queries)
@@ -179,12 +179,12 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         if (string.IsNullOrEmpty(fieldName))
         {
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (fieldName.Length > 64)
         {
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         switch (indexType)
@@ -193,7 +193,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 if (!template.TextFieldsByName.ContainsKey(fieldName))
                 {
                     return ValueTask.FromResult<Result>(
-                        ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
+                        DynamicValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
                 }
 
                 break;
@@ -201,7 +201,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 if (!template.NumberFieldsByName.ContainsKey(fieldName))
                 {
                     return ValueTask.FromResult<Result>(
-                        ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
+                        DynamicValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
                 }
 
                 break;
@@ -209,7 +209,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 if (!template.BoolFieldsByName.ContainsKey(fieldName))
                 {
                     return ValueTask.FromResult<Result>(
-                        ValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
+                        DynamicValidationException(DocumentErrorMessages.FieldNotFoundForThisType));
                 }
 
                 break;
@@ -291,7 +291,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         if (query.MinValue > query.MaxValue)
         {
             PropertyName.Push(nameof(RangeNumberSearchQuery.MinValue));
-            return ValidationException(SharedErrorMessages.InvalidValue);
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
 
         return Result.Ok;

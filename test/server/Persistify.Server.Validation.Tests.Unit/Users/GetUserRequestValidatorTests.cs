@@ -13,27 +13,11 @@ namespace Persistify.Server.Validation.Tests.Unit.Users;
 
 public class GetUserRequestValidatorTests
 {
-    private readonly IUserManager _userManager;
-
     private GetUserRequestValidator _sut;
 
     public GetUserRequestValidatorTests()
     {
-        _userManager = Substitute.For<IUserManager>();
-
-        _sut = new GetUserRequestValidator(_userManager);
-    }
-
-    [Fact]
-    public void Ctor_WhenUserManagerIsNull_ThrowsArgumentNullException()
-    {
-        // Arrange
-
-        // Act
-        Action act = () => _sut = new GetUserRequestValidator(null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>();
+        _sut = new GetUserRequestValidator();
     }
 
     [Fact]
@@ -57,8 +41,8 @@ public class GetUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("GetUserRequest");
     }
@@ -74,8 +58,8 @@ public class GetUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("GetUserRequest.Username");
     }
@@ -91,8 +75,8 @@ public class GetUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("GetUserRequest.Username");
     }
@@ -108,41 +92,9 @@ public class GetUserRequestValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value too long");
         exception.PropertyName.Should().Be("GetUserRequest.Username");
-    }
-
-    [Fact]
-    public async Task Validate_WhenUserDoesNotExist_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new GetUserRequest { Username = "username" };
-        _userManager.Exists(request.Username).Returns(false);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
-        exception.Message.Should().Be("User not found");
-        exception.PropertyName.Should().Be("GetUserRequest.Username");
-    }
-
-    [Fact]
-    public async Task Validate_WhenCorrect_ReturnsOk()
-    {
-        // Arrange
-        var request = new GetUserRequest { Username = "username" };
-        _userManager.Exists(request.Username).Returns(true);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeFalse();
     }
 }

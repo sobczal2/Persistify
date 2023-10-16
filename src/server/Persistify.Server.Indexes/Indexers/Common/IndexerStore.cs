@@ -7,6 +7,7 @@ using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Algorithms;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;
 using Persistify.Server.Indexes.Indexers.Number;
@@ -39,7 +40,7 @@ public class IndexerStore
             }
             else
             {
-                throw new PersistifyInternalException();
+                throw new InternalPersistifyException();
             }
             _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
         }
@@ -74,7 +75,7 @@ public class IndexerStore
                     return indexer.SearchAsync(query);
                 }
 
-                throw new PersistifyInternalException();
+                throw new InternalPersistifyException();
             case AndSearchQuery andSearchQuery:
                 results = new IEnumerable<ISearchResult>[andSearchQuery.Queries.Count];
 
@@ -97,9 +98,9 @@ public class IndexerStore
                 return EnumerableHelpers.MergeSorted(
                         Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results)
                     .ToList();
+            default:
+                throw new InternalPersistifyException(message: "Invalid search query");
         }
-
-        throw new PersistifyInternalException();
     }
 
     public void Index(Document document)

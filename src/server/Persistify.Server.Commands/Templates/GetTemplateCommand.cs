@@ -7,6 +7,7 @@ using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
@@ -37,7 +38,7 @@ public sealed class GetTemplateCommand : Command<GetTemplateRequest, GetTemplate
     {
         return new GetTemplateResponse
         {
-            Template = _template ?? throw new PersistifyInternalException()
+            Template = _template ?? throw new InternalPersistifyException(nameof(GetTemplateRequest))
         };
     }
 

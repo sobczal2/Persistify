@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Persistify.Domain.Users;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 
 namespace Persistify.Server.Security;
 
@@ -22,7 +23,7 @@ public static class ClaimsPrincipalExtensions
 
         if (!int.TryParse(permissionClaim.Value, out var permissionInt))
         {
-            throw new PersistifyInternalException();
+            throw new InternalPersistifyException();
         }
 
         return (Permission)permissionInt;

@@ -6,6 +6,7 @@ using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
@@ -33,12 +34,13 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
 
     protected override async ValueTask RunAsync(SearchDocumentsRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
+        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
 
         var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
         var take = request.Pagination.PageSize;
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
+        var documentManager = _documentManagerStore.GetManager(template.Id) ??
+                              throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
 
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
@@ -54,7 +56,7 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
 
     protected override SearchDocumentsResponse GetResponse()
     {
-        return _response ?? throw new PersistifyInternalException();
+        return _response ?? throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(SearchDocumentsRequest request)

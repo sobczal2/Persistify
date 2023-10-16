@@ -1,40 +1,49 @@
 using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Persistify.Server.Extensions;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace Persistify.Server;
 
-Log.Logger = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
-try
+public class Program
 {
-    var version = Assembly
-        .GetEntryAssembly()!
-        .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-        ?.InformationalVersion;
+    public static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-    builder.Logging.ClearProviders();
-    builder.Services.AddSettingsConfiguration(builder.Configuration);
-    builder.Services.AddServicesConfiguration(builder.Configuration);
-    builder.Host.AddHostConfiguration();
+        var tmpLogger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateBootstrapLogger() as ILogger;
+        try
+        {
+            var version = Assembly
+                .GetEntryAssembly()!
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                ?.InformationalVersion;
 
-    Log.Information("Persistify Server {Version} starting up...", version);
+            builder.Logging.ClearProviders();
+            builder.Services.AddSettingsConfiguration(builder.Configuration);
+            builder.Services.AddServicesConfiguration(builder.Configuration);
+            builder.Host.AddHostConfiguration();
 
-    var app = builder.Build();
+            var app = builder.Build();
 
-    app.UsePersistify();
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            logger.LogInformation("Persistify Server v{Version} started", version);
 
-    app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Persistify Server terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
+            app.UsePersistify();
+
+            app.Run();
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("fatal.log", ex.ToString());
+            tmpLogger.Fatal(ex, "Persistify Server terminated unexpectedly");
+        }
+    }
 }

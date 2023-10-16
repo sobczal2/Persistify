@@ -25,31 +25,25 @@ public class SignInRequestValidator : Validator<SignInRequest>
         if (string.IsNullOrEmpty(value.Username))
         {
             PropertyName.Push(nameof(SignInRequest.Username));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(SignInRequest.Username));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
-        }
-
-        if (!_userManager.Exists(value.Username))
-        {
-            PropertyName.Push(nameof(SignInRequest.Username));
-            return ValueTask.FromResult<Result>(ValidationException(UserErrorMessages.InvalidCredentials));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         if (string.IsNullOrEmpty(value.Password))
         {
             PropertyName.Push(nameof(SignInRequest.Password));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.Password.Length > 1024)
         {
             PropertyName.Push(nameof(SignInRequest.Password));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         return ValueTask.FromResult(Result.Ok);

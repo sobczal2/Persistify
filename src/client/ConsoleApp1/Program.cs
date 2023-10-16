@@ -13,9 +13,18 @@ var client = PersistifyClientBuilder.Create()
 await AnimalHelpers.EnsureAnimalTemplateExists(client);
 
 var sw = Stopwatch.StartNew();
-for (var i = 0; i < 100_000; i++)
+
+for (var i = 0; i < 100; i++)
 {
-    await AnimalHelpers.CreateRandomAnimal(client);
+    var tasks = new List<Task>();
+
+    for (var j = 0; j < 100; j++)
+    {
+        tasks.Add(AnimalHelpers.SearchForAnimals(client, "metal", false));
+    }
+
+    await Task.WhenAll(tasks);
 }
+
 
 Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds} ms");

@@ -4,6 +4,7 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Indexes.Searches;
 
@@ -63,7 +64,7 @@ public class BoolIndexer : IIndexer
         return boolSearchQuery switch
         {
             ExactBoolSearchQuery exactBoolSearchQuery => HandleExactBoolSearch(exactBoolSearchQuery),
-            _ => throw new PersistifyInternalException()
+            _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
 

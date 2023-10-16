@@ -8,6 +8,7 @@ using Persistify.Domain.Users;
 using Persistify.Helpers.Time;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Object;
@@ -212,7 +213,7 @@ public class UserManager : Manager, IUserManager
             }
             else
             {
-                throw new PersistifyInternalException();
+                throw new InternalPersistifyException();
             }
         });
 
@@ -230,7 +231,7 @@ public class UserManager : Manager, IUserManager
 
         if (user is null)
         {
-            throw new PersistifyInternalException();
+            throw new InternalPersistifyException();
         }
 
         var accessToken = _tokenService.GenerateAccessToken(user);
@@ -273,7 +274,7 @@ public class UserManager : Manager, IUserManager
 
         if (_clock.UtcNow < savedRefreshToken.Created)
         {
-            throw new PersistifyInternalException();
+            throw new InternalPersistifyException();
         }
 
         return refreshToken == savedRefreshToken.Value;
@@ -286,7 +287,7 @@ public class UserManager : Manager, IUserManager
 
         if (await _userRepository.ReadAsync(user.Id, true) is null)
         {
-            throw new PersistifyInternalException();
+            throw new InternalPersistifyException();
         }
 
         var updateAction = new Func<ValueTask>(async () =>

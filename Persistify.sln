@@ -84,9 +84,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Files", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{4966F52A-2A71-4E16-8400-A59C72AA50D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client", "src\Persistify.Client\Persistify.Client.csproj", "{CB50A31F-82BF-4E06-B044-9749769D43EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client", "src\client\Persistify.Client\Persistify.Client.csproj", "{CB50A31F-82BF-4E06-B044-9749769D43EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "src\ConsoleApp1\ConsoleApp1.csproj", "{60AA5BD1-F670-46EA-8126-F9B50E0D1855}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "src\client\ConsoleApp1\ConsoleApp1.csproj", "{60AA5BD1-F670-46EA-8126-F9B50E0D1855}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Tests.Integration", "test\server\Persistify.Server.Tests.Integration\Persistify.Server.Tests.Integration.csproj", "{A9757C71-6C2D-4B24-B760-6B51FFAE5D52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -234,6 +236,10 @@ Global
 		{60AA5BD1-F670-46EA-8126-F9B50E0D1855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60AA5BD1-F670-46EA-8126-F9B50E0D1855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60AA5BD1-F670-46EA-8126-F9B50E0D1855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9757C71-6C2D-4B24-B760-6B51FFAE5D52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9757C71-6C2D-4B24-B760-6B51FFAE5D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9757C71-6C2D-4B24-B760-6B51FFAE5D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9757C71-6C2D-4B24-B760-6B51FFAE5D52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -277,5 +283,6 @@ Global
 		{4966F52A-2A71-4E16-8400-A59C72AA50D2} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
 		{CB50A31F-82BF-4E06-B044-9749769D43EA} = {4966F52A-2A71-4E16-8400-A59C72AA50D2}
 		{60AA5BD1-F670-46EA-8126-F9B50E0D1855} = {4966F52A-2A71-4E16-8400-A59C72AA50D2}
+		{A9757C71-6C2D-4B24-B760-6B51FFAE5D52} = {A4A48851-1F0E-4013-99D9-688E84160257}
 	EndGlobalSection
 EndGlobal

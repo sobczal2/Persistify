@@ -4,8 +4,13 @@ using Persistify.Client.Core;
 using Persistify.Client.Documents;
 using Persistify.Client.Templates;
 using Persistify.Domain.Documents;
+using Persistify.Domain.Search.Queries;
+using Persistify.Domain.Search.Queries.Aggregates;
+using Persistify.Domain.Search.Queries.Bool;
+using Persistify.Domain.Search.Queries.Text;
 using Persistify.Domain.Templates;
 using Persistify.Requests.Documents;
+using Persistify.Requests.Shared;
 using Persistify.Requests.Templates;
 
 namespace ConsoleApp1;
@@ -90,5 +95,23 @@ public static class AnimalHelpers
                 }
             }
         );
+    }
+
+    public static async Task SearchForAnimals(IPersistifyClient client, string query, bool isCute)
+    {
+        await client.SearchDocumentsAsync(new SearchDocumentsRequest()
+        {
+            Pagination = new Pagination { PageNumber = 0, PageSize = 10 },
+            SearchQuery = new AndSearchQuery()
+            {
+                Boost = 1,
+                Queries = new List<SearchQuery>()
+                {
+                    new FullTextSearchQuery() { Boost = 1, FieldName = "Name", Value = query },
+                    new ExactBoolSearchQuery() { Boost = 1, FieldName = "IsCute", Value = isCute }
+                }
+            },
+            TemplateName = "Animal"
+        });
     }
 }

@@ -39,25 +39,25 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
-            return ValidationException(TemplateErrorMessages.NameEmpty);
+            return StaticValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
-            return ValidationException(SharedErrorMessages.ValueTooLong);
-        }
-
-        if (_templateManager.Exists(value.TemplateName))
-        {
-            PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
-            return ValidationException(TemplateErrorMessages.NameNotUnique);
+            return StaticValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         if (value.TextFields.Count + value.NumberFields.Count + value.BoolFields.Count == 0)
         {
             PropertyName.Push("*Fields");
-            return ValidationException(TemplateErrorMessages.NoFields);
+            return StaticValidationException(TemplateErrorMessages.NoFields);
+        }
+
+        if (_templateManager.Exists(value.TemplateName))
+        {
+            PropertyName.Push(nameof(CreateTemplateRequest.TemplateName));
+            return DynamicValidationException(TemplateErrorMessages.NameNotUnique);
         }
 
         for (var i = 0; i < value.TextFields.Count; i++)
@@ -103,7 +103,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
             {
                 PropertyName.Push($"{nameof(CreateTemplateRequest.TextFields)}[{i}]");
                 PropertyName.Push(nameof(TextField.Name));
-                return ValidationException(TemplateErrorMessages.FieldNameNotUnique);
+                return DynamicValidationException(TemplateErrorMessages.FieldNameNotUnique);
             }
 
             allNames.Add(name);
@@ -116,7 +116,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
             {
                 PropertyName.Push($"{nameof(CreateTemplateRequest.NumberFields)}[{i}]");
                 PropertyName.Push(nameof(NumberField.Name));
-                return ValidationException(TemplateErrorMessages.FieldNameNotUnique);
+                return DynamicValidationException(TemplateErrorMessages.FieldNameNotUnique);
             }
 
             allNames.Add(name);
@@ -129,7 +129,7 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
             {
                 PropertyName.Push($"{nameof(CreateTemplateRequest.BoolFields)}[{i}]");
                 PropertyName.Push(nameof(BoolField.Name));
-                return ValidationException(TemplateErrorMessages.FieldNameNotUnique);
+                return DynamicValidationException(TemplateErrorMessages.FieldNameNotUnique);
             }
 
             allNames.Add(name);

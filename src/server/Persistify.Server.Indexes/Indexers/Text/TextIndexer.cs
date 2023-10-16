@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Text;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Analyzers;
 using Persistify.Server.Indexes.DataStructures.Trees;
@@ -72,7 +73,7 @@ public class TextIndexer : IIndexer
         {
             ExactTextSearchQuery exactTextSearchQuery => HandleExactTextSearch(exactTextSearchQuery),
             FullTextSearchQuery fullTextSearchQuery => HandleFullTextSearch(fullTextSearchQuery),
-            _ => throw new Exception("Invalid search query")
+            _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
 

@@ -7,6 +7,7 @@ using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
@@ -35,9 +36,9 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
     protected override async ValueTask RunAsync(GetDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new PersistifyInternalException();
+        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new PersistifyInternalException();
+        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
 
         await CommandContext
             .CurrentTransaction
@@ -47,15 +48,15 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
         if (_document is null)
         {
-            throw ValidationException(nameof(GetDocumentRequest.DocumentId), DocumentErrorMessages.InvalidDocumentId);
+            throw new DynamicValidationPersistifyException(nameof(GetDocumentRequest.DocumentId), DocumentErrorMessages.InvalidDocumentId);
         }
     }
 
     protected override GetDocumentResponse GetResponse()
     {
-        return new GetDocumentResponse()
+        return new GetDocumentResponse
         {
-            Document = _document ?? throw new PersistifyInternalException()
+            Document = _document ?? throw new InternalPersistifyException(nameof(GetDocumentRequest))
         };
     }
 

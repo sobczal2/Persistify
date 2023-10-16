@@ -38,8 +38,8 @@ public class BoolFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("BoolFieldValue");
     }
@@ -55,8 +55,8 @@ public class BoolFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name empty");
         exception.PropertyName.Should().Be("BoolFieldValue.FieldName");
     }
@@ -72,8 +72,8 @@ public class BoolFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name empty");
         exception.PropertyName.Should().Be("BoolFieldValue.FieldName");
     }
@@ -89,8 +89,8 @@ public class BoolFieldValueValidatorTests
 
         // Assert
         result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<ValidationException>();
-        var exception = (ValidationException)result.Exception;
+        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
+        var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Name too long");
         exception.PropertyName.Should().Be("BoolFieldValue.FieldName");
     }

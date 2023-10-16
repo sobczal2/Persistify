@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Concurrency;
 using Persistify.Server.ErrorHandling;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Persistence.Abstractions;
 
 namespace Persistify.Server.Persistence.Primitives;
@@ -196,7 +197,7 @@ public class NullableBoolStreamRepository : IValueTypeStreamRepository<bool?>, I
             NullValueInternal => null,
             FalseValueInternal => false,
             TrueValueInternal => true,
-            _ => throw new PersistifyInternalException()
+            _ => throw new InternalPersistifyException()
         };
     }
 

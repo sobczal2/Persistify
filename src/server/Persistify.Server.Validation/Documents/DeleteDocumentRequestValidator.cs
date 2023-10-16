@@ -25,25 +25,25 @@ public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
         if (!_templateManager.Exists(value.TemplateName))
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(ValidationException(DocumentErrorMessages.TemplateNotFound));
+            return ValueTask.FromResult<Result>(DynamicValidationException(DocumentErrorMessages.TemplateNotFound));
         }
 
         if (value.DocumentId <= 0)
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.DocumentId));
-            return ValueTask.FromResult<Result>(ValidationException(DocumentErrorMessages.InvalidDocumentId));
+            return ValueTask.FromResult<Result>(StaticValidationException(DocumentErrorMessages.InvalidDocumentId));
         }
 
         return ValueTask.FromResult(Result.Ok);
