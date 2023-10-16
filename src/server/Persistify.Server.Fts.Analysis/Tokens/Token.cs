@@ -19,6 +19,12 @@ public class Token : IEnumerable<int>
         Count = count;
         Positions = positions;
         Score = score;
+
+        if (!CheckIfValueIsInAlphabet())
+        {
+            throw new ArgumentException("Either value is not in given alphabet or alphabet is not sorted",
+                nameof(Alphabet));
+        }
     }
 
     public Token(string value, int position, float score, char[] alphabet)
@@ -28,6 +34,12 @@ public class Token : IEnumerable<int>
         Score = score;
         Count = 1;
         Positions = new List<int>(1) { position };
+
+        if (!CheckIfValueIsInAlphabet())
+        {
+            throw new ArgumentException("Either value is not in given alphabet or alphabet is not sorted",
+                nameof(Alphabet));
+        }
     }
 
     // alphabet has to be sorted
@@ -56,5 +68,10 @@ public class Token : IEnumerable<int>
     IEnumerator IEnumerable.GetEnumerator()
     {
         return ((IEnumerable)CreateValueAlphabetIndexMap()).GetEnumerator();
+    }
+
+    private bool CheckIfValueIsInAlphabet()
+    {
+        return Value.All(x => Array.BinarySearch(Alphabet, x) >= 0);
     }
 }

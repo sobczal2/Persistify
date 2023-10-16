@@ -5,5 +5,5 @@ namespace Persistify.Server.Fts.Analysis.Abstractions;
 
 public interface ITokenizer
 {
-    IEnumerable<Token> Tokenize(string text, char[] alphabet);
+    List<Token> Tokenize(string text, char[] alphabet);
 }
