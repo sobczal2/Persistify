@@ -3,11 +3,6 @@
 namespace Persistify.Domain.Templates;
 
 [ProtoContract]
-public class NumberField
+public class NumberField : Field
 {
-    [ProtoMember(1)]
-    public string Name { get; set; } = default!;
-
-    [ProtoMember(2)]
-    public bool Required { get; set; }
 }

@@ -3,11 +3,8 @@
 namespace Persistify.Domain.Documents;
 
 [ProtoContract]
-public class BoolFieldValue
+public class BoolFieldValue : FieldValue
 {
-    [ProtoMember(1)]
-    public bool Value { get; set; }
-
     [ProtoMember(2)]
-    public string FieldName { get; set; } = default!;
+    public bool Value { get; set; }
 }
