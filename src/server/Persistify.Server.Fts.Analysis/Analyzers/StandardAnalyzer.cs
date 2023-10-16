@@ -30,7 +30,7 @@ public class StandardAnalyzer : IAnalyzer
     }
 
     // TODO: Optimize this method
-    public List<Token> Analyze(string text, AnalyzerMode mode)
+    public IEnumerable<Token> Analyze(string text, AnalyzerMode mode)
     {
         var tokens = _tokenizer.Tokenize(text, _alphabet);
 

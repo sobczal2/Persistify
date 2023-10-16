@@ -25,22 +25,6 @@ public class BoolIndexer : IIndexer
 
     public string FieldName { get; }
 
-    public void Initialize(IEnumerable<Document> documents)
-    {
-        foreach (var document in documents)
-        {
-            var boolFieldValue = document.BoolFieldValuesByFieldName[FieldName];
-            if (boolFieldValue.Value)
-            {
-                _trueDocuments.Add(document.Id);
-            }
-            else
-            {
-                _falseDocuments.Add(document.Id);
-            }
-        }
-    }
-
     public void IndexAsync(Document document)
     {
         var boolFieldValue = document.BoolFieldValuesByFieldName[FieldName];

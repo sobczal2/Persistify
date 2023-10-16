@@ -264,7 +264,7 @@ public class ObjectStreamRepositoryTests
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync());
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -279,7 +279,7 @@ public class ObjectStreamRepositoryTests
         var take = 0;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync());
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -295,7 +295,7 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -311,7 +311,7 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -327,7 +327,7 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, useLock);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -344,7 +344,7 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, useLock);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -364,7 +364,7 @@ public class ObjectStreamRepositoryTests
 
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);

@@ -137,7 +137,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock));
+        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync());
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -153,7 +153,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(0, (1, 2), false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -169,7 +169,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(0, (1, 2), false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().BeEmpty();
@@ -185,7 +185,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(0, (1, 2), false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, useLock);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -202,7 +202,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(1, (3, 4), false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(take, 0, useLock);
+        var result = await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -221,7 +221,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(2, (5, 6), false);
 
         // Act
-        var result = await _sut.ReadRangeAsync(1000, skip, useLock);
+        var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
@@ -340,7 +340,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         await _sut.WriteAsync(id2, value2, useLock);
 
         // Assert
-        var result = await _sut.ReadRangeAsync(1000, 0, false);
+        var result = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         result.Should().HaveCount(2);
         result.FirstOrDefault(x => x.key == id1).value.Should().Be(value1);
         result.FirstOrDefault(x => x.key == id2).value.Should().Be(value2);
@@ -376,7 +376,7 @@ public class IntPairStreamRepositoryTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        var allList = await _sut.ReadRangeAsync(1000, 0, false);
+        var allList = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         allList.Should().BeEmpty();
     }
 
@@ -398,7 +398,7 @@ public class IntPairStreamRepositoryTests : IDisposable
 
         // Assert
         result.Should().BeTrue();
-        var allList = await _sut.ReadRangeAsync(1000, 0, false);
+        var allList = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         allList.Should().HaveCount(1);
         allList.FirstOrDefault(x => x.key == id2).value.Should().Be(value2);
     }
@@ -474,7 +474,7 @@ public class IntPairStreamRepositoryTests : IDisposable
         _sut.Clear(useLock);
 
         // Assert
-        var result = await _sut.ReadRangeAsync(1000, 0, false);
+        var result = await _sut.ReadRangeAsync(1000, 0, false).ToListAsync();
         result.Should().BeEmpty();
     }
 

@@ -8,7 +8,7 @@ namespace Persistify.Server.Fts.Analysis.Tokenizers;
 
 public class StandardTokenizer : ITokenizer
 {
-    public List<Token> Tokenize(string text, char[] alphabet)
+    public IEnumerable<Token> Tokenize(string text, char[] alphabet)
     {
         var tokens = new Dictionary<string, Token>();
         var charEnumerator = StringInfo.GetTextElementEnumerator(text);
@@ -28,6 +28,6 @@ public class StandardTokenizer : ITokenizer
             }
         }
 
-        return tokens.Values.ToList();
+        return tokens.Values;
     }
 }

@@ -56,14 +56,6 @@ public class IndexerStore
         }
     }
 
-    public void Initialize(List<Document> documents)
-    {
-        foreach (var indexer in _indexers.Values)
-        {
-            indexer.Initialize(documents);
-        }
-    }
-
     public IEnumerable<ISearchResult> Search(SearchQuery query)
     {
         IEnumerable<ISearchResult>[]? results;

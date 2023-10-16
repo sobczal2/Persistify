@@ -29,24 +29,6 @@ public class TextIndexer : IIndexer
 
     public string FieldName { get; }
 
-    public void Initialize(IEnumerable<Document> documents)
-    {
-        foreach (var document in documents)
-        {
-            var textFieldValue = document.TextFieldValuesByFieldName[FieldName];
-            _intervalTree.Insert(new TextIndexerIntervalTreeRecord
-            {
-                DocumentId = document.Id, Value = textFieldValue.Value
-            });
-            var tokens = _analyzer.Analyze(textFieldValue.Value, AnalyzerMode.Index);
-
-            foreach (var token in tokens)
-            {
-                _fixedTrie.Insert(new TextIndexerFixedTrieRecord(document.Id, token));
-            }
-        }
-    }
-
     public void IndexAsync(Document document)
     {
         var textFieldValue = document.TextFieldValuesByFieldName[FieldName];
@@ -98,15 +80,16 @@ public class TextIndexer : IIndexer
 
     private IEnumerable<ISearchResult> HandleFullTextSearch(FullTextSearchQuery query)
     {
-        var tokens = _analyzer.Analyze(query.Value, AnalyzerMode.Search);
         var results = new SortedList<int, SearchResult>();
 
-        foreach (var token in tokens)
+        var tokenCount = 0;
+
+        foreach (var token in _analyzer.Analyze(query.Value, AnalyzerMode.Search))
         {
             var trieResults = _fixedTrie.Search(token);
             foreach (var trieResult in trieResults)
             {
-                var score = (trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost) / tokens.Count;
+                var score = (trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost);
                 if (results.TryGetValue(trieResult.Item.DocumentId, out var result))
                 {
                     result.Metadata.Score += score;
@@ -125,10 +108,13 @@ public class TextIndexer : IIndexer
                     results.Add(trieResult.Item.DocumentId, new SearchResult(trieResult.Item.DocumentId, metadata));
                 }
             }
+
+            tokenCount++;
         }
 
         foreach (var result in results.Values)
         {
+            result.Metadata.Score /= tokenCount;
             yield return result;
         }
     }

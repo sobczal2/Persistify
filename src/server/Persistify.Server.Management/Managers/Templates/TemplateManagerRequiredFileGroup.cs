@@ -11,7 +11,7 @@ public class TemplateManagerRequiredFileGroup : IRequiredFileGroup
     public static string TemplateRepositoryOffsetLengthFileName => Path.Join("Template", "offsetLength.bin");
     public string FileGroupName => "TemplateManager";
 
-    public List<string> GetFileNames()
+    public IEnumerable<string> GetFileNames()
     {
         return new List<string>
         {

@@ -12,11 +12,11 @@ public class FullAnalyzerDescriptor : AnalyzerDescriptor
     }
 
     [ProtoMember(1)]
-    public List<string> CharacterFilterNames { get; set; }
+    public IEnumerable<string> CharacterFilterNames { get; set; }
 
     [ProtoMember(2)]
     public string TokenizerName { get; set; } = default!;
 
     [ProtoMember(3)]
-    public List<string> TokenFilterNames { get; set; }
+    public IEnumerable<string> TokenFilterNames { get; set; }
 }

@@ -9,7 +9,7 @@ public class WhitespaceTokenizer : ITokenizer
 {
     private static readonly char[] WhitespaceChars = { ' ', '\t', '\n', '\r' };
 
-    public List<Token> Tokenize(string text, char[] alphabet)
+    public IEnumerable<Token> Tokenize(string text, char[] alphabet)
     {
         var textSpan = text.AsSpan();
         var tokens = new List<Token>();
