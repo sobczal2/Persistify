@@ -6,7 +6,6 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
@@ -36,9 +35,11 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
     protected override async ValueTask RunAsync(GetDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
+        var template = await _templateManager.GetAsync(request.TemplateName) ??
+                       throw new InternalPersistifyException(nameof(GetDocumentRequest));
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
+        var documentManager = _documentManagerStore.GetManager(template.Id) ??
+                              throw new InternalPersistifyException(nameof(GetDocumentRequest));
 
         await CommandContext
             .CurrentTransaction
@@ -48,7 +49,8 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
         if (_document is null)
         {
-            throw new DynamicValidationPersistifyException(nameof(GetDocumentRequest.DocumentId), DocumentErrorMessages.InvalidDocumentId);
+            throw new DynamicValidationPersistifyException(nameof(GetDocumentRequest.DocumentId),
+                DocumentErrorMessages.InvalidDocumentId);
         }
     }
 

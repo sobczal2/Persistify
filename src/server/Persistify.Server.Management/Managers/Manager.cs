@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Concurrency;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Management.Transactions.Exceptions;

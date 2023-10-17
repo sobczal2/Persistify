@@ -6,7 +6,6 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
@@ -35,7 +34,8 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override async ValueTask RunAsync(CreateDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest));
+        var template = await _templateManager.GetAsync(request.TemplateName) ??
+                       throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
         _document = new Document
         {
@@ -44,7 +44,8 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
             BoolFieldValues = request.BoolFieldValues
         };
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest));
+        var documentManager = _documentManagerStore.GetManager(template.Id) ??
+                              throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
         await CommandContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);

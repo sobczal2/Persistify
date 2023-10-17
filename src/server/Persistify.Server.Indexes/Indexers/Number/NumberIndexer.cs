@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Number;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.Indexers.Common;

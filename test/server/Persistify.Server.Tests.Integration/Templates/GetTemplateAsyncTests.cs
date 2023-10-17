@@ -26,7 +26,7 @@ public class GetTemplateAsyncTests : IntegrationTestBase
                     Required = true,
                     AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "standard" }
                 }
-            },
+            }
         };
         await TemplateService.CreateTemplateAsync(createTemplateRequest, callContext);
         var request = new GetTemplateRequest { TemplateName = "TestTemplate" };
@@ -44,6 +44,7 @@ public class GetTemplateAsyncTests : IntegrationTestBase
         response.Template.TextFields[0].Required.Should().BeTrue();
         response.Template.TextFields[0].AnalyzerDescriptor.Should().NotBeNull();
         response.Template.TextFields[0].AnalyzerDescriptor.Should().BeOfType<PresetAnalyzerDescriptor>();
-        ((PresetAnalyzerDescriptor)response.Template.TextFields[0].AnalyzerDescriptor).PresetName.Should().Be("standard");
+        ((PresetAnalyzerDescriptor)response.Template.TextFields[0].AnalyzerDescriptor).PresetName.Should()
+            .Be("standard");
     }
 }

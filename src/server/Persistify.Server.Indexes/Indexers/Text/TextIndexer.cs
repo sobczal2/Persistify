@@ -5,7 +5,6 @@ using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Text;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
-using Persistify.Server.Fts.Analysis.Analyzers;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.DataStructures.Tries;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -15,9 +14,9 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexer : IIndexer
 {
-    private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
-    private readonly FixedTrie<TextIndexerFixedTrieRecord> _fixedTrie;
     private readonly IAnalyzer _analyzer;
+    private readonly FixedTrie<TextIndexerFixedTrieRecord> _fixedTrie;
+    private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
 
     public TextIndexer(string fieldName, IAnalyzer analyzer)
     {
@@ -89,7 +88,7 @@ public class TextIndexer : IIndexer
             var trieResults = _fixedTrie.Search(token);
             foreach (var trieResult in trieResults)
             {
-                var score = (trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost);
+                var score = trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost;
                 if (results.TryGetValue(trieResult.Item.DocumentId, out var result))
                 {
                     result.Metadata.Score += score;
@@ -105,6 +104,7 @@ public class TextIndexer : IIndexer
                     {
                         metadata.Add($"token_{token.Value}.position", position.ToString());
                     }
+
                     results.Add(trieResult.Item.DocumentId, new SearchResult(trieResult.Item.DocumentId, metadata));
                 }
             }

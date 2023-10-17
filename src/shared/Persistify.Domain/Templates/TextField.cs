@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using ProtoBuf;
+﻿using ProtoBuf;
 
 namespace Persistify.Domain.Templates;
 

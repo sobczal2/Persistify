@@ -11,12 +11,6 @@ namespace Persistify.Client.Core;
 
 public class PersistifyClient : IPersistifyClient, IDisposable
 {
-    private PersistifyCredentials PersistifyCredentials { get; }
-    public IUsersClient Users { get; }
-    public ITemplatesClient Templates { get; }
-    public IDocumentsClient Documents { get; }
-    internal GrpcChannel Channel { get; }
-
     internal PersistifyClient(Uri baseAddress, PersistifyCredentials persistifyCredentials)
     {
         GrpcClientFactory.AllowUnencryptedHttp2 = true;
@@ -26,6 +20,20 @@ public class PersistifyClient : IPersistifyClient, IDisposable
         Templates = new TemplatesClient(this);
         Documents = new DocumentsClient(this);
     }
+
+    private PersistifyCredentials PersistifyCredentials { get; }
+    internal GrpcChannel Channel { get; }
+
+    public void Dispose()
+    {
+        Channel.Dispose();
+
+        GC.SuppressFinalize(this);
+    }
+
+    public IUsersClient Users { get; }
+    public ITemplatesClient Templates { get; }
+    public IDocumentsClient Documents { get; }
 
     internal async Task<TResponse> CallAuthenticatedServiceAsync<TResponse>(
         Func<CallContext, Task<TResponse>> serviceCall,
@@ -107,12 +115,5 @@ public class PersistifyClient : IPersistifyClient, IDisposable
         }
 
         callContext.RequestHeaders.Add("Authorization", $"Bearer {PersistifyCredentials.AccessToken}");
-    }
-
-    public void Dispose()
-    {
-        Channel.Dispose();
-
-        GC.SuppressFinalize(this);
     }
 }

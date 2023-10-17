@@ -12,7 +12,8 @@ public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
     {
     }
 
-    public async Task<CreateDocumentResponse> CreateDocumentAsync(IDocumentService documentService, CreateDocumentRequest createDocumentRequest,
+    public async Task<CreateDocumentResponse> CreateDocumentAsync(IDocumentService documentService,
+        CreateDocumentRequest createDocumentRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<CreateDocumentResponse>(
@@ -20,7 +21,8 @@ public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
         );
     }
 
-    public async Task<GetDocumentResponse> GetDocumentAsync(IDocumentService documentService, GetDocumentRequest getDocumentRequest,
+    public async Task<GetDocumentResponse> GetDocumentAsync(IDocumentService documentService,
+        GetDocumentRequest getDocumentRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<GetDocumentResponse>(
@@ -28,7 +30,8 @@ public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
         );
     }
 
-    public async Task<SearchDocumentsResponse> SearchDocumentsAsync(IDocumentService documentService, SearchDocumentsRequest searchDocumentsRequest,
+    public async Task<SearchDocumentsResponse> SearchDocumentsAsync(IDocumentService documentService,
+        SearchDocumentsRequest searchDocumentsRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<SearchDocumentsResponse>(
@@ -36,7 +39,8 @@ public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
         );
     }
 
-    public async Task<DeleteDocumentResponse> DeleteDocumentAsync(IDocumentService documentService, DeleteDocumentRequest deleteDocumentRequest,
+    public async Task<DeleteDocumentResponse> DeleteDocumentAsync(IDocumentService documentService,
+        DeleteDocumentRequest deleteDocumentRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<DeleteDocumentResponse>(

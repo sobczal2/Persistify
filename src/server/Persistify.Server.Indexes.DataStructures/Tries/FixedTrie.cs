@@ -26,8 +26,10 @@ public class FixedTrie<TItem> : ITrie<TItem>
                 child = new FixedTrieNode<TItem>(_alphabetSize);
                 node.SetChild(index, child);
             }
+
             node = child;
         }
+
         node.Insert(item);
     }
 
@@ -43,6 +45,7 @@ public class FixedTrie<TItem> : ITrie<TItem>
             {
                 yield break;
             }
+
             node = child;
             distance++;
         }
@@ -70,6 +73,7 @@ public class FixedTrie<TItem> : ITrie<TItem>
                 removedCount += Remove(child, predicate);
             }
         }
+
         return removedCount;
     }
 }

@@ -14,7 +14,9 @@ namespace Persistify.Server.Fts.Analysis.Factories;
 
 public class StandardAnalyzerFactory : IAnalyzerFactory
 {
-    private static readonly ConcurrentBag<string> SupportedCharacterFilters = new() { "lowercase_letters", "uppercase_letters", "digits" };
+    private static readonly ConcurrentBag<string> SupportedCharacterFilters =
+        new() { "lowercase_letters", "uppercase_letters", "digits" };
+
     private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
     private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase", "suffix" };
 

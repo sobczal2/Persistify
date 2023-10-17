@@ -1,13 +1,11 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Results;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Exceptions;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
-using Persistify.Server.Validation.Templates;
 
 namespace Persistify.Server.Validation.Domain;
 
@@ -45,7 +43,8 @@ public class PresetAnalyzerDescriptorValidator : Validator<PresetAnalyzerDescrip
             {
                 case AnalyzerPresetNotFoundException analyzerPresetNotFoundException:
                     PropertyName.Push(nameof(PresetAnalyzerDescriptor.PresetName));
-                    return ValueTask.FromResult<Result>(DynamicValidationException(analyzerPresetNotFoundException.Message));
+                    return ValueTask.FromResult<Result>(
+                        DynamicValidationException(analyzerPresetNotFoundException.Message));
                 default:
                     throw new InternalPersistifyException();
             }

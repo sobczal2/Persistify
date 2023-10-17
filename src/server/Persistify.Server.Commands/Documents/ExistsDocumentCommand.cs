@@ -11,14 +11,13 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Documents;
 
 namespace Persistify.Server.Commands.Documents;
 
 public class ExistsDocumentCommand : Command<ExistsDocumentRequest, ExistsDocumentResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private readonly IDocumentManagerStore _documentManagerStore;
+    private readonly ITemplateManager _templateManager;
     private bool? _exists;
 
     public ExistsDocumentCommand(
@@ -35,9 +34,11 @@ public class ExistsDocumentCommand : Command<ExistsDocumentRequest, ExistsDocume
 
     protected override async ValueTask RunAsync(ExistsDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var template = await _templateManager.GetAsync(request.TemplateName) ??
+                       throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var documentManager = _documentManagerStore.GetManager(template.Id) ??
+                              throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
         await CommandContext
             .CurrentTransaction

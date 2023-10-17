@@ -6,14 +6,14 @@ using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Users;
 
-public class GetUserRequestValidator : Validator<GetUserRequest>
+public class ExistsUserRequestValidator : Validator<ExistsUserRequest>
 {
-    public GetUserRequestValidator()
+    public ExistsUserRequestValidator()
     {
         PropertyName.Push(nameof(GetUserRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(GetUserRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(ExistsUserRequest value)
     {
         if (string.IsNullOrEmpty(value.Username))
         {

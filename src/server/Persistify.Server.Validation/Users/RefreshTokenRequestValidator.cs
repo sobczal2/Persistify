@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Users;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Common;
 using Persistify.Server.Validation.Shared;
 

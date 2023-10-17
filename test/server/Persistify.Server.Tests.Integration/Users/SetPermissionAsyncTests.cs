@@ -18,7 +18,10 @@ public class SetPermissionAsyncTests : IntegrationTestBase
         var password = "test";
         await CreateUserAsync(username, password);
 
-        var request = new SetPermissionRequest { Username = RootCredentials.Username, Permission = (int)Permission.TemplateRead };
+        var request = new SetPermissionRequest
+        {
+            Username = RootCredentials.Username, Permission = (int)Permission.TemplateRead
+        };
 
         // Act
         var response = await UserService.SetPermissionAsync(request, callContext);

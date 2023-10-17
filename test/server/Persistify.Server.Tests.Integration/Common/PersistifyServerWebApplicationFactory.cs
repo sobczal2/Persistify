@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -20,7 +19,7 @@ public class PersistifyServerWebApplicationFactory : WebApplicationFactory<Progr
             .AddJsonFile("appsettings.Testing.json")
             .AddInMemoryCollection(new Dictionary<string, string>
             {
-                {"Storage:DataPath", _dataDirectoryInfo.FullName}
+                { "Storage:DataPath", _dataDirectoryInfo.FullName }
             }!)
             .Build()
         );

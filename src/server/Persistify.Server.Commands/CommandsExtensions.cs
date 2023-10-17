@@ -15,8 +15,8 @@ public static class CommandsExtensions
             .GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false }
                         && (t.IsSubclassOf(typeof(Command)) ||
-                            t.BaseType?.IsGenericType == true &&
-                            t.BaseType?.GetGenericTypeDefinition() == typeof(Command<,>)))
+                            (t.BaseType?.IsGenericType == true &&
+                             t.BaseType?.GetGenericTypeDefinition() == typeof(Command<,>))))
             .ToList();
 
         foreach (var command in commands)

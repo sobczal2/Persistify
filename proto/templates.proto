@@ -2,27 +2,42 @@ syntax = "proto3";
 package Persistify.Services;
 
 message AnalyzerDescriptor {
-   repeated string CharacterFilterNames = 1;
-   string TokenizerName = 2;
-   repeated string TokenFilterNames = 3;
+   oneof subtype {
+      FullAnalyzerDescriptor FullAnalyzerDescriptor = 100;
+      PresetAnalyzerDescriptor PresetAnalyzerDescriptor = 101;
+   }
 }
 message BoolField {
-   string Name = 1;
-   bool Required = 2;
 }
 message CreateTemplateRequest {
    string TemplateName = 1;
-   repeated TextField TextFields = 2;
-   repeated NumberField NumberFields = 3;
-   repeated BoolField BoolFields = 4;
+   repeated Field TextFields = 2;
+   repeated Field NumberFields = 3;
+   repeated Field BoolFields = 4;
 }
 message CreateTemplateResponse {
-   int32 TemplateId = 1;
 }
 message DeleteTemplateRequest {
    string TemplateName = 1;
 }
 message DeleteTemplateResponse {
+}
+message ExistsTemplateRequest {
+   string TemplateName = 1;
+}
+message ExistsTemplateResponse {
+   bool Exists = 1;
+}
+message Field {
+   string Name = 1;
+   bool Required = 2;
+   oneof subtype {
+      BoolField BoolField = 100;
+      NumberField NumberField = 101;
+      TextField TextField = 102;
+   }
+}
+message FullAnalyzerDescriptor {
 }
 message GetTemplateRequest {
    string TemplateName = 1;
@@ -38,29 +53,28 @@ message ListTemplatesResponse {
    int32 TotalCount = 2;
 }
 message NumberField {
-   string Name = 1;
-   bool Required = 2;
 }
 message Pagination {
    int32 PageNumber = 1;
    int32 PageSize = 2;
 }
+message PresetAnalyzerDescriptor {
+   string PresetName = 1;
+}
 message Template {
    int32 Id = 1;
    string Name = 2;
-   repeated TextField TextFields = 3;
-   repeated NumberField NumberFields = 4;
-   repeated BoolField BooleanFields = 5;
+   repeated Field TextFields = 3;
+   repeated Field NumberFields = 4;
+   repeated Field BoolFields = 5;
 }
 message TextField {
-   string Name = 1;
-   bool Required = 2;
-   string AnalyzerPresetName = 3;
-   AnalyzerDescriptor AnalyzerDescriptor = 4;
+   AnalyzerDescriptor AnalyzerDescriptor = 3;
 }
 service TemplateService {
    rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);
    rpc DeleteTemplate (DeleteTemplateRequest) returns (DeleteTemplateResponse);
+   rpc ExistsTemplate (ExistsTemplateRequest) returns (ExistsTemplateResponse);
    rpc GetTemplate (GetTemplateRequest) returns (GetTemplateResponse);
    rpc ListTemplates (ListTemplatesRequest) returns (ListTemplatesResponse);
 }

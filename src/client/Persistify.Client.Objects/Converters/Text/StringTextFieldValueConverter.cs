@@ -7,11 +7,7 @@ public class StringTextFieldValueConverter : IFieldValueConverter<string, TextFi
 {
     public TextFieldValue Convert(string from, string fieldName)
     {
-        return new TextFieldValue
-        {
-            FieldName = fieldName,
-            Value = from
-        };
+        return new TextFieldValue { FieldName = fieldName, Value = from };
     }
 
     public TextFieldValue Convert(object? from, string fieldName)

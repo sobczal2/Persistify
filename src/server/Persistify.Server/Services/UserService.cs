@@ -12,10 +12,11 @@ namespace Persistify.Server.Services;
 public class UserService : IUserService
 {
     private readonly ChangeUserPasswordCommand _changeUserPasswordCommand;
-    private readonly ListUsersCommand _listUsersCommand;
     private readonly CreateUserCommand _createUserCommand;
     private readonly DeleteUserCommand _deleteUserCommand;
     private readonly GetUserCommand _getUserCommand;
+    private readonly ListUsersCommand _listUsersCommand;
+    private readonly ExistsUserCommand _existsUserCommand;
     private readonly RefreshTokenCommand _refreshTokenCommand;
     private readonly SetPermissionCommand _setPermissionCommand;
     private readonly SignInCommand _signInCommand;
@@ -28,7 +29,8 @@ public class UserService : IUserService
         DeleteUserCommand deleteUserCommand,
         RefreshTokenCommand refreshTokenCommand,
         ChangeUserPasswordCommand changeUserPasswordCommand,
-        ListUsersCommand listUsersCommand
+        ListUsersCommand listUsersCommand,
+        ExistsUserCommand existsUserCommand
     )
     {
         _createUserCommand = createUserCommand;
@@ -39,6 +41,7 @@ public class UserService : IUserService
         _refreshTokenCommand = refreshTokenCommand;
         _changeUserPasswordCommand = changeUserPasswordCommand;
         _listUsersCommand = listUsersCommand;
+        _existsUserCommand = existsUserCommand;
     }
 
     [Authorize]
@@ -101,6 +104,14 @@ public class UserService : IUserService
     public async ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext)
     {
         return await _listUsersCommand
+            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    [Authorize]
+    public async ValueTask<ExistsUserResponse> ExistsUserAsync(ExistsUserRequest request, CallContext callContext)
+    {
+        return await _existsUserCommand
             .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
             .ConfigureAwait(false);
     }

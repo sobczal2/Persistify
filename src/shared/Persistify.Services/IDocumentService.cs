@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Responses.Templates;
 using ProtoBuf.Grpc;
 
 namespace Persistify.Services;

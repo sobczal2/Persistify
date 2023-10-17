@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Persistify.Server.Indexes.Searches;
+﻿namespace Persistify.Server.Indexes.Searches;
 
 public class SearchResult : ISearchResult
 {

@@ -7,11 +7,7 @@ public class BoolBoolFieldValueConverter : IFieldValueConverter<bool, BoolFieldV
 {
     public BoolFieldValue Convert(bool from, string fieldName)
     {
-        return new BoolFieldValue
-        {
-            FieldName = fieldName,
-            Value = from
-        };
+        return new BoolFieldValue { FieldName = fieldName, Value = from };
     }
 
     public BoolFieldValue Convert(object? from, string fieldName)

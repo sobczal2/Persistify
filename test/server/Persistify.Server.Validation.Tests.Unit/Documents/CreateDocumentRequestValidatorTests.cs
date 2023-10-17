@@ -195,14 +195,11 @@ public class CreateDocumentRequestValidatorTests
     public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateDocumentRequest { TemplateName = "Test", TextFieldValues = new List<TextFieldValue>
+        var request = new CreateDocumentRequest
         {
-            new()
-            {
-                FieldName = "Test",
-                Value = "Test"
-            }
-        }};
+            TemplateName = "Test",
+            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "Test", Value = "Test" } }
+        };
         _templateManager.Exists(request.TemplateName).Returns(false);
 
         // Act
@@ -653,7 +650,11 @@ public class CreateDocumentRequestValidatorTests
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField> { new() { AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test"}, Name = "1" } },
+            TextFields =
+                new List<TextField>
+                {
+                    new() { AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test" }, Name = "1" }
+                },
             NumberFields = new List<NumberField> { new() { Name = "2" } },
             BoolFields = new List<BoolField> { new() { Name = "3" } }
         });

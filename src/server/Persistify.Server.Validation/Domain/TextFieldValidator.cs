@@ -12,7 +12,8 @@ public class TextFieldValidator : Validator<TextField>
     private readonly IValidator<FullAnalyzerDescriptor> _analyzerDescriptorValidator;
     private readonly IValidator<PresetAnalyzerDescriptor> _presetAnalyzerDescriptorValidator;
 
-    public TextFieldValidator(IValidator<FullAnalyzerDescriptor> analyzerDescriptorValidator, IValidator<PresetAnalyzerDescriptor> presetAnalyzerDescriptorValidator)
+    public TextFieldValidator(IValidator<FullAnalyzerDescriptor> analyzerDescriptorValidator,
+        IValidator<PresetAnalyzerDescriptor> presetAnalyzerDescriptorValidator)
     {
         _analyzerDescriptorValidator = analyzerDescriptorValidator;
         _presetAnalyzerDescriptorValidator = presetAnalyzerDescriptorValidator;

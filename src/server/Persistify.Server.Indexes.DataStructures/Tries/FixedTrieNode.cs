@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Persistify.Server.Indexes.DataStructures.Tries;
 
 public class FixedTrieNode<TItem>
-where TItem : IComparable<TItem>
+    where TItem : IComparable<TItem>
 {
     private readonly FixedTrieNode<TItem>?[] _children;
     private readonly SortedSet<TItem> _items;
@@ -31,6 +31,7 @@ where TItem : IComparable<TItem>
                 removedCount++;
             }
         }
+
         return removedCount;
     }
 
@@ -48,6 +49,7 @@ where TItem : IComparable<TItem>
         {
             yield return item;
         }
+
         foreach (var child in _children)
         {
             if (child != null)

@@ -3,7 +3,6 @@ using FluentAssertions;
 using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Server.Tests.Integration.Common;
-using ProtoBuf.Grpc;
 using Xunit;
 
 namespace Persistify.Server.Tests.Integration.Users;
@@ -22,7 +21,8 @@ public class CreateUserAsyncTests : IntegrationTestBase
 
         // Assert
         response.Should().NotBeNull();
-        var getUserResponse = await UserService.GetUserAsync(new GetUserRequest { Username = request.Username }, callContext);
+        var getUserResponse =
+            await UserService.GetUserAsync(new GetUserRequest { Username = request.Username }, callContext);
         getUserResponse.Should().NotBeNull();
         getUserResponse.Username.Should().Be(request.Username);
         getUserResponse.Permission.Should().Be((int)Permission.None);

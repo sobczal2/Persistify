@@ -11,10 +11,11 @@ public class GrpcExceptionHandler : IExceptionHandler
 
     public GrpcExceptionHandler(
         IPersistifyErrorCodeMapper<StatusCode> persistifyErrorCodeMapper
-        )
+    )
     {
         _persistifyErrorCodeMapper = persistifyErrorCodeMapper;
     }
+
     public void Handle(Exception exception)
     {
         if (exception is not PersistifyException persistifyException)

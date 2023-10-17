@@ -17,8 +17,8 @@ namespace Persistify.Server.Commands.Users;
 public class ListUsersCommand : Command<ListUsersRequest, ListUsersResponse>
 {
     private readonly IUserManager _userManager;
-    private List<UserDto>? _userDtos;
     private int? _totalCount;
+    private List<UserDto>? _userDtos;
 
     public ListUsersCommand(
         ICommandContext<ListUsersRequest> commandContext,

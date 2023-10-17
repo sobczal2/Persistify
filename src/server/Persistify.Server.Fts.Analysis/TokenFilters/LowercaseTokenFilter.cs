@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Persistify.Domain.Fts;
 using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Analysis.Tokens;
 
 namespace Persistify.Server.Fts.Analysis.TokenFilters;
 

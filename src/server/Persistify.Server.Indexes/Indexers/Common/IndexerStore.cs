@@ -6,7 +6,6 @@ using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Algorithms;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;
@@ -34,7 +33,9 @@ public class IndexerStore
             {
                 analyzer = analyzerFactory.Create(fullAnalyzerDescriptor);
             }
-            else if (field.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor && analyzerPresetFactory.TryCreate(presetAnalyzerDescriptor.PresetName, out var tmpAnalyzer).Success && tmpAnalyzer is not null)
+            else if (field.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor &&
+                     analyzerPresetFactory.TryCreate(presetAnalyzerDescriptor.PresetName, out var tmpAnalyzer)
+                         .Success && tmpAnalyzer is not null)
             {
                 analyzer = tmpAnalyzer;
             }
@@ -42,6 +43,7 @@ public class IndexerStore
             {
                 throw new InternalPersistifyException();
             }
+
             _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Persistify.Helpers.Algorithms;
 
@@ -37,13 +36,16 @@ public static class EnumerableHelpers
 
     public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, params IEnumerable<T>[] enumerables)
     {
-        if (enumerables.Length == 0) yield break;
+        if (enumerables.Length == 0)
+        {
+            yield break;
+        }
 
         var enumerators = GetEnumerators(enumerables);
 
         try
         {
-            bool canAdvance = true;
+            var canAdvance = true;
 
             foreach (var enumerator in enumerators)
             {
@@ -54,7 +56,10 @@ public static class EnumerableHelpers
                 }
             }
 
-            if (!canAdvance) yield break;
+            if (!canAdvance)
+            {
+                yield break;
+            }
 
             while (true)
             {
@@ -81,7 +86,12 @@ public static class EnumerableHelpers
                             break;
                         }
                     }
-                    if (!canAdvance) break;
+
+                    if (!canAdvance)
+                    {
+                        break;
+                    }
+
                     continue;
                 }
 
@@ -107,10 +117,16 @@ public static class EnumerableHelpers
                         }
                     }
 
-                    if (!canAdvance) break;
+                    if (!canAdvance)
+                    {
+                        break;
+                    }
                 }
 
-                if (!canAdvance) break;
+                if (!canAdvance)
+                {
+                    break;
+                }
             }
         }
         finally

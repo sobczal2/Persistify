@@ -64,7 +64,8 @@ public class DocumentService : IDocumentService
     }
 
     [Authorize]
-    public async ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request, CallContext callContext)
+    public async ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request,
+        CallContext callContext)
     {
         return await _existsDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
             callContext.CancellationToken);

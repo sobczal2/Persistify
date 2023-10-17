@@ -7,11 +7,7 @@ public class DoubleNumberFieldValueConverter : IFieldValueConverter<double, Numb
 {
     public NumberFieldValue Convert(double from, string fieldName)
     {
-        return new NumberFieldValue
-        {
-            FieldName = fieldName,
-            Value = from
-        };
+        return new NumberFieldValue { FieldName = fieldName, Value = from };
     }
 
     public NumberFieldValue Convert(object? from, string fieldName)

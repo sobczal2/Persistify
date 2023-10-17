@@ -65,23 +65,6 @@ public class ListTemplatesRequestValidatorTests
     }
 
     [Fact]
-    public async Task Validate_WhenPaginationIsNull_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new ListTemplatesRequest { Pagination = null! };
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
-        var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("ListTemplatesRequest.Pagination");
-    }
-
-    [Fact]
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange

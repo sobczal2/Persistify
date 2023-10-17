@@ -5,7 +5,6 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
@@ -39,14 +38,16 @@ public class SignInCommand : Command<SignInRequest, SignInResponse>
 
         if (user is null)
         {
-            throw new UnauthenticatedPersistifyException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
+            throw new UnauthenticatedPersistifyException(nameof(SignInRequest.Username),
+                UserErrorMessages.InvalidCredentials);
         }
 
         var passwordCorrect = _passwordService.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt);
 
         if (!passwordCorrect)
         {
-            throw new UnauthenticatedPersistifyException(nameof(SignInRequest.Username), UserErrorMessages.InvalidCredentials);
+            throw new UnauthenticatedPersistifyException(nameof(SignInRequest.Username),
+                UserErrorMessages.InvalidCredentials);
         }
 
         var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);

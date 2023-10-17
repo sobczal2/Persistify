@@ -5,7 +5,6 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
@@ -34,7 +33,8 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
 
     protected override async ValueTask RunAsync(SearchDocumentsRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
+        var template = await _templateManager.GetAsync(request.TemplateName) ??
+                       throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
 
         var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
         var take = request.Pagination.PageSize;
@@ -47,11 +47,7 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
 
         var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQuery, take, skip);
 
-        _response = new SearchDocumentsResponse
-        {
-            SearchRecords = searchRecords,
-            TotalCount = count
-        };
+        _response = new SearchDocumentsResponse { SearchRecords = searchRecords, TotalCount = count };
     }
 
     protected override SearchDocumentsResponse GetResponse()

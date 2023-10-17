@@ -23,7 +23,8 @@ public class PaginationValidator : Validator<Pagination>
         if (value.PageSize <= 0)
         {
             PropertyName.Push(nameof(value.PageSize));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero));
         }
 
         return ValueTask.FromResult(Result.Ok);

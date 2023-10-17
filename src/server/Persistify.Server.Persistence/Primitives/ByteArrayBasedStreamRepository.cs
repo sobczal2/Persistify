@@ -19,7 +19,14 @@ public abstract class ByteArrayBasedStreamRepository<TValue> : IValueTypeStreamR
         _semaphore = new SemaphoreSlim(1, 1);
     }
 
+    public void Dispose()
+    {
+        _innerRepository.Dispose();
+        _semaphore.Dispose();
+    }
+
     public TValue EmptyValue => BytesToValue(_innerRepository.EmptyValue);
+
     public async ValueTask<TValue> ReadAsync(int key, bool useLock)
     {
         if (key < 0)
@@ -112,9 +119,14 @@ public abstract class ByteArrayBasedStreamRepository<TValue> : IValueTypeStreamR
         }
     }
 
-    public bool IsValueEmpty(TValue value) => _innerRepository.IsValueEmpty(ValueToBytes(value));
+    public bool IsValueEmpty(TValue value)
+    {
+        return _innerRepository.IsValueEmpty(ValueToBytes(value));
+    }
+
     protected abstract TValue BytesToValue(byte[] bytes);
     protected abstract byte[] ValueToBytes(TValue value);
+
     private async ValueTask<TValue> ReadAsyncImpl(int key)
     {
         var bytes = await _innerRepository.ReadAsync(key, false);
@@ -148,11 +160,5 @@ public abstract class ByteArrayBasedStreamRepository<TValue> : IValueTypeStreamR
     private void ClearImpl()
     {
         _innerRepository.Clear(false);
-    }
-
-    public void Dispose()
-    {
-        _innerRepository.Dispose();
-        _semaphore.Dispose();
     }
 }

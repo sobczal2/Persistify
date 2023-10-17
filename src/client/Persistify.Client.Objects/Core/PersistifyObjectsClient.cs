@@ -19,10 +19,9 @@ namespace Persistify.Client.Objects.Core;
 
 public class PersistifyObjectsClient : IPersistifyObjectsClient
 {
-    private readonly IFieldValueConverterStore _fieldValueConverterStore;
     private readonly IAnalyzerDescriptorStore _analyzerDescriptorStore;
-    public IPersistifyClient Client { get; }
     private readonly Dictionary<Type, Dictionary<string, object>> _fieldValueConverters;
+    private readonly IFieldValueConverterStore _fieldValueConverterStore;
 
     public PersistifyObjectsClient(
         IPersistifyClient client,
@@ -35,6 +34,8 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
         Client = client;
         _fieldValueConverters = new Dictionary<Type, Dictionary<string, object>>();
     }
+
+    public IPersistifyClient Client { get; }
 
     public async Task RegisterTemplateAsync<TTemplate>(CallContext? callContext = null)
     {
@@ -72,10 +73,10 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
             switch (fieldType)
             {
                 case FieldType.Bool:
-                    boolFields.Add(new BoolField { Name = fieldName, Required = templateField.IsRequired(), });
+                    boolFields.Add(new BoolField { Name = fieldName, Required = templateField.IsRequired() });
                     break;
                 case FieldType.Number:
-                    numberFields.Add(new NumberField { Name = fieldName, Required = templateField.IsRequired(), });
+                    numberFields.Add(new NumberField { Name = fieldName, Required = templateField.IsRequired() });
                     break;
                 case FieldType.Text:
                     textFields.Add(new TextField
@@ -83,7 +84,7 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
                         Name = fieldName,
                         Required = templateField.IsRequired(),
                         AnalyzerDescriptor = _analyzerDescriptorStore.Get(templateField.GetAnalyzerDescriptorName() ??
-                            throw new InvalidOperationException()),
+                                                                          throw new InvalidOperationException())
                     });
                     break;
                 default:
@@ -95,7 +96,10 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
 
         var createTemplateRequest = new CreateTemplateRequest
         {
-            TemplateName = templateName, BoolFields = boolFields, NumberFields = numberFields, TextFields = textFields,
+            TemplateName = templateName,
+            BoolFields = boolFields,
+            NumberFields = numberFields,
+            TextFields = textFields
         };
 
         try
@@ -172,7 +176,7 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
             TemplateName = templateName,
             BoolFieldValues = boolFieldValues,
             NumberFieldValues = numberFieldValues,
-            TextFieldValues = textFieldValues,
+            TextFieldValues = textFieldValues
         };
 
         await Client.CreateDocumentAsync(createDocumentRequest, callContext);

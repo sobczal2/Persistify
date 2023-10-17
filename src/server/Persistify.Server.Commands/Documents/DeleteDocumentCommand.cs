@@ -5,13 +5,11 @@ using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.Commands.Common;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Documents;
 
 namespace Persistify.Server.Commands.Documents;
 
@@ -34,9 +32,11 @@ public class DeleteDocumentCommand : Command<DeleteDocumentRequest, DeleteDocume
 
     protected override async ValueTask RunAsync(DeleteDocumentRequest request, CancellationToken cancellationToken)
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var template = await _templateManager.GetAsync(request.TemplateName) ??
+                       throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var documentManager = _documentManagerStore.GetManager(template.Id) ??
+                              throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
         await CommandContext
             .CurrentTransaction

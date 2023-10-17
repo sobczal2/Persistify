@@ -1,10 +1,9 @@
 ﻿using Persistify.Client.Objects.Attributes;
-using Persistify.Domain.Templates;
 
 namespace ConsoleApp1;
 
 [PersistifyTemplate]
-public partial class Animal
+public class Animal
 {
     [PersistifyTextField]
     public string Name { get; set; } = default!;
@@ -15,4 +14,3 @@ public partial class Animal
     [PersistifyBoolField]
     public bool IsAlive { get; set; }
 }
-

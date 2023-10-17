@@ -18,6 +18,7 @@ namespace ConsoleApp1;
 public static class AnimalHelpers
 {
     private static readonly Faker Faker = new();
+
     public static async Task EnsureAnimalTemplateExists(IPersistifyClient client)
     {
         try
@@ -26,34 +27,19 @@ public static class AnimalHelpers
                 new CreateTemplateRequest
                 {
                     TemplateName = "Animal",
-                    TextFields = new List<TextField>
-                    {
-                        new()
+                    TextFields =
+                        new List<TextField>
                         {
-                            Name = "Name",
-                            Required = true,
-                            AnalyzerDescriptor = new PresetAnalyzerDescriptor()
+                            new()
                             {
-                                PresetName = "standard",
+                                Name = "Name",
+                                Required = true,
+                                AnalyzerDescriptor =
+                                    new PresetAnalyzerDescriptor { PresetName = "standard" }
                             }
-                        }
-                    },
-                    NumberFields = new List<NumberField>
-                    {
-                        new()
-                        {
-                            Name = "Age",
-                            Required = true,
-                        }
-                    },
-                    BoolFields = new List<BoolField>
-                    {
-                        new()
-                        {
-                            Name = "IsCute",
-                            Required = true,
-                        }
-                    }
+                        },
+                    NumberFields = new List<NumberField> { new() { Name = "Age", Required = true } },
+                    BoolFields = new List<BoolField> { new() { Name = "IsCute", Required = true } }
                 }
             );
         }
@@ -69,29 +55,16 @@ public static class AnimalHelpers
             new CreateDocumentRequest
             {
                 TemplateName = "Animal",
-                TextFieldValues = new List<TextFieldValue>
-                {
-                    new()
+                TextFieldValues =
+                    new List<TextFieldValue>
                     {
-                        FieldName = "Name",
-                        Value = Faker.Random.Words(Random.Shared.Next(2, 5)),
-                    }
-                },
-                NumberFieldValues = new List<NumberFieldValue>
-                {
-                    new()
-                    {
-                        FieldName = "Age",
-                        Value = Faker.Random.Number(1, 20)
-                    }
-                },
+                        new() { FieldName = "Name", Value = Faker.Random.Words(Random.Shared.Next(2, 5)) }
+                    },
+                NumberFieldValues =
+                    new List<NumberFieldValue> { new() { FieldName = "Age", Value = Faker.Random.Number(1, 20) } },
                 BoolFieldValues = new List<BoolFieldValue>
                 {
-                    new()
-                    {
-                        FieldName = "IsCute",
-                        Value = Faker.Random.Bool()
-                    }
+                    new() { FieldName = "IsCute", Value = Faker.Random.Bool() }
                 }
             }
         );
@@ -99,16 +72,16 @@ public static class AnimalHelpers
 
     public static async Task SearchForAnimals(IPersistifyClient client, string query, bool isCute)
     {
-        await client.SearchDocumentsAsync(new SearchDocumentsRequest()
+        await client.SearchDocumentsAsync(new SearchDocumentsRequest
         {
             Pagination = new Pagination { PageNumber = 0, PageSize = 10 },
-            SearchQuery = new AndSearchQuery()
+            SearchQuery = new AndSearchQuery
             {
                 Boost = 1,
-                Queries = new List<SearchQuery>()
+                Queries = new List<SearchQuery>
                 {
-                    new FullTextSearchQuery() { Boost = 1, FieldName = "Name", Value = query },
-                    new ExactBoolSearchQuery() { Boost = 1, FieldName = "IsCute", Value = isCute }
+                    new FullTextSearchQuery { Boost = 1, FieldName = "Name", Value = query },
+                    new ExactBoolSearchQuery { Boost = 1, FieldName = "IsCute", Value = isCute }
                 }
             },
             TemplateName = "Animal"

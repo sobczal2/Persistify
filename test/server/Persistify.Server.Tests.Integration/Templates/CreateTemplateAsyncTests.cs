@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
-using ProtoBuf.Grpc;
 using Xunit;
 
 namespace Persistify.Server.Tests.Integration.Templates;
@@ -28,7 +26,7 @@ public class CreateTemplateAsyncTests : IntegrationTestBase
                     Required = true,
                     AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "standard" }
                 }
-            },
+            }
         };
 
         // Act

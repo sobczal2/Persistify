@@ -7,7 +7,6 @@ using NSubstitute;
 using Persistify.Requests.Users;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Users;
 using Xunit;
 

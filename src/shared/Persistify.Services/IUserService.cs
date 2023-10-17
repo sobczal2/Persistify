@@ -33,4 +33,7 @@ public interface IUserService
 
     [OperationContract]
     ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ExistsUserResponse> ExistsUserAsync(ExistsUserRequest request, CallContext callContext);
 }
