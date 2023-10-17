@@ -8,7 +8,7 @@ namespace Persistify.Responses.Templates;
 public class ListTemplatesResponse
 {
     [ProtoMember(1)]
-    public IEnumerable<Template> Templates { get; set; } = default!;
+    public List<Template> Templates { get; set; } = default!;
 
     [ProtoMember(2)]
     public int TotalCount { get; set; }

@@ -102,6 +102,14 @@ public class DocumentManager : Manager, IDocumentManager
         return await _documentRepository.ReadAsync(id, true);
     }
 
+    public async ValueTask<bool> ExistsAsync(int id)
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        return await _documentRepository.ExistsAsync(id, true);
+    }
+
     public async IAsyncEnumerable<Document> ListAsync(int take, int skip)
     {
         ThrowIfNotInitialized();

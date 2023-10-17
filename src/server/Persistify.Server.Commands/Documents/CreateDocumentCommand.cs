@@ -71,6 +71,6 @@ public sealed class CreateDocumentCommand : Command<CreateDocumentRequest, Creat
 
     protected override Permission GetRequiredPermission(CreateDocumentRequest request)
     {
-        return Permission.DocumentWrite;
+        return Permission.DocumentWrite | Permission.TemplateRead;
     }
 }

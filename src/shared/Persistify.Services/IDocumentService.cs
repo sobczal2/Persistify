@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
+using Persistify.Responses.Templates;
 using ProtoBuf.Grpc;
 
 namespace Persistify.Services;
@@ -20,4 +21,7 @@ public interface IDocumentService
 
     [OperationContract]
     ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request, CallContext callContext);
 }

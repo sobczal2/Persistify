@@ -13,6 +13,7 @@ public class DocumentService : IDocumentService
 {
     private readonly CreateDocumentCommand _createDocumentCommand;
     private readonly DeleteDocumentCommand _deleteDocumentCommand;
+    private readonly ExistsDocumentCommand _existsDocumentCommand;
     private readonly GetDocumentCommand _getDocumentCommand;
     private readonly SearchDocumentsCommand _searchDocumentsCommand;
 
@@ -20,13 +21,15 @@ public class DocumentService : IDocumentService
         CreateDocumentCommand createDocumentCommand,
         GetDocumentCommand getDocumentCommand,
         SearchDocumentsCommand searchDocumentsCommand,
-        DeleteDocumentCommand deleteDocumentCommand
+        DeleteDocumentCommand deleteDocumentCommand,
+        ExistsDocumentCommand existsDocumentCommand
     )
     {
         _createDocumentCommand = createDocumentCommand;
         _getDocumentCommand = getDocumentCommand;
         _searchDocumentsCommand = searchDocumentsCommand;
         _deleteDocumentCommand = deleteDocumentCommand;
+        _existsDocumentCommand = existsDocumentCommand;
     }
 
     [Authorize]
@@ -57,6 +60,13 @@ public class DocumentService : IDocumentService
         CallContext callContext)
     {
         return await _deleteDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
+    }
+
+    [Authorize]
+    public async ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request, CallContext callContext)
+    {
+        return await _existsDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
             callContext.CancellationToken);
     }
 }

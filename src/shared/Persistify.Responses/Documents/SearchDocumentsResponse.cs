@@ -8,7 +8,7 @@ namespace Persistify.Responses.Documents;
 public class SearchDocumentsResponse
 {
     [ProtoMember(1)]
-    public IEnumerable<SearchRecord> SearchRecords { get; set; } = default!;
+    public List<SearchRecord> SearchRecords { get; set; } = default!;
 
     [ProtoMember(2)]
     public int TotalCount { get; set; }

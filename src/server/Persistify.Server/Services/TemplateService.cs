@@ -13,6 +13,7 @@ public class TemplateService : ITemplateService
 {
     private readonly CreateTemplateCommand _createTemplateCommand;
     private readonly DeleteTemplateCommand _deleteTemplateCommand;
+    private readonly ExistsTemplateCommand _existsTemplateCommand;
     private readonly GetTemplateCommand _getTemplateCommand;
     private readonly ListTemplatesCommand _listTemplatesCommand;
 
@@ -20,13 +21,15 @@ public class TemplateService : ITemplateService
         CreateTemplateCommand createTemplateCommand,
         GetTemplateCommand getTemplateCommand,
         ListTemplatesCommand listTemplatesCommand,
-        DeleteTemplateCommand deleteTemplateCommand
+        DeleteTemplateCommand deleteTemplateCommand,
+        ExistsTemplateCommand existsTemplateCommand
     )
     {
         _createTemplateCommand = createTemplateCommand;
         _getTemplateCommand = getTemplateCommand;
         _listTemplatesCommand = listTemplatesCommand;
         _deleteTemplateCommand = deleteTemplateCommand;
+        _existsTemplateCommand = existsTemplateCommand;
     }
 
     [Authorize]
@@ -56,6 +59,14 @@ public class TemplateService : ITemplateService
         CallContext callContext)
     {
         return await _deleteTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken);
+    }
+
+    [Authorize]
+    public async ValueTask<ExistsTemplateResponse> ExistsTemplateAsync(ExistsTemplateRequest request,
+        CallContext callContext)
+    {
+        return await _existsTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
             callContext.CancellationToken);
     }
 }

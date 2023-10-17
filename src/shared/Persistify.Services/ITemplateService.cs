@@ -20,4 +20,7 @@ public interface ITemplateService
 
     [OperationContract]
     ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ExistsTemplateResponse> ExistsTemplateAsync(ExistsTemplateRequest request, CallContext callContext);
 }

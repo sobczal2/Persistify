@@ -12,6 +12,7 @@ namespace Persistify.Server.Services;
 public class UserService : IUserService
 {
     private readonly ChangeUserPasswordCommand _changeUserPasswordCommand;
+    private readonly ListUsersCommand _listUsersCommand;
     private readonly CreateUserCommand _createUserCommand;
     private readonly DeleteUserCommand _deleteUserCommand;
     private readonly GetUserCommand _getUserCommand;
@@ -26,7 +27,8 @@ public class UserService : IUserService
         SetPermissionCommand setPermissionCommand,
         DeleteUserCommand deleteUserCommand,
         RefreshTokenCommand refreshTokenCommand,
-        ChangeUserPasswordCommand changeUserPasswordCommand
+        ChangeUserPasswordCommand changeUserPasswordCommand,
+        ListUsersCommand listUsersCommand
     )
     {
         _createUserCommand = createUserCommand;
@@ -36,6 +38,7 @@ public class UserService : IUserService
         _deleteUserCommand = deleteUserCommand;
         _refreshTokenCommand = refreshTokenCommand;
         _changeUserPasswordCommand = changeUserPasswordCommand;
+        _listUsersCommand = listUsersCommand;
     }
 
     [Authorize]
@@ -90,6 +93,14 @@ public class UserService : IUserService
         CallContext callContext)
     {
         return await _changeUserPasswordCommand
+            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    [Authorize]
+    public async ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext)
+    {
+        return await _listUsersCommand
             .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
             .ConfigureAwait(false);
     }

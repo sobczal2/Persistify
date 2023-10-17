@@ -70,6 +70,6 @@ public class SearchDocumentsCommand : Command<SearchDocumentsRequest, SearchDocu
 
     protected override Permission GetRequiredPermission(SearchDocumentsRequest request)
     {
-        return Permission.DocumentRead;
+        return Permission.DocumentRead | Permission.TemplateRead;
     }
 }

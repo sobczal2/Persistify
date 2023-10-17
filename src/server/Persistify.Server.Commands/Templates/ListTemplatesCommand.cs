@@ -18,8 +18,8 @@ namespace Persistify.Server.Commands.Templates;
 public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesResponse>
 {
     private readonly ITemplateManager _templateManager;
-    private IEnumerable<Template>? _templates;
-    private int _totalCount;
+    private List<Template>? _templates;
+    private int? _totalCount;
 
     public ListTemplatesCommand(
         ICommandContext<ListTemplatesRequest> commandContext,
@@ -41,12 +41,11 @@ public class ListTemplatesCommand : Command<ListTemplatesRequest, ListTemplatesR
 
     protected override ListTemplatesResponse GetResponse()
     {
-        if (_templates is null)
+        return new ListTemplatesResponse
         {
-            throw new InternalPersistifyException(nameof(ListTemplatesResponse));
-        }
-
-        return new ListTemplatesResponse { Templates = _templates, TotalCount = _totalCount };
+            Templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest)),
+            TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
+        };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest request)

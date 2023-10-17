@@ -71,6 +71,6 @@ public class GetDocumentCommand : Command<GetDocumentRequest, GetDocumentRespons
 
     protected override Permission GetRequiredPermission(GetDocumentRequest request)
     {
-        return Permission.DocumentRead;
+        return Permission.DocumentRead | Permission.TemplateRead;
     }
 }
