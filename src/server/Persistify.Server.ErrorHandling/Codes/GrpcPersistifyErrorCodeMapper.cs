@@ -5,14 +5,17 @@ namespace Persistify.Server.ErrorHandling.Codes;
 
 public class GrpcPersistifyErrorCodeMapper : IPersistifyErrorCodeMapper<StatusCode>
 {
-    public StatusCode Map(PersistifyErrorCode errorCode) => errorCode switch
+    public StatusCode Map(PersistifyErrorCode errorCode)
     {
-        PersistifyErrorCode.StaticValidationFailure => StatusCode.InvalidArgument,
-        PersistifyErrorCode.DynamicValidationFailure => StatusCode.InvalidArgument,
-        PersistifyErrorCode.InsufficientPermission => StatusCode.PermissionDenied,
-        PersistifyErrorCode.InternalFailure => StatusCode.Internal,
-        PersistifyErrorCode.Unauthenticated => StatusCode.Unauthenticated,
-        PersistifyErrorCode.NotFound => StatusCode.NotFound,
-        _ => throw new ArgumentOutOfRangeException(nameof(errorCode), errorCode, null)
-    };
+        return errorCode switch
+        {
+            PersistifyErrorCode.StaticValidationFailure => StatusCode.InvalidArgument,
+            PersistifyErrorCode.DynamicValidationFailure => StatusCode.InvalidArgument,
+            PersistifyErrorCode.InsufficientPermission => StatusCode.PermissionDenied,
+            PersistifyErrorCode.InternalFailure => StatusCode.Internal,
+            PersistifyErrorCode.Unauthenticated => StatusCode.Unauthenticated,
+            PersistifyErrorCode.NotFound => StatusCode.NotFound,
+            _ => throw new ArgumentOutOfRangeException(nameof(errorCode), errorCode, null)
+        };
+    }
 }

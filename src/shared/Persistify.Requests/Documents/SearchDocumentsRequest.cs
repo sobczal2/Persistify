@@ -1,11 +1,12 @@
 ﻿using Persistify.Domain.Search.Queries;
-using Persistify.Requests.Shared;
+using Persistify.Requests.Common;
+using Persistify.Responses.Documents;
 using ProtoBuf;
 
 namespace Persistify.Requests.Documents;
 
 [ProtoContract]
-public class SearchDocumentsRequest
+public class SearchDocumentsRequest : IRequest<SearchDocumentsResponse>
 {
     [ProtoMember(1)]
     public string TemplateName { get; set; } = default!;

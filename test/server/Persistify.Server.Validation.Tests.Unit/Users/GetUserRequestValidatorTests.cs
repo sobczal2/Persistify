@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
 using Persistify.Requests.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Users;
 using Xunit;
 
@@ -13,7 +10,7 @@ namespace Persistify.Server.Validation.Tests.Unit.Users;
 
 public class GetUserRequestValidatorTests
 {
-    private GetUserRequestValidator _sut;
+    private readonly GetUserRequestValidator _sut;
 
     public GetUserRequestValidatorTests()
     {

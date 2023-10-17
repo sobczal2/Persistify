@@ -12,7 +12,8 @@ public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
     {
     }
 
-    public async Task<CreateTemplateResponse> CreateTemplateAsync(ITemplateService templateService, CreateTemplateRequest createTemplateRequest,
+    public async Task<CreateTemplateResponse> CreateTemplateAsync(ITemplateService templateService,
+        CreateTemplateRequest createTemplateRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<CreateTemplateResponse>(
@@ -20,7 +21,8 @@ public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
         );
     }
 
-    public async Task<GetTemplateResponse> GetTemplateAsync(ITemplateService templateService, GetTemplateRequest getTemplateRequest,
+    public async Task<GetTemplateResponse> GetTemplateAsync(ITemplateService templateService,
+        GetTemplateRequest getTemplateRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<GetTemplateResponse>(
@@ -28,7 +30,8 @@ public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
         );
     }
 
-    public async Task<ListTemplatesResponse> ListTemplatesAsync(ITemplateService templateService, ListTemplatesRequest listTemplatesRequest,
+    public async Task<ListTemplatesResponse> ListTemplatesAsync(ITemplateService templateService,
+        ListTemplatesRequest listTemplatesRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<ListTemplatesResponse>(
@@ -36,7 +39,8 @@ public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
         );
     }
 
-    public async Task<DeleteTemplateResponse> DeleteTemplateAsync(ITemplateService templateService, DeleteTemplateRequest deleteTemplateRequest,
+    public async Task<DeleteTemplateResponse> DeleteTemplateAsync(ITemplateService templateService,
+        DeleteTemplateRequest deleteTemplateRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<DeleteTemplateResponse>(

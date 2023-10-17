@@ -7,11 +7,7 @@ public class IntNumberFieldValueConverter : IFieldValueConverter<int, NumberFiel
 {
     public NumberFieldValue Convert(int from, string fieldName)
     {
-        return new NumberFieldValue
-        {
-            FieldName = fieldName,
-            Value = from
-        };
+        return new NumberFieldValue { FieldName = fieldName, Value = from };
     }
 
     public NumberFieldValue Convert(object? from, string fieldName)

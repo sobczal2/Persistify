@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>disable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <Folder Include="Templates\" />
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Templates\"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\Persistify.Client\Persistify.Client.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Persistify.Client\Persistify.Client.csproj"/>
+  </ItemGroup>
 
 </Project>

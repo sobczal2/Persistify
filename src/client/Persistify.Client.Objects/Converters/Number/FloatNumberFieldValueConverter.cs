@@ -7,11 +7,7 @@ public class FloatNumberFieldValueConverter : IFieldValueConverter<float, Number
 {
     public NumberFieldValue Convert(float from, string fieldName)
     {
-        return new NumberFieldValue
-        {
-            FieldName = fieldName,
-            Value = from
-        };
+        return new NumberFieldValue { FieldName = fieldName, Value = from };
     }
 
     public NumberFieldValue Convert(object? from, string fieldName)

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Persistify.Domain.Fts;
 using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Analysis.Tokens;
 
 namespace Persistify.Server.Fts.Analysis.Tokenizers;
 

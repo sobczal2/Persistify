@@ -25,14 +25,7 @@ stopwatch.Start();
 
 await objectClient.RegisterTemplateAsync<Animal>();
 
-var animal = new Animal
-{
-    Name = "Dog",
-    Age = 5,
-    IsAlive = true
-};
-
-animal.SayHello();
+var animal = new Animal { Name = "Dog", Age = 5, IsAlive = true };
 
 await objectClient.CreateDocumentAsync(animal);
 
@@ -41,8 +34,7 @@ Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
 var document = await client.GetDocumentAsync(new GetDocumentRequest
 {
-    DocumentId = 1,
-    TemplateName = "ConsoleApp1.Animal",
+    DocumentId = 1, TemplateName = "ConsoleApp1.Animal"
 });
 
 Console.WriteLine(document);

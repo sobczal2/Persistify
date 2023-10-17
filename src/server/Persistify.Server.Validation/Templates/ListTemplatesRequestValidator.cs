@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Persistify.Helpers.Results;
-using Persistify.Requests.Shared;
+using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Templates;
 
@@ -21,13 +20,6 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 
     public override async ValueTask<Result> ValidateNotNullAsync(ListTemplatesRequest value)
     {
-        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (value.Pagination == null)
-        {
-            PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
-            return StaticValidationException(SharedErrorMessages.ValueNull);
-        }
-
         PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
         var paginationResult = await _paginationValidator.ValidateAsync(value.Pagination);
         PropertyName.Pop();

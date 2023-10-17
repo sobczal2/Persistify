@@ -9,7 +9,6 @@ using Persistify.Server.Configuration.Settings;
 using Persistify.Services;
 using ProtoBuf.Grpc;
 using ProtoBuf.Grpc.Client;
-using Xunit;
 
 namespace Persistify.Server.Tests.Integration.Common;
 
@@ -27,15 +26,21 @@ public class IntegrationTestBase : IDisposable
             rootSettings.Password
         );
         var client = _factory.CreateDefaultClient();
-        _grpcChannel = GrpcChannel.ForAddress(_factory.Server.BaseAddress, new GrpcChannelOptions
-        {
-            HttpClient = client
-        });
+        _grpcChannel =
+            GrpcChannel.ForAddress(_factory.Server.BaseAddress, new GrpcChannelOptions { HttpClient = client });
     }
 
     public IUserService UserService => _grpcChannel.CreateGrpcService<IUserService>();
     public ITemplateService TemplateService => _grpcChannel.CreateGrpcService<ITemplateService>();
     public IDocumentService DocumentService => _grpcChannel.CreateGrpcService<IDocumentService>();
+
+    public (string Username, string Password) RootCredentials { get; }
+
+    public void Dispose()
+    {
+        _factory.Dispose();
+        _grpcChannel.Dispose();
+    }
 
     public async Task<CallContext> GetAuthorizedCallContextAsync(string username, string password)
     {
@@ -57,13 +62,5 @@ public class IntegrationTestBase : IDisposable
         var callContext = await GetAuthorizedCallContextAsRootAsync();
         var request = new CreateUserRequest { Username = username, Password = password };
         await UserService.CreateUserAsync(request, callContext);
-    }
-
-    public (string Username, string Password) RootCredentials { get; }
-
-    public void Dispose()
-    {
-        _factory.Dispose();
-        _grpcChannel.Dispose();
     }
 }

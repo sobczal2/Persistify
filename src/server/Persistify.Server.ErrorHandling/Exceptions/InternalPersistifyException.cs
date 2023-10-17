@@ -4,7 +4,8 @@ namespace Persistify.Server.ErrorHandling.Exceptions;
 
 public class InternalPersistifyException : PersistifyException
 {
-    public InternalPersistifyException(string? requestName = null, string message = "Unknown error") : base(requestName ?? "Unknown", message, PersistifyErrorCode.InternalFailure)
+    public InternalPersistifyException(string? requestName = null, string message = "Unknown error") : base(
+        requestName ?? "Unknown", message, PersistifyErrorCode.InternalFailure)
     {
     }
 }

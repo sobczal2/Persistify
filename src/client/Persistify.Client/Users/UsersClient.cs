@@ -12,7 +12,8 @@ public class UsersClient : SubClient<IUserService>, IUsersClient
     {
     }
 
-    public async Task<SignInResponse> SignInAsync(IUserService userService, SignInRequest signInRequest, CallContext? callContext = default)
+    public async Task<SignInResponse> SignInAsync(IUserService userService, SignInRequest signInRequest,
+        CallContext? callContext = default)
     {
         return await userService.SignInAsync(
             signInRequest,
@@ -47,7 +48,8 @@ public class UsersClient : SubClient<IUserService>, IUsersClient
         );
     }
 
-    public async Task<SetPermissionResponse> SetPermissionAsync(IUserService userService, SetPermissionRequest setPermissionRequest,
+    public async Task<SetPermissionResponse> SetPermissionAsync(IUserService userService,
+        SetPermissionRequest setPermissionRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<SetPermissionResponse>(
@@ -63,7 +65,8 @@ public class UsersClient : SubClient<IUserService>, IUsersClient
         );
     }
 
-    public async Task<ChangeUserPasswordResponse> ChangeUserPasswordAsync(IUserService userService, ChangeUserPasswordRequest changeUserPasswordRequest,
+    public async Task<ChangeUserPasswordResponse> ChangeUserPasswordAsync(IUserService userService,
+        ChangeUserPasswordRequest changeUserPasswordRequest,
         CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<ChangeUserPasswordResponse>(

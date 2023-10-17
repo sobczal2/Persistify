@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Helpers.Results;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Analysis.Abstractions;
 using Persistify.Server.Fts.Analysis.Exceptions;
@@ -57,7 +56,7 @@ public class FullAnalyzerDescriptorValidator : Validator<FullAnalyzerDescriptor>
         }
 
         count = 0;
-        foreach(var tokenFilterName in value.TokenFilterNames)
+        foreach (var tokenFilterName in value.TokenFilterNames)
         {
             if (string.IsNullOrEmpty(tokenFilterName))
             {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Persistify.Domain.Fts;
 using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Analysis.Tokens;
 
 namespace Persistify.Server.Fts.Analysis.Analyzers;
 
@@ -69,6 +69,8 @@ public class StandardAnalyzer : IAnalyzer
         return tokens;
     }
 
+    public int AlphabetLength => _alphabet.Length;
+
     private bool ShouldFilter(TokenFilterType type, AnalyzerMode mode)
     {
         return type switch
@@ -79,6 +81,4 @@ public class StandardAnalyzer : IAnalyzer
             _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
         };
     }
-
-    public int AlphabetLength => _alphabet.Length;
 }

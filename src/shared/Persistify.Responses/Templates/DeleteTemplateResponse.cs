@@ -1,8 +1,9 @@
-﻿using ProtoBuf;
+﻿using Persistify.Responses.Common;
+using ProtoBuf;
 
 namespace Persistify.Responses.Templates;
 
 [ProtoContract]
-public class DeleteTemplateResponse
+public class DeleteTemplateResponse : IResponse
 {
 }

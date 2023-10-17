@@ -3,15 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Persistify.Domain.Fts;
+namespace Persistify.Server.Fts.Analysis.Tokens;
 
 public class Token : IEnumerable<int>
 {
-    public char[] Alphabet { get; }
-    public string Value { get; set; }
-    public float Score { get; }
-    public int Count { get; set; }
-    public List<int> Positions { get; }
     public Token(string value, int count, List<int> positions, float score, char[] alphabet)
     {
         Alphabet = alphabet;
@@ -42,6 +37,22 @@ public class Token : IEnumerable<int>
         }
     }
 
+    public char[] Alphabet { get; }
+    public string Value { get; set; }
+    public float Score { get; }
+    public int Count { get; set; }
+    public List<int> Positions { get; }
+
+    public IEnumerator<int> GetEnumerator()
+    {
+        return CreateValueAlphabetIndexMap().GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return ((IEnumerable)CreateValueAlphabetIndexMap()).GetEnumerator();
+    }
+
     // alphabet has to be sorted
     private IEnumerable<int> CreateValueAlphabetIndexMap()
     {
@@ -58,16 +69,6 @@ public class Token : IEnumerable<int>
                     nameof(Alphabet));
             }
         }
-    }
-
-    public IEnumerator<int> GetEnumerator()
-    {
-        return CreateValueAlphabetIndexMap().GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IEnumerable)CreateValueAlphabetIndexMap()).GetEnumerator();
     }
 
     private bool CheckIfValueIsInAlphabet()

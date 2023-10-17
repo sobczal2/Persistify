@@ -1,5 +1,4 @@
 ﻿using Persistify.Client.Objects.Attributes;
-using Persistify.Domain.Templates;
 
 namespace ConsoleApp1;
 
@@ -15,4 +14,3 @@ public partial class Animal
     [PersistifyBoolField]
     public bool IsAlive { get; set; }
 }
-

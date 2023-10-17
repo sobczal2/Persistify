@@ -2,51 +2,41 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Persistify.Requests.Shared;
-using Persistify.Server.Commands.Internal.Management;
+using Persistify.Requests.Internal;
+using Persistify.Responses.Internal;
+using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.Security;
 
 namespace Persistify.Server.HostedServices;
 
 public class StartupActionHostedService : BackgroundService
 {
-    private readonly EnsureRootUserExistsCommand _ensureRootUserExistsCommand;
-    private readonly InitializeDocumentManagersCommand _initializeDocumentManagersCommand;
-    private readonly InitializeTemplateManagerCommand _initializeTemplateManagerCommand;
-    private readonly InitializeUserManagerCommand _initializeUserManagerCommand;
     private readonly ILogger<StartupActionHostedService> _logger;
-    private readonly SetupFileSystemCommand _setupFileSystemCommand;
+    private readonly IRequestDispatcher _requestDispatcher;
 
     public StartupActionHostedService(
         ILogger<StartupActionHostedService> logger,
-        SetupFileSystemCommand setupFileSystemCommand,
-        InitializeTemplateManagerCommand initializeTemplateManagerCommand,
-        InitializeDocumentManagersCommand initializeDocumentManagersCommand,
-        InitializeUserManagerCommand initializeUserManagerCommand,
-        EnsureRootUserExistsCommand ensureRootUserExistsCommand
+        IRequestDispatcher requestDispatcher
     )
     {
         _logger = logger;
-        _setupFileSystemCommand = setupFileSystemCommand;
-        _initializeTemplateManagerCommand = initializeTemplateManagerCommand;
-        _initializeDocumentManagersCommand = initializeDocumentManagersCommand;
-        _initializeUserManagerCommand = initializeUserManagerCommand;
-        _ensureRootUserExistsCommand = ensureRootUserExistsCommand;
+        _requestDispatcher = requestDispatcher;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Executing startup actions");
         var internalClaimsPrincipal = ClaimsPrincipalExtensions.InternalClaimsPrincipal;
-        await _setupFileSystemCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal, stoppingToken);
-        await _initializeTemplateManagerCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
-            stoppingToken);
-        await _initializeDocumentManagersCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
-            stoppingToken);
-        await _initializeUserManagerCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
-            stoppingToken);
-        await _ensureRootUserExistsCommand.RunInTransactionAsync(new EmptyRequest(), internalClaimsPrincipal,
-            stoppingToken);
+        await _requestDispatcher.DispatchAsync<SetupFileSystemRequest, SetupFileSystemResponse>(new SetupFileSystemRequest(),
+            internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>(
+            new InitializeTemplateManagerRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<InitializeDocumentManagersRequest, InitializeDocumentManagersResponse>(
+            new InitializeDocumentManagersRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<InitializeUserManagerRequest, InitializeUserManagerResponse>(
+            new InitializeUserManagerRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>(
+            new EnsureRootUserExistsRequest(), internalClaimsPrincipal, stoppingToken);
         _logger.LogInformation("Startup actions executed");
     }
 }

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Users;
 using Persistify.Helpers.Time;
 using Persistify.Server.Configuration.Settings;
-using Persistify.Server.ErrorHandling;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Transactions;

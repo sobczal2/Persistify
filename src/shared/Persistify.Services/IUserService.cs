@@ -30,4 +30,10 @@ public interface IUserService
     [OperationContract]
     ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request,
         CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ExistsUserResponse> ExistsUserAsync(ExistsUserRequest request, CallContext callContext);
 }

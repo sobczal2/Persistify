@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Persistify.Domain\Persistify.Domain.csproj"/>
+    <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj"/>
   </ItemGroup>
 
 

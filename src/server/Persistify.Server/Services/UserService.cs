@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
-using Persistify.Server.Commands.Users;
+using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.CommandHandlers.Users;
 using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;
@@ -11,86 +12,75 @@ namespace Persistify.Server.Services;
 
 public class UserService : IUserService
 {
-    private readonly ChangeUserPasswordCommand _changeUserPasswordCommand;
-    private readonly CreateUserCommand _createUserCommand;
-    private readonly DeleteUserCommand _deleteUserCommand;
-    private readonly GetUserCommand _getUserCommand;
-    private readonly RefreshTokenCommand _refreshTokenCommand;
-    private readonly SetPermissionCommand _setPermissionCommand;
-    private readonly SignInCommand _signInCommand;
+    private readonly IRequestDispatcher _requestDispatcher;
 
     public UserService(
-        CreateUserCommand createUserCommand,
-        GetUserCommand getUserCommand,
-        SignInCommand signInCommand,
-        SetPermissionCommand setPermissionCommand,
-        DeleteUserCommand deleteUserCommand,
-        RefreshTokenCommand refreshTokenCommand,
-        ChangeUserPasswordCommand changeUserPasswordCommand
+        IRequestDispatcher requestDispatcher
     )
     {
-        _createUserCommand = createUserCommand;
-        _getUserCommand = getUserCommand;
-        _signInCommand = signInCommand;
-        _setPermissionCommand = setPermissionCommand;
-        _deleteUserCommand = deleteUserCommand;
-        _refreshTokenCommand = refreshTokenCommand;
-        _changeUserPasswordCommand = changeUserPasswordCommand;
+        _requestDispatcher = requestDispatcher;
     }
 
     [Authorize]
     public async ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext callContext)
     {
-        return await _createUserCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<CreateUserRequest, CreateUserResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext callContext)
     {
-        return await _getUserCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<GetUserRequest, GetUserResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     public async ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext callContext)
     {
-        return await _signInCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<SignInRequest, SignInResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<SetPermissionResponse> SetPermissionAsync(SetPermissionRequest request,
         CallContext callContext)
     {
-        return await _setPermissionCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<SetPermissionRequest, SetPermissionResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest request, CallContext callContext)
     {
-        return await _deleteUserCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<DeleteUserRequest, DeleteUserResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     public async ValueTask<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request, CallContext callContext)
     {
-        return await _refreshTokenCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<RefreshTokenRequest, RefreshTokenResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request,
         CallContext callContext)
     {
-        return await _changeUserPasswordCommand
-            .RunInTransactionAsync(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken)
-            .ConfigureAwait(false);
+        return await _requestDispatcher.DispatchAsync<ChangeUserPasswordRequest, ChangeUserPasswordResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+    }
+
+    [Authorize]
+    public async ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext)
+    {
+        return await _requestDispatcher.DispatchAsync<ListUsersRequest, ListUsersResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+    }
+
+    [Authorize]
+    public async ValueTask<ExistsUserResponse> ExistsUserAsync(ExistsUserRequest request, CallContext callContext)
+    {
+        return await _requestDispatcher.DispatchAsync<ExistsUserRequest, ExistsUserResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 }

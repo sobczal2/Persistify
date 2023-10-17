@@ -14,11 +14,11 @@ namespace Persistify.Server.Management.Managers.Documents;
 
 public class DocumentManagerStore : IDocumentManagerStore
 {
+    private readonly IAnalyzerFactory _analyzerFactory;
+    private readonly IAnalyzerPresetFactory _analyzerPresetFactory;
     private readonly IFileStreamFactory _fileStreamFactory;
     private readonly ConcurrentDictionary<int, IDocumentManager> _repositories;
     private readonly IOptions<RepositorySettings> _repositorySettingsOptions;
-    private readonly IAnalyzerFactory _analyzerFactory;
-    private readonly IAnalyzerPresetFactory _analyzerPresetFactory;
     private readonly ISerializer _serializer;
     private readonly ITransactionState _transactionState;
     private SpinLock _spinLock;

@@ -12,7 +12,8 @@ public static class TemplatesClientExtensions
         CallContext? callContext = default)
     {
         var templateService = persistifyClient.Templates.GetService();
-        return await persistifyClient.Templates.CreateTemplateAsync(templateService, createTemplateRequest, callContext);
+        return await persistifyClient.Templates.CreateTemplateAsync(templateService, createTemplateRequest,
+            callContext);
     }
 
     public static async Task<GetTemplateResponse> GetTemplateAsync(this IPersistifyClient persistifyClient,
@@ -36,6 +37,7 @@ public static class TemplatesClientExtensions
         CallContext? callContext = default)
     {
         var templateService = persistifyClient.Templates.GetService();
-        return await persistifyClient.Templates.DeleteTemplateAsync(templateService, deleteTemplateRequest, callContext);
+        return await persistifyClient.Templates.DeleteTemplateAsync(templateService, deleteTemplateRequest,
+            callContext);
     }
 }

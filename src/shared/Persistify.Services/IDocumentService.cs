@@ -20,4 +20,7 @@ public interface IDocumentService
 
     [OperationContract]
     ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request, CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request, CallContext callContext);
 }

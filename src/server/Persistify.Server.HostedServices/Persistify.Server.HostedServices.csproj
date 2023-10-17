@@ -15,7 +15,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.Commands\Persistify.Server.Commands.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.RequestHandlers\Persistify.Server.RequestHandlers.csproj" />
   </ItemGroup>
 
 

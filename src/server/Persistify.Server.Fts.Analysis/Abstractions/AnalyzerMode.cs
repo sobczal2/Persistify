@@ -1,4 +1,4 @@
-﻿namespace Persistify.Server.Fts.Analysis.Analyzers;
+﻿namespace Persistify.Server.Fts.Analysis.Abstractions;
 
 public enum AnalyzerMode
 {

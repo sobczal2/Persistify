@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Persistify.Requests.Shared;
+using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -62,23 +62,6 @@ public class ListTemplatesRequestValidatorTests
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
         exception.PropertyName.Should().Be("ListTemplatesRequest");
-    }
-
-    [Fact]
-    public async Task Validate_WhenPaginationIsNull_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new ListTemplatesRequest { Pagination = null! };
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
-        var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("ListTemplatesRequest.Pagination");
     }
 
     [Fact]

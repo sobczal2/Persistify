@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using Persistify.Domain.Documents;
+using Persistify.Requests.Common;
+using Persistify.Responses.Documents;
 using ProtoBuf;
 
 namespace Persistify.Requests.Documents;
 
 [ProtoContract]
-public class CreateDocumentRequest
+public class CreateDocumentRequest : IRequest<CreateDocumentResponse>
 {
     public CreateDocumentRequest()
     {

@@ -6,7 +6,6 @@ namespace Persistify.Server.Indexes.Searches;
 
 public class Metadata
 {
-    public float Score { get; set; }
     private readonly Dictionary<string, string> _metadata;
 
     public Metadata(float score)
@@ -14,6 +13,8 @@ public class Metadata
         Score = score;
         _metadata = new Dictionary<string, string>();
     }
+
+    public float Score { get; set; }
 
     public void Add(string name, string value)
     {
@@ -31,7 +32,7 @@ public class Metadata
     {
         var searchMetadataList = new List<SearchMetadata>
         {
-            new SearchMetadata { Name = "score", Value = Score.ToString(CultureInfo.InvariantCulture) }
+            new() { Name = "score", Value = Score.ToString(CultureInfo.InvariantCulture) }
         };
         foreach (var (name, value) in _metadata)
         {

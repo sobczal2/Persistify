@@ -7,11 +7,7 @@ public class LongNumberFieldValueConverter : IFieldValueConverter<long, NumberFi
 {
     public NumberFieldValue Convert(long from, string fieldName)
     {
-        return new NumberFieldValue
-        {
-            FieldName = fieldName,
-            Value = from
-        };
+        return new NumberFieldValue { FieldName = fieldName, Value = from };
     }
 
     public NumberFieldValue Convert(object? from, string fieldName)

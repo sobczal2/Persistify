@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using Persistify.Domain.Templates;
+using Persistify.Requests.Common;
+using Persistify.Responses.Templates;
 using ProtoBuf;
 
 namespace Persistify.Requests.Templates;
 
 [ProtoContract]
-public class CreateTemplateRequest
+public class CreateTemplateRequest : IRequest<CreateTemplateResponse>
 {
     public CreateTemplateRequest()
     {

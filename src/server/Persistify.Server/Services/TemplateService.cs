@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
-using Persistify.Server.Commands.Templates;
+using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.CommandHandlers.Templates;
 using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;
@@ -11,51 +14,50 @@ namespace Persistify.Server.Services;
 
 public class TemplateService : ITemplateService
 {
-    private readonly CreateTemplateCommand _createTemplateCommand;
-    private readonly DeleteTemplateCommand _deleteTemplateCommand;
-    private readonly GetTemplateCommand _getTemplateCommand;
-    private readonly ListTemplatesCommand _listTemplatesCommand;
+    private readonly IRequestDispatcher _requestDispatcher;
 
     public TemplateService(
-        CreateTemplateCommand createTemplateCommand,
-        GetTemplateCommand getTemplateCommand,
-        ListTemplatesCommand listTemplatesCommand,
-        DeleteTemplateCommand deleteTemplateCommand
+        IRequestDispatcher requestDispatcher
     )
     {
-        _createTemplateCommand = createTemplateCommand;
-        _getTemplateCommand = getTemplateCommand;
-        _listTemplatesCommand = listTemplatesCommand;
-        _deleteTemplateCommand = deleteTemplateCommand;
+        _requestDispatcher = requestDispatcher;
     }
 
     [Authorize]
     public async ValueTask<CreateTemplateResponse> CreateTemplateAsync(CreateTemplateRequest request,
         CallContext callContext)
     {
-        return await _createTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<CreateTemplateRequest, CreateTemplateResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<GetTemplateResponse> GetTemplateAsync(GetTemplateRequest request, CallContext callContext)
     {
-        return await _getTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<GetTemplateRequest, GetTemplateResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public ValueTask<ListTemplatesResponse> ListTemplatesAsync(ListTemplatesRequest request, CallContext callContext)
     {
-        return _listTemplatesCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return _requestDispatcher.DispatchAsync<ListTemplatesRequest, ListTemplatesResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<DeleteTemplateResponse> DeleteTemplateAsync(DeleteTemplateRequest request,
         CallContext callContext)
     {
-        return await _deleteTemplateCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<DeleteTemplateRequest, DeleteTemplateResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+    }
+
+    [Authorize]
+    public async ValueTask<ExistsTemplateResponse> ExistsTemplateAsync(ExistsTemplateRequest request,
+        CallContext callContext)
+    {
+        return await _requestDispatcher.DispatchAsync<ExistsTemplateRequest, ExistsTemplateResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 }

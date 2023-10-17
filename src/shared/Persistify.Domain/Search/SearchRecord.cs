@@ -7,15 +7,8 @@ namespace Persistify.Domain.Search;
 [ProtoContract]
 public class SearchRecord
 {
-    [ProtoMember(1)]
-    public Document Document { get; set; } = default!;
-
-    [ProtoMember(2)]
-    public List<SearchMetadata> MetadataList { get; set; } = default!;
-
     public SearchRecord()
     {
-
     }
 
     public SearchRecord(Document document, List<SearchMetadata> metadataList)
@@ -27,6 +20,12 @@ public class SearchRecord
     public SearchRecord(Document document, SearchMetadata metadata)
     {
         Document = document;
-        MetadataList = new List<SearchMetadata> {metadata};
+        MetadataList = new List<SearchMetadata> { metadata };
     }
+
+    [ProtoMember(1)]
+    public Document Document { get; set; } = default!;
+
+    [ProtoMember(2)]
+    public List<SearchMetadata> MetadataList { get; set; } = default!;
 }

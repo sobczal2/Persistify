@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Concurrency", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Concurrency.Tests.Unit", "test\shared\Persistify.Concurrency.Tests.Unit\Persistify.Concurrency.Tests.Unit.csproj", "{94BF5E64-32B0-47CC-A357-9062AFA5DF5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Commands", "src\server\Persistify.Server.Commands\Persistify.Server.Commands.csproj", "{5853376F-A538-4F83-87AA-C5BE4DA713AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.RequestHandlers", "src\server\Persistify.Server.RequestHandlers\Persistify.Server.RequestHandlers.csproj", "{5853376F-A538-4F83-87AA-C5BE4DA713AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.ErrorHandling", "src\server\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj", "{00B356E6-AA22-42CD-BACC-1E787343B096}"
 EndProject
@@ -91,6 +91,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client.Objects", "src\client\Persistify.Client.Objects\Persistify.Client.Objects.csproj", "{2E3D354B-CAF1-44A2-A449-3658CA1471A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client.Objects.Generators", "src\client\Persistify.Client.Objects.Generators\Persistify.Client.Objects.Generators.csproj", "{03C595FF-3598-40BF-8E45-BC96C6560D72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Dtos", "src\shared\Persistify.Dtos\Persistify.Dtos.csproj", "{FAA07C15-1253-4894-9702-680C511A6095}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -246,6 +248,10 @@ Global
 		{03C595FF-3598-40BF-8E45-BC96C6560D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03C595FF-3598-40BF-8E45-BC96C6560D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03C595FF-3598-40BF-8E45-BC96C6560D72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAA07C15-1253-4894-9702-680C511A6095}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAA07C15-1253-4894-9702-680C511A6095}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAA07C15-1253-4894-9702-680C511A6095}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAA07C15-1253-4894-9702-680C511A6095}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -291,5 +297,6 @@ Global
 		{A9757C71-6C2D-4B24-B760-6B51FFAE5D52} = {A4A48851-1F0E-4013-99D9-688E84160257}
 		{2E3D354B-CAF1-44A2-A449-3658CA1471A4} = {4966F52A-2A71-4E16-8400-A59C72AA50D2}
 		{03C595FF-3598-40BF-8E45-BC96C6560D72} = {4966F52A-2A71-4E16-8400-A59C72AA50D2}
+		{FAA07C15-1253-4894-9702-680C511A6095} = {4FB08BD5-8F08-4B8D-9A5D-083729853CD5}
 	EndGlobalSection
 EndGlobal

@@ -5,10 +5,11 @@ namespace Persistify.Client.Objects.Attributes;
 
 public class PersistifyTextFieldAttribute : PersistifyFieldAttribute
 {
-    public string AnalyzerDescriptorName { get; }
-
-    public PersistifyTextFieldAttribute(string? fieldName = null, bool required = false, string analyzerDescriptorName = PresetAnalyzerDescriptors.Standard) : base(FieldType.Text, fieldName, required)
+    public PersistifyTextFieldAttribute(string? fieldName = null, bool required = false,
+        string analyzerDescriptorName = PresetAnalyzerDescriptors.Standard) : base(FieldType.Text, fieldName, required)
     {
         AnalyzerDescriptorName = analyzerDescriptorName;
     }
+
+    public string AnalyzerDescriptorName { get; }
 }

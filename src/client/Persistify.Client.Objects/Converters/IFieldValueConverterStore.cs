@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Persistify.Domain.Templates;
 
 namespace Persistify.Client.Objects.Converters;
