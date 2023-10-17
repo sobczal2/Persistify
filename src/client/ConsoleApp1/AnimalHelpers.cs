@@ -9,8 +9,8 @@ using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Domain.Search.Queries.Text;
 using Persistify.Domain.Templates;
+using Persistify.Requests.Common;
 using Persistify.Requests.Documents;
-using Persistify.Requests.Shared;
 using Persistify.Requests.Templates;
 
 namespace ConsoleApp1;

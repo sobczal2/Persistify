@@ -1,8 +1,9 @@
-﻿using ProtoBuf;
+﻿using Persistify.Responses.Common;
+using ProtoBuf;
 
 namespace Persistify.Responses.Documents;
 
 [ProtoContract]
-public class DeleteDocumentResponse
+public class DeleteDocumentResponse : IResponse
 {
 }

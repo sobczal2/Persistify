@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <RootNamespace>Persistify.Server.CommandHandlers</RootNamespace>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.Responses\Persistify.Responses.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Security\Persistify.Server.Security.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Validation\Persistify.Server.Validation.csproj"/>
+
+
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="System.Linq.Async" Version="6.0.1"/>
+  </ItemGroup>
+
+
+</Project>

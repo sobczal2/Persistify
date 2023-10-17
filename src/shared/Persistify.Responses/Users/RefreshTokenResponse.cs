@@ -1,9 +1,10 @@
-﻿using ProtoBuf;
+﻿using Persistify.Responses.Common;
+using ProtoBuf;
 
 namespace Persistify.Responses.Users;
 
 [ProtoContract]
-public class RefreshTokenResponse
+public class RefreshTokenResponse : IResponse
 {
     [ProtoMember(1)]
     public string AccessToken { get; set; } = default!;

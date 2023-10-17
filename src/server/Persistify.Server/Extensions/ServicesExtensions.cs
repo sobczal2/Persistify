@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Persistify.Helpers;
 using Persistify.Helpers.Time;
-using Persistify.Server.Commands;
+using Persistify.Server.CommandHandlers;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
 using Persistify.Server.Fts.Analysis;

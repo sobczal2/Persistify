@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.Results;
-using Persistify.Requests.Shared;
+using Persistify.Requests.Common;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Shared;

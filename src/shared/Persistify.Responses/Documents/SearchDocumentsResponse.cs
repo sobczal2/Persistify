@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Persistify.Domain.Search;
+using Persistify.Responses.Common;
 using ProtoBuf;
 
 namespace Persistify.Responses.Documents;
 
 [ProtoContract]
-public class SearchDocumentsResponse
+public class SearchDocumentsResponse : IResponse
 {
     [ProtoMember(1)]
     public List<SearchRecord> SearchRecords { get; set; } = default!;

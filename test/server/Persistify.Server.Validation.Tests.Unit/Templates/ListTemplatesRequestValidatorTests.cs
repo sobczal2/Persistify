@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Persistify.Requests.Shared;
+using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;

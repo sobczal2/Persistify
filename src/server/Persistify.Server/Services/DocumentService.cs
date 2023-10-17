@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
-using Persistify.Server.Commands.Documents;
+using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.CommandHandlers.Documents;
 using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;
@@ -11,63 +12,51 @@ namespace Persistify.Server.Services;
 
 public class DocumentService : IDocumentService
 {
-    private readonly CreateDocumentCommand _createDocumentCommand;
-    private readonly DeleteDocumentCommand _deleteDocumentCommand;
-    private readonly ExistsDocumentCommand _existsDocumentCommand;
-    private readonly GetDocumentCommand _getDocumentCommand;
-    private readonly SearchDocumentsCommand _searchDocumentsCommand;
+    private readonly IRequestDispatcher _requestDispatcher;
 
     public DocumentService(
-        CreateDocumentCommand createDocumentCommand,
-        GetDocumentCommand getDocumentCommand,
-        SearchDocumentsCommand searchDocumentsCommand,
-        DeleteDocumentCommand deleteDocumentCommand,
-        ExistsDocumentCommand existsDocumentCommand
+        IRequestDispatcher requestDispatcher
     )
     {
-        _createDocumentCommand = createDocumentCommand;
-        _getDocumentCommand = getDocumentCommand;
-        _searchDocumentsCommand = searchDocumentsCommand;
-        _deleteDocumentCommand = deleteDocumentCommand;
-        _existsDocumentCommand = existsDocumentCommand;
+        _requestDispatcher = requestDispatcher;
     }
 
     [Authorize]
     public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request,
         CallContext callContext)
     {
-        return await _createDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<CreateDocumentRequest, CreateDocumentResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext callContext)
     {
-        return await _getDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<GetDocumentRequest, GetDocumentResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request,
         CallContext callContext)
     {
-        return await _searchDocumentsCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<SearchDocumentsRequest, SearchDocumentsResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request,
         CallContext callContext)
     {
-        return await _deleteDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<DeleteDocumentRequest, DeleteDocumentResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
     public async ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request,
         CallContext callContext)
     {
-        return await _existsDocumentCommand.RunInTransactionAsync(request, callContext.GetClaimsPrincipal(),
-            callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<ExistsDocumentRequest, ExistsDocumentResponse>(request,
+            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 }

@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Concurrency", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Concurrency.Tests.Unit", "test\shared\Persistify.Concurrency.Tests.Unit\Persistify.Concurrency.Tests.Unit.csproj", "{94BF5E64-32B0-47CC-A357-9062AFA5DF5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Commands", "src\server\Persistify.Server.Commands\Persistify.Server.Commands.csproj", "{5853376F-A538-4F83-87AA-C5BE4DA713AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.RequestHandlers", "src\server\Persistify.Server.RequestHandlers\Persistify.Server.RequestHandlers.csproj", "{5853376F-A538-4F83-87AA-C5BE4DA713AA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.ErrorHandling", "src\server\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj", "{00B356E6-AA22-42CD-BACC-1E787343B096}"
 EndProject
