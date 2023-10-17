@@ -97,14 +97,14 @@ public class DeleteDocumentRequestValidatorTests
     }
 
     [Fact]
-    public void Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
+    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 1 };
         _templateManager.Exists(request.TemplateName).Returns(false);
 
         // Act
-        var result = _sut.ValidateAsync(request).Result;
+        var result = await _sut.ValidateAsync(request);
 
         // Assert
         result.Failure.Should().BeTrue();
