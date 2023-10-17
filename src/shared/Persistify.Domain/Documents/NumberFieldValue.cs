@@ -3,11 +3,8 @@
 namespace Persistify.Domain.Documents;
 
 [ProtoContract]
-public class NumberFieldValue
+public class NumberFieldValue : FieldValue
 {
-    [ProtoMember(1)]
-    public double Value { get; set; }
-
     [ProtoMember(2)]
-    public string FieldName { get; set; } = default!;
+    public double Value { get; set; }
 }

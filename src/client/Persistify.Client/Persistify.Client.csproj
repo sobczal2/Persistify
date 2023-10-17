@@ -17,8 +17,4 @@
       <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Exceptions\" />
-    </ItemGroup>
-
 </Project>

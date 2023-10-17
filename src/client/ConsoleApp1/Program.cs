@@ -1,6 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Reflection;
 using ConsoleApp1;
 using Persistify.Client.Core;
+using Persistify.Client.Documents;
+using Persistify.Client.Objects.Analyzers;
+using Persistify.Client.Objects.Converters;
+using Persistify.Client.Objects.Core;
+using Persistify.Requests.Documents;
 
 var username = "test123456";
 
@@ -9,23 +15,34 @@ var client = PersistifyClientBuilder.Create()
     .WithCredentials("root", "root")
     .Build();
 
-// implicit call to SignInAsync
-await AnimalHelpers.EnsureAnimalTemplateExists(client);
+var fieldValueConverterStore = new DefaultFieldValueConverterStore(Assembly.GetExecutingAssembly());
+var analyzerDescriptorStore = new AnalyzerDescriptorStore(new[] { new DefaultAnalyzerDescriptorFactory() });
 
-var sw = Stopwatch.StartNew();
+var objectClient = new PersistifyObjectsClient(client, fieldValueConverterStore, analyzerDescriptorStore);
 
-for (var i = 0; i < 100; i++)
+var stopwatch = new Stopwatch();
+stopwatch.Start();
+
+await objectClient.RegisterTemplateAsync<Animal>();
+
+var animal = new Animal
 {
-    var tasks = new List<Task>();
+    Name = "Dog",
+    Age = 5,
+    IsAlive = true
+};
 
-    for (var j = 0; j < 100; j++)
-    {
-        tasks.Add(AnimalHelpers.CreateRandomAnimal(client));
-        // tasks.Add(AnimalHelpers.SearchForAnimals(client, "metal", false));
-    }
+animal.SayHello();
 
-    await Task.WhenAll(tasks);
-}
+await objectClient.CreateDocumentAsync(animal);
 
+stopwatch.Stop();
+Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
-Console.WriteLine($"Elapsed: {sw.ElapsedMilliseconds} ms");
+var document = await client.GetDocumentAsync(new GetDocumentRequest
+{
+    DocumentId = 1,
+    TemplateName = "ConsoleApp1.Animal",
+});
+
+Console.WriteLine(document);
