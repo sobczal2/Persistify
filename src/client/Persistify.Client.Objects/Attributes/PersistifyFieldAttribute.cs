@@ -1,4 +1,5 @@
-﻿using Persistify.Client.Objects.Converters;
+﻿using System;
+using Persistify.Client.Objects.Converters;
 using Persistify.Domain.Templates;
 
 namespace Persistify.Client.Objects.Attributes;

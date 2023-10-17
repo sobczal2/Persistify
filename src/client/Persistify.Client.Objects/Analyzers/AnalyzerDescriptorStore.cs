@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Persistify.Domain.Templates;
 
 namespace Persistify.Client.Objects.Analyzers;

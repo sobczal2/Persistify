@@ -32,6 +32,8 @@ var animal = new Animal
     IsAlive = true
 };
 
+animal.SayHello();
+
 await objectClient.CreateDocumentAsync(animal);
 
 stopwatch.Stop();

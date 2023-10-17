@@ -4,7 +4,7 @@ using Persistify.Domain.Templates;
 namespace ConsoleApp1;
 
 [PersistifyTemplate]
-public class Animal
+public partial class Animal
 {
     [PersistifyTextField]
     public string Name { get; set; } = default!;
@@ -15,3 +15,4 @@ public class Animal
     [PersistifyBoolField]
     public bool IsAlive { get; set; }
 }
+

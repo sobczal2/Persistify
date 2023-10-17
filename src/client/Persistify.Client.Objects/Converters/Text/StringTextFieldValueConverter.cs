@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Documents;
+﻿using System;
+using Persistify.Domain.Documents;
 
 namespace Persistify.Client.Objects.Converters.Text;
 

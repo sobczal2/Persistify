@@ -1,4 +1,6 @@
-﻿namespace Persistify.Client.Objects.Attributes;
+﻿using System;
+
+namespace Persistify.Client.Objects.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
 public class PersistifyTemplateAttribute : Attribute

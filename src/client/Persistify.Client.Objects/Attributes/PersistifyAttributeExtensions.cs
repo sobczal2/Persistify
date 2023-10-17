@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Persistify.Domain.Templates;
 
 namespace Persistify.Client.Objects.Attributes;
