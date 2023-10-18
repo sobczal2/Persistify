@@ -11,7 +11,7 @@ using Persistify.Helpers.Time;
 using Persistify.Server.CommandHandlers;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling;
-using Persistify.Server.Fts.Analysis;
+using Persistify.Server.Fts;
 using Persistify.Server.HostedServices;
 using Persistify.Server.Management;
 using Persistify.Server.Security;

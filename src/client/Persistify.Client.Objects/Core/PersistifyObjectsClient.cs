@@ -83,7 +83,7 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
                     {
                         Name = fieldName,
                         Required = templateField.IsRequired(),
-                        AnalyzerDescriptor = _analyzerDescriptorStore.Get(templateField.GetAnalyzerDescriptorName() ??
+                        Analyzer = _analyzerDescriptorStore.Get(templateField.GetAnalyzerDescriptorName() ??
                                                                           throw new InvalidOperationException())
                     });
                     break;
@@ -97,9 +97,9 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
         var createTemplateRequest = new CreateTemplateRequest
         {
             TemplateName = templateName,
-            BoolFields = boolFields,
-            NumberFields = numberFields,
-            TextFields = textFields
+            // BoolFields = boolFields,
+            // NumberFields = numberFields,
+            // TextFields = textFields
         };
 
         try
@@ -174,9 +174,9 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
         var createDocumentRequest = new CreateDocumentRequest
         {
             TemplateName = templateName,
-            BoolFieldValues = boolFieldValues,
-            NumberFieldValues = numberFieldValues,
-            TextFieldValues = textFieldValues
+            // BoolFieldValues = boolFieldValues,
+            // NumberFieldValues = numberFieldValues,
+            // TextFieldValues = textFieldValues
         };
 
         await Client.CreateDocumentAsync(createDocumentRequest, callContext);

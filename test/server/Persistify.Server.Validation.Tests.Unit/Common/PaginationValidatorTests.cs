@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Persistify.Dtos.Common;
 using Persistify.Requests.Common;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Shared;
@@ -25,7 +26,7 @@ public class PaginationValidatorTests
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "Pagination" });
+        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "PaginationDto" });
     }
 
     [Fact]
@@ -41,14 +42,14 @@ public class PaginationValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("Pagination");
+        exception.PropertyName.Should().Be("PaginationDto");
     }
 
     [Fact]
     public async Task Validate_WhenPageNumberLessThanZero_ReturnsValidationException()
     {
         // Arrange
-        var value = new Pagination { PageNumber = -1, PageSize = 1 };
+        var value = new PaginationDto { PageNumber = -1, PageSize = 1 };
 
         // Act
         var result = await _sut.ValidateAsync(value);
@@ -58,14 +59,14 @@ public class PaginationValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Page number less than zero");
-        exception.PropertyName.Should().Be("Pagination.PageNumber");
+        exception.PropertyName.Should().Be("PaginationDto.PageNumber");
     }
 
     [Fact]
     public async Task Validate_WhenPageSizeLessThanOrEqualToZero_ReturnsValidationException()
     {
         // Arrange
-        var value = new Pagination { PageNumber = 1, PageSize = 0 };
+        var value = new PaginationDto { PageNumber = 1, PageSize = 0 };
 
         // Act
         var result = await _sut.ValidateAsync(value);
@@ -75,14 +76,14 @@ public class PaginationValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Page size less than or equal to zero");
-        exception.PropertyName.Should().Be("Pagination.PageSize");
+        exception.PropertyName.Should().Be("PaginationDto.PageSize");
     }
 
     [Fact]
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var value = new Pagination { PageNumber = 1, PageSize = 1 };
+        var value = new PaginationDto { PageNumber = 1, PageSize = 1 };
 
         // Act
         var result = await _sut.ValidateAsync(value);

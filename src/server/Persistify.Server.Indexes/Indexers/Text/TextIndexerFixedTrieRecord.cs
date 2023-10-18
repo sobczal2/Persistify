@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Persistify.Server.Fts.Analysis.Tokens;
+using Persistify.Server.Fts.Tokens;
 
 namespace Persistify.Server.Indexes.Indexers.Text;
 

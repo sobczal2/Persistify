@@ -8,17 +8,17 @@ namespace Persistify.Client.Objects.Analyzers;
 public class AnalyzerDescriptorStore : IAnalyzerDescriptorStore
 {
     private readonly IEnumerable<IAnalyzerDescriptorFactory> _analyzerDescriptorFactories;
-    private readonly ConcurrentDictionary<string, AnalyzerDescriptor> _analyzerDescriptors;
+    private readonly ConcurrentDictionary<string, Analyzer> _analyzerDescriptors;
 
     public AnalyzerDescriptorStore(
         IEnumerable<IAnalyzerDescriptorFactory> analyzerDescriptorFactories
     )
     {
         _analyzerDescriptorFactories = analyzerDescriptorFactories;
-        _analyzerDescriptors = new ConcurrentDictionary<string, AnalyzerDescriptor>();
+        _analyzerDescriptors = new ConcurrentDictionary<string, Analyzer>();
     }
 
-    public AnalyzerDescriptor Get(string name)
+    public Analyzer Get(string name)
     {
         return _analyzerDescriptors.GetOrAdd(
             name,
@@ -26,7 +26,7 @@ public class AnalyzerDescriptorStore : IAnalyzerDescriptorStore
         );
     }
 
-    private AnalyzerDescriptor? Create(string name)
+    private Analyzer? Create(string name)
     {
         foreach (var analyzerDescriptorFactory in _analyzerDescriptorFactories)
         {

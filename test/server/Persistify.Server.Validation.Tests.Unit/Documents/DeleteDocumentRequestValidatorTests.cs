@@ -6,7 +6,7 @@ using NSubstitute;
 using Persistify.Requests.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
-using Persistify.Server.Validation.Documents;
+using Persistify.Server.Validation.Requests.Documents;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Documents;
@@ -14,25 +14,10 @@ namespace Persistify.Server.Validation.Tests.Unit.Documents;
 public class DeleteDocumentRequestValidatorTests
 {
     private readonly DeleteDocumentRequestValidator _sut;
-    private readonly ITemplateManager _templateManager;
 
     public DeleteDocumentRequestValidatorTests()
     {
-        _templateManager = Substitute.For<ITemplateManager>();
-
-        _sut = new DeleteDocumentRequestValidator(_templateManager);
-    }
-
-    [Fact]
-    public void Ctor_WhenTemplateManagerIsNull_ThrowsArgumentNullException()
-    {
-        // Arrange
-
-        // Act
-        Action act = () => new DeleteDocumentRequestValidator(null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>();
+        _sut = new DeleteDocumentRequestValidator();
     }
 
     [Fact]
@@ -97,29 +82,10 @@ public class DeleteDocumentRequestValidatorTests
     }
 
     [Fact]
-    public async Task Validate_WhenTemplateDoesNotExist_ReturnsValidationException()
-    {
-        // Arrange
-        var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 1 };
-        _templateManager.Exists(request.TemplateName).Returns(false);
-
-        // Act
-        var result = await _sut.ValidateAsync(request);
-
-        // Assert
-        result.Failure.Should().BeTrue();
-        result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
-        var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("Template not found");
-        exception.PropertyName.Should().Be("DeleteDocumentRequest.TemplateName");
-    }
-
-    [Fact]
     public async Task Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = string.Empty, DocumentId = 1 };
-        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -137,7 +103,6 @@ public class DeleteDocumentRequestValidatorTests
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 0 };
-        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -155,7 +120,6 @@ public class DeleteDocumentRequestValidatorTests
     {
         // Arrange
         var request = new DeleteDocumentRequest { TemplateName = "Test", DocumentId = 1 };
-        _templateManager.Exists(request.TemplateName).Returns(true);
 
         // Act
         var result = await _sut.ValidateAsync(request);

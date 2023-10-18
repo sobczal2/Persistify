@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Grpc.Core;
+using Persistify.Domain.Users;
 using Persistify.Requests.Users;
 using Persistify.Server.Tests.Integration.Common;
 using Persistify.TestHelpers.Assertions;
@@ -23,7 +24,8 @@ public class SignInAsyncTests : IntegrationTestBase
 
         // Assert
         response.Should().NotBeNull();
-        response.Username.Should().Be(RootCredentials.Username);
+        response.User.Username.Should().Be(RootCredentials.Username);
+        response.User.Permission.Should().Be((int)Permission.All);
         response.AccessToken.Should().NotBeNullOrEmpty();
         response.RefreshToken.Should().NotBeNullOrEmpty();
     }

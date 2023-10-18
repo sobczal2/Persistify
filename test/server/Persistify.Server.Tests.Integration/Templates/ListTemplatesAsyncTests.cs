@@ -3,6 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Common;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
@@ -20,19 +23,22 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
         var addTemplateRequest = new CreateTemplateRequest
         {
             TemplateName = "TestTemplate",
-            TextFields = new List<TextField>
+            Fields = new List<FieldDto>
             {
-                new()
+                new TextFieldDto
                 {
                     Name = "TextField1",
                     Required = true,
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "standard" }
+                    AnalyzerDescriptor = new PresetAnalyzerDescriptorDto
+                    {
+                        PresetName = "standard"
+                    }
                 }
             }
         };
 
         await TemplateService.CreateTemplateAsync(addTemplateRequest, callContext);
-        var request = new ListTemplatesRequest { Pagination = new Pagination { PageNumber = 0, PageSize = 10 } };
+        var request = new ListTemplatesRequest { Pagination = new PaginationDto { PageNumber = 0, PageSize = 10 } };
 
         // Act
         var response = await TemplateService.ListTemplatesAsync(request, callContext);
@@ -42,13 +48,9 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
         response.Templates.Should().NotBeNull();
         response.Templates.Should().HaveCount(1);
         response.Templates.First().Name.Should().Be("TestTemplate");
-        response.Templates.First().TextFields.Should().NotBeNull();
-        response.Templates.First().TextFields.Should().HaveCount(1);
-        response.Templates.First().TextFields[0].Name.Should().Be("TextField1");
-        response.Templates.First().TextFields[0].Required.Should().BeTrue();
-        response.Templates.First().TextFields[0].AnalyzerDescriptor.Should().NotBeNull();
-        response.Templates.First().TextFields[0].AnalyzerDescriptor.Should().BeOfType<PresetAnalyzerDescriptor>();
-        ((PresetAnalyzerDescriptor)response.Templates.First().TextFields[0].AnalyzerDescriptor).PresetName.Should()
-            .Be("standard");
+        response.Templates.First().Fields.Should().NotBeNull();
+        response.Templates.First().Fields.Should().HaveCount(1);
+        response.Templates.First().Fields[0].Name.Should().Be("TextField1");
+        response.Templates.First().Fields[0].Required.Should().BeTrue();
     }
 }

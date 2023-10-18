@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Files;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Serialization;
 
@@ -14,8 +14,7 @@ namespace Persistify.Server.Management.Managers.Documents;
 
 public class DocumentManagerStore : IDocumentManagerStore
 {
-    private readonly IAnalyzerFactory _analyzerFactory;
-    private readonly IAnalyzerPresetFactory _analyzerPresetFactory;
+    private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
     private readonly IFileStreamFactory _fileStreamFactory;
     private readonly ConcurrentDictionary<int, IDocumentManager> _repositories;
     private readonly IOptions<RepositorySettings> _repositorySettingsOptions;
@@ -28,16 +27,14 @@ public class DocumentManagerStore : IDocumentManagerStore
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
-        IAnalyzerFactory analyzerFactory,
-        IAnalyzerPresetFactory analyzerPresetFactory
+        IAnalyzerExecutorFactory analyzerExecutorFactory
     )
     {
         _transactionState = transactionState;
         _fileStreamFactory = fileStreamFactory;
         _serializer = serializer;
         _repositorySettingsOptions = repositorySettingsOptions;
-        _analyzerFactory = analyzerFactory;
-        _analyzerPresetFactory = analyzerPresetFactory;
+        _analyzerExecutorFactory = analyzerExecutorFactory;
         _repositories = new ConcurrentDictionary<int, IDocumentManager>();
         _spinLock = new SpinLock();
     }
@@ -66,8 +63,7 @@ public class DocumentManagerStore : IDocumentManagerStore
                 _fileStreamFactory,
                 _serializer,
                 _repositorySettingsOptions,
-                _analyzerFactory,
-                _analyzerPresetFactory
+                _analyzerExecutorFactory
             );
 
             _repositories.TryAdd(template.Id, repository);

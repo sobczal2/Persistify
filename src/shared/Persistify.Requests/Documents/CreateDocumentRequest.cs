@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Persistify.Domain.Documents;
+using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Requests.Common;
 using Persistify.Responses.Documents;
 using ProtoBuf;
@@ -9,22 +10,9 @@ namespace Persistify.Requests.Documents;
 [ProtoContract]
 public class CreateDocumentRequest : IRequest<CreateDocumentResponse>
 {
-    public CreateDocumentRequest()
-    {
-        TextFieldValues = new List<TextFieldValue>(0);
-        NumberFieldValues = new List<NumberFieldValue>(0);
-        BoolFieldValues = new List<BoolFieldValue>(0);
-    }
-
     [ProtoMember(1)]
     public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
-    public List<TextFieldValue> TextFieldValues { get; set; }
-
-    [ProtoMember(3)]
-    public List<NumberFieldValue> NumberFieldValues { get; set; }
-
-    [ProtoMember(4)]
-    public List<BoolFieldValue> BoolFieldValues { get; set; }
+    public List<FieldValueDto> FieldValues { get; set; } = default!;
 }

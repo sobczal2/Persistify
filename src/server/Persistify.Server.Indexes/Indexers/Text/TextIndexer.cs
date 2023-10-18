@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using Persistify.Domain.Documents;
-using Persistify.Domain.Search.Queries;
-using Persistify.Domain.Search.Queries.Text;
+using Persistify.Dtos.Documents.Search.Queries;
+using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.DataStructures.Tries;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -14,28 +14,33 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexer : IIndexer
 {
-    private readonly IAnalyzer _analyzer;
+    private readonly IAnalyzerExecutor _analyzerExecutor;
     private readonly FixedTrie<TextIndexerFixedTrieRecord> _fixedTrie;
     private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
 
-    public TextIndexer(string fieldName, IAnalyzer analyzer)
+    public TextIndexer(string fieldName, IAnalyzerExecutor analyzerExecutor)
     {
         FieldName = fieldName;
         _intervalTree = new IntervalTree<TextIndexerIntervalTreeRecord>();
-        _fixedTrie = new FixedTrie<TextIndexerFixedTrieRecord>(analyzer.AlphabetLength);
-        _analyzer = analyzer;
+        _fixedTrie = new FixedTrie<TextIndexerFixedTrieRecord>(analyzerExecutor.AlphabetLength);
+        _analyzerExecutor = analyzerExecutor;
     }
 
     public string FieldName { get; }
 
     public void IndexAsync(Document document)
     {
-        var textFieldValue = document.TextFieldValuesByFieldName[FieldName];
+        var textFieldValue = document.GetTextFieldValueByName(FieldName);
+        if (textFieldValue == null)
+        {
+            throw new InternalPersistifyException();
+        }
+
         _intervalTree.Insert(new TextIndexerIntervalTreeRecord
         {
             DocumentId = document.Id, Value = textFieldValue.Value
         });
-        var tokens = _analyzer.Analyze(textFieldValue.Value, AnalyzerMode.Index);
+        var tokens = _analyzerExecutor.Analyze(textFieldValue.Value, AnalyzerMode.Index);
 
         foreach (var token in tokens)
         {
@@ -43,17 +48,17 @@ public class TextIndexer : IIndexer
         }
     }
 
-    public IEnumerable<ISearchResult> SearchAsync(SearchQuery query)
+    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto query)
     {
-        if (query is not TextSearchQuery textSearchQuery || textSearchQuery.GetFieldName() != FieldName)
+        if (query is not TextSearchQueryDto textSearchQuery || textSearchQuery.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
         return textSearchQuery switch
         {
-            ExactTextSearchQuery exactTextSearchQuery => HandleExactTextSearch(exactTextSearchQuery),
-            FullTextSearchQuery fullTextSearchQuery => HandleFullTextSearch(fullTextSearchQuery),
+            ExactTextSearchQueryDto exactTextSearchQuery => HandleExactTextSearch(exactTextSearchQuery),
+            FullTextSearchQueryDto fullTextSearchQuery => HandleFullTextSearch(fullTextSearchQuery),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
@@ -64,7 +69,7 @@ public class TextIndexer : IIndexer
         _fixedTrie.Remove(x => x.DocumentId == document.Id);
     }
 
-    private IEnumerable<ISearchResult> HandleExactTextSearch(ExactTextSearchQuery query)
+    private IEnumerable<SearchResult> HandleExactTextSearch(ExactTextSearchQueryDto query)
     {
         var results = _intervalTree.Search(query.Value, query.Value,
             (a, b) => String.Compare(a.Value, b, StringComparison.Ordinal));
@@ -73,17 +78,17 @@ public class TextIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
         }
     }
 
-    private IEnumerable<ISearchResult> HandleFullTextSearch(FullTextSearchQuery query)
+    private IEnumerable<SearchResult> HandleFullTextSearch(FullTextSearchQueryDto query)
     {
         var results = new SortedList<int, SearchResult>();
 
         var tokenCount = 0;
 
-        foreach (var token in _analyzer.Analyze(query.Value, AnalyzerMode.Search))
+        foreach (var token in _analyzerExecutor.Analyze(query.Value, AnalyzerMode.Search))
         {
             var trieResults = _fixedTrie.Search(token);
             foreach (var trieResult in trieResults)
@@ -91,15 +96,15 @@ public class TextIndexer : IIndexer
                 var score = trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost;
                 if (results.TryGetValue(trieResult.Item.DocumentId, out var result))
                 {
-                    result.Metadata.Score += score;
+                    result.SearchMetadata.Score += score;
                     foreach (var position in trieResult.Item.Token.Positions)
                     {
-                        result.Metadata.Add($"token_{token.Value}.position", position.ToString());
+                        result.SearchMetadata.Add($"token_{token.Value}.position", position.ToString());
                     }
                 }
                 else
                 {
-                    var metadata = new Metadata(score);
+                    var metadata = new SearchMetadata(score);
                     foreach (var position in trieResult.Item.Token.Positions)
                     {
                         metadata.Add($"token_{token.Value}.position", position.ToString());
@@ -114,7 +119,7 @@ public class TextIndexer : IIndexer
 
         foreach (var result in results.Values)
         {
-            result.Metadata.Score /= tokenCount;
+            result.SearchMetadata.Score /= tokenCount;
             yield return result;
         }
     }

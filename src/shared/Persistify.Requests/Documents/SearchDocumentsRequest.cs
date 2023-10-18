@@ -1,4 +1,5 @@
-﻿using Persistify.Domain.Search.Queries;
+﻿using Persistify.Dtos.Common;
+using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Requests.Common;
 using Persistify.Responses.Documents;
 using ProtoBuf;
@@ -12,8 +13,8 @@ public class SearchDocumentsRequest : IRequest<SearchDocumentsResponse>
     public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
-    public Pagination Pagination { get; set; } = default!;
+    public PaginationDto Pagination { get; set; } = default!;
 
     [ProtoMember(3)]
-    public SearchQuery SearchQuery { get; set; } = default!;
+    public SearchQueryDto SearchQuery { get; set; } = default!;
 }

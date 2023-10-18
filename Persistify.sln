@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Responses", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Services", "src\shared\Persistify.Services\Persistify.Services.csproj", "{92A85FDC-E8B9-407A-A661-8DD2098F1864}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Fts.Analysis", "src\server\Persistify.Server.Fts.Analysis\Persistify.Server.Fts.Analysis.csproj", "{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Fts", "src\server\Persistify.Server.Fts\Persistify.Server.Fts.csproj", "{F54A54FE-21C4-4E58-8CFB-DDE11BC4D0BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Management", "src\server\Persistify.Server.Management\Persistify.Server.Management.csproj", "{ED18D06F-0F51-4035-8D41-81CB76BF89C1}"
 EndProject

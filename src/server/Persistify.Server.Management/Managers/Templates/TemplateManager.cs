@@ -102,14 +102,6 @@ public class TemplateManager : Manager, ITemplateManager
         return await _templateRepository.ReadAsync(id, true);
     }
 
-    public async ValueTask<Template?> GetAsync(int id)
-    {
-        ThrowIfNotInitialized();
-        ThrowIfCannotRead();
-
-        return await _templateRepository.ReadAsync(id, true);
-    }
-
     public bool Exists(string templateName)
     {
         ThrowIfNotInitialized();
@@ -210,7 +202,10 @@ public class TemplateManager : Manager, ITemplateManager
                 _fileHandler.DeleteFilesForTemplate(template);
                 _documentManagerStore.DeleteManager(id);
 
-                _templateNameIdDictionary.TryRemove(template.Name, out _);
+                if(!_templateNameIdDictionary.TryRemove(template.Name, out _))
+                {
+                    throw new InternalPersistifyException();
+                }
 
                 Interlocked.Decrement(ref _count);
             }

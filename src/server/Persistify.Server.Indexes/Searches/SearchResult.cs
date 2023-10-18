@@ -1,13 +1,13 @@
 ﻿namespace Persistify.Server.Indexes.Searches;
 
-public class SearchResult : ISearchResult
+public class SearchResult
 {
-    public SearchResult(int documentId, Metadata metadata)
+    public SearchResult(int documentId, SearchMetadata searchMetadata)
     {
         DocumentId = documentId;
-        Metadata = metadata;
+        SearchMetadata = searchMetadata;
     }
 
     public int DocumentId { get; set; }
-    public Metadata Metadata { get; set; }
+    public SearchMetadata SearchMetadata { get; set; }
 }

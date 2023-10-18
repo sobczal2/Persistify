@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Persistify.Domain.Documents;
-using Persistify.Domain.Search.Queries;
-using Persistify.Domain.Search.Queries.Aggregates;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Documents.Search.Queries;
+using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Helpers.Algorithms;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;
 using Persistify.Server.Indexes.Indexers.Number;
 using Persistify.Server.Indexes.Indexers.Text;
@@ -21,80 +21,76 @@ public class IndexerStore
 
     public IndexerStore(
         Template template,
-        IAnalyzerFactory analyzerFactory,
-        IAnalyzerPresetFactory analyzerPresetFactory
+        IAnalyzerExecutorFactory analyzerExecutorFactory
     )
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
-        foreach (var field in template.TextFields)
-        {
-            IAnalyzer analyzer;
-            if (field.AnalyzerDescriptor is FullAnalyzerDescriptor fullAnalyzerDescriptor)
-            {
-                analyzer = analyzerFactory.Create(fullAnalyzerDescriptor);
-            }
-            else if (field.AnalyzerDescriptor is PresetAnalyzerDescriptor presetAnalyzerDescriptor &&
-                     analyzerPresetFactory.TryCreate(presetAnalyzerDescriptor.PresetName, out var tmpAnalyzer)
-                         .Success && tmpAnalyzer is not null)
-            {
-                analyzer = tmpAnalyzer;
-            }
-            else
-            {
-                throw new InternalPersistifyException();
-            }
 
-            _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
-        }
-
-        foreach (var field in template.NumberFields)
+        foreach (var field in template.Fields)
         {
-            _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
-        }
-
-        foreach (var field in template.BoolFields)
-        {
-            _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
+            switch (field)
+            {
+                case BoolField boolField:
+                    _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
+                    break;
+                case NumberField numberField:
+                    _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
+                    break;
+                case TextField textField:
+                    var analyzer = analyzerExecutorFactory.Create(textField.Analyzer);
+                    _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
+                    break;
+                default:
+                    throw new InternalPersistifyException();
+            }
         }
     }
 
-    public IEnumerable<ISearchResult> Search(SearchQuery query)
+    public IEnumerable<SearchResult> Search(SearchQueryDto query)
     {
-        IEnumerable<ISearchResult>[]? results;
-        switch (query)
+        return query switch
         {
-            case FieldSearchQuery fieldSearchQuery:
-                if (_indexers.TryGetValue(fieldSearchQuery.GetFieldName(), out var indexer))
-                {
-                    return indexer.SearchAsync(query);
-                }
+            FieldSearchQueryDto fieldSearchQuery => FieldSearch(fieldSearchQuery),
+            AndSearchQueryDto andSearchQuery => AndSearch(andSearchQuery),
+            OrSearchQueryDto orSearchQuery => OrSearch(orSearchQuery),
+            _ => throw new InternalPersistifyException(message: "Invalid search query")
+        };
+    }
 
-                throw new InternalPersistifyException();
-            case AndSearchQuery andSearchQuery:
-                results = new IEnumerable<ISearchResult>[andSearchQuery.Queries.Count];
-
-                for (var i = 0; i < results.Length; i++)
-                {
-                    results[i] = Search(andSearchQuery.Queries[i]);
-                }
-
-                return EnumerableHelpers.IntersectSorted(
-                        Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results)
-                    .ToList();
-            case OrSearchQuery orSearchQuery:
-                results = new IEnumerable<ISearchResult>[orSearchQuery.Queries.Count];
-
-                for (var i = 0; i < results.Length; i++)
-                {
-                    results[i] = Search(orSearchQuery.Queries[i]);
-                }
-
-                return EnumerableHelpers.MergeSorted(
-                        Comparer<ISearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results)
-                    .ToList();
-            default:
-                throw new InternalPersistifyException(message: "Invalid search query");
+    private IEnumerable<SearchResult> FieldSearch(FieldSearchQueryDto query)
+    {
+        if (_indexers.TryGetValue(query.GetFieldName(), out var indexer))
+        {
+            return indexer.SearchAsync(query);
         }
+
+        throw new InternalPersistifyException();
+    }
+
+    private IEnumerable<SearchResult> AndSearch(AndSearchQueryDto query)
+    {
+        var results = new IEnumerable<SearchResult>[query.Queries.Count];
+
+        for (var i = 0; i < results.Length; i++)
+        {
+            results[i] = Search(query.Queries[i]);
+        }
+
+        return EnumerableHelpers.IntersectSorted(
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results);
+    }
+
+    private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto query)
+    {
+        var results = new IEnumerable<SearchResult>[query.Queries.Count];
+
+        for (var i = 0; i < results.Length; i++)
+        {
+            results[i] = Search(query.Queries[i]);
+        }
+
+        return EnumerableHelpers.MergeSorted(
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results);
     }
 
     public void Index(Document document)

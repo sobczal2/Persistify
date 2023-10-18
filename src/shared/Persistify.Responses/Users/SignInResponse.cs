@@ -1,4 +1,5 @@
-﻿using Persistify.Responses.Common;
+﻿using Persistify.Dtos.Users;
+using Persistify.Responses.Common;
 using ProtoBuf;
 
 namespace Persistify.Responses.Users;
@@ -7,14 +8,11 @@ namespace Persistify.Responses.Users;
 public class SignInResponse : IResponse
 {
     [ProtoMember(1)]
-    public string Username { get; set; } = default!;
+    public UserDto User { get; set; } = default!;
 
     [ProtoMember(2)]
-    public int Permission { get; set; }
-
-    [ProtoMember(3)]
     public string AccessToken { get; set; } = default!;
 
-    [ProtoMember(4)]
+    [ProtoMember(3)]
     public string RefreshToken { get; set; } = default!;
 }

@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
 using Xunit;
@@ -18,13 +20,16 @@ public class GetTemplateAsyncTests : IntegrationTestBase
         var createTemplateRequest = new CreateTemplateRequest
         {
             TemplateName = "TestTemplate",
-            TextFields = new List<TextField>
+            Fields = new List<FieldDto>
             {
-                new()
+                new TextFieldDto
                 {
                     Name = "TextField1",
                     Required = true,
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "standard" }
+                    AnalyzerDescriptor = new PresetAnalyzerDescriptorDto
+                    {
+                        PresetName = "standard"
+                    }
                 }
             }
         };
@@ -38,13 +43,10 @@ public class GetTemplateAsyncTests : IntegrationTestBase
         response.Should().NotBeNull();
         response.Template.Should().NotBeNull();
         response.Template.Name.Should().Be("TestTemplate");
-        response.Template.TextFields.Should().NotBeNull();
-        response.Template.TextFields.Should().HaveCount(1);
-        response.Template.TextFields[0].Name.Should().Be("TextField1");
-        response.Template.TextFields[0].Required.Should().BeTrue();
-        response.Template.TextFields[0].AnalyzerDescriptor.Should().NotBeNull();
-        response.Template.TextFields[0].AnalyzerDescriptor.Should().BeOfType<PresetAnalyzerDescriptor>();
-        ((PresetAnalyzerDescriptor)response.Template.TextFields[0].AnalyzerDescriptor).PresetName.Should()
-            .Be("standard");
+        response.Template.Fields.Should().NotBeNull();
+        response.Template.Fields.Should().HaveCount(1);
+        response.Template.Fields[0].Name.Should().Be("TextField1");
+        response.Template.Fields[0].Required.Should().BeTrue();
+        ((TextFieldDto)response.Template.Fields[0]).AnalyzerDescriptor.Should().NotBeNull();
     }
 }

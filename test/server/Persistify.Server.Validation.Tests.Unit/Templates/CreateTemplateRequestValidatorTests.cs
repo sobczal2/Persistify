@@ -4,29 +4,31 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Templates;
+using Persistify.Server.Validation.Requests.Templates;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Templates;
 
 public class CreateTemplateRequestValidatorTests
 {
-    private readonly IValidator<BoolField> _boolFieldValidator;
-    private readonly IValidator<NumberField> _numberFieldValidator;
+    private readonly IValidator<BoolFieldDto> _boolFieldValidator;
+    private readonly IValidator<NumberFieldDto> _numberFieldValidator;
     private readonly ITemplateManager _templateManager;
-    private readonly IValidator<TextField> _textFieldValidator;
+    private readonly IValidator<TextFieldDto> _textFieldValidator;
 
     private CreateTemplateRequestValidator _sut;
 
     public CreateTemplateRequestValidatorTests()
     {
-        _textFieldValidator = Substitute.For<IValidator<TextField>>();
-        _numberFieldValidator = Substitute.For<IValidator<NumberField>>();
-        _boolFieldValidator = Substitute.For<IValidator<BoolField>>();
+        _textFieldValidator = Substitute.For<IValidator<TextFieldDto>>();
+        _numberFieldValidator = Substitute.For<IValidator<NumberFieldDto>>();
+        _boolFieldValidator = Substitute.For<IValidator<BoolFieldDto>>();
         _templateManager = Substitute.For<ITemplateManager>();
 
         _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, _boolFieldValidator,
@@ -126,9 +128,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = null!,
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>(),
         };
 
         // Act
@@ -149,9 +149,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = string.Empty,
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>()
         };
 
         // Act
@@ -172,9 +170,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = new string('a', 65),
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>()
         };
 
         // Act
@@ -195,9 +191,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>()
         };
 
         // Act
@@ -208,7 +202,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("No fields");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.*Fields");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields");
     }
 
     [Fact]
@@ -218,20 +212,21 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField> { new() },
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto()
+            }
         };
         List<string> propertyNameAtCall = null!;
         _textFieldValidator
-            .When(x => x.ValidateAsync(Arg.Any<TextField>()))
+            .When(x => x.ValidateAsync(Arg.Any<TextFieldDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "TextFields[0]" });
+        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
     }
 
     [Fact]
@@ -241,13 +236,14 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField> { new() },
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto()
+            }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _textFieldValidator
-            .ValidateAsync(Arg.Any<TextField>())
+            .ValidateAsync(Arg.Any<TextFieldDto>())
             .Returns(validationException);
 
         // Act
@@ -265,20 +261,21 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField> { new() },
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new NumberFieldDto()
+            }
         };
         List<string> propertyNameAtCall = null!;
         _numberFieldValidator
-            .When(x => x.ValidateAsync(Arg.Any<NumberField>()))
+            .When(x => x.ValidateAsync(Arg.Any<NumberFieldDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "NumberFields[0]" });
+        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
     }
 
     [Fact]
@@ -288,13 +285,14 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField> { new() },
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new NumberFieldDto()
+            }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _numberFieldValidator
-            .ValidateAsync(Arg.Any<NumberField>())
+            .ValidateAsync(Arg.Any<NumberFieldDto>())
             .Returns(validationException);
 
         // Act
@@ -312,20 +310,21 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField> { new() }
+            Fields = new List<FieldDto>
+            {
+                new BoolFieldDto()
+            }
         };
         List<string> propertyNameAtCall = null!;
         _boolFieldValidator
-            .When(x => x.ValidateAsync(Arg.Any<BoolField>()))
+            .When(x => x.ValidateAsync(Arg.Any<BoolFieldDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "BoolFields[0]" });
+        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
     }
 
     [Fact]
@@ -335,13 +334,14 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField> { new() }
+            Fields = new List<FieldDto>
+            {
+                new BoolFieldDto()
+            }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _boolFieldValidator
-            .ValidateAsync(Arg.Any<BoolField>())
+            .ValidateAsync(Arg.Any<BoolFieldDto>())
             .Returns(validationException);
 
         // Act
@@ -359,9 +359,17 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField> { new() { Name = "name" }, new() { Name = "name" } },
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto
+                {
+                    Name = "name",
+                },
+                new TextFieldDto
+                {
+                    Name = "name"
+                }
+            }
         };
 
         // Act
@@ -372,7 +380,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.TextFields[1].Name");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields[1].Name");
     }
 
     [Fact]
@@ -382,9 +390,17 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField> { new() { Name = "name" }, new() { Name = "name" } },
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new NumberFieldDto
+                {
+                    Name = "name",
+                },
+                new NumberFieldDto
+                {
+                    Name = "name"
+                }
+            }
         };
 
         // Act
@@ -395,7 +411,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.NumberFields[1].Name");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields[1].Name");
     }
 
     [Fact]
@@ -405,9 +421,17 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField> { new() { Name = "name" }, new() { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new BoolFieldDto
+                {
+                    Name = "name",
+                },
+                new BoolFieldDto
+                {
+                    Name = "name"
+                }
+            }
         };
 
         // Act
@@ -418,7 +442,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.BoolFields[1].Name");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields[1].Name");
     }
 
     [Fact]
@@ -428,9 +452,17 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField> { new() { Name = "name" } },
-            NumberFields = new List<NumberField> { new() { Name = "name" } },
-            BoolFields = new List<BoolField>()
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto
+                {
+                    Name = "name",
+                },
+                new NumberFieldDto
+                {
+                    Name = "name"
+                }
+            }
         };
 
         // Act
@@ -441,7 +473,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.NumberFields[0].Name");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields[1].Name");
     }
 
     [Fact]
@@ -451,9 +483,17 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField> { new() { Name = "name" } },
-            NumberFields = new List<NumberField>(),
-            BoolFields = new List<BoolField> { new() { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto
+                {
+                    Name = "name",
+                },
+                new BoolFieldDto
+                {
+                    Name = "name"
+                }
+            }
         };
 
         // Act
@@ -464,7 +504,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.BoolFields[0].Name");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields[1].Name");
     }
 
     [Fact]
@@ -474,9 +514,17 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField>(),
-            NumberFields = new List<NumberField> { new() { Name = "name" } },
-            BoolFields = new List<BoolField> { new() { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new NumberFieldDto
+                {
+                    Name = "name",
+                },
+                new BoolFieldDto
+                {
+                    Name = "name"
+                }
+            }
         };
 
         // Act
@@ -487,7 +535,7 @@ public class CreateTemplateRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateTemplateRequest.BoolFields[0].Name");
+        exception.PropertyName.Should().Be("CreateTemplateRequest.Fields[1].Name");
     }
 
     [Fact]
@@ -497,9 +545,21 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            TextFields = new List<TextField> { new() { Name = "name" } },
-            NumberFields = new List<NumberField> { new() { Name = "name2" } },
-            BoolFields = new List<BoolField> { new() { Name = "name3" } }
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto
+                {
+                    Name = "name1",
+                },
+                new NumberFieldDto
+                {
+                    Name = "name2",
+                },
+                new BoolFieldDto
+                {
+                    Name = "name3"
+                }
+            }
         };
 
         // Act

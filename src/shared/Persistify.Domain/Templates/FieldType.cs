@@ -2,7 +2,7 @@
 
 public enum FieldType
 {
-    Bool,
-    Number,
-    Text
+    Bool = 1,
+    Number = 2,
+    Text = 3
 }

@@ -4,5 +4,5 @@ namespace Persistify.Client.Objects.Analyzers;
 
 public interface IAnalyzerDescriptorFactory
 {
-    AnalyzerDescriptor? Create(string name);
+    Analyzer? Create(string name);
 }
