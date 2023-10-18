@@ -42,13 +42,13 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (value.AnalyzerDescriptor is null)
         {
-            PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
+            PropertyName.Push(nameof(TextField.Analyzer));
             return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
         if (value.AnalyzerDescriptor is PresetAnalyzerDescriptorDto presetAnalyzerDescriptor)
         {
-            PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
+            PropertyName.Push(nameof(TextField.Analyzer));
             var presetAnalyzerDescriptorValidationResult =
                 await _presetAnalyzerDescriptorDtoValidator.ValidateAsync(presetAnalyzerDescriptor);
             PropertyName.Pop();
@@ -59,7 +59,7 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
         }
         else if (value.AnalyzerDescriptor is FullAnalyzerDescriptorDto fullAnalyzerDescriptor)
         {
-            PropertyName.Push(nameof(TextField.AnalyzerDescriptor));
+            PropertyName.Push(nameof(TextField.Analyzer));
             var analyzerDescriptorValidationResult =
                 await _analyzerDescriptorDtoValidator.ValidateAsync(fullAnalyzerDescriptor);
             PropertyName.Pop();
@@ -67,6 +67,11 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
             {
                 return analyzerDescriptorValidationResult;
             }
+        }
+        else
+        {
+            PropertyName.Push(nameof(TextField.Analyzer));
+            return StaticValidationException(TemplateErrorMessages.InvalidAnalyzerDescriptor);
         }
 
         return Result.Ok;

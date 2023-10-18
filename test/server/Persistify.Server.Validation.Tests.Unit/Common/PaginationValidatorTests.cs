@@ -26,7 +26,7 @@ public class PaginationValidatorTests
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "Pagination" });
+        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "PaginationDto" });
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class PaginationValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("Pagination");
+        exception.PropertyName.Should().Be("PaginationDto");
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class PaginationValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Page number less than zero");
-        exception.PropertyName.Should().Be("Pagination.PageNumber");
+        exception.PropertyName.Should().Be("PaginationDto.PageNumber");
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class PaginationValidatorTests
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Page size less than or equal to zero");
-        exception.PropertyName.Should().Be("Pagination.PageSize");
+        exception.PropertyName.Should().Be("PaginationDto.PageSize");
     }
 
     [Fact]

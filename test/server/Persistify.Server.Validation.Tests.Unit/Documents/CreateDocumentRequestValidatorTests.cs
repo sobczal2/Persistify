@@ -5,6 +5,7 @@ using FluentAssertions;
 using NSubstitute;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Requests.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
@@ -16,19 +17,19 @@ namespace Persistify.Server.Validation.Tests.Unit.Documents;
 
 public class CreateDocumentRequestValidatorTests
 {
-    private readonly IValidator<BoolFieldValue> _boolFieldValueValidator;
-    private readonly IValidator<NumberFieldValue> _numberFieldValueValidator;
+    private readonly IValidator<BoolFieldValueDto> _boolFieldValueValidator;
+    private readonly IValidator<NumberFieldValueDto> _numberFieldValueValidator;
 
     private readonly CreateDocumentRequestValidator _sut;
     private readonly ITemplateManager _templateManager;
-    private readonly IValidator<TextFieldValue> _textFieldValueValidator;
+    private readonly IValidator<TextFieldValueDto> _textFieldValueValidator;
 
 
     public CreateDocumentRequestValidatorTests()
     {
-        _textFieldValueValidator = Substitute.For<IValidator<TextFieldValue>>();
-        _numberFieldValueValidator = Substitute.For<IValidator<NumberFieldValue>>();
-        _boolFieldValueValidator = Substitute.For<IValidator<BoolFieldValue>>();
+        _textFieldValueValidator = Substitute.For<IValidator<TextFieldValueDto>>();
+        _numberFieldValueValidator = Substitute.For<IValidator<NumberFieldValueDto>>();
+        _boolFieldValueValidator = Substitute.For<IValidator<BoolFieldValueDto>>();
         _templateManager = Substitute.For<ITemplateManager>();
 
         _sut = new CreateDocumentRequestValidator(
@@ -198,7 +199,7 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "Test", Value = "Test" } }
+            FieldValues = new List<FieldValueDto> { new TextFieldValueDto { FieldName = "Test", Value = "Test" } }
         };
         _templateManager.Exists(request.TemplateName).Returns(false);
 
@@ -227,8 +228,8 @@ public class CreateDocumentRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("No field values");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.*FieldValues");
+        exception.Message.Should().Be("Value null");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues");
     }
 
     [Fact]
@@ -237,12 +238,16 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new TextFieldValueDto { FieldName = "Test" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template
+        {
+            Fields = new List<Field>()
+        });
         List<string> propertyNameAtCall = null!;
         _textFieldValueValidator
-            .When(x => x.ValidateAsync(Arg.Any<TextFieldValue>()))
+            .When(x => x.ValidateAsync(Arg.Any<TextFieldValueDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
@@ -250,7 +255,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "TextFieldValues[0]" }));
+            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValues[0]" }));
     }
 
     [Fact]
@@ -259,12 +264,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() }
+            TemplateName = "Test", FieldValues = new List<FieldValueDto> { new TextFieldValueDto() }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _textFieldValueValidator
-            .ValidateAsync(Arg.Any<TextFieldValue>())
+            .ValidateAsync(Arg.Any<TextFieldValueDto>())
             .Returns(validationException);
 
         // Act
@@ -281,12 +286,13 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new NumberFieldValueDto { FieldName = "test" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template() { Fields = new List<Field>() });
         List<string> propertyNameAtCall = null!;
         _numberFieldValueValidator
-            .When(x => x.ValidateAsync(Arg.Any<NumberFieldValue>()))
+            .When(x => x.ValidateAsync(Arg.Any<NumberFieldValueDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
@@ -294,7 +300,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "NumberFieldValues[0]" }));
+            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValues[0]" }));
     }
 
     [Fact]
@@ -303,12 +309,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() }
+            TemplateName = "Test", FieldValues = new List<FieldValueDto> { new NumberFieldValueDto() }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _numberFieldValueValidator
-            .ValidateAsync(Arg.Any<NumberFieldValue>())
+            .ValidateAsync(Arg.Any<NumberFieldValueDto>())
             .Returns(validationException);
 
         // Act
@@ -325,12 +331,16 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new BoolFieldValueDto() { FieldName = "test" } }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            Fields = new List<Field>()
+        });
         List<string> propertyNameAtCall = null!;
         _boolFieldValueValidator
-            .When(x => x.ValidateAsync(Arg.Any<BoolFieldValue>()))
+            .When(x => x.ValidateAsync(Arg.Any<BoolFieldValueDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
@@ -338,7 +348,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "BoolFieldValues[0]" }));
+            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValues[0]" }));
     }
 
     [Fact]
@@ -347,12 +357,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() }
+            TemplateName = "Test", FieldValues = new List<FieldValueDto> { new BoolFieldValueDto() }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _boolFieldValueValidator
-            .ValidateAsync(Arg.Any<BoolFieldValue>())
+            .ValidateAsync(Arg.Any<BoolFieldValueDto>())
             .Returns(validationException);
 
         // Act
@@ -370,9 +380,15 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new TextFieldValueDto { FieldName = "1" }, new TextFieldValueDto { FieldName = "1" }
+            }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template());
+        _templateManager.GetAsync(request.TemplateName).Returns(new Template()
+        {
+            Fields = new List<Field>()
+        });
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -382,7 +398,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.TextFieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
     }
 
     [Fact]
@@ -392,7 +408,10 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new NumberFieldValueDto { FieldName = "1" }, new NumberFieldValueDto { FieldName = "1" }
+            }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
@@ -404,7 +423,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.NumberFieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
     }
 
     [Fact]
@@ -414,7 +433,10 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" }, new() { FieldName = "1" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new BoolFieldValueDto { FieldName = "1" }, new BoolFieldValueDto { FieldName = "1" }
+            }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
@@ -426,7 +448,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.BoolFieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
     }
 
     [Fact]
@@ -436,8 +458,10 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
-            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new TextFieldValueDto { FieldName = "1" }, new NumberFieldValueDto { FieldName = "1" }
+            },
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
@@ -449,7 +473,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.NumberFieldValues[0].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
     }
 
     [Fact]
@@ -459,8 +483,10 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
-            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new TextFieldValueDto { FieldName = "1" }, new BoolFieldValueDto { FieldName = "1" }
+            },
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
@@ -472,7 +498,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.BoolFieldValues[0].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
     }
 
     [Fact]
@@ -482,8 +508,10 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } },
-            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new NumberFieldValueDto { FieldName = "1" }, new BoolFieldValueDto { FieldName = "1" }
+            },
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
@@ -495,7 +523,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.BoolFieldValues[0].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
     }
 
     [Fact]
@@ -504,15 +532,21 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new TextFieldValueDto { FieldName = "1" } }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField>
+            Fields = new List<Field>
             {
-                new()
+                new TextField
                 {
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test" },
+                    Analyzer = new Analyzer
+                    {
+                        CharacterFilterNames = new List<string>(),
+                        TokenizerName = "test",
+                        TokenFilterNames = new List<string>()
+                    },
                     Name = "2",
                     Required = true
                 }
@@ -533,11 +567,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new NumberFieldValueDto { FieldName = "1" } }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            NumberFields = new List<NumberField> { new() { Name = "2", Required = true } }
+            Fields = new List<Field> { new NumberField { Name = "2", Required = true } }
         });
 
         // Act
@@ -554,11 +589,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new BoolFieldValueDto { FieldName = "1" } }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            BoolFields = new List<BoolField> { new() { Name = "2", Required = true } }
+            Fields = new List<Field> { new BoolField { Name = "2", Required = true } }
         });
 
         // Act
@@ -575,15 +611,21 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new TextFieldValueDto { FieldName = "1" } }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields = new List<TextField>
+            Fields = new List<Field>
             {
-                new()
+                new TextField
                 {
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test" },
+                    Analyzer = new Analyzer
+                    {
+                        CharacterFilterNames = new List<string>(),
+                        TokenizerName = "test",
+                        TokenFilterNames = new List<string>()
+                    },
                     Name = "2",
                     Required = false
                 }
@@ -603,11 +645,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new NumberFieldValueDto { FieldName = "1" } }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            NumberFields = new List<NumberField> { new() { Name = "2", Required = false } }
+            Fields = new List<Field> { new NumberField { Name = "2", Required = false } }
         });
 
         // Act
@@ -623,11 +666,12 @@ public class CreateDocumentRequestValidatorTests
         // Arrange
         var request = new CreateDocumentRequest
         {
-            TemplateName = "Test", BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "1" } }
+            TemplateName = "Test",
+            FieldValues = new List<FieldValueDto> { new BoolFieldValueDto { FieldName = "1" } }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            BoolFields = new List<BoolField> { new() { Name = "2", Required = false } }
+            Fields = new List<Field> { new BoolField { Name = "2", Required = false } }
         });
 
         // Act
@@ -644,19 +688,32 @@ public class CreateDocumentRequestValidatorTests
         var request = new CreateDocumentRequest
         {
             TemplateName = "Test",
-            TextFieldValues = new List<TextFieldValue> { new() { FieldName = "1" } },
-            NumberFieldValues = new List<NumberFieldValue> { new() { FieldName = "2" } },
-            BoolFieldValues = new List<BoolFieldValue> { new() { FieldName = "3" } }
+            FieldValues = new List<FieldValueDto>
+            {
+                new TextFieldValueDto { FieldName = "1" },
+                new NumberFieldValueDto { FieldName = "2" },
+                new BoolFieldValueDto { FieldName = "3" }
+            },
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {
-            TextFields =
-                new List<TextField>
+            Fields =
+                new List<Field>
                 {
-                    new() { AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "test" }, Name = "1" }
+                    new TextField
+                    {
+                        Analyzer = new Analyzer()
+                        {
+                            CharacterFilterNames = new List<string>(),
+                            TokenizerName = "test",
+                            TokenFilterNames = new List<string>()
+                        },
+                        Name = "1",
+                        Required = true
+                    },
+                    new NumberField { Name = "2", Required = true },
+                    new BoolField { Name = "3", Required = true }
                 },
-            NumberFields = new List<NumberField> { new() { Name = "2" } },
-            BoolFields = new List<BoolField> { new() { Name = "3" } }
         });
 
         // Act

@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Persistify.Domain.PresetAnalyzerDescriptors;
 
 [ProtoContract]
-public class PresetAnalyzerDescriptor
+public class PresetAnalyzer
 {
     [ProtoMember(1)]
     public int Id { get; set; }
@@ -13,5 +13,5 @@ public class PresetAnalyzerDescriptor
     public string Name { get; set; } = default!;
 
     [ProtoMember(3)]
-    public AnalyzerDescriptor Analyzer { get; set; } = default!;
+    public Analyzer Analyzer { get; set; } = default!;
 }

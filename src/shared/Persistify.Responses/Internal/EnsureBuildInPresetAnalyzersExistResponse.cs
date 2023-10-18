@@ -2,7 +2,7 @@
 
 namespace Persistify.Responses.Internal;
 
-public class InitializePresetAnalyzerDescriptorManagerResponse : IResponse
+public class EnsureBuildInPresetAnalyzersExistResponse : IResponse
 {
 
 }

@@ -3,7 +3,7 @@ using Persistify.Server.Fts.Tokens;
 
 namespace Persistify.Server.Fts.Abstractions;
 
-public interface IAnalyzer
+public interface IAnalyzerExecutor
 {
     int AlphabetLength { get; }
     IEnumerable<Token> Analyze(string text, AnalyzerMode mode);

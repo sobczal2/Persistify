@@ -3,6 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Managers.Documents;
+using Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
@@ -39,7 +40,7 @@ public class ManagementExtensionsTests
 
         // Assert
         actual.Should().BeSameAs(services);
-        services.Should().HaveCount(10);
+        services.Should().HaveCount(12);
         services.Should().Contain(x => x.ImplementationType == typeof(TemplateManager));
         services.Should().Contain(x => x.ImplementationType == typeof(IdleTimeoutFileStreamFactory));
         services.Should().Contain(x => x.ImplementationType == typeof(FileHandler));
@@ -50,5 +51,7 @@ public class ManagementExtensionsTests
         services.Should().Contain(x => x.ImplementationType == typeof(TransactionState));
         services.Should().Contain(x => x.ImplementationType == typeof(UserManager));
         services.Should().Contain(x => x.ImplementationType == typeof(UserManagerRequiredFileGroup));
+        services.Should().Contain(x => x.ImplementationType == typeof(PresetAnalyzerManager));
+        services.Should().Contain(x => x.ImplementationType == typeof(PresetAnalyzerManagerRequiredFileGroup));
     }
 }

@@ -18,4 +18,5 @@ public static class DocumentErrorMessages
     public const string InvalidFieldValue = "Invalid field value";
     public const string FieldTypeMismatch = "Field type mismatch";
     public const string FieldNotFound = "Field not found";
+    public const string DocumentNotFound = "Document not found";
 }

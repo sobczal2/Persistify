@@ -10,13 +10,10 @@ namespace Persistify.Server.Validation.Requests.Documents;
 
 public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
 {
-    private readonly ITemplateManager _templateManager;
 
     public DeleteDocumentRequestValidator(
-        ITemplateManager templateManager
     )
     {
-        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(DeleteDocumentRequest));
     }
 
@@ -32,12 +29,6 @@ public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
-        }
-
-        if (!_templateManager.Exists(value.TemplateName))
-        {
-            PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(DynamicValidationException(DocumentErrorMessages.TemplateNotFound));
         }
 
         if (value.DocumentId <= 0)

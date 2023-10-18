@@ -63,8 +63,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             return paginationValidator;
         }
 
-        PropertyName.Push(nameof(SearchDocumentsRequest.SearchQueryDto));
-        var searchQueryResult = await ValidateSearchQueryAsync(value.SearchQueryDto, template);
+        PropertyName.Push(nameof(SearchDocumentsRequest.SearchQuery));
+        var searchQueryResult = await ValidateSearchQueryAsync(value.SearchQuery, template);
         PropertyName.Pop();
 
         if (searchQueryResult.Failure)

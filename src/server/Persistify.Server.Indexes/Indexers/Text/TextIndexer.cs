@@ -14,16 +14,16 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexer : IIndexer
 {
-    private readonly IAnalyzer _analyzer;
+    private readonly IAnalyzerExecutor _analyzerExecutor;
     private readonly FixedTrie<TextIndexerFixedTrieRecord> _fixedTrie;
     private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
 
-    public TextIndexer(string fieldName, IAnalyzer analyzer)
+    public TextIndexer(string fieldName, IAnalyzerExecutor analyzerExecutor)
     {
         FieldName = fieldName;
         _intervalTree = new IntervalTree<TextIndexerIntervalTreeRecord>();
-        _fixedTrie = new FixedTrie<TextIndexerFixedTrieRecord>(analyzer.AlphabetLength);
-        _analyzer = analyzer;
+        _fixedTrie = new FixedTrie<TextIndexerFixedTrieRecord>(analyzerExecutor.AlphabetLength);
+        _analyzerExecutor = analyzerExecutor;
     }
 
     public string FieldName { get; }
@@ -40,7 +40,7 @@ public class TextIndexer : IIndexer
         {
             DocumentId = document.Id, Value = textFieldValue.Value
         });
-        var tokens = _analyzer.Analyze(textFieldValue.Value, AnalyzerMode.Index);
+        var tokens = _analyzerExecutor.Analyze(textFieldValue.Value, AnalyzerMode.Index);
 
         foreach (var token in tokens)
         {
@@ -88,7 +88,7 @@ public class TextIndexer : IIndexer
 
         var tokenCount = 0;
 
-        foreach (var token in _analyzer.Analyze(query.Value, AnalyzerMode.Search))
+        foreach (var token in _analyzerExecutor.Analyze(query.Value, AnalyzerMode.Search))
         {
             var trieResults = _fixedTrie.Search(token);
             foreach (var trieResult in trieResults)

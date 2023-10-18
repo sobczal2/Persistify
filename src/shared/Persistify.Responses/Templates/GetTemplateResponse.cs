@@ -1,4 +1,5 @@
 ﻿using Persistify.Domain.Templates;
+using Persistify.Dtos.Templates.Common;
 using Persistify.Responses.Common;
 using ProtoBuf;
 
@@ -8,5 +9,5 @@ namespace Persistify.Responses.Templates;
 public class GetTemplateResponse : IResponse
 {
     [ProtoMember(1)]
-    public Template Template { get; set; } = default!;
+    public TemplateDto Template { get; set; } = default!;
 }

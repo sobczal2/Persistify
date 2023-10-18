@@ -35,14 +35,14 @@ public class DocumentManager : Manager, IDocumentManager
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
-        IAnalyzerFactory analyzerFactory
+        IAnalyzerExecutorFactory analyzerExecutorFactory
     ) : base(
         transactionState
     )
     {
         _template = template;
 
-        _indexerStore = new IndexerStore(template, analyzerFactory);
+        _indexerStore = new IndexerStore(template, analyzerExecutorFactory);
 
         var identifierFileStream =
             fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id));

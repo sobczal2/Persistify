@@ -83,7 +83,7 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
                     {
                         Name = fieldName,
                         Required = templateField.IsRequired(),
-                        AnalyzerDescriptor = _analyzerDescriptorStore.Get(templateField.GetAnalyzerDescriptorName() ??
+                        Analyzer = _analyzerDescriptorStore.Get(templateField.GetAnalyzerDescriptorName() ??
                                                                           throw new InvalidOperationException())
                     });
                     break;

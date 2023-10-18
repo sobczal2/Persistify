@@ -11,10 +11,4 @@ public static class TemplateMapper
         var fields = from.Fields.Select(FieldMapper.Map).ToList();
         return new TemplateDto { Name = from.Name, Fields = fields };
     }
-
-    public static Template Map(TemplateDto from)
-    {
-        var fields = from.Fields.Select(FieldMapper.Map).ToList();
-        return new Template { Name = from.Name, Fields = fields };
-    }
 }

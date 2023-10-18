@@ -2,7 +2,7 @@
 
 namespace Persistify.Server.Fts.Presets;
 
-public interface IBuiltInPresetAnalyzerDescriptor
+public interface IBuiltInPresetAnalyzer
 {
-    PresetAnalyzerDescriptor GetDescriptor();
+    PresetAnalyzer GetPresetAnalyzer();
 }

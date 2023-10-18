@@ -13,4 +13,6 @@ public static class TemplateErrorMessages
     public const string TemplateNotFound = "Template not found";
     public const string PresetNotFound = "Preset not found";
     public const string InvalidField = "Invalid field";
+    public const string PresetAnalyzerNotFound = "Preset analyzer not found";
+    public const string InvalidAnalyzerDescriptor = "Invalid analyzer descriptor";
 }

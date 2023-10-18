@@ -35,7 +35,7 @@ public static class AnimalHelpers
                             {
                                 Name = "Name",
                                 Required = true,
-                                AnalyzerDescriptor =
+                                Analyzer =
                                     new PresetAnalyzerDescriptor { PresetName = "standard" }
                             }
                         },
@@ -76,7 +76,7 @@ public static class AnimalHelpers
         await client.SearchDocumentsAsync(new SearchDocumentsRequest
         {
             PaginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 },
-            SearchQueryDto = new AndSearchQueryDto
+            SearchQuery = new AndSearchQueryDto
             {
                 Boost = 1,
                 Queries = new List<SearchQueryDto>

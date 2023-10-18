@@ -3,6 +3,7 @@ using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Dtos.Templates;
+using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
 
 namespace Persistify.Dtos.Mappers;
@@ -20,17 +21,6 @@ public static class FieldMapper
         };
     }
 
-    public static Field Map(FieldDto from)
-    {
-        return from switch
-        {
-            BoolFieldDto boolFieldValueDto => Map(boolFieldValueDto),
-            NumberFieldDto numberFieldValueDto => Map(numberFieldValueDto),
-            TextFieldDto textFieldValueDto => Map(textFieldValueDto),
-            _ => throw new NotSupportedException($"Field value type {from.GetType().Name} is not supported.")
-        };
-    }
-
     private static BoolFieldDto Map(BoolField from)
     {
         return new BoolFieldDto { Name = from.Name, Required = from.Required };
@@ -43,21 +33,16 @@ public static class FieldMapper
 
     private static TextFieldDto Map(TextField from)
     {
-        return new TextFieldDto { Name = from.Name, Required = from.Required };
-    }
-
-    private static BoolField Map(BoolFieldDto from)
-    {
-        return new BoolField { Name = from.Name, Required = from.Required };
-    }
-
-    private static NumberField Map(NumberFieldDto from)
-    {
-        return new NumberField { Name = from.Name, Required = from.Required };
-    }
-
-    private static TextField Map(TextFieldDto from)
-    {
-        return new TextField { Name = from.Name, Required = from.Required };
+        return new TextFieldDto
+        {
+            Name = from.Name,
+            Required = from.Required,
+            AnalyzerDescriptor = new FullAnalyzerDescriptorDto
+            {
+                CharacterFilterNames = from.Analyzer.CharacterFilterNames,
+                TokenizerName = from.Analyzer.TokenizerName,
+                TokenFilterNames = from.Analyzer.TokenFilterNames
+            }
+        };
     }
 }

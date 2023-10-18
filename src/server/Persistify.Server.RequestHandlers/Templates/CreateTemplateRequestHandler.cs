@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
 using Persistify.Dtos.Mappers;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.ErrorHandling.Exceptions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Management.Managers;
+using Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
 
@@ -18,29 +22,65 @@ namespace Persistify.Server.CommandHandlers.Templates;
 public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplateRequest, CreateTemplateResponse>
 {
     private readonly ITemplateManager _templateManager;
+    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private Template? _template;
 
     public CreateTemplateRequestHandler(
         IRequestHandlerContext<CreateTemplateRequest, CreateTemplateResponse> requestHandlerContext,
-        ITemplateManager templateManager
+        ITemplateManager templateManager,
+        IPresetAnalyzerManager presetAnalyzerManager
     ) : base(
         requestHandlerContext
     )
     {
         _templateManager = templateManager;
+        _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override ValueTask RunAsync(CreateTemplateRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(CreateTemplateRequest request, CancellationToken cancellationToken)
     {
-        _template = new Template
+        var templateFields = new List<Field>();
+        foreach (var field in request.Fields)
         {
-            Name = request.TemplateName,
-            Fields = request.Fields.Select(FieldMapper.Map).ToList()
-        };
+            switch (field)
+            {
+                case BoolFieldDto boolFieldDto:
+                    templateFields.Add(new BoolField { Name = boolFieldDto.Name, Required = boolFieldDto.Required, });
+                    break;
+                case NumberFieldDto numberFieldDto:
+                    templateFields.Add(new NumberField
+                    {
+                        Name = numberFieldDto.Name, Required = numberFieldDto.Required,
+                    });
+                    break;
+                case TextFieldDto textFieldDto:
+                    Analyzer analyzer = textFieldDto.AnalyzerDescriptor switch
+                    {
+                        FullAnalyzerDescriptorDto fullAnalyzerDescriptorDto =>
+                            new Analyzer
+                            {
+                                CharacterFilterNames = fullAnalyzerDescriptorDto.CharacterFilterNames,
+                                TokenizerName = fullAnalyzerDescriptorDto.TokenizerName,
+                                TokenFilterNames = fullAnalyzerDescriptorDto.TokenFilterNames
+                            },
+                        PresetAnalyzerDescriptorDto presetAnalyzerDescriptorDto =>
+                            (await _presetAnalyzerManager.GetAsync(presetAnalyzerDescriptorDto.PresetName))?.Analyzer ??
+                            throw new InternalPersistifyException(),
+                        _ => throw new InternalPersistifyException()
+                    };
+                    templateFields.Add(new TextField
+                    {
+                        Name = textFieldDto.Name, Required = textFieldDto.Required, Analyzer = analyzer
+                    });
+                    break;
+                default:
+                    throw new InternalPersistifyException();
+            }
+        }
+
+        _template = new Template { Name = request.TemplateName, Fields = templateFields };
 
         _templateManager.Add(_template);
-
-        return ValueTask.CompletedTask;
     }
 
     protected override CreateTemplateResponse GetResponse()
@@ -57,7 +97,7 @@ public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplate
     {
         return new TransactionDescriptor(
             false,
-            new List<IManager>(),
+            new List<IManager> { _presetAnalyzerManager },
             new List<IManager> { _templateManager }
         );
     }

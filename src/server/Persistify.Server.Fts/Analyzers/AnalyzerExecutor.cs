@@ -7,13 +7,13 @@ using Persistify.Server.Fts.Tokens;
 
 namespace Persistify.Server.Fts.Analyzers;
 
-public class StandardAnalyzer : IAnalyzer
+public class AnalyzerExecutor : IAnalyzerExecutor
 {
     private readonly char[] _alphabet;
     private readonly IEnumerable<ITokenFilter> _tokenFilters;
     private readonly ITokenizer _tokenizer;
 
-    public StandardAnalyzer(
+    public AnalyzerExecutor(
         IEnumerable<ICharacterFilter> characterFilters,
         ITokenizer tokenizer,
         IEnumerable<ITokenFilter> tokenFilters

@@ -13,14 +13,14 @@ namespace Persistify.Server.Validation.Dtos.Common;
 // TODO: Add tests
 public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescriptorDto>
 {
-    private readonly IAnalyzerFactory _analyzerFactory;
+    private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
 
     public FullAnalyzerDescriptorDtoValidator(
-        IAnalyzerFactory analyzerFactory
+        IAnalyzerExecutorFactory analyzerExecutorFactory
     )
     {
-        _analyzerFactory = analyzerFactory;
-        PropertyName.Push(nameof(AnalyzerDescriptor));
+        _analyzerExecutorFactory = analyzerExecutorFactory;
+        PropertyName.Push(nameof(Analyzer));
     }
 
     public override ValueTask<Result> ValidateNotNullAsync(FullAnalyzerDescriptorDto value)
@@ -73,7 +73,7 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescript
             count++;
         }
 
-        var analyzerFactoryResult = _analyzerFactory.Validate(value);
+        var analyzerFactoryResult = _analyzerExecutorFactory.Validate(value);
         if (analyzerFactoryResult.Failure)
         {
             switch (analyzerFactoryResult.Exception)

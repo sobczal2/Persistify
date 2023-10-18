@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
 using Xunit;
@@ -18,13 +20,16 @@ public class CreateTemplateAsyncTests : IntegrationTestBase
         var request = new CreateTemplateRequest
         {
             TemplateName = "TestTemplate",
-            TextFields = new List<TextField>
+            Fields = new List<FieldDto>
             {
-                new()
+                new TextFieldDto
                 {
                     Name = "TextField1",
                     Required = true,
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptor { PresetName = "standard" }
+                    AnalyzerDescriptor = new PresetAnalyzerDescriptorDto
+                    {
+                        PresetName = "standard"
+                    }
                 }
             }
         };

@@ -28,8 +28,8 @@ public static class ManagementExtensions
         services.AddSingleton<ITransactionState, TransactionState>();
         services.AddSingleton<IUserManager, UserManager>();
         services.AddSingleton<IRequiredFileGroup, UserManagerRequiredFileGroup>();
-        services.AddSingleton<IPresetAnalyzerDescriptorManager, PresetAnalyzerDescriptorManager>();
-        services.AddSingleton<IRequiredFileGroup, PresetAnalyzerDescriptorManagerRequiredFileGroup>();
+        services.AddSingleton<IPresetAnalyzerManager, PresetAnalyzerManager>();
+        services.AddSingleton<IRequiredFileGroup, PresetAnalyzerManagerRequiredFileGroup>();
 
         return services;
     }

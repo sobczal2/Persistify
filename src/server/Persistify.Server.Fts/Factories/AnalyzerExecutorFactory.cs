@@ -13,7 +13,7 @@ using Persistify.Server.Fts.Tokenizers;
 
 namespace Persistify.Server.Fts.Factories;
 
-public class AnalyzerFactory : IAnalyzerFactory
+public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
 {
     private static readonly ConcurrentBag<string> SupportedCharacterFilters =
         new() { "lowercase_letters", "uppercase_letters", "digits" };
@@ -47,13 +47,13 @@ public class AnalyzerFactory : IAnalyzerFactory
         return Result.Ok;
     }
 
-    public IAnalyzer Create(AnalyzerDescriptor descriptor)
+    public IAnalyzerExecutor Create(Analyzer descriptor)
     {
         var characterFilters = descriptor.CharacterFilterNames.Select(CreateCharacterFilter).ToList();
         var tokenizer = CreateTokenizer(descriptor.TokenizerName);
         var tokenFilters = descriptor.TokenFilterNames.Select(CreateTokenFilter).ToList();
 
-        return new StandardAnalyzer(characterFilters, tokenizer, tokenFilters);
+        return new AnalyzerExecutor(characterFilters, tokenizer, tokenFilters);
     }
 
     private ICharacterFilter CreateCharacterFilter(string name)

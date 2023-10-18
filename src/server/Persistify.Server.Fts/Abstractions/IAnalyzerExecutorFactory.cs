@@ -4,8 +4,8 @@ using Persistify.Helpers.Results;
 
 namespace Persistify.Server.Fts.Abstractions;
 
-public interface IAnalyzerFactory
+public interface IAnalyzerExecutorFactory
 {
-    IAnalyzer Create(AnalyzerDescriptor descriptor);
+    IAnalyzerExecutor Create(Analyzer descriptor);
     Result Validate(FullAnalyzerDescriptorDto descriptor);
 }

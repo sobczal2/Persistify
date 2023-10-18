@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
+using Persistify.Dtos.Mappers;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
@@ -35,9 +36,10 @@ public sealed class GetTemplateRequestHandler : RequestHandler<GetTemplateReques
 
     protected override GetTemplateResponse GetResponse()
     {
+        var template = _template ?? throw new InternalPersistifyException(nameof(GetTemplateRequest));
         return new GetTemplateResponse
         {
-            Template = _template ?? throw new InternalPersistifyException(nameof(GetTemplateRequest))
+            Template = TemplateMapper.Map(template)
         };
     }
 

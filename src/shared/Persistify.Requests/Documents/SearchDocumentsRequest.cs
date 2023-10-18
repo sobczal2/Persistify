@@ -16,5 +16,5 @@ public class SearchDocumentsRequest : IRequest<SearchDocumentsResponse>
     public PaginationDto Pagination { get; set; } = default!;
 
     [ProtoMember(3)]
-    public SearchQueryDto SearchQueryDto { get; set; } = default!;
+    public SearchQueryDto SearchQuery { get; set; } = default!;
 }

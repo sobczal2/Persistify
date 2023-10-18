@@ -3,7 +3,7 @@ using Persistify.Domain.PresetAnalyzerDescriptors;
 
 namespace Persistify.Server.Fts.Presets;
 
-public class StandardBuiltInPresetAnalyzerDescriptor : IBuiltInPresetAnalyzerDescriptor
+public class StandardBuiltInPresetAnalyzer : IBuiltInPresetAnalyzer
 {
     private const string TokenizerName = "whitespace";
 
@@ -11,7 +11,7 @@ public class StandardBuiltInPresetAnalyzerDescriptor : IBuiltInPresetAnalyzerDes
         new() { "lowercase_letters", "uppercase_letters", "digits" };
 
     private static readonly List<string> TokenFilterNames = new() { "lowercase", "suffix" };
-    public PresetAnalyzerDescriptor GetDescriptor()
+    public PresetAnalyzer GetPresetAnalyzer()
     {
         return new()
         {

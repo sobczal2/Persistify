@@ -16,14 +16,14 @@ using Persistify.Server.Serialization;
 
 namespace Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
 
-public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescriptorManager
+public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
 {
     private readonly IntStreamRepository _identifierRepository;
-    private readonly ObjectStreamRepository<PresetAnalyzerDescriptor> _presetAnalyzerDescriptorRepository;
-    private readonly ConcurrentDictionary<string, int> _presetAnalyzerDescriptorNameIdDictionary;
+    private readonly ObjectStreamRepository<PresetAnalyzer> _presetAnalyzerRepository;
+    private readonly ConcurrentDictionary<string, int> _presetAnalyzerNameIdDictionary;
     private volatile int _count;
 
-    public PresetAnalyzerDescriptorManager(
+    public PresetAnalyzerManager(
         ITransactionState transactionState,
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
@@ -33,21 +33,21 @@ public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescripto
     )
     {
         var identifierFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerDescriptorManagerRequiredFileGroup.IdentifierRepositoryFileName);
-        var presetAnalyzerDescriptorRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerDescriptorManagerRequiredFileGroup.TemplateRepositoryMainFileName);
-        var presetAnalyzerDescriptorRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerDescriptorManagerRequiredFileGroup.TemplateRepositoryOffsetLengthFileName);
+            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.IdentifierRepositoryFileName);
+        var presetAnalyzerRepositoryMainFileStream =
+            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryMainFileName);
+        var presetAnalyzerRepositoryOffsetLengthFileStream =
+            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryOffsetLengthFileName);
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
-        _presetAnalyzerDescriptorRepository = new ObjectStreamRepository<PresetAnalyzerDescriptor>(
-            presetAnalyzerDescriptorRepositoryMainFileStream,
-            presetAnalyzerDescriptorRepositoryOffsetLengthFileStream,
+        _presetAnalyzerRepository = new ObjectStreamRepository<PresetAnalyzer>(
+            presetAnalyzerRepositoryMainFileStream,
+            presetAnalyzerRepositoryOffsetLengthFileStream,
             serializer,
             repositorySettingsOptions.Value.PresetAnalyzerDescriptorRepositorySectorSize
         );
 
-        _presetAnalyzerDescriptorNameIdDictionary = new ConcurrentDictionary<string, int>();
+        _presetAnalyzerNameIdDictionary = new ConcurrentDictionary<string, int>();
         _count = 0;
     }
 
@@ -68,9 +68,9 @@ public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescripto
 
             _count = 0;
 
-            await foreach (var (key, presetAnalyzerDescriptor) in _presetAnalyzerDescriptorRepository.ReadAllAsync(true))
+            await foreach (var (key, presetAnalyzer) in _presetAnalyzerRepository.ReadAllAsync(true))
             {
-                _presetAnalyzerDescriptorNameIdDictionary.TryAdd(presetAnalyzerDescriptor.Name, key);
+                _presetAnalyzerNameIdDictionary.TryAdd(presetAnalyzer.Name, key);
 
                 Interlocked.Increment(ref _count);
             }
@@ -81,17 +81,17 @@ public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescripto
         PendingActions.Enqueue(initializeAction);
     }
 
-    public async ValueTask<PresetAnalyzerDescriptor?> GetAsync(string presetName)
+    public async ValueTask<PresetAnalyzer?> GetAsync(string presetAnalyzerName)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        if (!_presetAnalyzerDescriptorNameIdDictionary.TryGetValue(presetName, out var id))
+        if (!_presetAnalyzerNameIdDictionary.TryGetValue(presetAnalyzerName, out var id))
         {
             return null;
         }
 
-        return await _presetAnalyzerDescriptorRepository.ReadAsync(id, true);
+        return await _presetAnalyzerRepository.ReadAsync(id, true);
     }
 
     public bool Exists(string presetName)
@@ -99,26 +99,26 @@ public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescripto
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        return _presetAnalyzerDescriptorNameIdDictionary.ContainsKey(presetName);
+        return _presetAnalyzerNameIdDictionary.ContainsKey(presetName);
     }
 
-    public async IAsyncEnumerable<PresetAnalyzerDescriptor> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<PresetAnalyzer> ListAsync(int take, int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        await foreach (var (_, template) in _presetAnalyzerDescriptorRepository.ReadRangeAsync(take, skip, true))
+        await foreach (var (_, template) in _presetAnalyzerRepository.ReadRangeAsync(take, skip, true))
         {
             yield return template;
         }
     }
 
-    public void Add(PresetAnalyzerDescriptor preset)
+    public void Add(PresetAnalyzer presetAnalyzer)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
-        if (_presetAnalyzerDescriptorNameIdDictionary.ContainsKey(preset.Name))
+        if (_presetAnalyzerNameIdDictionary.ContainsKey(presetAnalyzer.Name))
         {
             throw new InternalPersistifyException();
         }
@@ -131,9 +131,11 @@ public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescripto
 
             await _identifierRepository.WriteAsync(0, currentId, true);
 
-            preset.Id = currentId;
+            presetAnalyzer.Id = currentId;
 
-            await _presetAnalyzerDescriptorRepository.WriteAsync(currentId, preset, true);
+            await _presetAnalyzerRepository.WriteAsync(currentId, presetAnalyzer, true);
+
+            _presetAnalyzerNameIdDictionary.TryAdd(presetAnalyzer.Name, currentId);
 
             Interlocked.Increment(ref _count);
         });
@@ -141,28 +143,28 @@ public class PresetAnalyzerDescriptorManager : Manager, IPresetAnalyzerDescripto
         PendingActions.Enqueue(addAction);
     }
 
-    public async ValueTask<bool> RemoveAsync(string presetName)
+    public async ValueTask<bool> RemoveAsync(string presetAnalyzerName)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
 
-        if (!_presetAnalyzerDescriptorNameIdDictionary.TryGetValue(presetName, out var id))
+        if (!_presetAnalyzerNameIdDictionary.TryGetValue(presetAnalyzerName, out var id))
         {
             return false;
         }
 
-        var presetAnalyzerDescriptor = await _presetAnalyzerDescriptorRepository.ReadAsync(id, true);
+        var presetAnalyzer = await _presetAnalyzerRepository.ReadAsync(id, true);
 
-        if (presetAnalyzerDescriptor is null)
+        if (presetAnalyzer is null)
         {
             throw new InternalPersistifyException();
         }
 
         var removeAction = new Func<ValueTask>(async () =>
         {
-            if (await _presetAnalyzerDescriptorRepository.DeleteAsync(id, true))
+            if (await _presetAnalyzerRepository.DeleteAsync(id, true))
             {
-                if(!_presetAnalyzerDescriptorNameIdDictionary.TryRemove(presetAnalyzerDescriptor.Name, out _))
+                if(!_presetAnalyzerNameIdDictionary.TryRemove(presetAnalyzer.Name, out _))
                 {
                     throw new InternalPersistifyException();
                 }

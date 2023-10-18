@@ -4,5 +4,5 @@ namespace Persistify.Client.Objects.Analyzers;
 
 public interface IAnalyzerDescriptorStore
 {
-    AnalyzerDescriptor Get(string name);
+    Analyzer Get(string name);
 }

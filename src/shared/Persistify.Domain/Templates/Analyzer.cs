@@ -4,7 +4,7 @@ using ProtoBuf;
 namespace Persistify.Domain.Templates;
 
 [ProtoContract]
-public class AnalyzerDescriptor
+public class Analyzer
 {
     [ProtoMember(1)]
     public List<string> CharacterFilterNames { get; set; } = default!;

@@ -5,9 +5,9 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Requests.Internal;
 
-public class InitializePresetAnalyzerDescriptorManagerRequestValidator : Validator<InitializePresetAnalyzerDescriptorManagerRequest>
+public class InitializePresetAnalyzerDescriptorManagerRequestValidator : Validator<InitializePresetAnalyzerManagerRequest>
 {
-    public override ValueTask<Result> ValidateNotNullAsync(InitializePresetAnalyzerDescriptorManagerRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(InitializePresetAnalyzerManagerRequest value)
     {
         return ValueTask.FromResult(Result.Ok);
     }

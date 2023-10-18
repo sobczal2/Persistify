@@ -21,7 +21,7 @@ public class IndexerStore
 
     public IndexerStore(
         Template template,
-        IAnalyzerFactory analyzerFactory
+        IAnalyzerExecutorFactory analyzerExecutorFactory
     )
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
@@ -37,7 +37,7 @@ public class IndexerStore
                     _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
                     break;
                 case TextField textField:
-                    var analyzer = analyzerFactory.Create(textField.AnalyzerDescriptor);
+                    var analyzer = analyzerExecutorFactory.Create(textField.Analyzer);
                     _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
                     break;
                 default:
