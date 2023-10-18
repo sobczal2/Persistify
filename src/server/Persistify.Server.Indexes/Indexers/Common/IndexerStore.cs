@@ -7,7 +7,7 @@ using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Helpers.Algorithms;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;
 using Persistify.Server.Indexes.Indexers.Number;
 using Persistify.Server.Indexes.Indexers.Text;

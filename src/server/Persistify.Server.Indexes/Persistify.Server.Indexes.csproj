@@ -13,7 +13,7 @@
     <ProjectReference Include="..\..\shared\Persistify.Dtos\Persistify.Dtos.csproj" />
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
     <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Fts.Analysis\Persistify.Server.Fts.Analysis.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Fts\Persistify.Server.Fts.csproj" />
     <ProjectReference Include="..\Persistify.Server.Indexes.DataStructures\Persistify.Server.Indexes.DataStructures.csproj"/>
 
 

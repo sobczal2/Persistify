@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using Persistify.Domain.Templates;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Files;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Serialization;
 

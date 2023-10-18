@@ -4,7 +4,7 @@ using Persistify.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.DataStructures.Tries;
 using Persistify.Server.Indexes.Indexers.Common;

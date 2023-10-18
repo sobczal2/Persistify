@@ -4,8 +4,8 @@ using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Fts.Analysis.Abstractions;
-using Persistify.Server.Fts.Analysis.Exceptions;
+using Persistify.Server.Fts.Abstractions;
+using Persistify.Server.Fts.Exceptions;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Dtos.Common;

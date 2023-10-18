@@ -11,7 +11,7 @@ using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Mappers;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Files;
-using Persistify.Server.Fts.Analysis.Abstractions;
+using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Persistence.Extensions;

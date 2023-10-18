@@ -8,4 +8,5 @@ public class RepositorySettings
     public int DocumentRepositorySectorSize { get; set; }
     public int UserRepositorySectorSize { get; set; }
     public int RefreshTokenRepositorySectorSize { get; set; }
+    public int PresetAnalyzerDescriptorRepositorySectorSize { get; set; }
 }

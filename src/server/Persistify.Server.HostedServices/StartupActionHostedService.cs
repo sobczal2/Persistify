@@ -27,7 +27,8 @@ public class StartupActionHostedService : BackgroundService
     {
         _logger.LogInformation("Executing startup actions");
         var internalClaimsPrincipal = ClaimsPrincipalExtensions.InternalClaimsPrincipal;
-        await _requestDispatcher.DispatchAsync<SetupFileSystemRequest, SetupFileSystemResponse>(new SetupFileSystemRequest(),
+        await _requestDispatcher.DispatchAsync<SetupFileSystemRequest, SetupFileSystemResponse>(
+            new SetupFileSystemRequest(),
             internalClaimsPrincipal, stoppingToken);
         await _requestDispatcher.DispatchAsync<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>(
             new InitializeTemplateManagerRequest(), internalClaimsPrincipal, stoppingToken);
@@ -37,6 +38,9 @@ public class StartupActionHostedService : BackgroundService
             new InitializeUserManagerRequest(), internalClaimsPrincipal, stoppingToken);
         await _requestDispatcher.DispatchAsync<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>(
             new EnsureRootUserExistsRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<InitializePresetAnalyzerDescriptorManagerRequest,
+            InitializePresetAnalyzerDescriptorManagerResponse>(
+            new InitializePresetAnalyzerDescriptorManagerRequest(), internalClaimsPrincipal, stoppingToken);
         _logger.LogInformation("Startup actions executed");
     }
 }
