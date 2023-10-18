@@ -8,7 +8,7 @@ public class DefaultAnalyzerDescriptorFactory : IAnalyzerDescriptorFactory
     {
         return name switch
         {
-            PresetAnalyzerDescriptors.Standard => new PresetAnalyzerDescriptor { PresetName = "standard" },
+            // PresetAnalyzerDescriptors.Standard => new PresetAnalyzerDescriptor { PresetName = "standard" },
             _ => null
         };
     }

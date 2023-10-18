@@ -97,9 +97,9 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
         var createTemplateRequest = new CreateTemplateRequest
         {
             TemplateName = templateName,
-            BoolFields = boolFields,
-            NumberFields = numberFields,
-            TextFields = textFields
+            // BoolFields = boolFields,
+            // NumberFields = numberFields,
+            // TextFields = textFields
         };
 
         try
@@ -174,9 +174,9 @@ public class PersistifyObjectsClient : IPersistifyObjectsClient
         var createDocumentRequest = new CreateDocumentRequest
         {
             TemplateName = templateName,
-            BoolFieldValues = boolFieldValues,
-            NumberFieldValues = numberFieldValues,
-            TextFieldValues = textFieldValues
+            // BoolFieldValues = boolFieldValues,
+            // NumberFieldValues = numberFieldValues,
+            // TextFieldValues = textFieldValues
         };
 
         await Client.CreateDocumentAsync(createDocumentRequest, callContext);
