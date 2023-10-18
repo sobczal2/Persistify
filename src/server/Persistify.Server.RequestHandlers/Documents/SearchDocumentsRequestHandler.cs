@@ -45,7 +45,7 @@ public class SearchDocumentsRequestHandler : RequestHandler<SearchDocumentsReque
         await RequestHandlerContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQuery, take, skip);
+        var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQueryDto, take, skip);
 
         _response = new SearchDocumentsResponse { SearchRecords = searchRecords, TotalCount = count };
     }

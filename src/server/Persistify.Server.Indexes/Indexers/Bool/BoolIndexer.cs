@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Persistify.Domain.Documents;
-using Persistify.Domain.Search.Queries;
-using Persistify.Domain.Search.Queries.Bool;
+using Persistify.Dtos.Documents.Search.Queries;
+using Persistify.Dtos.Documents.Search.Queries.Bool;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Indexes.Searches;
@@ -26,7 +26,12 @@ public class BoolIndexer : IIndexer
 
     public void IndexAsync(Document document)
     {
-        var boolFieldValue = document.BoolFieldValuesByFieldName[FieldName];
+        var boolFieldValue = document.GetBoolFieldValueByName(FieldName);
+        if (boolFieldValue == null)
+        {
+            throw new InternalPersistifyException();
+        }
+
         if (boolFieldValue.Value)
         {
             _trueDocuments.Add(document.Id);
@@ -37,47 +42,40 @@ public class BoolIndexer : IIndexer
         }
     }
 
-    public IEnumerable<ISearchResult> SearchAsync(SearchQuery query)
+    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto query)
     {
-        if (query is not BoolSearchQuery boolSearchQuery || boolSearchQuery.GetFieldName() != FieldName)
+        if (query is not BoolSearchQueryDto boolSearchQuery || boolSearchQuery.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
         return boolSearchQuery switch
         {
-            ExactBoolSearchQuery exactBoolSearchQuery => HandleExactBoolSearch(exactBoolSearchQuery),
+            ExactBoolSearchQueryDto exactBoolSearchQuery => HandleExactBoolSearch(exactBoolSearchQuery),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
 
     public void DeleteAsync(Document document)
     {
-        var boolFieldValue = document.BoolFieldValuesByFieldName[FieldName];
-        if (boolFieldValue.Value)
-        {
-            _trueDocuments.Remove(document.Id);
-        }
-        else
-        {
-            _falseDocuments.Remove(document.Id);
-        }
+        _trueDocuments.Remove(document.Id);
+        _falseDocuments.Remove(document.Id);
     }
 
-    private IEnumerable<ISearchResult> HandleExactBoolSearch(ExactBoolSearchQuery query)
+    private IEnumerable<SearchResult> HandleExactBoolSearch(ExactBoolSearchQueryDto query)
     {
         if (query.Value)
         {
             foreach (var documentId in _trueDocuments)
             {
-                yield return new SearchResult(documentId, new Metadata(query.Boost));
+                yield return new SearchResult(documentId, new SearchMetadata(query.Boost));
             }
         }
         else
         {
             foreach (var documentId in _falseDocuments)
             {
-                yield return new SearchResult(documentId, new Metadata(query.Boost));
+                yield return new SearchResult(documentId, new SearchMetadata(query.Boost));
             }
         }
     }

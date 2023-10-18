@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Persistify.Domain.Documents;
-using Persistify.Domain.Search.Queries;
-using Persistify.Domain.Search.Queries.Number;
+using Persistify.Dtos.Documents.Search.Queries;
+using Persistify.Dtos.Documents.Search.Queries.Number;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -24,26 +24,31 @@ public class NumberIndexer : IIndexer
 
     public void IndexAsync(Document document)
     {
-        var numberFieldValue = document.NumberFieldValuesByFieldName[FieldName];
+        var numberFieldValue = document.GetNumberFieldValueByName(FieldName);
+        if (numberFieldValue == null)
+        {
+            throw new InternalPersistifyException();
+        }
+
         _intervalTree.Insert(new NumberIndexerIntervalTreeRecord
         {
             DocumentId = document.Id, Value = numberFieldValue.Value
         });
     }
 
-    public IEnumerable<ISearchResult> SearchAsync(SearchQuery query)
+    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto query)
     {
-        if (query is not NumberSearchQuery numberSearchQuery || numberSearchQuery.GetFieldName() != FieldName)
+        if (query is not NumberSearchQueryDto numberSearchQuery || numberSearchQuery.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
         return query switch
         {
-            ExactNumberSearchQuery exactNumberSearchQuery => HandleExactNumberSearch(exactNumberSearchQuery),
-            GreaterNumberSearchQuery greaterNumberSearchQuery => HandleGreaterNumberSearch(greaterNumberSearchQuery),
-            LessNumberSearchQuery lessNumberSearchQuery => HandleLessNumberSearch(lessNumberSearchQuery),
-            RangeNumberSearchQuery rangeNumberSearchQuery => HandleRangeNumberSearch(rangeNumberSearchQuery),
+            ExactNumberSearchQueryDto exactNumberSearchQuery => HandleExactNumberSearch(exactNumberSearchQuery),
+            GreaterNumberSearchQueryDto greaterNumberSearchQuery => HandleGreaterNumberSearch(greaterNumberSearchQuery),
+            LessNumberSearchQueryDto lessNumberSearchQuery => HandleLessNumberSearch(lessNumberSearchQuery),
+            RangeNumberSearchQueryDto rangeNumberSearchQuery => HandleRangeNumberSearch(rangeNumberSearchQuery),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
@@ -53,7 +58,7 @@ public class NumberIndexer : IIndexer
         _intervalTree.Remove(x => x.DocumentId == document.Id);
     }
 
-    private IEnumerable<ISearchResult> HandleExactNumberSearch(ExactNumberSearchQuery query)
+    private IEnumerable<SearchResult> HandleExactNumberSearch(ExactNumberSearchQueryDto query)
     {
         var results = _intervalTree.Search(query.Value, query.Value, (x, y) => x.Value.CompareTo(y));
 
@@ -61,11 +66,11 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
         }
     }
 
-    private IEnumerable<ISearchResult> HandleGreaterNumberSearch(GreaterNumberSearchQuery query)
+    private IEnumerable<SearchResult> HandleGreaterNumberSearch(GreaterNumberSearchQueryDto query)
     {
         var results = _intervalTree.Search(query.Value, double.MaxValue, (x, y) => x.Value.CompareTo(y));
 
@@ -73,11 +78,11 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
         }
     }
 
-    private IEnumerable<ISearchResult> HandleLessNumberSearch(LessNumberSearchQuery query)
+    private IEnumerable<SearchResult> HandleLessNumberSearch(LessNumberSearchQueryDto query)
     {
         var results = _intervalTree.Search(double.MinValue, query.Value, (x, y) => x.Value.CompareTo(y));
 
@@ -85,11 +90,11 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
         }
     }
 
-    private IEnumerable<ISearchResult> HandleRangeNumberSearch(RangeNumberSearchQuery query)
+    private IEnumerable<SearchResult> HandleRangeNumberSearch(RangeNumberSearchQueryDto query)
     {
         var results = _intervalTree.Search(query.MinValue, query.MaxValue, (x, y) => x.Value.CompareTo(y));
 
@@ -97,7 +102,7 @@ public class NumberIndexer : IIndexer
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new Metadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
         }
     }
 }

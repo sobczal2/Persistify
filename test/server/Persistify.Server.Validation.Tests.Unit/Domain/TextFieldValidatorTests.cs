@@ -5,7 +5,7 @@ using NSubstitute;
 using Persistify.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Domain;
+using Persistify.Server.Validation.Dtos.Fields;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Domain;
@@ -15,14 +15,14 @@ public class TextFieldValidatorTests
 {
     private readonly IValidator<FullAnalyzerDescriptor> _fullAnalyzerDescriptorValidator;
     private readonly IValidator<PresetAnalyzerDescriptor> _presetAnalyzerDescriptorValidator;
-    private readonly TextFieldValidator _sut;
+    private readonly TextFieldDtoValidator _sut;
 
     public TextFieldValidatorTests()
     {
         _fullAnalyzerDescriptorValidator = Substitute.For<IValidator<FullAnalyzerDescriptor>>();
         _presetAnalyzerDescriptorValidator = Substitute.For<IValidator<PresetAnalyzerDescriptor>>();
 
-        _sut = new TextFieldValidator(_fullAnalyzerDescriptorValidator, _presetAnalyzerDescriptorValidator);
+        _sut = new TextFieldDtoValidator(_fullAnalyzerDescriptorValidator, _presetAnalyzerDescriptorValidator);
     }
 
     [Fact]

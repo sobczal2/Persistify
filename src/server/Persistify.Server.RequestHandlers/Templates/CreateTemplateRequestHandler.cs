@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
+using Persistify.Dtos.Mappers;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
@@ -33,9 +35,7 @@ public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplate
         _template = new Template
         {
             Name = request.TemplateName,
-            TextFields = request.TextFields,
-            NumberFields = request.NumberFields,
-            BoolFields = request.BoolFields
+            Fields = request.Fields.Select(FieldMapper.Map).ToList()
         };
 
         _templateManager.Add(_template);

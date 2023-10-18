@@ -2,14 +2,15 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Users;
+using Persistify.Dtos.Mappers;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
-using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.CommandHandlers.Users;
 
@@ -41,7 +42,7 @@ public class GetUserRequestHandler : RequestHandler<GetUserRequest, GetUserRespo
             throw new InternalPersistifyException(nameof(GetUserRequest));
         }
 
-        return new GetUserResponse { Username = _user.Username, Permission = (int)_user.Permission };
+        return new GetUserResponse { User = UserMapper.Map(_user) };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetUserRequest request)

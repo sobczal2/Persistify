@@ -3,27 +3,28 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Persistify.Domain.Search.Queries.Bool;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Common;
+using Persistify.Dtos.Documents.Search.Queries.Bool;
 using Persistify.Requests.Common;
 using Persistify.Requests.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Documents;
+using Persistify.Server.Validation.Requests.Documents;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Documents;
 
 public class SearchDocumentsRequestValidatorTests
 {
-    private readonly IValidator<Pagination> _paginationValidator;
+    private readonly IValidator<PaginationDto> _paginationValidator;
     private readonly SearchDocumentsRequestValidator _sut;
     private readonly ITemplateManager _templateManager;
 
     public SearchDocumentsRequestValidatorTests()
     {
-        _paginationValidator = Substitute.For<IValidator<Pagination>>();
+        _paginationValidator = Substitute.For<IValidator<PaginationDto>>();
         _templateManager = Substitute.For<ITemplateManager>();
 
         _sut = new SearchDocumentsRequestValidator(_paginationValidator, _templateManager);
@@ -160,12 +161,12 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         List<string> propertyNameAtCall = null!;
         _paginationValidator
-            .When(x => x.ValidateAsync(Arg.Any<Pagination>()))
+            .When(x => x.ValidateAsync(Arg.Any<PaginationDto>()))
             .Do(x => propertyNameAtCall = new List<string>(_sut.PropertyName));
 
         // Act
@@ -180,11 +181,11 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new Pagination() };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         var validationException = new StaticValidationPersistifyException("Test", "Test");
-        _paginationValidator.ValidateAsync(Arg.Any<Pagination>()).Returns(validationException);
+        _paginationValidator.ValidateAsync(Arg.Any<PaginationDto>()).Returns(validationException);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -201,8 +202,8 @@ public class SearchDocumentsRequestValidatorTests
         var request = new SearchDocumentsRequest
         {
             TemplateName = "Test",
-            Pagination = new Pagination(),
-            SearchQuery = new ExactBoolSearchQuery { FieldName = "Test", Value = true, Boost = 1 }
+            PaginationDto = new PaginationDto(),
+            SearchQueryDto = new ExactBoolSearchQueryDto { FieldName = "Test", Value = true, Boost = 1 }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {

@@ -5,9 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Persistify.Domain.Documents;
-using Persistify.Domain.Search;
-using Persistify.Domain.Search.Queries;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Documents.Search;
+using Persistify.Dtos.Documents.Search.Queries;
+using Persistify.Dtos.Mappers;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.Files;
 using Persistify.Server.Fts.Analysis.Abstractions;
@@ -34,15 +35,14 @@ public class DocumentManager : Manager, IDocumentManager
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
-        IAnalyzerFactory analyzerFactory,
-        IAnalyzerPresetFactory analyzerPresetFactory
+        IAnalyzerFactory analyzerFactory
     ) : base(
         transactionState
     )
     {
         _template = template;
 
-        _indexerStore = new IndexerStore(template, analyzerFactory, analyzerPresetFactory);
+        _indexerStore = new IndexerStore(template, analyzerFactory);
 
         var identifierFileStream =
             fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id));
@@ -121,8 +121,8 @@ public class DocumentManager : Manager, IDocumentManager
         }
     }
 
-    public async ValueTask<(List<SearchRecord> searchRecords, int count)> SearchAsync(
-        SearchQuery searchQuery, int take,
+    public async ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(
+        SearchQueryDto searchQuery, int take,
         int skip)
     {
         ThrowIfNotInitialized();
@@ -130,16 +130,20 @@ public class DocumentManager : Manager, IDocumentManager
 
         var searchResults = _indexerStore.Search(searchQuery).ToList();
 
-        searchResults.Sort((a, b) => b.Metadata.Score.CompareTo(a.Metadata.Score));
+        searchResults.Sort((a, b) => b.SearchMetadata.Score.CompareTo(a.SearchMetadata.Score));
 
-        var searchRecords = new List<SearchRecord>();
+        var searchRecords = new List<SearchRecordDto>();
 
         foreach (var searchResult in searchResults.Skip(skip).Take(take))
         {
             var document = await _documentRepository.ReadAsync(searchResult.DocumentId, true);
             if (document != null)
             {
-                searchRecords.Add(new SearchRecord(document, searchResult.Metadata.ToSearchMetadataList()));
+                searchRecords.Add(new SearchRecordDto
+                {
+                    Document = DocumentMapper.Map(document),
+                    MetadataList = searchResult.SearchMetadata.ToSearchMetadataList()
+                });
             }
         }
 

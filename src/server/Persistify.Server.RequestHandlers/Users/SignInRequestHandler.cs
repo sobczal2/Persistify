@@ -2,15 +2,16 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Users;
+using Persistify.Dtos.Mappers;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
-using Persistify.Server.Validation.Users;
 
 namespace Persistify.Server.CommandHandlers.Users;
 
@@ -54,8 +55,7 @@ public class SignInRequestHandler : RequestHandler<SignInRequest, SignInResponse
 
         _response = new SignInResponse
         {
-            Username = user.Username,
-            Permission = (int)user.Permission,
+            User = UserMapper.Map(user),
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };

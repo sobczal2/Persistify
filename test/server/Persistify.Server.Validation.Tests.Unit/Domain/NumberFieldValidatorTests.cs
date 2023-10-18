@@ -3,18 +3,18 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Validation.Domain;
+using Persistify.Server.Validation.Dtos.Fields;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Domain;
 
 public class NumberFieldValidatorTests
 {
-    private readonly NumberFieldValidator _sut;
+    private readonly NumberFieldDtoValidator _sut;
 
     public NumberFieldValidatorTests()
     {
-        _sut = new NumberFieldValidator();
+        _sut = new NumberFieldDtoValidator();
     }
 
     [Fact]

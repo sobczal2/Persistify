@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Persistify.Dtos.Common;
 using Persistify.Requests.Common;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Shared;
@@ -48,7 +49,7 @@ public class PaginationValidatorTests
     public async Task Validate_WhenPageNumberLessThanZero_ReturnsValidationException()
     {
         // Arrange
-        var value = new Pagination { PageNumber = -1, PageSize = 1 };
+        var value = new PaginationDto { PageNumber = -1, PageSize = 1 };
 
         // Act
         var result = await _sut.ValidateAsync(value);
@@ -65,7 +66,7 @@ public class PaginationValidatorTests
     public async Task Validate_WhenPageSizeLessThanOrEqualToZero_ReturnsValidationException()
     {
         // Arrange
-        var value = new Pagination { PageNumber = 1, PageSize = 0 };
+        var value = new PaginationDto { PageNumber = 1, PageSize = 0 };
 
         // Act
         var result = await _sut.ValidateAsync(value);
@@ -82,7 +83,7 @@ public class PaginationValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var value = new Pagination { PageNumber = 1, PageSize = 1 };
+        var value = new PaginationDto { PageNumber = 1, PageSize = 1 };
 
         // Act
         var result = await _sut.ValidateAsync(value);

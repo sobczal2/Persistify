@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Common;
 using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
@@ -32,7 +33,7 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
         };
 
         await TemplateService.CreateTemplateAsync(addTemplateRequest, callContext);
-        var request = new ListTemplatesRequest { Pagination = new Pagination { PageNumber = 0, PageSize = 10 } };
+        var request = new ListTemplatesRequest { PaginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 } };
 
         // Act
         var response = await TemplateService.ListTemplatesAsync(request, callContext);

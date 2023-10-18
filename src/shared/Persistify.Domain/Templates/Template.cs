@@ -7,14 +7,6 @@ namespace Persistify.Domain.Templates;
 [ProtoContract]
 public class Template
 {
-    private List<BoolField>? _boolFields;
-    private IDictionary<string, BoolField>? _boolFieldsByName;
-    private List<NumberField>? _numberFields;
-    private IDictionary<string, NumberField>? _numberFieldsByName;
-    private List<TextField>? _textFields;
-
-    private IDictionary<string, TextField>? _textFieldsByName;
-
     [ProtoMember(1)]
     public int Id { get; set; }
 
@@ -22,44 +14,21 @@ public class Template
     public string Name { get; set; } = default!;
 
     [ProtoMember(3)]
-    public List<TextField> TextFields
+    public List<Field> Fields { get; set; } = default!;
+
+    private Dictionary<string, Field>? _fieldNameTypeMap;
+
+    private void EnsureFieldNameTypeMapInitialized()
     {
-        get => _textFields ??= new List<TextField>(0);
-        set
+        if (_fieldNameTypeMap == null)
         {
-            _textFields = value;
-            _textFieldsByName = null;
+            _fieldNameTypeMap = Fields.ToDictionary(f => f.Name, f => f);
         }
     }
 
-    [ProtoMember(4)]
-    public List<NumberField> NumberFields
+    public Field? GetFieldByName(string fieldName)
     {
-        get => _numberFields ??= new List<NumberField>(0);
-        set
-        {
-            _numberFields = value;
-            _numberFieldsByName = null;
-        }
+        EnsureFieldNameTypeMapInitialized();
+        return _fieldNameTypeMap!.TryGetValue(fieldName, out var field) ? field : null;
     }
-
-    [ProtoMember(5)]
-    public List<BoolField> BoolFields
-    {
-        get => _boolFields ??= new List<BoolField>(0);
-        set
-        {
-            _boolFields = value;
-            _boolFieldsByName = null;
-        }
-    }
-
-    public IDictionary<string, TextField> TextFieldsByName =>
-        _textFieldsByName ??= TextFields.ToDictionary(x => x.Name);
-
-    public IDictionary<string, NumberField> NumberFieldsByName =>
-        _numberFieldsByName ??= NumberFields.ToDictionary(x => x.Name);
-
-    public IDictionary<string, BoolField> BoolFieldsByName =>
-        _boolFieldsByName ??= BoolFields.ToDictionary(x => x.Name);
 }

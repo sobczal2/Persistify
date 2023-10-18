@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
+using Persistify.Dtos.Mappers;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
@@ -40,9 +41,10 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
 
     protected override ListTemplatesResponse GetResponse()
     {
+        var templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
         return new ListTemplatesResponse
         {
-            Templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest)),
+            Templates = templates.Select(TemplateMapper.Map).ToList(),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
         };
     }

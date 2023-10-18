@@ -1,18 +1,20 @@
 ﻿using System.Threading.Tasks;
+using Persistify.Dtos.Common;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Common;
+using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Shared;
 
-public class PaginationValidator : Validator<Pagination>
+public class PaginationValidator : Validator<PaginationDto>
 {
     public PaginationValidator()
     {
-        PropertyName.Push(nameof(Pagination));
+        PropertyName.Push(nameof(PaginationDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(Pagination value)
+    public override ValueTask<Result> ValidateNotNullAsync(PaginationDto value)
     {
         if (value.PageNumber < 0)
         {

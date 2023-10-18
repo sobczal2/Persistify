@@ -15,7 +15,6 @@ namespace Persistify.Server.Management.Managers.Documents;
 public class DocumentManagerStore : IDocumentManagerStore
 {
     private readonly IAnalyzerFactory _analyzerFactory;
-    private readonly IAnalyzerPresetFactory _analyzerPresetFactory;
     private readonly IFileStreamFactory _fileStreamFactory;
     private readonly ConcurrentDictionary<int, IDocumentManager> _repositories;
     private readonly IOptions<RepositorySettings> _repositorySettingsOptions;
@@ -28,8 +27,7 @@ public class DocumentManagerStore : IDocumentManagerStore
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
-        IAnalyzerFactory analyzerFactory,
-        IAnalyzerPresetFactory analyzerPresetFactory
+        IAnalyzerFactory analyzerFactory
     )
     {
         _transactionState = transactionState;
@@ -37,7 +35,6 @@ public class DocumentManagerStore : IDocumentManagerStore
         _serializer = serializer;
         _repositorySettingsOptions = repositorySettingsOptions;
         _analyzerFactory = analyzerFactory;
-        _analyzerPresetFactory = analyzerPresetFactory;
         _repositories = new ConcurrentDictionary<int, IDocumentManager>();
         _spinLock = new SpinLock();
     }
@@ -66,8 +63,7 @@ public class DocumentManagerStore : IDocumentManagerStore
                 _fileStreamFactory,
                 _serializer,
                 _repositorySettingsOptions,
-                _analyzerFactory,
-                _analyzerPresetFactory
+                _analyzerFactory
             );
 
             _repositories.TryAdd(template.Id, repository);

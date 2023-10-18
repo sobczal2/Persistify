@@ -4,11 +4,12 @@ using Persistify.Client.Core;
 using Persistify.Client.Documents;
 using Persistify.Client.Templates;
 using Persistify.Domain.Documents;
-using Persistify.Domain.Search.Queries;
-using Persistify.Domain.Search.Queries.Aggregates;
-using Persistify.Domain.Search.Queries.Bool;
-using Persistify.Domain.Search.Queries.Text;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.Common;
+using Persistify.Dtos.Documents.Search.Queries;
+using Persistify.Dtos.Documents.Search.Queries.Aggregates;
+using Persistify.Dtos.Documents.Search.Queries.Bool;
+using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Requests.Common;
 using Persistify.Requests.Documents;
 using Persistify.Requests.Templates;
@@ -74,14 +75,14 @@ public static class AnimalHelpers
     {
         await client.SearchDocumentsAsync(new SearchDocumentsRequest
         {
-            Pagination = new Pagination { PageNumber = 0, PageSize = 10 },
-            SearchQuery = new AndSearchQuery
+            PaginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 },
+            SearchQueryDto = new AndSearchQueryDto
             {
                 Boost = 1,
-                Queries = new List<SearchQuery>
+                Queries = new List<SearchQueryDto>
                 {
-                    new FullTextSearchQuery { Boost = 1, FieldName = "Name", Value = query },
-                    new ExactBoolSearchQuery { Boost = 1, FieldName = "IsCute", Value = isCute }
+                    new FullTextSearchQueryDto { Boost = 1, FieldName = "Name", Value = query },
+                    new ExactBoolSearchQueryDto { Boost = 1, FieldName = "IsCute", Value = isCute }
                 }
             },
             TemplateName = "Animal"

@@ -6,7 +6,7 @@ using NSubstitute;
 using Persistify.Requests.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
-using Persistify.Server.Validation.Templates;
+using Persistify.Server.Validation.Requests.Templates;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Templates;

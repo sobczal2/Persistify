@@ -1,4 +1,5 @@
-﻿using Persistify.Requests.Common;
+﻿using Persistify.Dtos.Common;
+using Persistify.Requests.Common;
 using Persistify.Responses.Users;
 using ProtoBuf;
 
@@ -8,5 +9,5 @@ namespace Persistify.Requests.Users;
 public class ListUsersRequest : IRequest<ListUsersResponse>
 {
     [ProtoMember(1)]
-    public Pagination Pagination { get; set; } = default!;
+    public PaginationDto Pagination { get; set; } = default!;
 }

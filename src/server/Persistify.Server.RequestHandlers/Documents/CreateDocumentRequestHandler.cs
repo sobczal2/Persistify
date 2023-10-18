@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Domain.Documents;
 using Persistify.Domain.Users;
+using Persistify.Dtos.Mappers;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.CommandHandlers.Common;
@@ -39,9 +41,7 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
 
         _document = new Document
         {
-            TextFieldValues = request.TextFieldValues,
-            NumberFieldValues = request.NumberFieldValues,
-            BoolFieldValues = request.BoolFieldValues
+            FieldValues = request.FieldValues.Select(FieldValueMapper.Map).ToList()
         };
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ??

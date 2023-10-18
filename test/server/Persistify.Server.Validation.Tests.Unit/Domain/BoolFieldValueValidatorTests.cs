@@ -3,18 +3,18 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Validation.Domain;
+using Persistify.Server.Validation.Dtos.FieldValues;
 using Xunit;
 
 namespace Persistify.Server.Validation.Tests.Unit.Domain;
 
 public class BoolFieldValueValidatorTests
 {
-    private readonly BoolFieldValueValidator _sut;
+    private readonly BoolFieldValueDtoValidator _sut;
 
     public BoolFieldValueValidatorTests()
     {
-        _sut = new BoolFieldValueValidator();
+        _sut = new BoolFieldValueDtoValidator();
     }
 
     [Fact]
