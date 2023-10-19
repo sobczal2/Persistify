@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
-using Persistify.Domain.Users;
 using Persistify.Requests.Users;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.Tests.Integration.Common;
 using Xunit;
 

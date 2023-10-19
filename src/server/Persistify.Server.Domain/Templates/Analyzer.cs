@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
 
-namespace Persistify.Domain.Templates;
+namespace Persistify.Server.Domain.Templates;
 
 [ProtoContract]
 public class Analyzer

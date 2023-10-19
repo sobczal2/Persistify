@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Persistify.Domain.Documents;
+using Persistify.Server.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Server.ErrorHandling.Exceptions;

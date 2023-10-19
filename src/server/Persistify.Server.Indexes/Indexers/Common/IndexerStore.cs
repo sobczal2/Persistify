@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Helpers.Algorithms;

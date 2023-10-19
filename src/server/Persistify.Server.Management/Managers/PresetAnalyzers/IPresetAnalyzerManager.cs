@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Domain.PresetAnalyzers;
+using Persistify.Server.Domain.PresetAnalyzers;
 
 namespace Persistify.Server.Management.Managers.PresetAnalyzers;
 

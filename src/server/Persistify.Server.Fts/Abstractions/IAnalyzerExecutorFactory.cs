@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Templates;
+﻿using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;

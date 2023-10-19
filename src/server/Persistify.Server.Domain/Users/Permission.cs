@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persistify.Domain.Users;
+namespace Persistify.Server.Domain.Users;
 
 [Flags]
 public enum Permission

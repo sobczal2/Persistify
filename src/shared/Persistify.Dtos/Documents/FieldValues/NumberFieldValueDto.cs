@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Templates;
+﻿using Persistify.Server.Domain.Templates;
 using ProtoBuf;
 
 namespace Persistify.Dtos.Documents.FieldValues;
@@ -9,5 +9,5 @@ public class NumberFieldValueDto : FieldValueDto
     [ProtoMember(2)]
     public double Value { get; set; }
 
-    public override FieldType FieldType => FieldType.Number;
+    public override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 }

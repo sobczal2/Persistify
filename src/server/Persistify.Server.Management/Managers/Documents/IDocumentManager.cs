@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
+using Persistify.Server.Domain.Documents;
 using Persistify.Dtos.Documents.Search;
 using Persistify.Dtos.Documents.Search.Queries;
 

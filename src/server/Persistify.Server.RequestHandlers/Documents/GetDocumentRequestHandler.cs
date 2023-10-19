@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.Documents.Common;
+using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
@@ -58,7 +60,34 @@ public class GetDocumentRequestHandler : RequestHandler<GetDocumentRequest, GetD
     protected override GetDocumentResponse GetResponse()
     {
         var document = _document ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
-        return new GetDocumentResponse { Document = DocumentMapper.Map(document) };
+        return new GetDocumentResponse
+        {
+            Document = new DocumentDto
+            {
+                Id = document.Id,
+                FieldValues = document.FieldValues.Select(x =>
+                {
+                    FieldValueDto fieldValueDto = x switch
+                    {
+                        BoolFieldValue boolFieldValue => new BoolFieldValueDto
+                        {
+                            FieldName = boolFieldValue.FieldName, Value = boolFieldValue.Value
+                        },
+                        NumberFieldValue numberFieldValue => new NumberFieldValueDto
+                        {
+                            FieldName = numberFieldValue.FieldName, Value = numberFieldValue.Value
+                        },
+                        TextFieldValue textFieldValue => new TextFieldValueDto
+                        {
+                            FieldName = textFieldValue.FieldName, Value = textFieldValue.Value
+                        },
+                        _ => throw new InternalPersistifyException(nameof(GetDocumentRequest))
+                    };
+
+                    return fieldValueDto;
+                }).ToList()
+            }
+        };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest request)

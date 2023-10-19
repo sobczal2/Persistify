@@ -1,4 +1,4 @@
-﻿namespace Persistify.Domain.Templates;
+﻿namespace Persistify.Server.Domain.Templates;
 
 public enum FieldType
 {

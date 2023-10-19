@@ -1,4 +1,4 @@
-﻿namespace Persistify.Domain.Documents;
+﻿namespace Persistify.Server.Domain.Documents;
 
 public static class DocumentExtensions
 {

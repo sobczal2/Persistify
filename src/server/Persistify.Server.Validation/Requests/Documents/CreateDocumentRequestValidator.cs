@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -107,7 +107,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             PropertyName.Pop();
         }
 
-        var fieldNameTypeMap = new Dictionary<string, FieldType>();
+        var fieldNameTypeMap = new Dictionary<string, FieldTypeDto>();
 
         for (var i = 0; i < value.FieldValues.Count; i++)
         {
@@ -119,7 +119,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
                 return DynamicValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
-            fieldNameTypeMap.Add(fieldName, value.FieldValues[i].FieldType);
+            fieldNameTypeMap.Add(fieldName, value.FieldValues[i].FieldTypeDto);
         }
 
         foreach (var field in template.Fields)
@@ -135,7 +135,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             }
             else
             {
-                if (fieldNameType != field.FieldType)
+                if ((int)fieldNameType != (int)field.FieldType)
                 {
                     PropertyName.Push(nameof(CreateDocumentRequest.FieldValues));
                     return DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch);

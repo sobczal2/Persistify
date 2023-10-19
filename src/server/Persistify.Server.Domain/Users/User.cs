@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Persistify.Domain.Users;
+namespace Persistify.Server.Domain.Users;
 
 [ProtoContract]
 public class User

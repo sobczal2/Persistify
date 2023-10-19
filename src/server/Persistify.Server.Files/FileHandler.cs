@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.Files.Exceptions;
 
 namespace Persistify.Server.Files;

@@ -2,7 +2,7 @@
 using System.Linq;
 using ProtoBuf;
 
-namespace Persistify.Domain.Templates;
+namespace Persistify.Server.Domain.Templates;
 
 [ProtoContract]
 public class Template

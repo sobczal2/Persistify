@@ -2,12 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Common;
 using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
-using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
 using Xunit;

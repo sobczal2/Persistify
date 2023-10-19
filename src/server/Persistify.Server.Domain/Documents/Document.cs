@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Templates;
 using ProtoBuf;
 
-namespace Persistify.Domain.Documents;
+namespace Persistify.Server.Domain.Documents;
 
 [ProtoContract]
 public class Document

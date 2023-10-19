@@ -2,9 +2,9 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
 using Persistify.Requests.Common;
 using Persistify.Responses.Common;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;

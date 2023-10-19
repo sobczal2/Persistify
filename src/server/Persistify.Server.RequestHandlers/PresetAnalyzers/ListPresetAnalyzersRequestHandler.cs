@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.PresetAnalyzers;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.PresetAnalyzers;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
@@ -42,10 +42,20 @@ public class ListPresetAnalyzersRequestHandler : RequestHandler<ListPresetAnalyz
 
     protected override ListPresetAnalyzersResponse GetResponse()
     {
-        var presetAnalyzers = _presetAnalyzers ?? throw new InternalPersistifyException(nameof(ListPresetAnalyzersRequest));
+        var presetAnalyzers =
+            _presetAnalyzers ?? throw new InternalPersistifyException(nameof(ListPresetAnalyzersRequest));
         return new ListPresetAnalyzersResponse
         {
-            PresetAnalyzerDtos = presetAnalyzers.Select(PresetAnalyzerMapper.Map).ToList(),
+            PresetAnalyzerDtos = presetAnalyzers.Select(x => new PresetAnalyzerDto
+            {
+                Name = x.Name,
+                FullAnalyzerDto = new FullAnalyzerDto
+                {
+                    CharacterFilterNames = x.Analyzer.CharacterFilterNames,
+                    TokenizerName = x.Analyzer.TokenizerName,
+                    TokenFilterNames = x.Analyzer.TokenFilterNames
+                }
+            }).ToList(),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListPresetAnalyzersRequest))
         };
     }

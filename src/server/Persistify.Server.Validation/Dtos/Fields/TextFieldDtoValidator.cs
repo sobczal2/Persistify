@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Helpers.Results;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Validation.Common;
 

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.PresetAnalyzers;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.PresetAnalyzers;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
@@ -22,9 +22,9 @@ public class GetPresetAnalyzerRequestHandler : RequestHandler<GetPresetAnalyzerR
     public GetPresetAnalyzerRequestHandler(
         IRequestHandlerContext<GetPresetAnalyzerRequest, GetPresetAnalyzerResponse> requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-        ) : base(
+    ) : base(
         requestHandlerContext
-        )
+    )
     {
         _presetAnalyzerManager = presetAnalyzerManager;
     }
@@ -39,7 +39,16 @@ public class GetPresetAnalyzerRequestHandler : RequestHandler<GetPresetAnalyzerR
         var presetAnalyzer = _presetAnalyzer ?? throw new InternalPersistifyException(nameof(GetPresetAnalyzerRequest));
         return new GetPresetAnalyzerResponse
         {
-            PresetAnalyzerDto = PresetAnalyzerMapper.Map(presetAnalyzer)
+            PresetAnalyzerDto = new PresetAnalyzerDto
+            {
+                Name = presetAnalyzer.Name,
+                FullAnalyzerDto = new FullAnalyzerDto
+                {
+                    CharacterFilterNames = presetAnalyzer.Analyzer.CharacterFilterNames,
+                    TokenizerName = presetAnalyzer.Analyzer.TokenizerName,
+                    TokenFilterNames = presetAnalyzer.Analyzer.TokenFilterNames
+                }
+            }
         };
     }
 

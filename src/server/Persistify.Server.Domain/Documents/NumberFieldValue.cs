@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Persistify.Domain.Documents;
+namespace Persistify.Server.Domain.Documents;
 
 [ProtoContract]
 public class NumberFieldValue : FieldValue

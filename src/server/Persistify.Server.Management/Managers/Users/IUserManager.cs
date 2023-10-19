@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
+using Persistify.Server.Domain.Users;
 
 namespace Persistify.Server.Management.Managers.Users;
 

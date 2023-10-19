@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Persistify.Domain.Documents;
 using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Requests.Common;
 using Persistify.Responses.Documents;

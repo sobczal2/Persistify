@@ -1,7 +1,7 @@
-﻿using Persistify.Domain.Templates;
+﻿using Persistify.Server.Domain.Templates;
 using ProtoBuf;
 
-namespace Persistify.Domain.PresetAnalyzers;
+namespace Persistify.Server.Domain.PresetAnalyzers;
 
 [ProtoContract]
 public class PresetAnalyzer

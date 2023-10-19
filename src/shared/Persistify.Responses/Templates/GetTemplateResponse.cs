@@ -1,5 +1,4 @@
-﻿using Persistify.Domain.Templates;
-using Persistify.Dtos.Templates.Common;
+﻿using Persistify.Dtos.Templates.Common;
 using Persistify.Responses.Common;
 using ProtoBuf;
 

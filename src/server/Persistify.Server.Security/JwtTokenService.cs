@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Persistify.Domain.Users;
+using Persistify.Server.Domain.Users;
 using Persistify.Helpers.Time;
 using Persistify.Server.Configuration.Settings;
 

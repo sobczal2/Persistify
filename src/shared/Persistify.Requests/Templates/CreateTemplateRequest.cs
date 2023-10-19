@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.Templates;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Common;

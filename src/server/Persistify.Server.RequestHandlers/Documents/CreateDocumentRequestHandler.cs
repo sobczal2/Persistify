@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
@@ -41,7 +41,27 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
 
         _document = new Document
         {
-            FieldValues = request.FieldValues.Select(FieldValueMapper.Map).ToList()
+            FieldValues = request.FieldValues.Select(x =>
+            {
+                FieldValue fieldValue = x switch
+                {
+                    BoolFieldValueDto boolFieldValue => new BoolFieldValue
+                    {
+                        FieldName = boolFieldValue.FieldName, Value = boolFieldValue.Value
+                    },
+                    NumberFieldValueDto numberFieldValue => new NumberFieldValue
+                    {
+                        FieldName = numberFieldValue.FieldName, Value = numberFieldValue.Value
+                    },
+                    TextFieldValueDto textFieldValue => new TextFieldValue
+                    {
+                        FieldName = textFieldValue.FieldName, Value = textFieldValue.Value
+                    },
+                    _ => throw new InternalPersistifyException(nameof(CreateDocumentRequest))
+                };
+
+                return fieldValue;
+            }).ToList()
         };
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ??

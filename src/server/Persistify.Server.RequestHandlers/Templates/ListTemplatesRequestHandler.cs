@@ -2,12 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Templates;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Templates;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
@@ -44,7 +45,12 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
         var templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
         return new ListTemplatesResponse
         {
-            TemplateDtos = templates.Select(TemplateMapper.Map).ToList(),
+            TemplateDtos = templates.Select(x => new TemplateDto
+                {
+                    Name = x.Name,
+                    Fields = x.Fields.Select(y => new FieldDto { Name = y.Name, Required = y.Required }).ToList()
+                }
+            ).ToList(),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
         };
     }

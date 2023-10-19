@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Domain.PresetAnalyzers;
+using Persistify.Server.Domain.PresetAnalyzers;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;

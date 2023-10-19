@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;

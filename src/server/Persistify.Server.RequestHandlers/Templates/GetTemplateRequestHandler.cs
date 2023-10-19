@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Templates;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Templates;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
@@ -39,7 +41,12 @@ public sealed class GetTemplateRequestHandler : RequestHandler<GetTemplateReques
         var template = _template ?? throw new InternalPersistifyException(nameof(GetTemplateRequest));
         return new GetTemplateResponse
         {
-            Template = TemplateMapper.Map(template)
+            Template = new TemplateDto
+            {
+                Name = template.Name,
+                Fields = template.Fields.Select(x => new FieldDto { Name = x.Name, Required = x.Required })
+                    .ToList()
+            }
         };
     }
 

@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
+using Persistify.Dtos.Documents.Common;
+using Persistify.Dtos.Documents.FieldValues;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.Documents.Search;
 using Persistify.Dtos.Documents.Search.Queries;
-using Persistify.Dtos.Mappers;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -141,7 +143,31 @@ public class DocumentManager : Manager, IDocumentManager
             {
                 searchRecords.Add(new SearchRecordDto
                 {
-                    Document = DocumentMapper.Map(document),
+                    Document = new DocumentDto
+                    {
+                        Id = document.Id,
+                        FieldValues = document.FieldValues.Select(x =>
+                        {
+                            FieldValueDto fieldValueDto = x switch
+                            {
+                                BoolFieldValue boolFieldValue => new BoolFieldValueDto
+                                {
+                                    FieldName = boolFieldValue.FieldName, Value = boolFieldValue.Value
+                                },
+                                NumberFieldValue numberFieldValue => new NumberFieldValueDto
+                                {
+                                    FieldName = numberFieldValue.FieldName, Value = numberFieldValue.Value
+                                },
+                                TextFieldValue textFieldValue => new TextFieldValueDto
+                                {
+                                    FieldName = textFieldValue.FieldName, Value = textFieldValue.Value
+                                },
+                                _ => throw new InternalPersistifyException()
+                            };
+
+                            return fieldValueDto;
+                        }).ToList()
+                    },
                     MetadataList = searchResult.SearchMetadata.ToSearchMetadataList()
                 });
             }

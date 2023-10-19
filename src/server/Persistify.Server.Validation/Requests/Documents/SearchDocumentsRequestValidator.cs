@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Common;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
@@ -9,6 +8,7 @@ using Persistify.Dtos.Documents.Search.Queries.Number;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Managers.Templates;

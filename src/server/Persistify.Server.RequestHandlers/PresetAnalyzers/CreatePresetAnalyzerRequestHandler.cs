@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.PresetAnalyzers;
-using Persistify.Domain.Templates;
-using Persistify.Domain.Users;
 using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.PresetAnalyzers;
+using Persistify.Server.Domain.Templates;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Transactions;

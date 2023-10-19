@@ -6,11 +6,8 @@ namespace Persistify.Dtos.PresetAnalyzers;
 public class PresetAnalyzerDto
 {
     [ProtoMember(1)]
-    public int Id { get; set; }
+    public string Name { get; set; } = default!;
 
     [ProtoMember(2)]
-    public string PresetAnalyzerName { get; set; } = default!;
-
-    [ProtoMember(3)]
     public FullAnalyzerDto FullAnalyzerDto { get; set; } = default!;
 }

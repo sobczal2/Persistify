@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using Microsoft.IO;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using ProtoBuf;
 
 namespace Persistify.Server.Serialization;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.Files;
 using Persistify.Server.Files.Exceptions;
 using Xunit;

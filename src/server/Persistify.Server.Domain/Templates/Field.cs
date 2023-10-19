@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace Persistify.Domain.Templates;
+namespace Persistify.Server.Domain.Templates;
 
 [ProtoContract]
 [ProtoInclude(100, typeof(BoolField))]

@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Templates;
+﻿using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using ProtoBuf;
 
@@ -13,5 +13,5 @@ public class FieldValueDto
     [ProtoMember(1)]
     public string FieldName { get; set; } = default!;
 
-    public virtual FieldType FieldType => throw new InternalPersistifyException();
+    public virtual FieldTypeDto FieldTypeDto => throw new InternalPersistifyException();
 }

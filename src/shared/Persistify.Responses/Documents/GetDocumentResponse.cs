@@ -1,5 +1,4 @@
-﻿using Persistify.Domain.Documents;
-using Persistify.Dtos.Documents.Common;
+﻿using Persistify.Dtos.Documents.Common;
 using Persistify.Responses.Common;
 using ProtoBuf;
 
