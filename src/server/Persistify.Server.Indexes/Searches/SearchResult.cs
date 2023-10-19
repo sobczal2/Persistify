@@ -1,4 +1,7 @@
-﻿namespace Persistify.Server.Indexes.Searches;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Persistify.Server.Indexes.Searches;
 
 public class SearchResult
 {
@@ -10,4 +13,14 @@ public class SearchResult
 
     public int DocumentId { get; set; }
     public SearchMetadata SearchMetadata { get; set; }
+
+    public SearchResult Merge(SearchResult other)
+    {
+        if (DocumentId != other.DocumentId)
+        {
+            throw new InvalidOperationException("Cannot merge search results with different document ids.");
+        }
+
+        return new SearchResult(DocumentId, SearchMetadata.Merge(other.SearchMetadata));
+    }
 }

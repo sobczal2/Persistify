@@ -14,13 +14,17 @@ public class LowercaseTokenFilter : ITokenFilter
         }
     }
 
-    public void FilterForSearch(IEnumerable<SearchToken> tokens)
+    public List<SearchToken> FilterForSearch(List<SearchToken> tokens)
     {
         Filter(tokens);
+
+        return tokens;
     }
 
-    public void FilterForIndex(IEnumerable<IndexToken> tokens)
+    public List<IndexToken> FilterForIndex(List<IndexToken> tokens)
     {
         Filter(tokens);
+
+        return tokens;
     }
 }

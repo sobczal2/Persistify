@@ -77,7 +77,7 @@ public class IndexerStore
         }
 
         return EnumerableHelpers.IntersectSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results);
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), (a, b) => a.Merge(b), results);
     }
 
     private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto query)

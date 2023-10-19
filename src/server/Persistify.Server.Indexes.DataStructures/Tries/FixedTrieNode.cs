@@ -57,4 +57,23 @@ public class FixedTrieNode<TItem>
     {
         Item = null;
     }
+
+    public IEnumerable<TItem> GetItems()
+    {
+        if (Item is not null)
+        {
+            yield return Item.Value;
+        }
+
+        foreach (var child in _children)
+        {
+            if (child is not null)
+            {
+                foreach (var item in child.GetItems())
+                {
+                    yield return item;
+                }
+            }
+        }
+    }
 }

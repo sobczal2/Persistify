@@ -7,7 +7,7 @@ using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Analyzers;
-using Persistify.Server.Fts.CharacterFilters;
+using Persistify.Server.Fts.CharacterSets;
 using Persistify.Server.Fts.Exceptions;
 using Persistify.Server.Fts.TokenFilters;
 using Persistify.Server.Fts.Tokenizers;
@@ -82,6 +82,7 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         return name switch
         {
             "lowercase" => new LowercaseTokenFilter(),
+            "suffix" => new SuffixTokenFilter(),
             _ => throw new NotImplementedException()
         };
     }

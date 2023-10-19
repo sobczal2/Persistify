@@ -51,9 +51,9 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
             node = child;
         }
 
-        if (node.Item != null)
+        foreach (var foundItem in node.GetItems())
         {
-            yield return node.Item.Value;
+            yield return foundItem;
         }
     }
 

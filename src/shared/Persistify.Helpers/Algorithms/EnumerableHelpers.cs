@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Persistify.Helpers.Algorithms;
 
@@ -34,7 +36,7 @@ public static class EnumerableHelpers
         }
     }
 
-    public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc, params IEnumerable<T>[] enumerables)
     {
         if (enumerables.Length == 0)
         {
@@ -76,7 +78,15 @@ public static class EnumerableHelpers
 
                 if (areEqual)
                 {
-                    yield return firstValue;
+                    var mergedValue = enumerators[0].Current;
+
+                    for (var i = 1; i < enumerators.Length; i++)
+                    {
+                        mergedValue = mergeFunc(mergedValue, enumerators[i].Current);
+                    }
+
+                    yield return mergedValue;
+                    
                     canAdvance = true;
                     foreach (var enumerator in enumerators)
                     {

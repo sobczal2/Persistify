@@ -41,4 +41,25 @@ public class SearchMetadata
 
         return searchMetadataList;
     }
+
+    public SearchMetadata Merge(SearchMetadata other)
+    {
+        var mergedMetadata = new SearchMetadata(Score + other.Score);
+
+        var metadataDictionary = new Dictionary<string, string>(_metadata);
+
+        foreach (var (name, value) in other._metadata)
+        {
+            if (metadataDictionary.ContainsKey(name))
+            {
+                metadataDictionary[name] = $"{metadataDictionary[name]};{value}";
+            }
+            else
+            {
+                metadataDictionary.Add(name, value);
+            }
+        }
+
+        return mergedMetadata;
+    }
 }

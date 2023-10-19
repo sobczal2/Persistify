@@ -6,8 +6,12 @@ public class IndexToken : Token
 {
     public SortedSet<DocumentPosition> DocumentPositions { get; set; }
 
-    public IndexToken(string term, char[] alphabet, DocumentPosition documentPosition) : base(term, alphabet)
+    public IndexToken(string term, char[] alphabet, DocumentPosition documentPosition) : this(term, alphabet, new[] { documentPosition })
     {
-        DocumentPositions = new SortedSet<DocumentPosition> { documentPosition };
+    }
+
+    public IndexToken(string term, char[] alphabet, IEnumerable<DocumentPosition> documentPositions) : base(term, alphabet)
+    {
+        DocumentPositions = new SortedSet<DocumentPosition>(documentPositions);
     }
 }

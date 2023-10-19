@@ -1,6 +1,6 @@
 ﻿using Persistify.Domain.PresetAnalyzers;
 
-namespace Persistify.Server.Fts.Presets;
+namespace Persistify.Server.Fts.PresetAnalyzers;
 
 public interface IBuiltInPresetAnalyzer
 {

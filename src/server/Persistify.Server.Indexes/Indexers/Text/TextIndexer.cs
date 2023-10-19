@@ -101,7 +101,7 @@ public class TextIndexer : IIndexer
             var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token));
             foreach (var trieResult in trieResults)
             {
-                var score = query.Boost * (trieResult.Term.Length / (float) token.Term.Length);
+                var score = query.Boost * (token.Term.Length / (float) trieResult.Term.Length);
 
                 foreach (var documentPosition in trieResult.DocumentPositions)
                 {
