@@ -3,27 +3,29 @@ using System.Collections.Generic;
 
 namespace Persistify.Server.Indexes.DataStructures.Tries;
 
-public class FixedTrie<TItem> : IFixedTrie<TItem>
+public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, TSearchItem, TItem>
+    where TIndexItem : IndexFixedTrieItem<TItem>
+    where TSearchItem : SearchFixedTrieItem
 {
     private readonly int _alphabetSize;
-    private readonly FixedTrieNode<IndexFixedTrieItem<TItem>> _root;
+    private readonly FixedTrieNode<TItem> _root;
 
     public FixedTrie(int alphabetSize)
     {
         _alphabetSize = alphabetSize;
-        _root = new FixedTrieNode<IndexFixedTrieItem<TItem>>(alphabetSize);
+        _root = new FixedTrieNode<TItem>(alphabetSize);
     }
 
-    public void Insert(IndexFixedTrieItem<TItem> item)
+    public void Insert(TIndexItem item)
     {
         var node = _root;
         for(var i = 0; i < item.Length; i++)
         {
             var index = item.GetIndex(i);
             var child = node.GetChild(index);
-            if (child == null)
+            if (child is null)
             {
-                child = new FixedTrieNode<IndexFixedTrieItem<TItem>>(_alphabetSize);
+                child = new FixedTrieNode<TItem>(_alphabetSize);
                 node.SetChild(index, child);
             }
 
@@ -33,48 +35,80 @@ public class FixedTrie<TItem> : IFixedTrie<TItem>
         node.Insert(item);
     }
 
-    public IEnumerable<(TItem Item, int Distance)> Search(SearchFixedTrieItem item)
+    public IEnumerable<TItem> Search(TSearchItem item)
     {
         var node = _root;
-        var distance = 0;
 
         for (var i = 0; i < item.Length; i++)
         {
             var index = item.GetIndex(i);
             var child = node.GetChild(index);
-            if (child == null)
+            if (child is null)
             {
                 yield break;
             }
 
             node = child;
-            distance++;
         }
 
-        foreach (var child in node.GetAllItems())
+        if (node.Item != null)
         {
-            yield return (child.Value, distance);
+            yield return node.Item.Value;
         }
     }
 
-    public int Remove(Predicate<TItem> predicate)
+    public int UpdateIf(Predicate<TItem> predicate, Action<TItem> action)
     {
-        return Remove(_root, predicate);
-    }
+        var count = 0;
+        var queue = new Queue<FixedTrieNode<TItem>>();
+        queue.Enqueue(_root);
 
-    private int Remove(FixedTrieNode<IndexFixedTrieItem<TItem>> node, Predicate<TItem> predicate)
-    {
-        var removedCount = 0;
-        removedCount += node.Remove(x => predicate(x.Value));
-        for (var i = 0; i < _alphabetSize; i++)
+        while (queue.Count > 0)
         {
-            var child = node.GetChild(i);
-            if (child != null)
+            var node = queue.Dequeue();
+            if (node.Item != null && predicate(node.Item.Value))
             {
-                removedCount += Remove(child, predicate);
+                node.Update(action);
+                if (node.Item.IsEmpty)
+                {
+                    node.SetItemEmpty();
+                }
+                count++;
+            }
+
+            foreach (var child in node.GetChildren())
+            {
+                if (child != null)
+                {
+                    queue.Enqueue(child);
+                }
             }
         }
 
-        return removedCount;
+        RemoveDeadEnds();
+        return count;
+    }
+
+    private void RemoveDeadEnds()
+    {
+        var queue = new Queue<FixedTrieNode<TItem>>();
+        queue.Enqueue(_root);
+
+        while (queue.Count > 0)
+        {
+            var node = queue.Dequeue();
+            if (node.Item != null && node.Item.IsEmpty)
+            {
+                node.SetItemEmpty();
+            }
+
+            foreach (var child in node.GetChildren())
+            {
+                if (child != null)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+        }
     }
 }

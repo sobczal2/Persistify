@@ -2,18 +2,9 @@
 
 namespace Persistify.Server.Indexes.DataStructures.Tries;
 
-public abstract class IndexFixedTrieItem<TSelf> : FixedTrieItem, IComparable<TSelf>, IComparable<IndexFixedTrieItem<TSelf>>
+public abstract class IndexFixedTrieItem<TItem> : FixedTrieItem
 {
-    public abstract int CompareTo(TSelf? other);
-    public abstract TSelf Value { get; }
-
-    public int CompareTo(IndexFixedTrieItem<TSelf>? other)
-    {
-        if (other == null)
-        {
-            return 1;
-        }
-
-        return CompareTo(other.Value);
-    }
+    public abstract TItem Value { get; }
+    public abstract void Merge(TItem other);
+    public abstract bool IsEmpty { get; }
 }

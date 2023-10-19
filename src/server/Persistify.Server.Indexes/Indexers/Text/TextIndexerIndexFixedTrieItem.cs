@@ -6,32 +6,26 @@ using Persistify.Server.Indexes.DataStructures.Tries;
 
 namespace Persistify.Server.Indexes.Indexers.Text;
 
-public class TextIndexerIndexFixedTrieItem : IndexFixedTrieItem<TextIndexerIndexFixedTrieItem>
+public class TextIndexerIndexFixedTrieItem : IndexFixedTrieItem<IndexToken>
 {
-    public TextIndexerIndexFixedTrieItem(int documentId, Token token)
+    public TextIndexerIndexFixedTrieItem(
+        IndexToken value
+        )
     {
-        DocumentId = documentId;
-        Token = token;
+        Value = value;
     }
-
-    public int DocumentId { get; set; }
-    public Token Token { get; set; }
-
     public override int GetIndex(int index)
     {
-        return Token.AlphabetIndexMap[index];
+        return Array.BinarySearch(Value.Alphabet, Value.Term[index]);
     }
 
-    public override int Length => Token.Value.Length;
-    public override int CompareTo(TextIndexerIndexFixedTrieItem? other)
+    public override int Length => Value.Term.Length;
+    public override IndexToken Value { get; }
+
+    public override void Merge(IndexToken other)
     {
-        if (other == null)
-        {
-            return 1;
-        }
-
-        return DocumentId.CompareTo(other.DocumentId);
+        Value.DocumentPositions.UnionWith(other.DocumentPositions);
     }
 
-    public override TextIndexerIndexFixedTrieItem Value => this;
+    public override bool IsEmpty => Value.DocumentPositions.Count == 0;
 }

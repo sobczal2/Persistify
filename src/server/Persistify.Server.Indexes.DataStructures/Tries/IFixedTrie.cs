@@ -3,9 +3,11 @@ using System.Collections.Generic;
 
 namespace Persistify.Server.Indexes.DataStructures.Tries;
 
-public interface IFixedTrie<TItem>
+public interface IFixedTrie<in TIndexItem, in TSearchItem, TItem>
+    where TIndexItem : IndexFixedTrieItem<TItem>
+    where TSearchItem : SearchFixedTrieItem
 {
-    void Insert(IndexFixedTrieItem<TItem> item);
-    IEnumerable<(TItem Item, int Distance)> Search(SearchFixedTrieItem item);
-    int Remove(Predicate<TItem> predicate);
+    void Insert(TIndexItem item);
+    IEnumerable<TItem> Search(TSearchItem item);
+    int UpdateIf(Predicate<TItem> predicate, Action<TItem> action);
 }

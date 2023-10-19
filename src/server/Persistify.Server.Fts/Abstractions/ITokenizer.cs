@@ -5,5 +5,6 @@ namespace Persistify.Server.Fts.Abstractions;
 
 public interface ITokenizer
 {
-    List<Token> Tokenize(string text, char[] alphabet);
+    IEnumerable<SearchToken> TokenizeForSearch(string text, char[] alphabet);
+    IEnumerable<IndexToken> TokenizeForIndex(string text, char[] alphabet, int documentId);
 }

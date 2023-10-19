@@ -72,7 +72,6 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
     {
         return name switch
         {
-            "standard" => new StandardTokenizer(),
             "whitespace" => new WhitespaceTokenizer(),
             _ => throw new NotImplementedException()
         };

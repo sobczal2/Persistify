@@ -30,55 +30,43 @@ public class AnalyzerExecutor : IAnalyzerExecutor
         _tokenFilters = tokenFilters;
     }
 
-    // TODO: Optimize this method
-    public IEnumerable<Token> Analyze(string text, AnalyzerMode mode)
+    public int AlphabetLength => _alphabet.Length;
+    public IEnumerable<SearchToken> AnalyzeForSearch(string input)
     {
-        var textSpan = text.AsSpan();
-        var stringBuilder = new StringBuilder(text.Length);
-
-        for (var i = 0; i < textSpan.Length; i++)
-        {
-            var c = textSpan[i];
-
-            if (Array.BinarySearch(_alphabet, c) >= 0)
-            {
-                stringBuilder.Append(c);
-            }
-        }
-
-        text = stringBuilder.ToString();
-
-        var tokens = _tokenizer.Tokenize(text, _alphabet);
+        var tokens = _tokenizer.TokenizeForSearch(input, _alphabet).ToList();
 
         foreach (var tokenFilter in _tokenFilters)
         {
-            if (ShouldFilter(tokenFilter.Type, mode))
-            {
-                tokenFilter.Filter(tokens);
-            }
+            tokenFilter.FilterForSearch(tokens);
         }
 
-        foreach (var token in tokens)
-        {
-            token.Value = new string(token.Value
-                .Where(x => Array.BinarySearch(_alphabet, x) >= 0)
-                .ToArray()
-            );
-        }
+        RemoveNonAlphabetCharacters(tokens);
 
         return tokens;
     }
 
-    public int AlphabetLength => _alphabet.Length;
-
-    private bool ShouldFilter(TokenFilterType type, AnalyzerMode mode)
+    public IEnumerable<IndexToken> AnalyzeForIndex(string text, int documentId)
     {
-        return type switch
+        var tokens = _tokenizer.TokenizeForIndex(text, _alphabet, documentId).ToList();
+
+        foreach (var tokenFilter in _tokenFilters)
         {
-            TokenFilterType.IndexOnly => mode == AnalyzerMode.Index,
-            TokenFilterType.SearchOnly => mode == AnalyzerMode.Search,
-            TokenFilterType.IndexAndSearch => true,
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
+            tokenFilter.FilterForIndex(tokens);
+        }
+
+        RemoveNonAlphabetCharacters(tokens);
+
+        return tokens;
+    }
+
+    private void RemoveNonAlphabetCharacters(IEnumerable<Token> tokens)
+    {
+        foreach (var token in tokens)
+        {
+            token.Term = new string(token.Term
+                .Where(x => Array.BinarySearch(_alphabet, x) >= 0)
+                .ToArray()
+            );
+        }
     }
 }

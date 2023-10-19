@@ -5,6 +5,6 @@ namespace Persistify.Server.Fts.Abstractions;
 
 public interface ITokenFilter
 {
-    TokenFilterType Type { get; }
-    void Filter(List<Token> tokens);
+    void FilterForSearch(IEnumerable<SearchToken> tokens);
+    void FilterForIndex(IEnumerable<IndexToken> tokens);
 }

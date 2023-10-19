@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Persistify.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
+using Persistify.Server.Fts.Tokens;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.DataStructures.Tries;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -15,14 +17,16 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 public class TextIndexer : IIndexer
 {
     private readonly IAnalyzerExecutor _analyzerExecutor;
-    private readonly FixedTrie<TextIndexerIndexFixedTrieItem> _fixedTrie;
+    private readonly FixedTrie<TextIndexerIndexFixedTrieItem, TextIndexerSearchFixedTrieItem, IndexToken> _fixedTrie;
     private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
 
     public TextIndexer(string fieldName, IAnalyzerExecutor analyzerExecutor)
     {
         FieldName = fieldName;
         _intervalTree = new IntervalTree<TextIndexerIntervalTreeRecord>();
-        _fixedTrie = new FixedTrie<TextIndexerIndexFixedTrieItem>(analyzerExecutor.AlphabetLength);
+        _fixedTrie =
+            new FixedTrie<TextIndexerIndexFixedTrieItem, TextIndexerSearchFixedTrieItem, IndexToken>(analyzerExecutor
+                .AlphabetLength);
         _analyzerExecutor = analyzerExecutor;
     }
 
@@ -40,11 +44,12 @@ public class TextIndexer : IIndexer
         {
             DocumentId = document.Id, Value = textFieldValue.Value
         });
-        var tokens = _analyzerExecutor.Analyze(textFieldValue.Value, AnalyzerMode.Index);
+
+        var tokens = _analyzerExecutor.AnalyzeForIndex(textFieldValue.Value, document.Id);
 
         foreach (var token in tokens)
         {
-            _fixedTrie.Insert(new TextIndexerIndexFixedTrieItem(document.Id, token));
+            _fixedTrie.Insert(new TextIndexerIndexFixedTrieItem(token));
         }
     }
 
@@ -66,7 +71,10 @@ public class TextIndexer : IIndexer
     public void DeleteAsync(Document document)
     {
         _intervalTree.Remove(x => x.DocumentId == document.Id);
-        _fixedTrie.Remove(x => x.DocumentId == document.Id);
+        _fixedTrie.UpdateIf(
+            x => x.DocumentPositions.Any(y => y.DocumentId == document.Id),
+            x => x.DocumentPositions.RemoveWhere(y => y.DocumentId == document.Id)
+        );
     }
 
     private IEnumerable<SearchResult> HandleExactTextSearch(ExactTextSearchQueryDto query)
@@ -88,29 +96,26 @@ public class TextIndexer : IIndexer
 
         var tokenCount = 0;
 
-        foreach (var token in _analyzerExecutor.Analyze(query.Value, AnalyzerMode.Search))
+        foreach (var token in _analyzerExecutor.AnalyzeForSearch(query.Value))
         {
             var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token));
             foreach (var trieResult in trieResults)
             {
-                var score = trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost;
-                if (results.TryGetValue(trieResult.Item.DocumentId, out var result))
-                {
-                    result.SearchMetadata.Score += score;
-                    foreach (var position in trieResult.Item.Token.Positions)
-                    {
-                        result.SearchMetadata.Add($"token_{token.Value}.position", position.ToString());
-                    }
-                }
-                else
-                {
-                    var metadata = new SearchMetadata(score);
-                    foreach (var position in trieResult.Item.Token.Positions)
-                    {
-                        metadata.Add($"token_{token.Value}.position", position.ToString());
-                    }
+                var score = query.Boost * (trieResult.Term.Length / (float) token.Term.Length);
 
-                    results.Add(trieResult.Item.DocumentId, new SearchResult(trieResult.Item.DocumentId, metadata));
+                foreach (var documentPosition in trieResult.DocumentPositions)
+                {
+                    if (results.TryGetValue(documentPosition.DocumentId, out var result))
+                    {
+                        result.SearchMetadata.Score += score;
+                        result.SearchMetadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
+                    }
+                    else
+                    {
+                        var metadata = new SearchMetadata(score);
+                        metadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
+                        results.Add(documentPosition.DocumentId, new SearchResult(documentPosition.DocumentId, metadata));
+                    }
                 }
             }
 

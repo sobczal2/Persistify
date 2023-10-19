@@ -9,23 +9,35 @@ public class WhitespaceTokenizer : ITokenizer
 {
     private static readonly char[] WhitespaceChars = { ' ', '\t', '\n', '\r' };
 
-    public List<Token> Tokenize(string text, char[] alphabet)
+    public IEnumerable<SearchToken> TokenizeForSearch(string text, char[] alphabet)
     {
-        var textSpan = text.AsSpan();
-        var tokens = new List<Token>();
         var index = 0;
 
-        while (index < textSpan.Length)
+        while (index < text.Length)
         {
-            var whitespaceIndex = textSpan[index..].IndexOfAny(WhitespaceChars);
+            var whitespaceIndex = text[index..].IndexOfAny(WhitespaceChars);
             var token = whitespaceIndex == -1
-                ? textSpan[index..]
-                : textSpan.Slice(index, whitespaceIndex);
+                ? text[index..]
+                : text.Substring(index, whitespaceIndex);
 
-            tokens.Add(new Token(token.ToString(), index, 1, alphabet));
+            yield return new SearchToken(token, alphabet, index);
             index += token.Length + 1;
         }
+    }
 
-        return tokens;
+    public IEnumerable<IndexToken> TokenizeForIndex(string text, char[] alphabet, int documentId)
+    {
+        var index = 0;
+
+        while (index < text.Length)
+        {
+            var whitespaceIndex = text[index..].IndexOfAny(WhitespaceChars);
+            var token = whitespaceIndex == -1
+                ? text[index..]
+                : text.Substring(index, whitespaceIndex);
+
+            yield return new IndexToken(token, alphabet, new DocumentPosition(documentId, index, 1));
+            index += token.Length + 1;
+        }
     }
 }
