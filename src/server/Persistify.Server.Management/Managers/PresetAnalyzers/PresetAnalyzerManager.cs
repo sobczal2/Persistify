@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Domain.PresetAnalyzerDescriptors;
+using Persistify.Domain.PresetAnalyzers;
 using Persistify.Server.Configuration.Settings;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
@@ -14,7 +14,7 @@ using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
 
-namespace Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+namespace Persistify.Server.Management.Managers.PresetAnalyzers;
 
 public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
 {
@@ -111,6 +111,14 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         {
             yield return template;
         }
+    }
+
+    public int Count()
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        return _count;
     }
 
     public void Add(PresetAnalyzer presetAnalyzer)

@@ -10,7 +10,7 @@ namespace Persistify.Responses.Templates;
 public class ListTemplatesResponse : IResponse
 {
     [ProtoMember(1)]
-    public List<TemplateDto> Templates { get; set; } = default!;
+    public List<TemplateDto> TemplateDtos { get; set; } = default!;
 
     [ProtoMember(2)]
     public int TotalCount { get; set; }

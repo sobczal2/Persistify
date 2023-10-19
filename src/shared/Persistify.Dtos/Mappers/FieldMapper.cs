@@ -2,6 +2,7 @@
 using Persistify.Domain.Documents;
 using Persistify.Domain.Templates;
 using Persistify.Dtos.Documents.FieldValues;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
@@ -37,7 +38,7 @@ public static class FieldMapper
         {
             Name = from.Name,
             Required = from.Required,
-            AnalyzerDescriptor = new FullAnalyzerDescriptorDto
+            Analyzer = new FullAnalyzerDto
             {
                 CharacterFilterNames = from.Analyzer.CharacterFilterNames,
                 TokenizerName = from.Analyzer.TokenizerName,

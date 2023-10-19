@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
@@ -26,7 +27,7 @@ public class GetTemplateAsyncTests : IntegrationTestBase
                 {
                     Name = "TextField1",
                     Required = true,
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptorDto
+                    Analyzer = new PresetNameAnalyzerDto
                     {
                         PresetName = "standard"
                     }
@@ -47,6 +48,6 @@ public class GetTemplateAsyncTests : IntegrationTestBase
         response.Template.Fields.Should().HaveCount(1);
         response.Template.Fields[0].Name.Should().Be("TextField1");
         response.Template.Fields[0].Required.Should().BeTrue();
-        ((TextFieldDto)response.Template.Fields[0]).AnalyzerDescriptor.Should().NotBeNull();
+        ((TextFieldDto)response.Template.Fields[0]).Analyzer.Should().NotBeNull();
     }
 }

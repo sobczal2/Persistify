@@ -2,7 +2,7 @@
 using System.IO;
 using Persistify.Server.Files;
 
-namespace Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+namespace Persistify.Server.Management.Managers.PresetAnalyzers;
 
 public class PresetAnalyzerManagerRequiredFileGroup : IRequiredFileGroup
 {

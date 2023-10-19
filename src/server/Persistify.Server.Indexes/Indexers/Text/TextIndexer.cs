@@ -15,14 +15,14 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 public class TextIndexer : IIndexer
 {
     private readonly IAnalyzerExecutor _analyzerExecutor;
-    private readonly FixedTrie<TextIndexerFixedTrieRecord> _fixedTrie;
+    private readonly FixedTrie<TextIndexerIndexFixedTrieItem> _fixedTrie;
     private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
 
     public TextIndexer(string fieldName, IAnalyzerExecutor analyzerExecutor)
     {
         FieldName = fieldName;
         _intervalTree = new IntervalTree<TextIndexerIntervalTreeRecord>();
-        _fixedTrie = new FixedTrie<TextIndexerFixedTrieRecord>(analyzerExecutor.AlphabetLength);
+        _fixedTrie = new FixedTrie<TextIndexerIndexFixedTrieItem>(analyzerExecutor.AlphabetLength);
         _analyzerExecutor = analyzerExecutor;
     }
 
@@ -44,7 +44,7 @@ public class TextIndexer : IIndexer
 
         foreach (var token in tokens)
         {
-            _fixedTrie.Insert(new TextIndexerFixedTrieRecord(document.Id, token));
+            _fixedTrie.Insert(new TextIndexerIndexFixedTrieItem(document.Id, token));
         }
     }
 
@@ -90,7 +90,7 @@ public class TextIndexer : IIndexer
 
         foreach (var token in _analyzerExecutor.Analyze(query.Value, AnalyzerMode.Search))
         {
-            var trieResults = _fixedTrie.Search(token);
+            var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token));
             foreach (var trieResult in trieResults)
             {
                 var score = trieResult.Item.Token.Value.Length * trieResult.Item.Token.Score * query.Boost;

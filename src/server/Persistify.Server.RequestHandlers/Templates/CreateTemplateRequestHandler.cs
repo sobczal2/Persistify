@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Persistify.Domain.Templates;
 using Persistify.Domain.Users;
 using Persistify.Dtos.Mappers;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
@@ -13,7 +14,7 @@ using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Management.Managers;
-using Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
 
@@ -54,16 +55,16 @@ public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplate
                     });
                     break;
                 case TextFieldDto textFieldDto:
-                    Analyzer analyzer = textFieldDto.AnalyzerDescriptor switch
+                    Analyzer analyzer = textFieldDto.Analyzer switch
                     {
-                        FullAnalyzerDescriptorDto fullAnalyzerDescriptorDto =>
+                        FullAnalyzerDto fullAnalyzerDescriptorDto =>
                             new Analyzer
                             {
                                 CharacterFilterNames = fullAnalyzerDescriptorDto.CharacterFilterNames,
                                 TokenizerName = fullAnalyzerDescriptorDto.TokenizerName,
                                 TokenFilterNames = fullAnalyzerDescriptorDto.TokenFilterNames
                             },
-                        PresetAnalyzerDescriptorDto presetAnalyzerDescriptorDto =>
+                        PresetNameAnalyzerDto presetAnalyzerDescriptorDto =>
                             (await _presetAnalyzerManager.GetAsync(presetAnalyzerDescriptorDto.PresetName))?.Analyzer ??
                             throw new InternalPersistifyException(),
                         _ => throw new InternalPersistifyException()

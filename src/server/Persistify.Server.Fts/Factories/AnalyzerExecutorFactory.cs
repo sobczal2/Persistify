@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using Persistify.Domain.Templates;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;
 using Persistify.Server.Fts.Abstractions;
@@ -21,7 +22,7 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
     private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
     private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase", "suffix" };
 
-    public Result Validate(FullAnalyzerDescriptorDto descriptor)
+    public Result Validate(FullAnalyzerDto descriptor)
     {
         foreach (var characterFilter in descriptor.CharacterFilterNames)
         {
@@ -56,13 +57,13 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         return new AnalyzerExecutor(characterFilters, tokenizer, tokenFilters);
     }
 
-    private ICharacterFilter CreateCharacterFilter(string name)
+    private ICharacterSet CreateCharacterFilter(string name)
     {
         return name switch
         {
-            "lowercase_letters" => new LowercaseLettersCharacterFilter(),
-            "uppercase_letters" => new UppercaseLettersCharacterFilter(),
-            "digits" => new DigitsCharacterFilter(),
+            "lowercase_letters" => new LowercaseLettersCharacterSet(),
+            "uppercase_letters" => new UppercaseLettersCharacterSet(),
+            "digits" => new DigitsCharacterSet(),
             _ => throw new NotImplementedException()
         };
     }
@@ -82,7 +83,6 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         return name switch
         {
             "lowercase" => new LowercaseTokenFilter(),
-            "suffix" => new SuffixTokenFilter(),
             _ => throw new NotImplementedException()
         };
     }

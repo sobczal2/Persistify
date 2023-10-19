@@ -14,13 +14,13 @@ public class AnalyzerExecutor : IAnalyzerExecutor
     private readonly ITokenizer _tokenizer;
 
     public AnalyzerExecutor(
-        IEnumerable<ICharacterFilter> characterFilters,
+        IEnumerable<ICharacterSet> characterFilters,
         ITokenizer tokenizer,
         IEnumerable<ITokenFilter> tokenFilters
     )
     {
         _alphabet = characterFilters
-            .SelectMany(x => x.AllowedCharacters)
+            .SelectMany(x => x.Characters)
             .Distinct()
             .ToArray();
 

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Persistify.Server.Fts.Tokens;
 
-public class Token : IEnumerable<int>
+public class Token
 {
     public Token(string value, int count, List<int> positions, float score, char[] alphabet)
     {
@@ -20,48 +20,14 @@ public class Token : IEnumerable<int>
             throw new ArgumentException("Either value is not in given alphabet or alphabet is not sorted",
                 nameof(Alphabet));
         }
-    }
 
-    public Token(string value, int position, float score, char[] alphabet)
-    {
-        Alphabet = alphabet;
-        Value = value;
-        Score = score;
-        Count = 1;
-        Positions = new List<int>(1) { position };
-
-        if (!CheckIfValueIsInAlphabet())
-        {
-            throw new ArgumentException("Either value is not in given alphabet or alphabet is not sorted",
-                nameof(Alphabet));
-        }
-    }
-
-    public char[] Alphabet { get; }
-    public string Value { get; set; }
-    public float Score { get; }
-    public int Count { get; set; }
-    public List<int> Positions { get; }
-
-    public IEnumerator<int> GetEnumerator()
-    {
-        return CreateValueAlphabetIndexMap().GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IEnumerable)CreateValueAlphabetIndexMap()).GetEnumerator();
-    }
-
-    // alphabet has to be sorted
-    private IEnumerable<int> CreateValueAlphabetIndexMap()
-    {
+        AlphabetIndexMap = new List<int>(Value.Length);
         for (var i = 0; i < Value.Length; i++)
         {
             var index = Array.BinarySearch(Alphabet, Value[i]);
             if (index >= 0)
             {
-                yield return index;
+                AlphabetIndexMap.Add(index);
             }
             else
             {
@@ -70,6 +36,17 @@ public class Token : IEnumerable<int>
             }
         }
     }
+
+    public Token(string value, int position, float score, char[] alphabet) : this(value, 1, new List<int> {position}, score, alphabet)
+    {
+    }
+
+    public char[] Alphabet { get; }
+    public string Value { get; set; }
+    public float Score { get; }
+    public int Count { get; set; }
+    public List<int> Positions { get; }
+    public List<int> AlphabetIndexMap { get; private set; }
 
     private bool CheckIfValueIsInAlphabet()
     {

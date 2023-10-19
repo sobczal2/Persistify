@@ -1,4 +1,5 @@
-﻿using Persistify.Dtos.Templates.Common;
+﻿using Persistify.Dtos.PresetAnalyzers;
+using Persistify.Dtos.Templates.Common;
 using ProtoBuf;
 
 namespace Persistify.Dtos.Templates.Fields;
@@ -7,5 +8,5 @@ namespace Persistify.Dtos.Templates.Fields;
 public class TextFieldDto : FieldDto
 {
     [ProtoMember(3)]
-    public AnalyzerDescriptorDto AnalyzerDescriptor { get; set; } = default!;
+    public AnalyzerDto Analyzer { get; set; } = default!;
 }

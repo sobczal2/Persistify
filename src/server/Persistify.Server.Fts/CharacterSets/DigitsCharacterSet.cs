@@ -3,7 +3,7 @@ using Persistify.Server.Fts.Abstractions;
 
 namespace Persistify.Server.Fts.CharacterFilters;
 
-public class DigitsCharacterFilter : ICharacterFilter
+public class DigitsCharacterSet : ICharacterSet
 {
-    public IEnumerable<char> AllowedCharacters { get; } = "0123456789";
+    public IEnumerable<char> Characters => "0123456789";
 }

@@ -33,8 +33,8 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
 
     protected override async ValueTask RunAsync(ListTemplatesRequest request, CancellationToken cancellationToken)
     {
-        var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
-        var take = request.Pagination.PageSize;
+        var skip = request.PaginationDto.PageNumber * request.PaginationDto.PageSize;
+        var take = request.PaginationDto.PageSize;
         _templates = await _templateManager.ListAsync(take, skip).ToListAsync(cancellationToken);
         _totalCount = _templateManager.Count();
     }
@@ -44,7 +44,7 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
         var templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
         return new ListTemplatesResponse
         {
-            Templates = templates.Select(TemplateMapper.Map).ToList(),
+            TemplateDtos = templates.Select(TemplateMapper.Map).ToList(),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
         };
     }

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using ProtoBuf;
 
-namespace Persistify.Dtos.Templates.Common;
+namespace Persistify.Dtos.PresetAnalyzers;
 
 [ProtoContract]
-public class FullAnalyzerDescriptorDto : AnalyzerDescriptorDto
+public class FullAnalyzerDto : AnalyzerDto
 {
     [ProtoMember(1)]
     public List<string> CharacterFilterNames { get; set; } = default!;

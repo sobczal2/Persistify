@@ -8,9 +8,9 @@ public class OrSearchQueryDto : SearchQueryDto
 {
     public OrSearchQueryDto()
     {
-        Queries = new List<SearchQueryDto>();
+        SearchQueryDtos = new List<SearchQueryDto>();
     }
 
     [ProtoMember(2)]
-    public List<SearchQueryDto> Queries { get; set; }
+    public List<SearchQueryDto> SearchQueryDtos { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.PresetAnalyzerDescriptors;
+﻿using Persistify.Domain.PresetAnalyzers;
 
 namespace Persistify.Server.Fts.Presets;
 

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Domain.Templates;
 using Persistify.Dtos.Common;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Common;
@@ -29,7 +30,7 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
                 {
                     Name = "TextField1",
                     Required = true,
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptorDto
+                    Analyzer = new PresetNameAnalyzerDto
                     {
                         PresetName = "standard"
                     }
@@ -38,19 +39,19 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
         };
 
         await TemplateService.CreateTemplateAsync(addTemplateRequest, callContext);
-        var request = new ListTemplatesRequest { Pagination = new PaginationDto { PageNumber = 0, PageSize = 10 } };
+        var request = new ListTemplatesRequest { PaginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 } };
 
         // Act
         var response = await TemplateService.ListTemplatesAsync(request, callContext);
 
         // Assert
         response.Should().NotBeNull();
-        response.Templates.Should().NotBeNull();
-        response.Templates.Should().HaveCount(1);
-        response.Templates.First().Name.Should().Be("TestTemplate");
-        response.Templates.First().Fields.Should().NotBeNull();
-        response.Templates.First().Fields.Should().HaveCount(1);
-        response.Templates.First().Fields[0].Name.Should().Be("TextField1");
-        response.Templates.First().Fields[0].Required.Should().BeTrue();
+        response.TemplateDtos.Should().NotBeNull();
+        response.TemplateDtos.Should().HaveCount(1);
+        response.TemplateDtos.First().Name.Should().Be("TestTemplate");
+        response.TemplateDtos.First().Fields.Should().NotBeNull();
+        response.TemplateDtos.First().Fields.Should().HaveCount(1);
+        response.TemplateDtos.First().Fields[0].Name.Should().Be("TextField1");
+        response.TemplateDtos.First().Fields[0].Required.Should().BeTrue();
     }
 }

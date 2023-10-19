@@ -13,8 +13,8 @@ public class SearchDocumentsRequest : IRequest<SearchDocumentsResponse>
     public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
-    public PaginationDto Pagination { get; set; } = default!;
+    public PaginationDto PaginationDto { get; set; } = default!;
 
     [ProtoMember(3)]
-    public SearchQueryDto SearchQuery { get; set; } = default!;
+    public SearchQueryDto SearchQueryDto { get; set; } = default!;
 }

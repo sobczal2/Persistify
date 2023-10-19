@@ -1,9 +1,9 @@
 ﻿using ProtoBuf;
 
-namespace Persistify.Dtos.Templates.Common;
+namespace Persistify.Dtos.PresetAnalyzers;
 
 [ProtoContract]
-public class PresetAnalyzerDescriptorDto : AnalyzerDescriptorDto
+public class PresetNameAnalyzerDto : AnalyzerDto
 {
     [ProtoMember(1)]
     public string PresetName { get; set; } = default!;

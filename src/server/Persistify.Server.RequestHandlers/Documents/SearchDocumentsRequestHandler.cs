@@ -36,8 +36,8 @@ public class SearchDocumentsRequestHandler : RequestHandler<SearchDocumentsReque
         var template = await _templateManager.GetAsync(request.TemplateName) ??
                        throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
 
-        var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
-        var take = request.Pagination.PageSize;
+        var skip = request.PaginationDto.PageNumber * request.PaginationDto.PageSize;
+        var take = request.PaginationDto.PageSize;
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ??
                               throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
@@ -45,9 +45,9 @@ public class SearchDocumentsRequestHandler : RequestHandler<SearchDocumentsReque
         await RequestHandlerContext.CurrentTransaction
             .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
-        var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQuery, take, skip);
+        var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQueryDto, take, skip);
 
-        _response = new SearchDocumentsResponse { SearchRecords = searchRecords, TotalCount = count };
+        _response = new SearchDocumentsResponse { SearchRecordDtos = searchRecords, TotalCount = count };
     }
 
     protected override SearchDocumentsResponse GetResponse()

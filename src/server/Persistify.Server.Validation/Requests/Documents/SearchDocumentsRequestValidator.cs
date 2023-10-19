@@ -54,8 +54,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             return DynamicValidationException(DocumentErrorMessages.TemplateNotFound);
         }
 
-        PropertyName.Push(nameof(SearchDocumentsRequest.Pagination));
-        var paginationValidator = await _paginationValidator.ValidateAsync(value.Pagination);
+        PropertyName.Push(nameof(SearchDocumentsRequest.PaginationDto));
+        var paginationValidator = await _paginationValidator.ValidateAsync(value.PaginationDto);
         PropertyName.Pop();
 
         if (paginationValidator.Failure)
@@ -63,8 +63,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             return paginationValidator;
         }
 
-        PropertyName.Push(nameof(SearchDocumentsRequest.SearchQuery));
-        var searchQueryResult = await ValidateSearchQueryAsync(value.SearchQuery, template);
+        PropertyName.Push(nameof(SearchDocumentsRequest.SearchQueryDto));
+        var searchQueryResult = await ValidateSearchQueryAsync(value.SearchQueryDto, template);
         PropertyName.Pop();
 
         if (searchQueryResult.Failure)
@@ -118,15 +118,15 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private async ValueTask<Result> ValidateAndSearchQueryAsync(AndSearchQueryDto queryDto, Template template)
     {
         PropertyName.Push(nameof(AndSearchQueryDto));
-        if (queryDto.Queries.Count < 2)
+        if (queryDto.SearchQueryDtos.Count < 2)
         {
-            PropertyName.Push(nameof(AndSearchQueryDto.Queries));
+            PropertyName.Push(nameof(AndSearchQueryDto.SearchQueryDtos));
             return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
 
-        foreach (var subquery in queryDto.Queries)
+        foreach (var subquery in queryDto.SearchQueryDtos)
         {
-            PropertyName.Push(nameof(AndSearchQueryDto.Queries));
+            PropertyName.Push(nameof(AndSearchQueryDto.SearchQueryDtos));
             var result = await ValidateSearchQueryAsync(subquery, template);
             PropertyName.Pop();
             if (result.Failure)
@@ -141,15 +141,15 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private async ValueTask<Result> ValidateOrSearchQueryAsync(OrSearchQueryDto queryDto, Template template)
     {
         PropertyName.Push(nameof(OrSearchQueryDto));
-        if (queryDto.Queries.Count < 2)
+        if (queryDto.SearchQueryDtos.Count < 2)
         {
-            PropertyName.Push(nameof(OrSearchQueryDto.Queries));
+            PropertyName.Push(nameof(OrSearchQueryDto.SearchQueryDtos));
             return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
 
-        foreach (var subquery in queryDto.Queries)
+        foreach (var subquery in queryDto.SearchQueryDtos)
         {
-            PropertyName.Push(nameof(OrSearchQueryDto.Queries));
+            PropertyName.Push(nameof(OrSearchQueryDto.SearchQueryDtos));
             var result = await ValidateSearchQueryAsync(subquery, template);
             PropertyName.Pop();
             if (result.Failure)

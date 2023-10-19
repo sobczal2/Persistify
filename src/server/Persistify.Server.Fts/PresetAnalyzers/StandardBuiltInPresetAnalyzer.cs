@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Persistify.Domain.PresetAnalyzerDescriptors;
+using Persistify.Domain.PresetAnalyzers;
 
 namespace Persistify.Server.Fts.Presets;
 
@@ -10,7 +10,7 @@ public class StandardBuiltInPresetAnalyzer : IBuiltInPresetAnalyzer
     private static readonly List<string> CharacterFilterNames =
         new() { "lowercase_letters", "uppercase_letters", "digits" };
 
-    private static readonly List<string> TokenFilterNames = new() { "lowercase", "suffix" };
+    private static readonly List<string> TokenFilterNames = new() { "lowercase" };
     public PresetAnalyzer GetPresetAnalyzer()
     {
         return new()

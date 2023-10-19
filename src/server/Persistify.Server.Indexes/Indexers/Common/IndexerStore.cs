@@ -69,11 +69,11 @@ public class IndexerStore
 
     private IEnumerable<SearchResult> AndSearch(AndSearchQueryDto query)
     {
-        var results = new IEnumerable<SearchResult>[query.Queries.Count];
+        var results = new IEnumerable<SearchResult>[query.SearchQueryDtos.Count];
 
         for (var i = 0; i < results.Length; i++)
         {
-            results[i] = Search(query.Queries[i]);
+            results[i] = Search(query.SearchQueryDtos[i]);
         }
 
         return EnumerableHelpers.IntersectSorted(
@@ -82,11 +82,11 @@ public class IndexerStore
 
     private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto query)
     {
-        var results = new IEnumerable<SearchResult>[query.Queries.Count];
+        var results = new IEnumerable<SearchResult>[query.SearchQueryDtos.Count];
 
         for (var i = 0; i < results.Length; i++)
         {
-            results[i] = Search(query.Queries[i]);
+            results[i] = Search(query.SearchQueryDtos[i]);
         }
 
         return EnumerableHelpers.MergeSorted(

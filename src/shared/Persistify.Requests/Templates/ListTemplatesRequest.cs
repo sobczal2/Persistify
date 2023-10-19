@@ -9,5 +9,5 @@ namespace Persistify.Requests.Templates;
 public class ListTemplatesRequest : IRequest<ListTemplatesResponse>
 {
     [ProtoMember(1)]
-    public PaginationDto Pagination { get; set; } = default!;
+    public PaginationDto PaginationDto { get; set; } = default!;
 }
