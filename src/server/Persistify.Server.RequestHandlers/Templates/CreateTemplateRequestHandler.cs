@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Fields;
 using Persistify.Helpers.Collections;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.Domain.Templates;
 using Persistify.Server.Domain.Users;
-using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
@@ -21,8 +18,8 @@ namespace Persistify.Server.CommandHandlers.Templates;
 
 public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplateRequest, CreateTemplateResponse>
 {
-    private readonly ITemplateManager _templateManager;
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
+    private readonly ITemplateManager _templateManager;
     private Template? _template;
 
     public CreateTemplateRequestHandler(
@@ -44,7 +41,7 @@ public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplate
             Name = request.TemplateName,
             Fields = await request.Fields.ListSelectAsync(
                 x =>
-                    x.ToDomain(async (name) =>
+                    x.ToDomain(async name =>
                         (
                             await _presetAnalyzerManager.GetAsync(name)
                         )?

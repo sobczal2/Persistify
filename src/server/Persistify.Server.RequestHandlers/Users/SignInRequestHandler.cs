@@ -55,11 +55,7 @@ public class SignInRequestHandler : RequestHandler<SignInRequest, SignInResponse
 
         _response = new SignInResponse
         {
-            User = new UserDto
-            {
-                Username = user.Username,
-                Permission = (int)user.Permission
-            },
+            User = new UserDto { Username = user.Username, Permission = (int)user.Permission },
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };

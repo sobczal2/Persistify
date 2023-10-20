@@ -6,7 +6,6 @@ using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 using Persistify.Server.Domain.Documents;
-using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -15,10 +14,10 @@ namespace Persistify.Server.Validation.Requests.Documents;
 
 public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
-    private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
-    private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly IValidator<BoolFieldValueDto> _boolFieldValueDtoValidator;
+    private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly ITemplateManager _templateManager;
+    private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
 
     public CreateDocumentRequestValidator(
         IValidator<TextFieldValueDto> textFieldValueDtoValidator,
@@ -27,11 +26,14 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         ITemplateManager templateManager
     )
     {
-        _textFieldValueDtoValidator = textFieldValueDtoValidator ?? throw new ArgumentNullException(nameof(textFieldValueDtoValidator));
+        _textFieldValueDtoValidator = textFieldValueDtoValidator ??
+                                      throw new ArgumentNullException(nameof(textFieldValueDtoValidator));
         _textFieldValueDtoValidator.PropertyName = PropertyName;
-        _numberFieldValueDtoValidator = numberFieldValueDtoValidator ?? throw new ArgumentNullException(nameof(numberFieldValueDtoValidator));
+        _numberFieldValueDtoValidator = numberFieldValueDtoValidator ??
+                                        throw new ArgumentNullException(nameof(numberFieldValueDtoValidator));
         _numberFieldValueDtoValidator.PropertyName = PropertyName;
-        _boolFieldValueDtoValidator = boolFieldValueDtoValidator ?? throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
+        _boolFieldValueDtoValidator = boolFieldValueDtoValidator ??
+                                      throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
         _boolFieldValueDtoValidator.PropertyName = PropertyName;
         _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateDocumentRequest));
@@ -87,7 +89,8 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 
                     break;
                 case NumberFieldValueDto numberFieldValueDto:
-                    var numberFieldValueDtoResult = await _numberFieldValueDtoValidator.ValidateAsync(numberFieldValueDto);
+                    var numberFieldValueDtoResult =
+                        await _numberFieldValueDtoValidator.ValidateAsync(numberFieldValueDto);
                     if (!numberFieldValueDtoResult.Success)
                     {
                         return numberFieldValueDtoResult;
@@ -105,6 +108,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
                 default:
                     return DynamicValidationException(DocumentErrorMessages.InvalidFieldValue);
             }
+
             PropertyName.Pop();
         }
 

@@ -22,7 +22,8 @@ public class PresetAnalyzerService : IPresetAnalyzerService
     public async ValueTask<CreatePresetAnalyzerResponse> CreatePresetAnalyzerAsync(CreatePresetAnalyzerRequest request,
         CallContext callContext)
     {
-        return await _requestDispatcher.DispatchAsync<CreatePresetAnalyzerRequest, CreatePresetAnalyzerResponse>(request,
+        return await _requestDispatcher.DispatchAsync<CreatePresetAnalyzerRequest, CreatePresetAnalyzerResponse>(
+            request,
             callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
@@ -43,7 +44,8 @@ public class PresetAnalyzerService : IPresetAnalyzerService
     public async ValueTask<DeletePresetAnalyzerResponse> DeletePresetAnalyzerAsync(DeletePresetAnalyzerRequest request,
         CallContext callContext)
     {
-        return await _requestDispatcher.DispatchAsync<DeletePresetAnalyzerRequest, DeletePresetAnalyzerResponse>(request,
+        return await _requestDispatcher.DispatchAsync<DeletePresetAnalyzerRequest, DeletePresetAnalyzerResponse>(
+            request,
             callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 }

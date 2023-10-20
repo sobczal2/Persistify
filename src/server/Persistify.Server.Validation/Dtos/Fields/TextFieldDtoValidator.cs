@@ -2,7 +2,6 @@
 using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Helpers.Results;
-using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Validation.Common;
 
@@ -16,7 +15,7 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
     public TextFieldDtoValidator(
         IValidator<FullAnalyzerDto> fullAnalyzerDtoValidator,
         IValidator<PresetNameAnalyzerDto> presetNameDescriptorDtoValidator
-        )
+    )
     {
         _fullAnalyzerDtoValidator = fullAnalyzerDtoValidator;
         _fullAnalyzerDtoValidator.PropertyName = PropertyName;

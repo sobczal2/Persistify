@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.RequestHandlers\Persistify.Server.RequestHandlers.csproj" />
+    <ProjectReference Include="..\Persistify.Server.RequestHandlers\Persistify.Server.RequestHandlers.csproj"/>
     <ProjectReference Include="..\Persistify.Server.HostedServices\Persistify.Server.HostedServices.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Security\Persistify.Server.Security.csproj"/>

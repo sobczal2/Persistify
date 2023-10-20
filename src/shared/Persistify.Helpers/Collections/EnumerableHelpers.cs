@@ -5,12 +5,13 @@ namespace Persistify.Helpers.Collections;
 
 public static class EnumerableHelpers
 {
-    public static IEnumerable<T> MergeSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc, params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> MergeSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc,
+        params IEnumerable<T>[] enumerables)
     {
         var enumerators = GetEnumerators(enumerables);
         var heap = new SortedSet<(T Value, int Index)>(Comparer<(T Value, int Index)>.Create((x, y) =>
         {
-            int comp = comparer.Compare(x.Value, y.Value);
+            var comp = comparer.Compare(x.Value, y.Value);
             return comp != 0 ? comp : x.Index.CompareTo(y.Index);
         }));
 
@@ -46,6 +47,7 @@ public static class EnumerableHelpers
                     nextHeap.Add((enumerators[item.Index].Current, item.Index));
                 }
             }
+
             heap = nextHeap;
 
             yield return mergedValue;
@@ -62,7 +64,8 @@ public static class EnumerableHelpers
         }
     }
 
-    public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc, params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc,
+        params IEnumerable<T>[] enumerables)
     {
         if (enumerables.Length == 0)
         {

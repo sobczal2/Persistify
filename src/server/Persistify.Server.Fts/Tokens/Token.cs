@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Persistify.Server.Fts.Tokens;
+﻿namespace Persistify.Server.Fts.Tokens;
 
 public abstract class Token
 {

@@ -15,8 +15,8 @@ namespace Persistify.Server.CommandHandlers.Internal;
 public class EnsureBuildInPresetAnalyzersExistRequestHandler : RequestHandler<EnsureBuildInPresetAnalyzersExistRequest,
     EnsureBuildInPresetAnalyzersExistResponse>
 {
-    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private readonly IEnumerable<IBuiltInPresetAnalyzer> _buildInPresetAnalyzers;
+    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public EnsureBuildInPresetAnalyzersExistRequestHandler(
         IRequestHandlerContext<EnsureBuildInPresetAnalyzersExistRequest, EnsureBuildInPresetAnalyzersExistResponse>

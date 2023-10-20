@@ -11,6 +11,7 @@ public class DeletePresetAnalyzerRequestValidator : Validator<DeletePresetAnalyz
     {
         PropertyName.Push(nameof(DeletePresetAnalyzerRequest));
     }
+
     public override ValueTask<Result> ValidateNotNullAsync(DeletePresetAnalyzerRequest value)
     {
         return ValueTask.FromResult(Result.Ok);

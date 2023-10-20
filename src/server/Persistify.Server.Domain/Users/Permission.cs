@@ -15,5 +15,7 @@ public enum Permission
     PresetAnalyzerRead = 64,
     PresetAnalyzerWrite = 128,
     Root = 256,
-    All = DocumentRead | DocumentWrite | TemplateRead | TemplateWrite | UserRead | UserWrite | PresetAnalyzerRead | PresetAnalyzerWrite | Root
+
+    All = DocumentRead | DocumentWrite | TemplateRead | TemplateWrite | UserRead | UserWrite | PresetAnalyzerRead |
+          PresetAnalyzerWrite | Root
 }

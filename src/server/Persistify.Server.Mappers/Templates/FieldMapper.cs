@@ -9,20 +9,13 @@ namespace Persistify.Server.Mappers.Templates;
 
 public static class FieldMapper
 {
-    public static async ValueTask<Field> ToDomain(this FieldDto fieldDto, Func<string, ValueTask<Analyzer>> analyzerFromPresetNameFunc)
+    public static async ValueTask<Field> ToDomain(this FieldDto fieldDto,
+        Func<string, ValueTask<Analyzer>> analyzerFromPresetNameFunc)
     {
         return fieldDto switch
         {
-            BoolFieldDto => new BoolField
-            {
-                Name = fieldDto.Name,
-                Required = fieldDto.Required
-            },
-            NumberFieldDto => new NumberField
-            {
-                Name = fieldDto.Name,
-                Required = fieldDto.Required
-            },
+            BoolFieldDto => new BoolField { Name = fieldDto.Name, Required = fieldDto.Required },
+            NumberFieldDto => new NumberField { Name = fieldDto.Name, Required = fieldDto.Required },
             TextFieldDto textFieldDto => new TextField
             {
                 Name = fieldDto.Name,
@@ -30,7 +23,8 @@ public static class FieldMapper
                 Analyzer = textFieldDto.AnalyzerDto switch
                 {
                     FullAnalyzerDto fullAnalyzerDto => fullAnalyzerDto.ToDomain(),
-                    PresetNameAnalyzerDto presetNameAnalyzerDto => await analyzerFromPresetNameFunc(presetNameAnalyzerDto.PresetName),
+                    PresetNameAnalyzerDto presetNameAnalyzerDto => await analyzerFromPresetNameFunc(
+                        presetNameAnalyzerDto.PresetName),
                     _ => throw new ArgumentOutOfRangeException(nameof(textFieldDto.AnalyzerDto))
                 }
             },
@@ -42,21 +36,11 @@ public static class FieldMapper
     {
         return field switch
         {
-            BoolField => new BoolFieldDto
-            {
-                Name = field.Name,
-                Required = field.Required
-            },
-            NumberField => new NumberFieldDto
-            {
-                Name = field.Name,
-                Required = field.Required
-            },
+            BoolField => new BoolFieldDto { Name = field.Name, Required = field.Required },
+            NumberField => new NumberFieldDto { Name = field.Name, Required = field.Required },
             TextField textField => new TextFieldDto
             {
-                Name = field.Name,
-                Required = field.Required,
-                AnalyzerDto = textField.Analyzer.ToDto(),
+                Name = field.Name, Required = field.Required, AnalyzerDto = textField.Analyzer.ToDto()
             },
             _ => throw new ArgumentOutOfRangeException(nameof(field))
         };

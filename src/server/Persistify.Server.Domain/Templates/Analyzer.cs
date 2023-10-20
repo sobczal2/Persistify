@@ -6,6 +6,13 @@ namespace Persistify.Server.Domain.Templates;
 [ProtoContract]
 public class Analyzer
 {
+    public Analyzer()
+    {
+        CharacterFilterNames = new List<string>();
+        CharacterSetNames = new List<string>();
+        TokenFilterNames = new List<string>();
+    }
+
     [ProtoMember(1)]
     public List<string> CharacterFilterNames { get; set; }
 
@@ -17,11 +24,4 @@ public class Analyzer
 
     [ProtoMember(4)]
     public List<string> TokenFilterNames { get; set; }
-
-    public Analyzer()
-    {
-        CharacterFilterNames = new List<string>();
-        CharacterSetNames = new List<string>();
-        TokenFilterNames = new List<string>();
-    }
 }

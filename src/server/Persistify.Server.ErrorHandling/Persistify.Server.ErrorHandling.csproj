@@ -9,14 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Server.Domain\Persistify.Server.Domain.csproj" />
-    <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Server.Domain\Persistify.Server.Domain.csproj"/>
+    <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1"/>
   </ItemGroup>
 
 

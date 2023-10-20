@@ -6,11 +6,12 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
 {
+    private readonly int[] _alphabetIndexMap;
     private readonly Token _token;
 
     public TextIndexerSearchFixedTrieItem(
         Token token
-        )
+    )
     {
         _token = token;
 
@@ -26,6 +27,11 @@ public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
             };
         }
     }
+
+    public override int Length => _token.Term.Length;
+    public sealed override int AnyIndex => _alphabetIndexMap.Length;
+    public sealed override int RepeatedAnyIndex => _alphabetIndexMap.Length + 1;
+
     public override int GetIndex(int index)
     {
         if (index >= _alphabetIndexMap.Length)
@@ -40,9 +46,4 @@ public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
 
         return _alphabetIndexMap[index];
     }
-
-    private readonly int[] _alphabetIndexMap;
-    public override int Length => _token.Term.Length;
-    public sealed override int AnyIndex => _alphabetIndexMap.Length;
-    public sealed override int RepeatedAnyIndex => _alphabetIndexMap.Length + 1;
 }

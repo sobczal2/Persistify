@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Helpers.Collections;
 using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;

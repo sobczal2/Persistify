@@ -1,7 +1,6 @@
-﻿using Persistify.Server.Domain.Templates;
-using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
+﻿using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Helpers.Results;
+using Persistify.Server.Domain.Templates;
 
 namespace Persistify.Server.Fts.Abstractions;
 

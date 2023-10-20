@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
@@ -37,7 +36,8 @@ public class PresetAnalyzerDescriptorDtoValidator : Validator<PresetNameAnalyzer
         if (!_presetAnalyzerManager.Exists(value.PresetName))
         {
             PropertyName.Push(nameof(PresetNameAnalyzerDto.PresetName));
-            return ValueTask.FromResult<Result>(DynamicValidationException(TemplateErrorMessages.PresetAnalyzerNotFound));
+            return ValueTask.FromResult<Result>(
+                DynamicValidationException(TemplateErrorMessages.PresetAnalyzerNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

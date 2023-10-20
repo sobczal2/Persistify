@@ -19,7 +19,7 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
     public void Insert(TIndexItem item)
     {
         var node = _root;
-        for(var i = 0; i < item.Length; i++)
+        for (var i = 0; i < item.Length; i++)
         {
             var index = item.GetIndex(i);
             var child = node.GetChild(index);
@@ -91,6 +91,7 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
                 {
                     node.SetItemEmpty();
                 }
+
                 count++;
             }
 

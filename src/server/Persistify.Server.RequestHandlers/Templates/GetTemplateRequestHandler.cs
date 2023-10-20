@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Dtos.Templates.Common;
-using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
@@ -40,10 +37,7 @@ public sealed class GetTemplateRequestHandler : RequestHandler<GetTemplateReques
     protected override GetTemplateResponse GetResponse()
     {
         var template = _template ?? throw new InternalPersistifyException(nameof(GetTemplateRequest));
-        return new GetTemplateResponse
-        {
-            TemplateDto = template.ToDto()
-        };
+        return new GetTemplateResponse { TemplateDto = template.ToDto() };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest request)

@@ -10,8 +10,4 @@
     <Folder Include="Templates\"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Persistify.Client\Persistify.Client.csproj"/>
-  </ItemGroup>
-
 </Project>

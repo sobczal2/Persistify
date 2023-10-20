@@ -20,7 +20,7 @@ public class InitializePresetAnalyzerManagerRequestHandler : RequestHandler<
         IRequestHandlerContext<InitializePresetAnalyzerManagerRequest,
             InitializePresetAnalyzerManagerResponse> requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-            ) : base(
+    ) : base(
         requestHandlerContext
     )
     {

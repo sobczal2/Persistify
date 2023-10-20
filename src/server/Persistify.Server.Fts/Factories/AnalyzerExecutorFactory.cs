@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
 using Persistify.Helpers.Results;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Analyzers;
 using Persistify.Server.Fts.CharacterSets;
@@ -17,7 +16,8 @@ namespace Persistify.Server.Fts.Factories;
 public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
 {
     private static readonly ConcurrentBag<string> SupportedCharacterFilters =
-        new() { };
+        new();
+
     private static readonly ConcurrentBag<string> SupportedCharacterSets =
         new() { "lowercase_letters", "uppercase_letters", "digits" };
 

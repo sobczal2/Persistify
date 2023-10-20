@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Persistify.Server.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Number;
+using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -38,7 +38,8 @@ public class NumberIndexer : IIndexer
 
     public IEnumerable<SearchResult> SearchAsync(SearchQueryDto queryDto)
     {
-        if (queryDto is not NumberSearchQueryDto numberSearchQueryDto || numberSearchQueryDto.GetFieldName() != FieldName)
+        if (queryDto is not NumberSearchQueryDto numberSearchQueryDto ||
+            numberSearchQueryDto.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
@@ -46,7 +47,8 @@ public class NumberIndexer : IIndexer
         return queryDto switch
         {
             ExactNumberSearchQueryDto exactNumberSearchQueryDto => HandleExactNumberSearch(exactNumberSearchQueryDto),
-            GreaterNumberSearchQueryDto greaterNumberSearchQueryDto => HandleGreaterNumberSearch(greaterNumberSearchQueryDto),
+            GreaterNumberSearchQueryDto greaterNumberSearchQueryDto => HandleGreaterNumberSearch(
+                greaterNumberSearchQueryDto),
             LessNumberSearchQueryDto lessNumberSearchQueryDto => HandleLessNumberSearch(lessNumberSearchQueryDto),
             RangeNumberSearchQueryDto rangeNumberSearchQueryDto => HandleRangeNumberSearch(rangeNumberSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")

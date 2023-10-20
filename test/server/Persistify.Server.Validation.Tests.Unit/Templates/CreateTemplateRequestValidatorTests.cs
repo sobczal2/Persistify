@@ -123,11 +123,7 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest
-        {
-            TemplateName = null!,
-            Fields = new List<FieldDto>(),
-        };
+        var request = new CreateTemplateRequest { TemplateName = null!, Fields = new List<FieldDto>() };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -144,11 +140,7 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest
-        {
-            TemplateName = string.Empty,
-            Fields = new List<FieldDto>()
-        };
+        var request = new CreateTemplateRequest { TemplateName = string.Empty, Fields = new List<FieldDto>() };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -165,11 +157,7 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest
-        {
-            TemplateName = new string('a', 65),
-            Fields = new List<FieldDto>()
-        };
+        var request = new CreateTemplateRequest { TemplateName = new string('a', 65), Fields = new List<FieldDto>() };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -186,11 +174,7 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenNoFields_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest
-        {
-            TemplateName = "template",
-            Fields = new List<FieldDto>()
-        };
+        var request = new CreateTemplateRequest { TemplateName = "template", Fields = new List<FieldDto>() };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -209,11 +193,7 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new TextFieldDto()
-            }
+            TemplateName = "template", Fields = new List<FieldDto> { new TextFieldDto() }
         };
         List<string> propertyNameAtCall = null!;
         _textFieldValidator
@@ -233,11 +213,7 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new TextFieldDto()
-            }
+            TemplateName = "template", Fields = new List<FieldDto> { new TextFieldDto() }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _textFieldValidator
@@ -258,11 +234,7 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new NumberFieldDto()
-            }
+            TemplateName = "template", Fields = new List<FieldDto> { new NumberFieldDto() }
         };
         List<string> propertyNameAtCall = null!;
         _numberFieldValidator
@@ -282,11 +254,7 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new NumberFieldDto()
-            }
+            TemplateName = "template", Fields = new List<FieldDto> { new NumberFieldDto() }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _numberFieldValidator
@@ -307,11 +275,7 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new BoolFieldDto()
-            }
+            TemplateName = "template", Fields = new List<FieldDto> { new BoolFieldDto() }
         };
         List<string> propertyNameAtCall = null!;
         _boolFieldValidator
@@ -331,11 +295,7 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new BoolFieldDto()
-            }
+            TemplateName = "template", Fields = new List<FieldDto> { new BoolFieldDto() }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _boolFieldValidator
@@ -357,17 +317,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new TextFieldDto
-                {
-                    Name = "name",
-                },
-                new TextFieldDto
-                {
-                    Name = "name"
-                }
-            }
+            Fields = new List<FieldDto> { new TextFieldDto { Name = "name" }, new TextFieldDto { Name = "name" } }
         };
 
         // Act
@@ -390,14 +340,7 @@ public class CreateTemplateRequestValidatorTests
             TemplateName = "template",
             Fields = new List<FieldDto>
             {
-                new NumberFieldDto
-                {
-                    Name = "name",
-                },
-                new NumberFieldDto
-                {
-                    Name = "name"
-                }
+                new NumberFieldDto { Name = "name" }, new NumberFieldDto { Name = "name" }
             }
         };
 
@@ -419,17 +362,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new BoolFieldDto
-                {
-                    Name = "name",
-                },
-                new BoolFieldDto
-                {
-                    Name = "name"
-                }
-            }
+            Fields = new List<FieldDto> { new BoolFieldDto { Name = "name" }, new BoolFieldDto { Name = "name" } }
         };
 
         // Act
@@ -450,17 +383,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new TextFieldDto
-                {
-                    Name = "name",
-                },
-                new NumberFieldDto
-                {
-                    Name = "name"
-                }
-            }
+            Fields = new List<FieldDto> { new TextFieldDto { Name = "name" }, new NumberFieldDto { Name = "name" } }
         };
 
         // Act
@@ -481,17 +404,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new TextFieldDto
-                {
-                    Name = "name",
-                },
-                new BoolFieldDto
-                {
-                    Name = "name"
-                }
-            }
+            Fields = new List<FieldDto> { new TextFieldDto { Name = "name" }, new BoolFieldDto { Name = "name" } }
         };
 
         // Act
@@ -512,17 +425,7 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto>
-            {
-                new NumberFieldDto
-                {
-                    Name = "name",
-                },
-                new BoolFieldDto
-                {
-                    Name = "name"
-                }
-            }
+            Fields = new List<FieldDto> { new NumberFieldDto { Name = "name" }, new BoolFieldDto { Name = "name" } }
         };
 
         // Act
@@ -545,18 +448,9 @@ public class CreateTemplateRequestValidatorTests
             TemplateName = "template",
             Fields = new List<FieldDto>
             {
-                new TextFieldDto
-                {
-                    Name = "name1",
-                },
-                new NumberFieldDto
-                {
-                    Name = "name2",
-                },
-                new BoolFieldDto
-                {
-                    Name = "name3"
-                }
+                new TextFieldDto { Name = "name1" },
+                new NumberFieldDto { Name = "name2" },
+                new BoolFieldDto { Name = "name3" }
             }
         };
 

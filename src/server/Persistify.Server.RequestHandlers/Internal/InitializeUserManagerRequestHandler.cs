@@ -11,7 +11,8 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class InitializeUserManagerRequestHandler : RequestHandler<InitializeUserManagerRequest, InitializeUserManagerResponse>
+public class
+    InitializeUserManagerRequestHandler : RequestHandler<InitializeUserManagerRequest, InitializeUserManagerResponse>
 {
     private readonly IUserManager _userManager;
 

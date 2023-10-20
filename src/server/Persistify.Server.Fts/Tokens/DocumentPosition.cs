@@ -4,16 +4,16 @@ namespace Persistify.Server.Fts.Tokens;
 
 public class DocumentPosition : IComparable<DocumentPosition>
 {
-    public int DocumentId { get; }
-    public int Position { get; }
-    public float Score { get; }
-
     public DocumentPosition(int documentId, int position, float score)
     {
         DocumentId = documentId;
         Position = position;
         Score = score;
     }
+
+    public int DocumentId { get; }
+    public int Position { get; }
+    public float Score { get; }
 
     public int CompareTo(DocumentPosition? other)
     {

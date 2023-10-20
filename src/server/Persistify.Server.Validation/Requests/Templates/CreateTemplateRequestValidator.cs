@@ -12,10 +12,10 @@ namespace Persistify.Server.Validation.Requests.Templates;
 
 public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 {
-    private readonly IValidator<TextFieldDto> _textFieldDtoValidator;
-    private readonly IValidator<NumberFieldDto> _numberFieldDtoValidator;
     private readonly IValidator<BoolFieldDto> _boolFieldDtoValidator;
+    private readonly IValidator<NumberFieldDto> _numberFieldDtoValidator;
     private readonly ITemplateManager _templateManager;
+    private readonly IValidator<TextFieldDto> _textFieldDtoValidator;
 
     public CreateTemplateRequestValidator(
         IValidator<TextFieldDto> textFieldDtoValidator,
@@ -24,11 +24,14 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         ITemplateManager templateManager
     )
     {
-        _textFieldDtoValidator = textFieldDtoValidator ?? throw new ArgumentNullException(nameof(textFieldDtoValidator));
+        _textFieldDtoValidator =
+            textFieldDtoValidator ?? throw new ArgumentNullException(nameof(textFieldDtoValidator));
         _textFieldDtoValidator.PropertyName = PropertyName;
-        _numberFieldDtoValidator = numberFieldDtoValidator ?? throw new ArgumentNullException(nameof(numberFieldDtoValidator));
+        _numberFieldDtoValidator =
+            numberFieldDtoValidator ?? throw new ArgumentNullException(nameof(numberFieldDtoValidator));
         _numberFieldDtoValidator.PropertyName = PropertyName;
-        _boolFieldDtoValidator = boolFieldDtoValidator ?? throw new ArgumentNullException(nameof(boolFieldDtoValidator));
+        _boolFieldDtoValidator =
+            boolFieldDtoValidator ?? throw new ArgumentNullException(nameof(boolFieldDtoValidator));
         _boolFieldDtoValidator.PropertyName = PropertyName;
         _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateTemplateRequest));
@@ -99,12 +102,13 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
                 default:
                     return DynamicValidationException(TemplateErrorMessages.InvalidField);
             }
+
             PropertyName.Pop();
         }
 
         var allNames = new HashSet<string>(value.Fields.Count);
 
-        for(var i = 0; i < value.Fields.Count; i++)
+        for (var i = 0; i < value.Fields.Count; i++)
         {
             var field = value.Fields[i];
             if (allNames.Add(field.Name))

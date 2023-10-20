@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Dtos.Common;
 using Persistify.Helpers.Results;
-using Persistify.Requests.Common;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Validation.Common;
 

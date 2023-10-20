@@ -11,6 +11,7 @@ public class CreatePresetAnalyzerRequestValidator : Validator<CreatePresetAnalyz
     {
         PropertyName.Push(nameof(CreatePresetAnalyzerRequest));
     }
+
     public override ValueTask<Result> ValidateNotNullAsync(CreatePresetAnalyzerRequest value)
     {
         return ValueTask.FromResult(Result.Ok);

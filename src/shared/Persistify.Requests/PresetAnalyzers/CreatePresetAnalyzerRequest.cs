@@ -1,5 +1,4 @@
 ﻿using Persistify.Dtos.PresetAnalyzers;
-using Persistify.Dtos.Templates.Common;
 using Persistify.Requests.Common;
 using Persistify.Responses.PresetAnalyzers;
 using ProtoBuf;

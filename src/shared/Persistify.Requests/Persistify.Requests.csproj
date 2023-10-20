@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj" />
-    <ProjectReference Include="..\Persistify.Responses\Persistify.Responses.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj"/>
+    <ProjectReference Include="..\Persistify.Responses\Persistify.Responses.csproj"/>
   </ItemGroup>
 
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Tokens;
 

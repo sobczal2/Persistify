@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Persistify.Server.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Text;
+using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Tokens;
@@ -101,7 +101,7 @@ public class TextIndexer : IIndexer
             var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token));
             foreach (var trieResult in trieResults)
             {
-                var score = queryDto.Boost * (token.Term.Length / (float) trieResult.Term.Length);
+                var score = queryDto.Boost * (token.Term.Length / (float)trieResult.Term.Length);
 
                 foreach (var documentPosition in trieResult.DocumentPositions)
                 {
@@ -114,7 +114,8 @@ public class TextIndexer : IIndexer
                     {
                         var metadata = new SearchMetadata(score);
                         metadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
-                        results.Add(documentPosition.DocumentId, new SearchResult(documentPosition.DocumentId, metadata));
+                        results.Add(documentPosition.DocumentId,
+                            new SearchResult(documentPosition.DocumentId, metadata));
                     }
                 }
             }

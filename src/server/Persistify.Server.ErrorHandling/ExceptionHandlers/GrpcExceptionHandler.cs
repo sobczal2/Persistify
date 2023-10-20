@@ -8,8 +8,8 @@ namespace Persistify.Server.ErrorHandling.ExceptionHandlers;
 
 public class GrpcExceptionHandler : IExceptionHandler
 {
-    private readonly IPersistifyErrorCodeMapper<StatusCode> _persistifyErrorCodeMapper;
     private readonly ILogger<GrpcExceptionHandler> _logger;
+    private readonly IPersistifyErrorCodeMapper<StatusCode> _persistifyErrorCodeMapper;
 
     public GrpcExceptionHandler(
         IPersistifyErrorCodeMapper<StatusCode> persistifyErrorCodeMapper,

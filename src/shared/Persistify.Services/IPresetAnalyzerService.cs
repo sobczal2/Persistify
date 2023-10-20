@@ -10,14 +10,18 @@ namespace Persistify.Services;
 public interface IPresetAnalyzerService
 {
     [OperationContract]
-    ValueTask<CreatePresetAnalyzerResponse> CreatePresetAnalyzerAsync(CreatePresetAnalyzerRequest request, CallContext callContext);
+    ValueTask<CreatePresetAnalyzerResponse> CreatePresetAnalyzerAsync(CreatePresetAnalyzerRequest request,
+        CallContext callContext);
 
     [OperationContract]
-    ValueTask<GetPresetAnalyzerResponse> GetPresetAnalyzerAsync(GetPresetAnalyzerRequest request, CallContext callContext);
+    ValueTask<GetPresetAnalyzerResponse> GetPresetAnalyzerAsync(GetPresetAnalyzerRequest request,
+        CallContext callContext);
 
     [OperationContract]
-    ValueTask<ListPresetAnalyzersResponse> ListPresetAnalyzersAsync(ListPresetAnalyzersRequest request, CallContext callContext);
+    ValueTask<ListPresetAnalyzersResponse> ListPresetAnalyzersAsync(ListPresetAnalyzersRequest request,
+        CallContext callContext);
 
     [OperationContract]
-    ValueTask<DeletePresetAnalyzerResponse> DeletePresetAnalyzerAsync(DeletePresetAnalyzerRequest request, CallContext callContext);
+    ValueTask<DeletePresetAnalyzerResponse> DeletePresetAnalyzerAsync(DeletePresetAnalyzerRequest request,
+        CallContext callContext);
 }

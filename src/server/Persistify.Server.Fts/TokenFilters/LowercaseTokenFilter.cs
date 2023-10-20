@@ -6,14 +6,6 @@ namespace Persistify.Server.Fts.TokenFilters;
 
 public class LowercaseTokenFilter : ITokenFilter
 {
-    private static void Filter(IEnumerable<Token> tokens)
-    {
-        foreach (var token in tokens)
-        {
-            token.Term = token.Term.ToLowerInvariant();
-        }
-    }
-
     public List<SearchToken> FilterForSearch(List<SearchToken> tokens)
     {
         Filter(tokens);
@@ -26,5 +18,13 @@ public class LowercaseTokenFilter : ITokenFilter
         Filter(tokens);
 
         return tokens;
+    }
+
+    private static void Filter(IEnumerable<Token> tokens)
+    {
+        foreach (var token in tokens)
+        {
+            token.Term = token.Term.ToLowerInvariant();
+        }
     }
 }

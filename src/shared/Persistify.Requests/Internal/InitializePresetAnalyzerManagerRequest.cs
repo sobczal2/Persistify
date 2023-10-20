@@ -5,5 +5,4 @@ namespace Persistify.Requests.Internal;
 
 public class InitializePresetAnalyzerManagerRequest : IRequest<InitializePresetAnalyzerManagerResponse>
 {
-
 }

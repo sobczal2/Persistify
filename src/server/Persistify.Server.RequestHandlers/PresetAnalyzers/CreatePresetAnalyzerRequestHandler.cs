@@ -5,7 +5,6 @@ using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.Domain.PresetAnalyzers;
-using Persistify.Server.Domain.Templates;
 using Persistify.Server.Domain.Users;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
@@ -33,8 +32,7 @@ public class
     {
         var presetAnalyzer = new PresetAnalyzer
         {
-            Name = request.PresetAnalyzerName,
-            Analyzer = request.FullAnalyzerDto.ToDomain(),
+            Name = request.PresetAnalyzerName, Analyzer = request.FullAnalyzerDto.ToDomain()
         };
 
         _presetAnalyzerManager.Add(presetAnalyzer);

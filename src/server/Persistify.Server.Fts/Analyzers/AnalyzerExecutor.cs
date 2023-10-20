@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Tokens;
 
@@ -10,8 +9,8 @@ namespace Persistify.Server.Fts.Analyzers;
 public class AnalyzerExecutor : IAnalyzerExecutor
 {
     private readonly char[] _alphabet;
-    private readonly IEnumerable<ITokenFilter> _tokenFilters;
     private readonly IEnumerable<ICharacterFilter> _characterFilters;
+    private readonly IEnumerable<ITokenFilter> _tokenFilters;
     private readonly ITokenizer _tokenizer;
 
     public AnalyzerExecutor(
@@ -34,6 +33,7 @@ public class AnalyzerExecutor : IAnalyzerExecutor
     }
 
     public int AlphabetLength => _alphabet.Length;
+
     public IEnumerable<SearchToken> AnalyzeForSearch(string input)
     {
         foreach (var characterFilter in _characterFilters)

@@ -7,5 +7,4 @@ namespace Persistify.Dtos.PresetAnalyzers;
 [ProtoInclude(2, typeof(PresetNameAnalyzerDto))]
 public class AnalyzerDto
 {
-
 }

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using Persistify.Server.Domain.Documents;
-using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Helpers.Collections;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;

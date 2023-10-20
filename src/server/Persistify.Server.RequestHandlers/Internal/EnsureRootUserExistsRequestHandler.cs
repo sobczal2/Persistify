@@ -14,7 +14,8 @@ using Persistify.Server.Security;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class EnsureRootUserExistsRequestHandler : RequestHandler<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>
+public class
+    EnsureRootUserExistsRequestHandler : RequestHandler<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>
 {
     private readonly IPasswordService _passwordService;
     private readonly IOptions<RootSettings> _rootSettingsOptions;

@@ -6,12 +6,13 @@ namespace Persistify.Server.Indexes.DataStructures.Tries;
 public class FixedTrieNode<TItem>
 {
     private readonly FixedTrieNode<TItem>?[] _children;
-    public IndexFixedTrieItem<TItem>? Item { get; private set; }
 
     public FixedTrieNode(int alphabetSize)
     {
         _children = new FixedTrieNode<TItem>?[alphabetSize];
     }
+
+    public IndexFixedTrieItem<TItem>? Item { get; private set; }
 
     public void Insert(IndexFixedTrieItem<TItem> item)
     {

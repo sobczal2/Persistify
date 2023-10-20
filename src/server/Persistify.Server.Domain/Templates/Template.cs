@@ -7,6 +7,13 @@ namespace Persistify.Server.Domain.Templates;
 [ProtoContract]
 public class Template
 {
+    private Dictionary<string, Field>? _fieldNameTypeMap;
+
+    public Template()
+    {
+        Fields = new List<Field>();
+    }
+
     [ProtoMember(1)]
     public int Id { get; set; }
 
@@ -15,13 +22,6 @@ public class Template
 
     [ProtoMember(3)]
     public List<Field> Fields { get; set; }
-
-    private Dictionary<string, Field>? _fieldNameTypeMap;
-
-    public Template()
-    {
-        Fields = new List<Field>();
-    }
 
     private void EnsureFieldNameTypeMapInitialized()
     {

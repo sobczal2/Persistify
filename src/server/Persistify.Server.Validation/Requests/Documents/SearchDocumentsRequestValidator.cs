@@ -95,7 +95,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             AndSearchQueryDto andSearchQueryDto => await ValidateAndSearchQueryDtoAsync(andSearchQueryDto, template),
             OrSearchQueryDto orSearchQueryDto => await ValidateOrSearchQueryDtoAsync(orSearchQueryDto, template),
             NotSearchQueryDto notSearchQueryDto => await ValidateNotSearchQueryDtoAsync(notSearchQueryDto, template),
-            ExactBoolSearchQueryDto exactBoolSearchQueryDto => await ValidateExactBoolSearchQueryDtoAsync(exactBoolSearchQueryDto,
+            ExactBoolSearchQueryDto exactBoolSearchQueryDto => await ValidateExactBoolSearchQueryDtoAsync(
+                exactBoolSearchQueryDto,
                 template),
             ExactNumberSearchQueryDto exactNumberSearchQueryDto => await ValidateExactNumberSearchQueryDtoAsync(
                 exactNumberSearchQueryDto, template),
@@ -105,9 +106,11 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 lessNumberSearchQueryDto, template),
             RangeNumberSearchQueryDto rangeNumberSearchQueryDto => await ValidateRangeNumberSearchQueryDtoAsync(
                 rangeNumberSearchQueryDto, template),
-            ExactTextSearchQueryDto exactTextSearchQueryDto => await ValidateExactTextSearchQueryDtoAsync(exactTextSearchQueryDto,
+            ExactTextSearchQueryDto exactTextSearchQueryDto => await ValidateExactTextSearchQueryDtoAsync(
+                exactTextSearchQueryDto,
                 template),
-            FullTextSearchQueryDto fullTextSearchQueryDto => await ValidateFullTextSearchQueryDtoAsync(fullTextSearchQueryDto,
+            FullTextSearchQueryDto fullTextSearchQueryDto => await ValidateFullTextSearchQueryDtoAsync(
+                fullTextSearchQueryDto,
                 template),
             PrefixTextSearchQueryDto prefixTextSearchQueryDto => await ValidatePrefixTextSearchQueryDtoAsync(
                 prefixTextSearchQueryDto, template),
@@ -197,17 +200,21 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         switch (indexType)
         {
             case IndexType.Boolean when field.FieldType != FieldType.Bool:
-                return ValueTask.FromResult<Result>(DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch));
+                return ValueTask.FromResult<Result>(
+                    DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch));
             case IndexType.Number when field.FieldType != FieldType.Number:
-                return ValueTask.FromResult<Result>(DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch));
+                return ValueTask.FromResult<Result>(
+                    DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch));
             case IndexType.Text when field.FieldType != FieldType.Text:
-                return ValueTask.FromResult<Result>(DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch));
+                return ValueTask.FromResult<Result>(
+                    DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch));
         }
 
         return ValueTask.FromResult(Result.Ok);
     }
 
-    private async ValueTask<Result> ValidateExactBoolSearchQueryDtoAsync(ExactBoolSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidateExactBoolSearchQueryDtoAsync(ExactBoolSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(ExactBoolSearchQueryDto));
         PropertyName.Push(nameof(ExactBoolSearchQueryDto.FieldName));
@@ -221,7 +228,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateExactNumberSearchQueryDtoAsync(ExactNumberSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidateExactNumberSearchQueryDtoAsync(ExactNumberSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(ExactNumberSearchQueryDto));
         PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
@@ -250,7 +258,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateLessNumberSearchQueryDtoAsync(LessNumberSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidateLessNumberSearchQueryDtoAsync(LessNumberSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(LessNumberSearchQueryDto));
         PropertyName.Push(nameof(LessNumberSearchQueryDto.FieldName));
@@ -264,7 +273,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateRangeNumberSearchQueryDtoAsync(RangeNumberSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidateRangeNumberSearchQueryDtoAsync(RangeNumberSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(RangeNumberSearchQueryDto));
         PropertyName.Push(nameof(RangeNumberSearchQueryDto.FieldName));
@@ -284,7 +294,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateExactTextSearchQueryDtoAsync(ExactTextSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidateExactTextSearchQueryDtoAsync(ExactTextSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(ExactTextSearchQueryDto));
         PropertyName.Push(nameof(ExactTextSearchQueryDto.FieldName));
@@ -298,7 +309,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateFullTextSearchQueryDtoAsync(FullTextSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidateFullTextSearchQueryDtoAsync(FullTextSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(FullTextSearchQueryDto));
         PropertyName.Push(nameof(FullTextSearchQueryDto.FieldName));
@@ -312,7 +324,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidatePrefixTextSearchQueryDtoAsync(PrefixTextSearchQueryDto queryDto, Template template)
+    private async ValueTask<Result> ValidatePrefixTextSearchQueryDtoAsync(PrefixTextSearchQueryDto queryDto,
+        Template template)
     {
         PropertyName.Push(nameof(PrefixTextSearchQueryDto));
         PropertyName.Push(nameof(PrefixTextSearchQueryDto.FieldName));

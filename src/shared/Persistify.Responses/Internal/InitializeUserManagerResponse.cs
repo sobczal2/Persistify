@@ -4,5 +4,4 @@ namespace Persistify.Responses.Internal;
 
 public class InitializeUserManagerResponse : IResponse
 {
-
 }

@@ -18,7 +18,9 @@ public class PresetAnalyzerManagerRequiredFileGroup : IRequiredFileGroup
     {
         return new List<string>
         {
-            IdentifierRepositoryFileName, PresetAnalyzerRepositoryMainFileName, PresetAnalyzerRepositoryOffsetLengthFileName
+            IdentifierRepositoryFileName,
+            PresetAnalyzerRepositoryMainFileName,
+            PresetAnalyzerRepositoryOffsetLengthFileName
         };
     }
 }

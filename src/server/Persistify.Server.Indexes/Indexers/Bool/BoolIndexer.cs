@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Persistify.Server.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
+using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Indexes.Searches;

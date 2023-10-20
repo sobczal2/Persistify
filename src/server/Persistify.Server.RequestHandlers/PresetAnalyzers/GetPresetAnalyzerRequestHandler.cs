@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;

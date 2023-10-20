@@ -1,11 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
-using Persistify.Server.CommandHandlers.Templates;
 using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;
