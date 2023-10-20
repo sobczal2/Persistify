@@ -13,6 +13,7 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Documents;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
@@ -39,30 +40,14 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
         var template = await _templateManager.GetAsync(request.TemplateName) ??
                        throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
-        _document = new Document
-        {
-            FieldValues = request.FieldValues.Select(x =>
-            {
-                FieldValue fieldValue = x switch
-                {
-                    BoolFieldValueDto boolFieldValue => new BoolFieldValue
-                    {
-                        FieldName = boolFieldValue.FieldName, Value = boolFieldValue.Value
-                    },
-                    NumberFieldValueDto numberFieldValue => new NumberFieldValue
-                    {
-                        FieldName = numberFieldValue.FieldName, Value = numberFieldValue.Value
-                    },
-                    TextFieldValueDto textFieldValue => new TextFieldValue
-                    {
-                        FieldName = textFieldValue.FieldName, Value = textFieldValue.Value
-                    },
-                    _ => throw new InternalPersistifyException(nameof(CreateDocumentRequest))
-                };
+        var fieldValues = new List<FieldValue>();
 
-                return fieldValue;
-            }).ToList()
-        };
+        foreach (var fieldValueDto in request.FieldValueDtos)
+        {
+            fieldValues.Add(fieldValueDto.ToDomain());
+        }
+
+        _document = new Document { FieldValues = fieldValues };
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ??
                               throw new InternalPersistifyException(nameof(CreateDocumentRequest));

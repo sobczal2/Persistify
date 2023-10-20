@@ -60,6 +60,11 @@ public class SearchMetadata
             }
         }
 
+        foreach (var (name, value) in metadataDictionary)
+        {
+            mergedMetadata.Add(name, value);
+        }
+
         return mergedMetadata;
     }
 }

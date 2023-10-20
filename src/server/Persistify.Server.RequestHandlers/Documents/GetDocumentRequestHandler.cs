@@ -15,6 +15,7 @@ using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Documents;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
@@ -60,34 +61,7 @@ public class GetDocumentRequestHandler : RequestHandler<GetDocumentRequest, GetD
     protected override GetDocumentResponse GetResponse()
     {
         var document = _document ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
-        return new GetDocumentResponse
-        {
-            Document = new DocumentDto
-            {
-                Id = document.Id,
-                FieldValues = document.FieldValues.Select(x =>
-                {
-                    FieldValueDto fieldValueDto = x switch
-                    {
-                        BoolFieldValue boolFieldValue => new BoolFieldValueDto
-                        {
-                            FieldName = boolFieldValue.FieldName, Value = boolFieldValue.Value
-                        },
-                        NumberFieldValue numberFieldValue => new NumberFieldValueDto
-                        {
-                            FieldName = numberFieldValue.FieldName, Value = numberFieldValue.Value
-                        },
-                        TextFieldValue textFieldValue => new TextFieldValueDto
-                        {
-                            FieldName = textFieldValue.FieldName, Value = textFieldValue.Value
-                        },
-                        _ => throw new InternalPersistifyException(nameof(GetDocumentRequest))
-                    };
-
-                    return fieldValueDto;
-                }).ToList()
-            }
-        };
+        return new GetDocumentResponse { DocumentDto = document.ToDto() };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest request)

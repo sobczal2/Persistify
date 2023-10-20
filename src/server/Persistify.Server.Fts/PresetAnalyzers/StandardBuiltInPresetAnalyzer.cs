@@ -7,8 +7,10 @@ public class StandardBuiltInPresetAnalyzer : IBuiltInPresetAnalyzer
 {
     private const string TokenizerName = "whitespace";
 
-    private static readonly List<string> CharacterFilterNames =
+    private static readonly List<string> CharacterSetNames =
         new() { "lowercase_letters", "uppercase_letters", "digits" };
+
+    private static readonly List<string> CharacterFilterNames = new();
 
     private static readonly List<string> TokenFilterNames = new() { "lowercase", "suffix" };
     public PresetAnalyzer GetPresetAnalyzer()
@@ -18,8 +20,9 @@ public class StandardBuiltInPresetAnalyzer : IBuiltInPresetAnalyzer
             Name = "standard",
             Analyzer = new()
             {
-                TokenizerName = TokenizerName,
                 CharacterFilterNames = CharacterFilterNames,
+                CharacterSetNames = CharacterSetNames,
+                TokenizerName = TokenizerName,
                 TokenFilterNames = TokenFilterNames
             }
         };

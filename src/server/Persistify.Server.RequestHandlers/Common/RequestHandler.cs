@@ -63,8 +63,6 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
         {
             await RequestHandlerContext.ValidateAsync(request).ConfigureAwait(false);
             await RunAsync(request, cancellationToken).ConfigureAwait(false);
-            await transaction.CommitAsync().ConfigureAwait(false);
-            return GetResponse();
         }
         catch (Exception exception)
         {
@@ -72,6 +70,15 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
             RequestHandlerContext.HandleException(exception);
         }
 
-        throw new InternalPersistifyException(request?.GetType().Name);
+        try
+        {
+            await transaction.CommitAsync().ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            RequestHandlerContext.HandleException(exception);
+        }
+
+        return GetResponse();
     }
 }

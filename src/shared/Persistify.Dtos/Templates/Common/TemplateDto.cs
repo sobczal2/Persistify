@@ -11,5 +11,10 @@ public class TemplateDto
     public string Name { get; set; } = default!;
 
     [ProtoMember(2)]
-    public List<FieldDto> Fields { get; set; } = default!;
+    public List<FieldDto> Fields { get; set; }
+
+    public TemplateDto()
+    {
+        Fields = new List<FieldDto>();
+    }
 }

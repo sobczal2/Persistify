@@ -53,17 +53,17 @@ public class TextIndexer : IIndexer
         }
     }
 
-    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto query)
+    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto queryDto)
     {
-        if (query is not TextSearchQueryDto textSearchQuery || textSearchQuery.GetFieldName() != FieldName)
+        if (queryDto is not TextSearchQueryDto textSearchQueryDto || textSearchQueryDto.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
-        return textSearchQuery switch
+        return textSearchQueryDto switch
         {
-            ExactTextSearchQueryDto exactTextSearchQuery => HandleExactTextSearch(exactTextSearchQuery),
-            FullTextSearchQueryDto fullTextSearchQuery => HandleFullTextSearch(fullTextSearchQuery),
+            ExactTextSearchQueryDto exactTextSearchQueryDto => HandleExactTextSearch(exactTextSearchQueryDto),
+            FullTextSearchQueryDto fullTextSearchQueryDto => HandleFullTextSearch(fullTextSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
@@ -77,31 +77,31 @@ public class TextIndexer : IIndexer
         );
     }
 
-    private IEnumerable<SearchResult> HandleExactTextSearch(ExactTextSearchQueryDto query)
+    private IEnumerable<SearchResult> HandleExactTextSearch(ExactTextSearchQueryDto queryDto)
     {
-        var results = _intervalTree.Search(query.Value, query.Value,
+        var results = _intervalTree.Search(queryDto.Value, queryDto.Value,
             (a, b) => String.Compare(a.Value, b, StringComparison.Ordinal));
 
         results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(queryDto.Boost));
         }
     }
 
-    private IEnumerable<SearchResult> HandleFullTextSearch(FullTextSearchQueryDto query)
+    private IEnumerable<SearchResult> HandleFullTextSearch(FullTextSearchQueryDto queryDto)
     {
         var results = new SortedList<int, SearchResult>();
 
         var tokenCount = 0;
 
-        foreach (var token in _analyzerExecutor.AnalyzeForSearch(query.Value))
+        foreach (var token in _analyzerExecutor.AnalyzeForSearch(queryDto.Value))
         {
             var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token));
             foreach (var trieResult in trieResults)
             {
-                var score = query.Boost * (token.Term.Length / (float) trieResult.Term.Length);
+                var score = queryDto.Boost * (token.Term.Length / (float) trieResult.Term.Length);
 
                 foreach (var documentPosition in trieResult.DocumentPositions)
                 {

@@ -94,6 +94,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Dtos", "src\shar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Domain", "src\server\Persistify.Server.Domain\Persistify.Server.Domain.csproj", "{B15A6027-2ABD-4DC1-ACDC-D9B81BA9E589}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Mappers", "src\server\Persistify.Server.Mappers\Persistify.Server.Mappers.csproj", "{FD6B151D-AB24-4D30-B6B9-868625C73200}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -252,6 +254,10 @@ Global
 		{B15A6027-2ABD-4DC1-ACDC-D9B81BA9E589}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B15A6027-2ABD-4DC1-ACDC-D9B81BA9E589}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B15A6027-2ABD-4DC1-ACDC-D9B81BA9E589}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD6B151D-AB24-4D30-B6B9-868625C73200}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD6B151D-AB24-4D30-B6B9-868625C73200}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD6B151D-AB24-4D30-B6B9-868625C73200}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD6B151D-AB24-4D30-B6B9-868625C73200}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{99511B02-47E2-49EA-ABFA-692908E9ECF0} = {529E57B4-73DB-4FB3-B24A-546172EA4E25}
@@ -298,5 +304,6 @@ Global
 		{03C595FF-3598-40BF-8E45-BC96C6560D72} = {4966F52A-2A71-4E16-8400-A59C72AA50D2}
 		{FAA07C15-1253-4894-9702-680C511A6095} = {4FB08BD5-8F08-4B8D-9A5D-083729853CD5}
 		{B15A6027-2ABD-4DC1-ACDC-D9B81BA9E589} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
+		{FD6B151D-AB24-4D30-B6B9-868625C73200} = {99511B02-47E2-49EA-ABFA-692908E9ECF0}
 	EndGlobalSection
 EndGlobal

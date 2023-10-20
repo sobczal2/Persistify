@@ -14,4 +14,8 @@
     <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CharacterFilters\" />
+  </ItemGroup>
+
 </Project>

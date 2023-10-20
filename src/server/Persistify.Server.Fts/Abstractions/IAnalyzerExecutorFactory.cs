@@ -7,6 +7,6 @@ namespace Persistify.Server.Fts.Abstractions;
 
 public interface IAnalyzerExecutorFactory
 {
-    IAnalyzerExecutor Create(Analyzer descriptor);
-    Result Validate(FullAnalyzerDto descriptor);
+    IAnalyzerExecutor Create(Analyzer analyzer);
+    Result Validate(FullAnalyzerDto analyzerDto);
 }

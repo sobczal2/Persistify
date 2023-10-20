@@ -37,23 +37,41 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
 
     public IEnumerable<TItem> Search(TSearchItem item)
     {
-        var node = _root;
+        var queue = new Queue<(FixedTrieNode<TItem> node, int depth)>();
+        queue.Enqueue((_root, 0));
 
-        for (var i = 0; i < item.Length; i++)
+        while (queue.Count > 0)
         {
-            var index = item.GetIndex(i);
-            var child = node.GetChild(index);
-            if (child is null)
+            var (node, depth) = queue.Dequeue();
+            if (depth == item.Length)
             {
-                yield break;
+                foreach (var result in node.GetItems())
+                {
+                    yield return result;
+                }
             }
-
-            node = child;
-        }
-
-        foreach (var foundItem in node.GetItems())
-        {
-            yield return foundItem;
+            else
+            {
+                var index = item.GetIndex(depth);
+                if (index == item.AnyIndex)
+                {
+                    foreach (var child in node.GetChildren())
+                    {
+                        if (child != null)
+                        {
+                            queue.Enqueue((child, depth + 1));
+                        }
+                    }
+                }
+                else
+                {
+                    var child = node.GetChild(index);
+                    if (child != null)
+                    {
+                        queue.Enqueue((child, depth + 1));
+                    }
+                }
+            }
         }
     }
 

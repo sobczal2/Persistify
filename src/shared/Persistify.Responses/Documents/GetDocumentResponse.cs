@@ -8,5 +8,5 @@ namespace Persistify.Responses.Documents;
 public class GetDocumentResponse : IResponse
 {
     [ProtoMember(1)]
-    public DocumentDto Document { get; set; } = default!;
+    public DocumentDto DocumentDto { get; set; } = default!;
 }

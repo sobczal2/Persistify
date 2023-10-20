@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Dtos.PresetAnalyzers;
+using Persistify.Helpers.Collections;
 using Persistify.Requests.PresetAnalyzers;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;
@@ -12,6 +13,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.PresetAnalyzers;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
@@ -46,16 +48,7 @@ public class ListPresetAnalyzersRequestHandler : RequestHandler<ListPresetAnalyz
             _presetAnalyzers ?? throw new InternalPersistifyException(nameof(ListPresetAnalyzersRequest));
         return new ListPresetAnalyzersResponse
         {
-            PresetAnalyzerDtos = presetAnalyzers.Select(x => new PresetAnalyzerDto
-            {
-                Name = x.Name,
-                FullAnalyzerDto = new FullAnalyzerDto
-                {
-                    CharacterFilterNames = x.Analyzer.CharacterFilterNames,
-                    TokenizerName = x.Analyzer.TokenizerName,
-                    TokenFilterNames = x.Analyzer.TokenFilterNames
-                }
-            }).ToList(),
+            PresetAnalyzerDtos = presetAnalyzers.ListSelect(x => x.ToDto()),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListPresetAnalyzersRequest))
         };
     }

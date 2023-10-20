@@ -1,4 +1,4 @@
-﻿namespace Persistify.Server.Domain.Templates;
+﻿namespace Persistify.Dtos.Common;
 
 public enum FieldTypeDto
 {

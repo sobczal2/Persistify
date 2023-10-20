@@ -9,6 +9,6 @@ public interface IIndexer
 {
     string FieldName { get; }
     void IndexAsync(Document document);
-    IEnumerable<SearchResult> SearchAsync(SearchQueryDto query);
+    IEnumerable<SearchResult> SearchAsync(SearchQueryDto queryDto);
     void DeleteAsync(Document document);
 }

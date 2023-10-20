@@ -26,17 +26,17 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDto>
     public override ValueTask<Result> ValidateNotNullAsync(FullAnalyzerDto value)
     {
         var count = 0;
-        foreach (var characterFilterName in value.CharacterFilterNames)
+        foreach (var characterFilterName in value.CharacterSetNames)
         {
             if (string.IsNullOrEmpty(characterFilterName))
             {
-                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterFilterNames)}[{count}]");
+                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
                 return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
             }
 
             if (characterFilterName.Length > 64)
             {
-                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterFilterNames)}[{count}]");
+                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
                 return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
             }
 
@@ -78,8 +78,8 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDto>
         {
             switch (analyzerFactoryResult.Exception)
             {
-                case UnsupportedCharacterFilterException unsupportedCharacterFilterException:
-                    PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterFilterNames)}");
+                case UnsupportedCharacterSetException unsupportedCharacterFilterException:
+                    PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}");
                     return ValueTask.FromResult<Result>(
                         DynamicValidationException(unsupportedCharacterFilterException.Message));
                 case UnsupportedTokenizerException unsupportedTokenizerException:

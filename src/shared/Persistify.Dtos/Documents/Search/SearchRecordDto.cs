@@ -8,8 +8,13 @@ namespace Persistify.Dtos.Documents.Search;
 public class SearchRecordDto
 {
     [ProtoMember(1)]
-    public DocumentDto Document { get; set; } = default!;
+    public DocumentDto DocumentDto { get; set; } = default!;
 
     [ProtoMember(2)]
-    public List<SearchMetadataDto> MetadataList { get; set; } = default!;
+    public List<SearchMetadataDto> MetadataList { get; set; }
+
+    public SearchRecordDto()
+    {
+        MetadataList = new List<SearchMetadataDto>();
+    }
 }

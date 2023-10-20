@@ -12,9 +12,14 @@ public class Document
     public int Id { get; set; }
 
     [ProtoMember(2)]
-    public List<FieldValue> FieldValues { get; set; } = default!;
+    public List<FieldValue> FieldValues { get; set; }
 
     private Dictionary<string, FieldValue>? _fieldNameTypeMap;
+
+    public Document()
+    {
+        FieldValues = new List<FieldValue>();
+    }
 
     private void EnsureFieldNameTypeMapInitialized()
     {

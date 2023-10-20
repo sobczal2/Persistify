@@ -1,4 +1,4 @@
-﻿using Persistify.Server.Domain.Templates;
+﻿using Persistify.Dtos.Common;
 using ProtoBuf;
 
 namespace Persistify.Dtos.Documents.FieldValues;

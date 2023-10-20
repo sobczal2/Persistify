@@ -17,14 +17,16 @@ namespace Persistify.Server.Fts.Factories;
 public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
 {
     private static readonly ConcurrentBag<string> SupportedCharacterFilters =
+        new() { };
+    private static readonly ConcurrentBag<string> SupportedCharacterSets =
         new() { "lowercase_letters", "uppercase_letters", "digits" };
 
     private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
     private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase", "suffix" };
 
-    public Result Validate(FullAnalyzerDto descriptor)
+    public Result Validate(FullAnalyzerDto analyzerDto)
     {
-        foreach (var characterFilter in descriptor.CharacterFilterNames)
+        foreach (var characterFilter in analyzerDto.CharacterFilterNames)
         {
             if (!SupportedCharacterFilters.Contains(characterFilter))
             {
@@ -32,12 +34,20 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
             }
         }
 
-        if (!SupportedTokenizers.Contains(descriptor.TokenizerName))
+        foreach (var characterSetName in analyzerDto.CharacterSetNames)
         {
-            return new UnsupportedTokenizerException(descriptor.TokenizerName, SupportedTokenizers);
+            if (!SupportedCharacterSets.Contains(characterSetName))
+            {
+                return new UnsupportedCharacterSetException(characterSetName, SupportedCharacterSets);
+            }
         }
 
-        foreach (var tokenFilter in descriptor.TokenFilterNames)
+        if (!SupportedTokenizers.Contains(analyzerDto.TokenizerName))
+        {
+            return new UnsupportedTokenizerException(analyzerDto.TokenizerName, SupportedTokenizers);
+        }
+
+        foreach (var tokenFilter in analyzerDto.TokenFilterNames)
         {
             if (!SupportedTokenFilters.Contains(tokenFilter))
             {
@@ -48,16 +58,25 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         return Result.Ok;
     }
 
-    public IAnalyzerExecutor Create(Analyzer descriptor)
+    public IAnalyzerExecutor Create(Analyzer analyzer)
     {
-        var characterFilters = descriptor.CharacterFilterNames.Select(CreateCharacterFilter).ToList();
-        var tokenizer = CreateTokenizer(descriptor.TokenizerName);
-        var tokenFilters = descriptor.TokenFilterNames.Select(CreateTokenFilter).ToList();
+        var characterFilters = analyzer.CharacterFilterNames.Select(CreateCharacterFilter).ToList();
+        var characterSets = analyzer.CharacterSetNames.Select(CreateCharacterSet).ToList();
+        var tokenizer = CreateTokenizer(analyzer.TokenizerName);
+        var tokenFilters = analyzer.TokenFilterNames.Select(CreateTokenFilter).ToList();
 
-        return new AnalyzerExecutor(characterFilters, tokenizer, tokenFilters);
+        return new AnalyzerExecutor(characterFilters, characterSets, tokenizer, tokenFilters);
     }
 
-    private ICharacterSet CreateCharacterFilter(string name)
+    private static ICharacterFilter CreateCharacterFilter(string name)
+    {
+        return name switch
+        {
+            _ => throw new NotImplementedException()
+        };
+    }
+
+    private static ICharacterSet CreateCharacterSet(string name)
     {
         return name switch
         {
@@ -68,7 +87,7 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         };
     }
 
-    private ITokenizer CreateTokenizer(string name)
+    private static ITokenizer CreateTokenizer(string name)
     {
         return name switch
         {
@@ -77,7 +96,7 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         };
     }
 
-    private ITokenFilter CreateTokenFilter(string name)
+    private static ITokenFilter CreateTokenFilter(string name)
     {
         return name switch
         {

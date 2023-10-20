@@ -8,5 +8,5 @@ namespace Persistify.Responses.Templates;
 public class GetTemplateResponse : IResponse
 {
     [ProtoMember(1)]
-    public TemplateDto Template { get; set; } = default!;
+    public TemplateDto TemplateDto { get; set; } = default!;
 }

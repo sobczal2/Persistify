@@ -15,4 +15,5 @@ public static class TemplateErrorMessages
     public const string InvalidField = "Invalid field";
     public const string PresetAnalyzerNotFound = "Preset analyzer not found";
     public const string InvalidAnalyzerDescriptor = "Invalid analyzer descriptor";
+    public const string TemplateAlreadyExists = "Template already exists";
 }

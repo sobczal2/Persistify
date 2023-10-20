@@ -14,9 +14,14 @@ public class Template
     public string Name { get; set; } = default!;
 
     [ProtoMember(3)]
-    public List<Field> Fields { get; set; } = default!;
+    public List<Field> Fields { get; set; }
 
     private Dictionary<string, Field>? _fieldNameTypeMap;
+
+    public Template()
+    {
+        Fields = new List<Field>();
+    }
 
     private void EnsureFieldNameTypeMapInitialized()
     {

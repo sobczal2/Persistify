@@ -7,11 +7,21 @@ namespace Persistify.Dtos.PresetAnalyzers;
 public class FullAnalyzerDto : AnalyzerDto
 {
     [ProtoMember(1)]
-    public List<string> CharacterFilterNames { get; set; } = default!;
+    public List<string> CharacterFilterNames { get; set; }
 
     [ProtoMember(2)]
-    public string TokenizerName { get; set; } = default!;
+    public List<string> CharacterSetNames { get; set; }
 
     [ProtoMember(3)]
-    public List<string> TokenFilterNames { get; set; } = default!;
+    public string TokenizerName { get; set; } = default!;
+
+    [ProtoMember(4)]
+    public List<string> TokenFilterNames { get; set; }
+
+    public FullAnalyzerDto()
+    {
+        CharacterFilterNames = new List<string>();
+        CharacterSetNames = new List<string>();
+        TokenFilterNames = new List<string>();
+    }
 }

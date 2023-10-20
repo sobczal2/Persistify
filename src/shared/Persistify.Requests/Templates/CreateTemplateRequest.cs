@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Persistify.Server.Domain.Templates;
 using Persistify.Dtos.Templates;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Common;
@@ -15,5 +14,10 @@ public class CreateTemplateRequest : IRequest<CreateTemplateResponse>
     public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
-    public List<FieldDto> Fields { get; set; } = default!;
+    public List<FieldDto> Fields { get; set; }
+
+    public CreateTemplateRequest()
+    {
+        Fields = new List<FieldDto>();
+    }
 }

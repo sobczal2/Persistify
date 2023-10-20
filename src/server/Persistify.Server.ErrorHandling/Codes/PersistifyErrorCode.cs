@@ -7,5 +7,7 @@ public enum PersistifyErrorCode
     InsufficientPermission,
     InternalFailure,
     Unauthenticated,
-    NotFound
+    NotFound,
+    AlreadyExists,
+    FatalInternalFailure
 }

@@ -13,5 +13,10 @@ public class CreateDocumentRequest : IRequest<CreateDocumentResponse>
     public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
-    public List<FieldValueDto> FieldValues { get; set; } = default!;
+    public List<FieldValueDto> FieldValueDtos { get; set; }
+
+    public CreateDocumentRequest()
+    {
+        FieldValueDtos = new List<FieldValueDto>();
+    }
 }

@@ -13,6 +13,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Templates;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
@@ -41,12 +42,7 @@ public sealed class GetTemplateRequestHandler : RequestHandler<GetTemplateReques
         var template = _template ?? throw new InternalPersistifyException(nameof(GetTemplateRequest));
         return new GetTemplateResponse
         {
-            Template = new TemplateDto
-            {
-                Name = template.Name,
-                Fields = template.Fields.Select(x => new FieldDto { Name = x.Name, Required = x.Required })
-                    .ToList()
-            }
+            TemplateDto = template.ToDto()
         };
     }
 

@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace Persistify.Helpers.Algorithms;
+namespace Persistify.Helpers.Collections;
 
 public static class EnumerableHelpers
 {
-    public static IEnumerable<T> MergeSorted<T>(IComparer<T> comparer, params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> MergeSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc, params IEnumerable<T>[] enumerables)
     {
         var enumerators = GetEnumerators(enumerables);
-        var heap = new SortedSet<(T Value, int Index)>(
-            Comparer<(T Value, int Index)>.Create((x, y) => comparer.Compare(x.Value, y.Value)));
+        var heap = new SortedSet<(T Value, int Index)>(Comparer<(T Value, int Index)>.Create((x, y) =>
+        {
+            int comp = comparer.Compare(x.Value, y.Value);
+            return comp != 0 ? comp : x.Index.CompareTo(y.Index);
+        }));
+
         for (var i = 0; i < enumerators.Length; i++)
         {
             if (enumerators[i].MoveNext())
@@ -23,7 +26,30 @@ public static class EnumerableHelpers
         {
             var min = heap.Min;
             heap.Remove(min);
-            yield return min.Value;
+
+            var mergedValue = min.Value;
+
+            var nextHeap = new SortedSet<(T Value, int Index)>(heap.Comparer);
+            foreach (var item in heap)
+            {
+                if (comparer.Compare(item.Value, min.Value) == 0)
+                {
+                    mergedValue = mergeFunc(mergedValue, item.Value);
+                }
+                else
+                {
+                    nextHeap.Add(item);
+                }
+
+                if (enumerators[item.Index].MoveNext())
+                {
+                    nextHeap.Add((enumerators[item.Index].Current, item.Index));
+                }
+            }
+            heap = nextHeap;
+
+            yield return mergedValue;
+
             if (enumerators[min.Index].MoveNext())
             {
                 heap.Add((enumerators[min.Index].Current, min.Index));
@@ -86,7 +112,7 @@ public static class EnumerableHelpers
                     }
 
                     yield return mergedValue;
-                    
+
                     canAdvance = true;
                     foreach (var enumerator in enumerators)
                     {

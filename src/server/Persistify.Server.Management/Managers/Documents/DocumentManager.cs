@@ -16,6 +16,7 @@ using Persistify.Server.Files;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Documents;
 using Persistify.Server.Persistence.Extensions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
@@ -124,13 +125,13 @@ public class DocumentManager : Manager, IDocumentManager
     }
 
     public async ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(
-        SearchQueryDto searchQuery, int take,
+        SearchQueryDto searchQueryDto, int take,
         int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var searchResults = _indexerStore.Search(searchQuery).ToList();
+        var searchResults = _indexerStore.Search(searchQueryDto).ToList();
 
         searchResults.Sort((a, b) => b.SearchMetadata.Score.CompareTo(a.SearchMetadata.Score));
 
@@ -143,31 +144,7 @@ public class DocumentManager : Manager, IDocumentManager
             {
                 searchRecords.Add(new SearchRecordDto
                 {
-                    Document = new DocumentDto
-                    {
-                        Id = document.Id,
-                        FieldValues = document.FieldValues.Select(x =>
-                        {
-                            FieldValueDto fieldValueDto = x switch
-                            {
-                                BoolFieldValue boolFieldValue => new BoolFieldValueDto
-                                {
-                                    FieldName = boolFieldValue.FieldName, Value = boolFieldValue.Value
-                                },
-                                NumberFieldValue numberFieldValue => new NumberFieldValueDto
-                                {
-                                    FieldName = numberFieldValue.FieldName, Value = numberFieldValue.Value
-                                },
-                                TextFieldValue textFieldValue => new TextFieldValueDto
-                                {
-                                    FieldName = textFieldValue.FieldName, Value = textFieldValue.Value
-                                },
-                                _ => throw new InternalPersistifyException()
-                            };
-
-                            return fieldValueDto;
-                        }).ToList()
-                    },
+                    DocumentDto = document.ToDto(),
                     MetadataList = searchResult.SearchMetadata.ToSearchMetadataList()
                 });
             }

@@ -27,7 +27,7 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
                 {
                     Name = "TextField1",
                     Required = true,
-                    Analyzer = new PresetNameAnalyzerDto
+                    AnalyzerDto = new PresetNameAnalyzerDto
                     {
                         PresetName = "standard"
                     }

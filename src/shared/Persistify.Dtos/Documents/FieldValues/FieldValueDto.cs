@@ -1,4 +1,4 @@
-﻿using Persistify.Server.Domain.Templates;
+﻿using Persistify.Dtos.Common;
 using Persistify.Server.ErrorHandling.Exceptions;
 using ProtoBuf;
 

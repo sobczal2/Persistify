@@ -9,8 +9,13 @@ namespace Persistify.Responses.Users;
 public class ListUsersResponse : IResponse
 {
     [ProtoMember(1)]
-    public List<UserDto> Users { get; set; } = default!;
+    public List<UserDto> Users { get; set; }
 
     [ProtoMember(2)]
     public int TotalCount { get; set; }
+
+    public ListUsersResponse()
+    {
+        Users = new List<UserDto>();
+    }
 }

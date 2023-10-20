@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions.Exceptions;
 
@@ -127,6 +129,8 @@ public sealed class Transaction : ITransaction
             throw new TransactionStateCorruptedException();
         }
 
+        var exceptions = new List<Exception>();
+
         // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < _transactionDescriptor.WriteManagers.Count; i++)
         {
@@ -135,11 +139,9 @@ public sealed class Transaction : ITransaction
             {
                 await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _logger.LogError(
-                    "Error while executing pending actions for transaction {TransactionId} on manager {ManagerName}",
-                    Id, writeManager.GetType().Name);
+                exceptions.Add(ex);
             }
         }
 
@@ -163,6 +165,17 @@ public sealed class Transaction : ITransaction
         }
 
         Phase = TransactionPhase.Committed;
+
+        if (exceptions.Any())
+        {
+            _logger.LogCritical("Transaction {TransactionId} committed with errors", Id);
+            foreach (var exception in exceptions)
+            {
+                _logger.LogCritical(exception, "Error occurred during transaction {TransactionId} commit", Id);
+            }
+
+            throw new FatalInternalPersistifyException("Unknown", "Transaction committed with errors");
+        }
 
         _logger.LogDebug("Transaction {TransactionId} committed", Id);
     }

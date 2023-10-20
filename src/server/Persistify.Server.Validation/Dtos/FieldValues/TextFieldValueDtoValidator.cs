@@ -11,20 +11,20 @@ public class TextFieldValueDtoValidator : Validator<TextFieldValueDto>
 {
     public TextFieldValueDtoValidator()
     {
-        PropertyName.Push(nameof(TextFieldValue));
+        PropertyName.Push(nameof(TextFieldValueDto));
     }
 
     public override ValueTask<Result> ValidateNotNullAsync(TextFieldValueDto value)
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {
-            PropertyName.Push(nameof(TextFieldValue.FieldName));
+            PropertyName.Push(nameof(TextFieldValueDto.FieldName));
             return ValueTask.FromResult<Result>(StaticValidationException(DocumentErrorMessages.NameEmpty));
         }
 
         if (value.FieldName.Length > 64)
         {
-            PropertyName.Push(nameof(TextFieldValue.FieldName));
+            PropertyName.Push(nameof(TextFieldValueDto.FieldName));
             return ValueTask.FromResult<Result>(StaticValidationException(DocumentErrorMessages.NameTooLong));
         }
 

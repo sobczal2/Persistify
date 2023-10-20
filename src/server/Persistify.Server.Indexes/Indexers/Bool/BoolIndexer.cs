@@ -42,16 +42,16 @@ public class BoolIndexer : IIndexer
         }
     }
 
-    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto query)
+    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto queryDto)
     {
-        if (query is not BoolSearchQueryDto boolSearchQuery || boolSearchQuery.GetFieldName() != FieldName)
+        if (queryDto is not BoolSearchQueryDto boolSearchQueryDto || boolSearchQueryDto.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
-        return boolSearchQuery switch
+        return boolSearchQueryDto switch
         {
-            ExactBoolSearchQueryDto exactBoolSearchQuery => HandleExactBoolSearch(exactBoolSearchQuery),
+            ExactBoolSearchQueryDto exactBoolSearchQueryDto => HandleExactBoolSearch(exactBoolSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
@@ -62,20 +62,20 @@ public class BoolIndexer : IIndexer
         _falseDocuments.Remove(document.Id);
     }
 
-    private IEnumerable<SearchResult> HandleExactBoolSearch(ExactBoolSearchQueryDto query)
+    private IEnumerable<SearchResult> HandleExactBoolSearch(ExactBoolSearchQueryDto queryDto)
     {
-        if (query.Value)
+        if (queryDto.Value)
         {
             foreach (var documentId in _trueDocuments)
             {
-                yield return new SearchResult(documentId, new SearchMetadata(query.Boost));
+                yield return new SearchResult(documentId, new SearchMetadata(queryDto.Boost));
             }
         }
         else
         {
             foreach (var documentId in _falseDocuments)
             {
-                yield return new SearchResult(documentId, new SearchMetadata(query.Boost));
+                yield return new SearchResult(documentId, new SearchMetadata(queryDto.Boost));
             }
         }
     }

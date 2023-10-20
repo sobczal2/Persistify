@@ -10,6 +10,7 @@ using Persistify.Server.Domain.Users;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.PresetAnalyzers;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
@@ -33,12 +34,7 @@ public class
         var presetAnalyzer = new PresetAnalyzer
         {
             Name = request.PresetAnalyzerName,
-            Analyzer = new Analyzer
-            {
-                CharacterFilterNames = request.FullAnalyzerDto.CharacterFilterNames,
-                TokenizerName = request.FullAnalyzerDto.TokenizerName,
-                TokenFilterNames = request.FullAnalyzerDto.TokenFilterNames
-            }
+            Analyzer = request.FullAnalyzerDto.ToDomain(),
         };
 
         _presetAnalyzerManager.Add(presetAnalyzer);

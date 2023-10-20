@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Dtos.Templates.Common;
 using Persistify.Dtos.Templates.Fields;
+using Persistify.Helpers.Collections;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
@@ -13,6 +14,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Templates;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
@@ -45,12 +47,7 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
         var templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
         return new ListTemplatesResponse
         {
-            TemplateDtos = templates.Select(x => new TemplateDto
-                {
-                    Name = x.Name,
-                    Fields = x.Fields.Select(y => new FieldDto { Name = y.Name, Required = y.Required }).ToList()
-                }
-            ).ToList(),
+            TemplateDtos = templates.ListSelect(x => x.ToDto()),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
         };
     }

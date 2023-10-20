@@ -8,5 +8,5 @@ namespace Persistify.Dtos.Templates.Fields;
 public class TextFieldDto : FieldDto
 {
     [ProtoMember(3)]
-    public AnalyzerDto Analyzer { get; set; } = default!;
+    public AnalyzerDto AnalyzerDto { get; set; } = default!;
 }

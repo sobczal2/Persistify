@@ -11,6 +11,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.PresetAnalyzers;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
@@ -37,19 +38,7 @@ public class GetPresetAnalyzerRequestHandler : RequestHandler<GetPresetAnalyzerR
     protected override GetPresetAnalyzerResponse GetResponse()
     {
         var presetAnalyzer = _presetAnalyzer ?? throw new InternalPersistifyException(nameof(GetPresetAnalyzerRequest));
-        return new GetPresetAnalyzerResponse
-        {
-            PresetAnalyzerDto = new PresetAnalyzerDto
-            {
-                Name = presetAnalyzer.Name,
-                FullAnalyzerDto = new FullAnalyzerDto
-                {
-                    CharacterFilterNames = presetAnalyzer.Analyzer.CharacterFilterNames,
-                    TokenizerName = presetAnalyzer.Analyzer.TokenizerName,
-                    TokenFilterNames = presetAnalyzer.Analyzer.TokenFilterNames
-                }
-            }
-        };
+        return new GetPresetAnalyzerResponse { PresetAnalyzerDto = presetAnalyzer.ToDto() };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetPresetAnalyzerRequest request)

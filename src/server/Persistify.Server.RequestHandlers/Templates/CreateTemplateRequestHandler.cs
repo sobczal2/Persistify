@@ -3,16 +3,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Fields;
+using Persistify.Helpers.Collections;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.Domain.Templates;
 using Persistify.Server.Domain.Users;
+using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Templates;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
@@ -36,46 +39,19 @@ public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplate
 
     protected override async ValueTask RunAsync(CreateTemplateRequest request, CancellationToken cancellationToken)
     {
-        var templateFields = new List<Field>();
-        foreach (var field in request.Fields)
+        _template = new Template
         {
-            switch (field)
-            {
-                case BoolFieldDto boolFieldDto:
-                    templateFields.Add(new BoolField { Name = boolFieldDto.Name, Required = boolFieldDto.Required, });
-                    break;
-                case NumberFieldDto numberFieldDto:
-                    templateFields.Add(new NumberField
-                    {
-                        Name = numberFieldDto.Name, Required = numberFieldDto.Required,
-                    });
-                    break;
-                case TextFieldDto textFieldDto:
-                    Analyzer analyzer = textFieldDto.Analyzer switch
-                    {
-                        FullAnalyzerDto fullAnalyzerDescriptorDto =>
-                            new Analyzer
-                            {
-                                CharacterFilterNames = fullAnalyzerDescriptorDto.CharacterFilterNames,
-                                TokenizerName = fullAnalyzerDescriptorDto.TokenizerName,
-                                TokenFilterNames = fullAnalyzerDescriptorDto.TokenFilterNames
-                            },
-                        PresetNameAnalyzerDto presetAnalyzerDescriptorDto =>
-                            (await _presetAnalyzerManager.GetAsync(presetAnalyzerDescriptorDto.PresetName))?.Analyzer ??
-                            throw new InternalPersistifyException(),
-                        _ => throw new InternalPersistifyException()
-                    };
-                    templateFields.Add(new TextField
-                    {
-                        Name = textFieldDto.Name, Required = textFieldDto.Required, Analyzer = analyzer
-                    });
-                    break;
-                default:
-                    throw new InternalPersistifyException();
-            }
-        }
-
-        _template = new Template { Name = request.TemplateName, Fields = templateFields };
+            Name = request.TemplateName,
+            Fields = await request.Fields.ListSelectAsync(
+                x =>
+                    x.ToDomain(async (name) =>
+                        (
+                            await _presetAnalyzerManager.GetAsync(name)
+                        )?
+                        .Analyzer ?? throw new InternalPersistifyException(nameof(CreateTemplateRequest))
+                    )
+            )
+        };
 
         _templateManager.Add(_template);
     }

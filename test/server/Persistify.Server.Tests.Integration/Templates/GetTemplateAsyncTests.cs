@@ -25,7 +25,7 @@ public class GetTemplateAsyncTests : IntegrationTestBase
                 {
                     Name = "TextField1",
                     Required = true,
-                    Analyzer = new PresetNameAnalyzerDto
+                    AnalyzerDto = new PresetNameAnalyzerDto
                     {
                         PresetName = "standard"
                     }
@@ -40,12 +40,12 @@ public class GetTemplateAsyncTests : IntegrationTestBase
 
         // Assert
         response.Should().NotBeNull();
-        response.Template.Should().NotBeNull();
-        response.Template.Name.Should().Be("TestTemplate");
-        response.Template.Fields.Should().NotBeNull();
-        response.Template.Fields.Should().HaveCount(1);
-        response.Template.Fields[0].Name.Should().Be("TextField1");
-        response.Template.Fields[0].Required.Should().BeTrue();
-        ((TextFieldDto)response.Template.Fields[0]).Analyzer.Should().NotBeNull();
+        response.TemplateDto.Should().NotBeNull();
+        response.TemplateDto.Name.Should().Be("TestTemplate");
+        response.TemplateDto.Fields.Should().NotBeNull();
+        response.TemplateDto.Fields.Should().HaveCount(1);
+        response.TemplateDto.Fields[0].Name.Should().Be("TextField1");
+        response.TemplateDto.Fields[0].Required.Should().BeTrue();
+        ((TextFieldDto)response.TemplateDto.Fields[0]).AnalyzerDto.Should().NotBeNull();
     }
 }
