@@ -11,11 +11,11 @@ using Persistify.Server.Validation.Common;
 namespace Persistify.Server.Validation.Dtos.Common;
 
 // TODO: Add tests
-public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDto>
+public class FullAnalyzeRDtoValidator : Validator<FullAnalyzerDto>
 {
     private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
 
-    public FullAnalyzerDescriptorDtoValidator(
+    public FullAnalyzeRDtoValidator(
         IAnalyzerExecutorFactory analyzerExecutorFactory
     )
     {
@@ -26,7 +26,25 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDto>
     public override ValueTask<Result> ValidateNotNullAsync(FullAnalyzerDto value)
     {
         var count = 0;
-        foreach (var characterFilterName in value.CharacterSetNames)
+        foreach (var characterSetName in value.CharacterSetNames)
+        {
+            if (string.IsNullOrEmpty(characterSetName))
+            {
+                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
+                return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
+            }
+
+            if (characterSetName.Length > 64)
+            {
+                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
+                return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            }
+
+            count++;
+        }
+
+        count = 0;
+        foreach (var characterFilterName in value.CharacterFilterNames)
         {
             if (string.IsNullOrEmpty(characterFilterName))
             {
