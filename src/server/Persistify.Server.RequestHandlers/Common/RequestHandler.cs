@@ -48,20 +48,16 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
         {
             await RequestHandlerContext.ValidateAsync(request).ConfigureAwait(false);
             await RunAsync(request, cancellationToken).ConfigureAwait(false);
+            await transaction.CommitAsync().ConfigureAwait(false);
         }
         catch (Exception exception)
         {
             await transaction.RollbackAsync().ConfigureAwait(false);
             RequestHandlerContext.HandleException(exception);
         }
-
-        try
+        finally
         {
-            await transaction.CommitAsync().ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            RequestHandlerContext.HandleException(exception);
+            RequestHandlerContext.TransactionState.CurrentTransaction.Value = null;
         }
 
         return GetResponse();

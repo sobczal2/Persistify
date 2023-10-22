@@ -21,7 +21,7 @@ public class SuffixTokenFilter : ITokenFilter
             var token = tokens[i];
             var term = token.Term.AsSpan();
 
-            for (var j = 1; j < term.Length - 1; j++)
+            for (var j = 1; j < term.Length; j++)
             {
                 var suffixSpan = term.Slice(j);
                 var suffix = suffixSpan.ToString();

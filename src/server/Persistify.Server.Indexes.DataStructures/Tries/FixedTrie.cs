@@ -14,10 +14,18 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
     {
         _alphabetSize = alphabetSize;
         _root = new FixedTrieNode<TItem>(alphabetSize);
+        Depth = 0;
     }
+
+    public int Depth { get; private set; }
 
     public void Insert(TIndexItem item)
     {
+        if (item.Length > Depth)
+        {
+            Depth = item.Length;
+        }
+
         var node = _root;
         for (var i = 0; i < item.Length; i++)
         {
@@ -37,39 +45,53 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
 
     public IEnumerable<TItem> Search(TSearchItem item)
     {
+        if (item.Length > Depth)
+        {
+            yield break;
+        }
+
         var queue = new Queue<(FixedTrieNode<TItem> node, int depth)>();
         queue.Enqueue((_root, 0));
 
         while (queue.Count > 0)
         {
             var (node, depth) = queue.Dequeue();
-            if (depth == item.Length)
+            var index = item.GetIndex(depth);
+            if (index == item.RepeatedAnyIndex)
+            {
+                queue.Enqueue((node, depth + 1));
+
+                foreach (var child in node.GetChildren())
+                {
+                    if (child != null)
+                    {
+                        queue.Enqueue((child, depth));
+                    }
+                }
+            }
+            else if (depth == item.Length)
             {
                 foreach (var result in node.GetItems())
                 {
                     yield return result;
                 }
             }
-            else
+            else if (index == item.AnyIndex)
             {
-                var index = item.GetIndex(depth);
-                if (index == item.AnyIndex)
+                foreach (var child in node.GetChildren())
                 {
-                    foreach (var child in node.GetChildren())
-                    {
-                        if (child != null)
-                        {
-                            queue.Enqueue((child, depth + 1));
-                        }
-                    }
-                }
-                else
-                {
-                    var child = node.GetChild(index);
                     if (child != null)
                     {
                         queue.Enqueue((child, depth + 1));
                     }
+                }
+            }
+            else
+            {
+                var child = node.GetChild(index);
+                if (child != null)
+                {
+                    queue.Enqueue((child, depth + 1));
                 }
             }
         }

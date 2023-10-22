@@ -19,7 +19,7 @@ public class WhitespaceTokenizer : ITokenizer
                 ? text[index..]
                 : text.Substring(index, whitespaceIndex);
 
-            yield return new SearchToken(token, alphabet, index);
+            yield return new SearchToken(token, alphabet);
             index += token.Length + 1;
         }
     }

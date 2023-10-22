@@ -129,8 +129,6 @@ public sealed class Transaction : ITransaction
             throw new TransactionStateCorruptedException();
         }
 
-        var exceptions = new List<Exception>();
-
         // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < _transactionDescriptor.WriteManagers.Count; i++)
         {
@@ -139,9 +137,12 @@ public sealed class Transaction : ITransaction
             {
                 await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                exceptions.Add(ex);
+                _logger.LogError(exception,
+                    "Error occurred while executing pending actions for manager {ManagerName} in transaction {TransactionId}",
+                    writeManager.Name, Id);
+                throw;
             }
         }
 
@@ -165,17 +166,6 @@ public sealed class Transaction : ITransaction
         }
 
         Phase = TransactionPhase.Committed;
-
-        if (exceptions.Any())
-        {
-            _logger.LogCritical("Transaction {TransactionId} committed with errors", Id);
-            foreach (var exception in exceptions)
-            {
-                _logger.LogCritical(exception, "Error occurred during transaction {TransactionId} commit", Id);
-            }
-
-            throw new FatalInternalPersistifyException("Unknown", "Transaction committed with errors");
-        }
 
         _logger.LogDebug("Transaction {TransactionId} committed", Id);
     }

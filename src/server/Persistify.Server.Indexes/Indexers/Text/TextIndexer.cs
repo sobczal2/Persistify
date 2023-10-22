@@ -98,26 +98,12 @@ public class TextIndexer : IIndexer
 
         foreach (var token in _analyzerExecutor.AnalyzeForSearch(queryDto.Value))
         {
-            var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token));
+            var trieResults = _fixedTrie.Search(new TextIndexerSearchFixedTrieItem(token)).Distinct();
             foreach (var trieResult in trieResults)
             {
                 var score = queryDto.Boost * (token.Term.Length / (float)trieResult.Term.Length);
 
-                foreach (var documentPosition in trieResult.DocumentPositions)
-                {
-                    if (results.TryGetValue(documentPosition.DocumentId, out var result))
-                    {
-                        result.SearchMetadata.Score += score;
-                        result.SearchMetadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
-                    }
-                    else
-                    {
-                        var metadata = new SearchMetadata(score);
-                        metadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
-                        results.Add(documentPosition.DocumentId,
-                            new SearchResult(documentPosition.DocumentId, metadata));
-                    }
-                }
+                HandleTrieResult(trieResult, results, score, token);
             }
 
             tokenCount++;
@@ -127,6 +113,25 @@ public class TextIndexer : IIndexer
         {
             result.SearchMetadata.Score /= tokenCount;
             yield return result;
+        }
+    }
+
+    private static void HandleTrieResult(IndexToken trieResult, IDictionary<int, SearchResult> results, float score, Token token)
+    {
+        foreach (var documentPosition in trieResult.DocumentPositions)
+        {
+            if (results.TryGetValue(documentPosition.DocumentId, out var result))
+            {
+                result.SearchMetadata.Score += score;
+                result.SearchMetadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
+            }
+            else
+            {
+                var metadata = new SearchMetadata(score);
+                metadata.Add($"term_{token.Term}.position", documentPosition.Position.ToString());
+                results.Add(documentPosition.DocumentId,
+                    new SearchResult(documentPosition.DocumentId, metadata));
+            }
         }
     }
 }

@@ -6,25 +6,25 @@ namespace Persistify.Server.Indexes.Searches;
 
 public class SearchMetadata
 {
-    private readonly Dictionary<string, string> _metadata;
+    private readonly Dictionary<string, SortedSet<string>> _metadata;
 
     public SearchMetadata(float score)
     {
         Score = score;
-        _metadata = new Dictionary<string, string>();
+        _metadata = new Dictionary<string, SortedSet<string>>();
     }
 
     public float Score { get; set; }
 
     public void Add(string name, string value)
     {
-        if (_metadata.ContainsKey(name))
+        if (_metadata.TryGetValue(name, out var list))
         {
-            _metadata[name] = $"{_metadata[name]};{value}";
+            list.Add(value);
         }
         else
         {
-            _metadata.Add(name, value);
+            _metadata.Add(name, new SortedSet<string>{ value });
         }
     }
 
@@ -36,7 +36,7 @@ public class SearchMetadata
         };
         foreach (var (name, value) in _metadata)
         {
-            searchMetadataList.Add(new SearchMetadataDto { Name = name, Value = value });
+            searchMetadataList.Add(new SearchMetadataDto { Name = name, Value = string.Join(", ", value) });
         }
 
         return searchMetadataList;
@@ -46,13 +46,13 @@ public class SearchMetadata
     {
         var mergedMetadata = new SearchMetadata(Score + other.Score);
 
-        var metadataDictionary = new Dictionary<string, string>(_metadata);
+        var metadataDictionary = new Dictionary<string, SortedSet<string>>(_metadata);
 
         foreach (var (name, value) in other._metadata)
         {
-            if (metadataDictionary.ContainsKey(name))
+            if (metadataDictionary.TryGetValue(name, out var list))
             {
-                metadataDictionary[name] = $"{metadataDictionary[name]};{value}";
+                list.UnionWith(value);
             }
             else
             {
@@ -62,7 +62,10 @@ public class SearchMetadata
 
         foreach (var (name, value) in metadataDictionary)
         {
-            mergedMetadata.Add(name, value);
+            foreach (var item in value)
+            {
+                mergedMetadata.Add(name, item);
+            }
         }
 
         return mergedMetadata;

@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj"/>
     <ProjectReference Include="..\Persistify.Dtos\Persistify.Dtos.csproj"/>
   </ItemGroup>
 

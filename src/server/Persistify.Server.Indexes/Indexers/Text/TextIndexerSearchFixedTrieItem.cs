@@ -23,7 +23,7 @@ public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
             {
                 '?' => AnyIndex,
                 '*' => RepeatedAnyIndex,
-                var term => Array.BinarySearch(_token.Alphabet, term)
+                var character => Array.BinarySearch(_token.Alphabet, character)
             };
         }
     }
