@@ -2,7 +2,8 @@
 
 namespace Persistify.Client.Core;
 
-public class SubClient<TService> where TService : class
+public class SubClient<TService>
+    where TService : class
 {
     protected readonly PersistifyClient PersistifyClient;
 

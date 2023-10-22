@@ -1,6 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Net.Client;
 using Persistify.Client.Documents;
+using Persistify.Client.PresetAnalyzers;
 using Persistify.Client.Templates;
 using Persistify.Client.Users;
 using Persistify.Requests.Users;
@@ -19,6 +20,7 @@ public class PersistifyClient : IPersistifyClient, IDisposable
         Users = new UsersClient(this);
         Templates = new TemplatesClient(this);
         Documents = new DocumentsClient(this);
+        PresetAnalyzerses = new PresetAnalyzersClient(this);
     }
 
     private PersistifyCredentials PersistifyCredentials { get; }
@@ -34,6 +36,7 @@ public class PersistifyClient : IPersistifyClient, IDisposable
     public IUsersClient Users { get; }
     public ITemplatesClient Templates { get; }
     public IDocumentsClient Documents { get; }
+    public IPresetAnalyzersClient PresetAnalyzerses { get; }
 
     internal async Task<TResponse> CallAuthenticatedServiceAsync<TResponse>(
         Func<CallContext, Task<TResponse>> serviceCall,

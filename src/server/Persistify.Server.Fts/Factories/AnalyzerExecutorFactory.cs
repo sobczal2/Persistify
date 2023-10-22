@@ -4,10 +4,10 @@ using System.Linq;
 using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Helpers.Results;
 using Persistify.Server.Domain.Templates;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Analyzers;
 using Persistify.Server.Fts.CharacterSets;
-using Persistify.Server.Fts.Exceptions;
 using Persistify.Server.Fts.TokenFilters;
 using Persistify.Server.Fts.Tokenizers;
 
@@ -30,7 +30,10 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         {
             if (!SupportedCharacterFilters.Contains(characterFilter))
             {
-                return new UnsupportedCharacterFilterException(characterFilter, SupportedCharacterFilters);
+                return new DynamicValidationPersistifyException(
+                    nameof(FullAnalyzerDto),
+                    $"Character filter '{characterFilter}' is not supported. Supported character filters: {string.Join(", ", SupportedCharacterFilters)}"
+                );
             }
         }
 
@@ -38,20 +41,29 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
         {
             if (!SupportedCharacterSets.Contains(characterSetName))
             {
-                return new UnsupportedCharacterSetException(characterSetName, SupportedCharacterSets);
+                return new DynamicValidationPersistifyException(
+                    nameof(FullAnalyzerDto),
+                    $"Character set '{characterSetName}' is not supported. Supported character sets: {string.Join(", ", SupportedCharacterSets)}"
+                );
             }
         }
 
         if (!SupportedTokenizers.Contains(analyzerDto.TokenizerName))
         {
-            return new UnsupportedTokenizerException(analyzerDto.TokenizerName, SupportedTokenizers);
+            return new DynamicValidationPersistifyException(
+                nameof(FullAnalyzerDto),
+                $"Tokenizer '{analyzerDto.TokenizerName}' is not supported. Supported tokenizers: {string.Join(", ", SupportedTokenizers)}"
+            );
         }
 
         foreach (var tokenFilter in analyzerDto.TokenFilterNames)
         {
             if (!SupportedTokenFilters.Contains(tokenFilter))
             {
-                return new UnsupportedTokenFilterException(tokenFilter, SupportedTokenFilters);
+                return new DynamicValidationPersistifyException(
+                    nameof(FullAnalyzerDto),
+                    $"Token filter '{tokenFilter}' is not supported. Supported token filters: {string.Join(", ", SupportedTokenFilters)}"
+                );
             }
         }
 

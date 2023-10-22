@@ -3,19 +3,16 @@ using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Helpers.Results;
 using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
-using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
-using Persistify.Server.Fts.Exceptions;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Dtos.Common;
 
-// TODO: Add tests
-public class FullAnalyzeRDtoValidator : Validator<FullAnalyzerDto>
+public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
 {
     private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
 
-    public FullAnalyzeRDtoValidator(
+    public FullAnalyzerDtoValidator(
         IAnalyzerExecutorFactory analyzerExecutorFactory
     )
     {
@@ -94,23 +91,7 @@ public class FullAnalyzeRDtoValidator : Validator<FullAnalyzerDto>
         var analyzerFactoryResult = _analyzerExecutorFactory.Validate(value);
         if (analyzerFactoryResult.Failure)
         {
-            switch (analyzerFactoryResult.Exception)
-            {
-                case UnsupportedCharacterSetException unsupportedCharacterFilterException:
-                    PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}");
-                    return ValueTask.FromResult<Result>(
-                        DynamicValidationException(unsupportedCharacterFilterException.Message));
-                case UnsupportedTokenizerException unsupportedTokenizerException:
-                    PropertyName.Push(nameof(FullAnalyzerDto.TokenizerName));
-                    return ValueTask.FromResult<Result>(
-                        DynamicValidationException(unsupportedTokenizerException.Message));
-                case UnsupportedTokenFilterException unsupportedTokenFilterException:
-                    PropertyName.Push($"{nameof(FullAnalyzerDto.TokenFilterNames)}");
-                    return ValueTask.FromResult<Result>(
-                        DynamicValidationException(unsupportedTokenFilterException.Message));
-                default:
-                    throw new InternalPersistifyException();
-            }
+            return ValueTask.FromResult(analyzerFactoryResult);
         }
 
         return ValueTask.FromResult(Result.Ok);

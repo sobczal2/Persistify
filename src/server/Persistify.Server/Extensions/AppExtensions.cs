@@ -15,5 +15,6 @@ public static class AppExtensions
         app.MapGrpcService<DocumentService>();
         app.MapGrpcService<TemplateService>();
         app.MapGrpcService<UserService>();
+        app.MapGrpcService<PresetAnalyzerService>();
     }
 }

@@ -37,4 +37,12 @@ public static class DocumentsClientExtensions
         return await persistifyClient.Documents.DeleteDocumentAsync(documentService, deleteDocumentRequest,
             callContext);
     }
+
+    public static async Task<ExistsDocumentResponse> ExistsDocumentAsync(this IPersistifyClient persistifyClient,
+        ExistsDocumentRequest existsDocumentRequest, CallContext? callContext = default)
+    {
+        var documentService = persistifyClient.Documents.GetService();
+        return await persistifyClient.Documents.ExistsDocumentAsync(documentService, existsDocumentRequest,
+            callContext);
+    }
 }

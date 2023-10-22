@@ -47,4 +47,13 @@ public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
             async cc => await templateService.DeleteTemplateAsync(deleteTemplateRequest, cc), callContext
         );
     }
+
+    public async Task<ExistsTemplateResponse> ExistsTemplateAsync(ITemplateService templateService,
+        ExistsTemplateRequest existsTemplateRequest,
+        CallContext? callContext = default)
+    {
+        return await PersistifyClient.CallAuthenticatedServiceAsync<ExistsTemplateResponse>(
+            async cc => await templateService.ExistsTemplateAsync(existsTemplateRequest, cc), callContext
+        );
+    }
 }

@@ -4,6 +4,7 @@ using ProtoBuf;
 
 namespace Persistify.Requests.PresetAnalyzers;
 
+[ProtoContract]
 public class DeletePresetAnalyzerRequest : IRequest<DeletePresetAnalyzerResponse>
 {
     [ProtoMember(1)]
