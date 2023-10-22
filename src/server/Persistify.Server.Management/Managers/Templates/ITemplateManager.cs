@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Templates;
 
 namespace Persistify.Server.Management.Managers.Templates;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Users;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Validation.Common;

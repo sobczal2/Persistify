@@ -15,6 +15,8 @@ public class GrpcPersistifyErrorCodeMapper : IPersistifyErrorCodeMapper<StatusCo
             PersistifyErrorCode.InternalFailure => StatusCode.Internal,
             PersistifyErrorCode.Unauthenticated => StatusCode.Unauthenticated,
             PersistifyErrorCode.NotFound => StatusCode.NotFound,
+            PersistifyErrorCode.AlreadyExists => StatusCode.AlreadyExists,
+            PersistifyErrorCode.FatalInternalFailure => StatusCode.Internal,
             _ => throw new ArgumentOutOfRangeException(nameof(errorCode), errorCode, null)
         };
     }

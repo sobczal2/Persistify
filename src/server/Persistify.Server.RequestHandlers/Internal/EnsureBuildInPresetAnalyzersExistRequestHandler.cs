@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
 using Persistify.Requests.Internal;
 using Persistify.Responses.Internal;
 using Persistify.Server.CommandHandlers.Common;
-using Persistify.Server.Fts.Presets;
+using Persistify.Server.Domain.Users;
+using Persistify.Server.Fts.PresetAnalyzers;
 using Persistify.Server.Management.Managers;
-using Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
@@ -15,8 +15,8 @@ namespace Persistify.Server.CommandHandlers.Internal;
 public class EnsureBuildInPresetAnalyzersExistRequestHandler : RequestHandler<EnsureBuildInPresetAnalyzersExistRequest,
     EnsureBuildInPresetAnalyzersExistResponse>
 {
-    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private readonly IEnumerable<IBuiltInPresetAnalyzer> _buildInPresetAnalyzers;
+    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public EnsureBuildInPresetAnalyzersExistRequestHandler(
         IRequestHandlerContext<EnsureBuildInPresetAnalyzersExistRequest, EnsureBuildInPresetAnalyzersExistResponse>

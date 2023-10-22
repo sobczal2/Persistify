@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Grpc.Core;
-using Persistify.Domain.Users;
 using Persistify.Requests.Users;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.Tests.Integration.Common;
 using Persistify.TestHelpers.Assertions;
 using ProtoBuf.Grpc;

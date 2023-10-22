@@ -11,17 +11,13 @@
     <ProjectReference Include="..\..\shared\Persistify.Requests\Persistify.Requests.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Configuration\Persistify.Server.Configuration.csproj"/>
     <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.Fts\Persistify.Server.Fts.csproj" />
+    <ProjectReference Include="..\Persistify.Server.Fts\Persistify.Server.Fts.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Management\Persistify.Server.Management.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Requests\" />
   </ItemGroup>
 
 </Project>

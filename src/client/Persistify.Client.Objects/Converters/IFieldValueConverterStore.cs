@@ -1,9 +1,11 @@
-﻿using System;
-using Persistify.Domain.Templates;
+﻿// using System;
+// using Persistify.Domain.Templates;
+//
+// namespace Persistify.Client.Objects.Converters;
+//
+// public interface IFieldValueConverterStore
+// {
+//     object GetConverter(Type fromType, FieldType toType);
+// }
 
-namespace Persistify.Client.Objects.Converters;
 
-public interface IFieldValueConverterStore
-{
-    object GetConverter(Type fromType, FieldType toType);
-}

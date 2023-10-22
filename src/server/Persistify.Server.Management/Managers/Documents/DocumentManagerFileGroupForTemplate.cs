@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Persistify.Domain.Templates;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.Files;
 
 namespace Persistify.Server.Management.Managers.Documents;

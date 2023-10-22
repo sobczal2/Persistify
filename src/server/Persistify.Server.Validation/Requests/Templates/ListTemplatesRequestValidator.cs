@@ -20,8 +20,8 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 
     public override async ValueTask<Result> ValidateNotNullAsync(ListTemplatesRequest value)
     {
-        PropertyName.Push(nameof(ListTemplatesRequest.Pagination));
-        var paginationResult = await _paginationValidator.ValidateAsync(value.Pagination);
+        PropertyName.Push(nameof(ListTemplatesRequest.PaginationDto));
+        var paginationResult = await _paginationValidator.ValidateAsync(value.PaginationDto);
         PropertyName.Pop();
         if (paginationResult.Failure)
         {

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Dtos.Users;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
@@ -55,7 +55,7 @@ public class SignInRequestHandler : RequestHandler<SignInRequest, SignInResponse
 
         _response = new SignInResponse
         {
-            User = UserMapper.Map(user),
+            User = new UserDto { Username = user.Username, Permission = (int)user.Permission },
             AccessToken = accessToken,
             RefreshToken = refreshToken
         };

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace Persistify.Server.Indexes.DataStructures.Tries;
 
-public class FixedTrie<TItem> : ITrie<TItem>
-    where TItem : IComparable<TItem>, IEnumerable<int>
+public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, TSearchItem, TItem>
+    where TIndexItem : IndexFixedTrieItem<TItem>
+    where TSearchItem : SearchFixedTrieItem
 {
     private readonly int _alphabetSize;
     private readonly FixedTrieNode<TItem> _root;
@@ -13,15 +14,24 @@ public class FixedTrie<TItem> : ITrie<TItem>
     {
         _alphabetSize = alphabetSize;
         _root = new FixedTrieNode<TItem>(alphabetSize);
+        Depth = 0;
     }
 
-    public void Insert(TItem item)
+    public int Depth { get; private set; }
+
+    public void Insert(TIndexItem item)
     {
-        var node = _root;
-        foreach (var index in item)
+        if (item.Length > Depth)
         {
+            Depth = item.Length;
+        }
+
+        var node = _root;
+        for (var i = 0; i < item.Length; i++)
+        {
+            var index = item.GetIndex(i);
             var child = node.GetChild(index);
-            if (child == null)
+            if (child is null)
             {
                 child = new FixedTrieNode<TItem>(_alphabetSize);
                 node.SetChild(index, child);
@@ -33,47 +43,132 @@ public class FixedTrie<TItem> : ITrie<TItem>
         node.Insert(item);
     }
 
-    public IEnumerable<(TItem Item, int Distance)> Search(IEnumerable<int> item)
+    public IEnumerable<TItem> Search(TSearchItem item)
     {
-        var node = _root;
-        var distance = 0;
+        var length = item.Length;
 
-        foreach (var index in item)
+        var repeatedAnyIndexCount = 0;
+
+        for (var i = 0; i < length; i++)
         {
-            var child = node.GetChild(index);
-            if (child == null)
+            if (item.GetIndex(i) == item.RepeatedAnyIndex)
             {
-                yield break;
-            }
-
-            node = child;
-            distance++;
-        }
-
-        foreach (var child in node.GetAllItems())
-        {
-            yield return (child, distance);
-        }
-    }
-
-    public int Remove(Predicate<TItem> predicate)
-    {
-        return Remove(_root, predicate);
-    }
-
-    private int Remove(FixedTrieNode<TItem> node, Predicate<TItem> predicate)
-    {
-        var removedCount = 0;
-        removedCount += node.Remove(predicate);
-        for (var i = 0; i < _alphabetSize; i++)
-        {
-            var child = node.GetChild(i);
-            if (child != null)
-            {
-                removedCount += Remove(child, predicate);
+                repeatedAnyIndexCount++;
             }
         }
 
-        return removedCount;
+        if (repeatedAnyIndexCount == length)
+        {
+            foreach (var result in _root.GetItems())
+            {
+                yield return result;
+            }
+
+            yield break;
+        }
+
+        length -= repeatedAnyIndexCount;
+
+        var queue = new Queue<(FixedTrieNode<TItem> node, int searchLenght, int nodeDepth)>();
+        queue.Enqueue((_root, 0, 0));
+
+        while (queue.Count > 0)
+        {
+            var (node, searchLenght, nodeDepth) = queue.Dequeue();
+            var index = item.GetIndex(nodeDepth);
+            if (index == item.RepeatedAnyIndex)
+            {
+                queue.Enqueue((node, searchLenght, nodeDepth + 1));
+
+                foreach (var child in node.GetChildren())
+                {
+                    if (child != null)
+                    {
+                        queue.Enqueue((child, searchLenght, nodeDepth));
+                    }
+                }
+            }
+            else if (searchLenght == length)
+            {
+                foreach (var result in node.GetItems())
+                {
+                    yield return result;
+                }
+            }
+            else if (index == item.AnyIndex)
+            {
+                foreach (var child in node.GetChildren())
+                {
+                    if (child != null)
+                    {
+                        queue.Enqueue((child, searchLenght + 1, nodeDepth + 1));
+                    }
+                }
+            }
+            else
+            {
+                var child = node.GetChild(index);
+                if (child != null)
+                {
+                    queue.Enqueue((child, searchLenght + 1, nodeDepth + 1));
+                }
+            }
+        }
+    }
+
+    public int UpdateIf(Predicate<TItem> predicate, Action<TItem> action)
+    {
+        var count = 0;
+        var queue = new Queue<FixedTrieNode<TItem>>();
+        queue.Enqueue(_root);
+
+        while (queue.Count > 0)
+        {
+            var node = queue.Dequeue();
+            if (node.Item != null && predicate(node.Item.Value))
+            {
+                node.Update(action);
+                if (node.Item.IsEmpty)
+                {
+                    node.SetItemEmpty();
+                }
+
+                count++;
+            }
+
+            foreach (var child in node.GetChildren())
+            {
+                if (child != null)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+        }
+
+        RemoveDeadEnds();
+        return count;
+    }
+
+    private void RemoveDeadEnds()
+    {
+        var queue = new Queue<FixedTrieNode<TItem>>();
+        queue.Enqueue(_root);
+
+        while (queue.Count > 0)
+        {
+            var node = queue.Dequeue();
+            if (node.Item != null && node.Item.IsEmpty)
+            {
+                node.SetItemEmpty();
+            }
+
+            foreach (var child in node.GetChildren())
+            {
+                if (child != null)
+                {
+                    queue.Enqueue(child);
+                }
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Users;
+﻿using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Codes;
 
 namespace Persistify.Server.ErrorHandling.Exceptions;

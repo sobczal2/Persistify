@@ -2,16 +2,17 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Templates;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
+using Persistify.Helpers.Collections;
 using Persistify.Requests.Templates;
 using Persistify.Responses.Templates;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Templates;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Templates;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
@@ -33,8 +34,8 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
 
     protected override async ValueTask RunAsync(ListTemplatesRequest request, CancellationToken cancellationToken)
     {
-        var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
-        var take = request.Pagination.PageSize;
+        var skip = request.PaginationDto.PageNumber * request.PaginationDto.PageSize;
+        var take = request.PaginationDto.PageSize;
         _templates = await _templateManager.ListAsync(take, skip).ToListAsync(cancellationToken);
         _totalCount = _templateManager.Count();
     }
@@ -44,7 +45,7 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
         var templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
         return new ListTemplatesResponse
         {
-            Templates = templates.Select(TemplateMapper.Map).ToList(),
+            TemplateDtos = templates.ListSelect(x => x.ToDto()),
             TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
         };
     }

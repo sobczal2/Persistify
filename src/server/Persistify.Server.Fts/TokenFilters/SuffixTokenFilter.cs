@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using Persistify.Helpers.Strings;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Tokens;
 
@@ -7,29 +8,31 @@ namespace Persistify.Server.Fts.TokenFilters;
 
 public class SuffixTokenFilter : ITokenFilter
 {
-    public void Filter(List<Token> tokens)
+    public List<SearchToken> FilterForSearch(List<SearchToken> tokens)
     {
-        var count = tokens.Count;
-        for (var i = 0; i < count; i++)
-        {
-            var token = tokens[i];
-            var value = token.Value;
-            var suffixes = StringHelpers.GetNotEmptySuffixes(value);
-
-            foreach (var suffix in suffixes)
-            {
-                var newPositions = new List<int>();
-
-                foreach (var position in token.Positions)
-                {
-                    newPositions.Add(position + value.Length - suffix.Length);
-                }
-
-                tokens.Add(new Token(suffix, token.Count, newPositions, suffix.Length / (float)token.Value.Length,
-                    token.Alphabet));
-            }
-        }
+        return tokens;
     }
 
-    public TokenFilterType Type => TokenFilterType.IndexOnly;
+    public List<IndexToken> FilterForIndex(List<IndexToken> tokens)
+    {
+        var initialTokensCount = tokens.Count;
+        for (var i = 0; i < initialTokensCount; i++)
+        {
+            var token = tokens[i];
+            var term = token.Term.AsSpan();
+
+            for (var j = 1; j < term.Length; j++)
+            {
+                var suffixSpan = term.Slice(j);
+                var suffix = suffixSpan.ToString();
+
+                var charsCut = j;
+                tokens.Add(new IndexToken(suffix, token.Alphabet,
+                    token.DocumentPositions.Select(x => new DocumentPosition(x.DocumentId, x.Position + charsCut,
+                        (token.Term.Length - charsCut) / (float)token.Term.Length))));
+            }
+        }
+
+        return tokens;
+    }
 }

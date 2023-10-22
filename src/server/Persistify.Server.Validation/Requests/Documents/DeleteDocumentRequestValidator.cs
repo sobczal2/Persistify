@@ -1,16 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 using Persistify.Server.ErrorHandling.ErrorMessages;
-using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Requests.Documents;
 
 public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
 {
-
     public DeleteDocumentRequestValidator(
     )
     {

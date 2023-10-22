@@ -4,62 +4,36 @@ using System.Collections.Generic;
 namespace Persistify.Server.Indexes.DataStructures.Tries;
 
 public class FixedTrieNode<TItem>
-    where TItem : IComparable<TItem>
 {
     private readonly FixedTrieNode<TItem>?[] _children;
-    private readonly SortedSet<TItem> _items;
 
     public FixedTrieNode(int alphabetSize)
     {
         _children = new FixedTrieNode<TItem>?[alphabetSize];
-        _items = new SortedSet<TItem>();
     }
 
-    public void Insert(TItem item)
-    {
-        _items.Add(item);
-    }
+    public IndexFixedTrieItem<TItem>? Item { get; private set; }
 
-    public int Remove(Predicate<TItem> predicate)
+    public void Insert(IndexFixedTrieItem<TItem> item)
     {
-        var removedCount = 0;
-        foreach (var item in _items)
+        if (Item is null)
         {
-            if (predicate(item))
-            {
-                _items.Remove(item);
-                removedCount++;
-            }
+            Item = item;
         }
-
-        return removedCount;
-    }
-
-    public IEnumerable<TItem> GetItems()
-    {
-        foreach (var item in _items)
+        else
         {
-            yield return item;
+            Item.Merge(item.Value);
         }
     }
 
-    public IEnumerable<TItem> GetAllItems()
+    public void Update(Action<TItem> action)
     {
-        foreach (var item in _items)
+        if (Item is null || Item.IsEmpty)
         {
-            yield return item;
+            throw new InvalidOperationException("Item is null");
         }
 
-        foreach (var child in _children)
-        {
-            if (child != null)
-            {
-                foreach (var item in child.GetAllItems())
-                {
-                    yield return item;
-                }
-            }
-        }
+        action(Item.Value);
     }
 
     public FixedTrieNode<TItem>? GetChild(int index)
@@ -78,5 +52,29 @@ public class FixedTrieNode<TItem>
     public void SetChild(int index, FixedTrieNode<TItem>? node)
     {
         _children[index] = node;
+    }
+
+    public void SetItemEmpty()
+    {
+        Item = null;
+    }
+
+    public IEnumerable<TItem> GetItems()
+    {
+        if (Item is not null)
+        {
+            yield return Item.Value;
+        }
+
+        foreach (var child in _children)
+        {
+            if (child is not null)
+            {
+                foreach (var item in child.GetItems())
+                {
+                    yield return item;
+                }
+            }
+        }
     }
 }

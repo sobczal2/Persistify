@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Persistify.Dtos.Common;
-using Persistify.Requests.Common;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Shared;
 using Xunit;

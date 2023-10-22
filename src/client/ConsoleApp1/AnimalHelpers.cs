@@ -3,8 +3,8 @@
 // using Persistify.Client.Core;
 // using Persistify.Client.Documents;
 // using Persistify.Client.Templates;
-// using Persistify.Domain.Documents;
-// using Persistify.Domain.Templates;
+// using Persistify.Server.Domain.Documents;
+// using Persistify.Server.Domain.Templates;
 // using Persistify.Dtos.Common;
 // using Persistify.Dtos.Documents.Search.Queries;
 // using Persistify.Dtos.Documents.Search.Queries.Aggregates;
@@ -89,3 +89,5 @@
 //         });
 //     }
 // }
+
+

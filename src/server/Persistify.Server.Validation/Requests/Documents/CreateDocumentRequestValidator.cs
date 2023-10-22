@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
+using Persistify.Dtos.Common;
 using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
+using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -14,10 +14,10 @@ namespace Persistify.Server.Validation.Requests.Documents;
 
 public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
-    private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
-    private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly IValidator<BoolFieldValueDto> _boolFieldValueDtoValidator;
+    private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly ITemplateManager _templateManager;
+    private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
 
     public CreateDocumentRequestValidator(
         IValidator<TextFieldValueDto> textFieldValueDtoValidator,
@@ -26,11 +26,14 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         ITemplateManager templateManager
     )
     {
-        _textFieldValueDtoValidator = textFieldValueDtoValidator ?? throw new ArgumentNullException(nameof(textFieldValueDtoValidator));
+        _textFieldValueDtoValidator = textFieldValueDtoValidator ??
+                                      throw new ArgumentNullException(nameof(textFieldValueDtoValidator));
         _textFieldValueDtoValidator.PropertyName = PropertyName;
-        _numberFieldValueDtoValidator = numberFieldValueDtoValidator ?? throw new ArgumentNullException(nameof(numberFieldValueDtoValidator));
+        _numberFieldValueDtoValidator = numberFieldValueDtoValidator ??
+                                        throw new ArgumentNullException(nameof(numberFieldValueDtoValidator));
         _numberFieldValueDtoValidator.PropertyName = PropertyName;
-        _boolFieldValueDtoValidator = boolFieldValueDtoValidator ?? throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
+        _boolFieldValueDtoValidator = boolFieldValueDtoValidator ??
+                                      throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
         _boolFieldValueDtoValidator.PropertyName = PropertyName;
         _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateDocumentRequest));
@@ -51,16 +54,16 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (value.FieldValues is null)
+        if (value.FieldValueDtos is null)
         {
-            PropertyName.Push(nameof(CreateDocumentRequest.FieldValues));
+            PropertyName.Push(nameof(CreateDocumentRequest.FieldValueDtos));
             return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
-        if (value.FieldValues.Count == 0)
+        if (value.FieldValueDtos.Count == 0)
         {
-            PropertyName.Push(nameof(CreateDocumentRequest.FieldValues));
-            return DynamicValidationException(DocumentErrorMessages.FieldValuesEmpty);
+            PropertyName.Push(nameof(CreateDocumentRequest.FieldValueDtos));
+            return StaticValidationException(DocumentErrorMessages.FieldValuesEmpty);
         }
 
         var template = await _templateManager.GetAsync(value.TemplateName);
@@ -72,29 +75,30 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         }
 
 
-        for (var i = 0; i < value.FieldValues.Count; i++)
+        for (var i = 0; i < value.FieldValueDtos.Count; i++)
         {
-            PropertyName.Push($"{nameof(CreateDocumentRequest.FieldValues)}[{i}]");
-            switch (value.FieldValues[i])
+            PropertyName.Push($"{nameof(CreateDocumentRequest.FieldValueDtos)}[{i}]");
+            switch (value.FieldValueDtos[i])
             {
-                case TextFieldValueDto textFieldValue:
-                    var textFieldValueDtoResult = await _textFieldValueDtoValidator.ValidateAsync(textFieldValue);
+                case TextFieldValueDto textFieldValueDto:
+                    var textFieldValueDtoResult = await _textFieldValueDtoValidator.ValidateAsync(textFieldValueDto);
                     if (!textFieldValueDtoResult.Success)
                     {
                         return textFieldValueDtoResult;
                     }
 
                     break;
-                case NumberFieldValueDto numberFieldValue:
-                    var numberFieldValueDtoResult = await _numberFieldValueDtoValidator.ValidateAsync(numberFieldValue);
+                case NumberFieldValueDto numberFieldValueDto:
+                    var numberFieldValueDtoResult =
+                        await _numberFieldValueDtoValidator.ValidateAsync(numberFieldValueDto);
                     if (!numberFieldValueDtoResult.Success)
                     {
                         return numberFieldValueDtoResult;
                     }
 
                     break;
-                case BoolFieldValueDto boolFieldValue:
-                    var boolFieldValueDtoResult = await _boolFieldValueDtoValidator.ValidateAsync(boolFieldValue);
+                case BoolFieldValueDto boolFieldValueDto:
+                    var boolFieldValueDtoResult = await _boolFieldValueDtoValidator.ValidateAsync(boolFieldValueDto);
                     if (!boolFieldValueDtoResult.Success)
                     {
                         return boolFieldValueDtoResult;
@@ -104,22 +108,23 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
                 default:
                     return DynamicValidationException(DocumentErrorMessages.InvalidFieldValue);
             }
+
             PropertyName.Pop();
         }
 
-        var fieldNameTypeMap = new Dictionary<string, FieldType>();
+        var fieldNameTypeMap = new Dictionary<string, FieldTypeDto>();
 
-        for (var i = 0; i < value.FieldValues.Count; i++)
+        for (var i = 0; i < value.FieldValueDtos.Count; i++)
         {
-            var fieldName = value.FieldValues[i].FieldName;
+            var fieldName = value.FieldValueDtos[i].FieldName;
             if (fieldNameTypeMap.ContainsKey(fieldName))
             {
-                PropertyName.Push($"{nameof(CreateDocumentRequest.FieldValues)}[{i}]");
+                PropertyName.Push($"{nameof(CreateDocumentRequest.FieldValueDtos)}[{i}]");
                 PropertyName.Push(nameof(TextFieldValue.FieldName));
                 return DynamicValidationException(DocumentErrorMessages.FieldNameNotUnique);
             }
 
-            fieldNameTypeMap.Add(fieldName, value.FieldValues[i].FieldType);
+            fieldNameTypeMap.Add(fieldName, value.FieldValueDtos[i].FieldTypeDto);
         }
 
         foreach (var field in template.Fields)
@@ -129,15 +134,15 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             {
                 if (field.Required)
                 {
-                    PropertyName.Push(nameof(CreateDocumentRequest.FieldValues));
+                    PropertyName.Push(nameof(CreateDocumentRequest.FieldValueDtos));
                     return DynamicValidationException(DocumentErrorMessages.RequiredFieldMissing);
                 }
             }
             else
             {
-                if (fieldNameType != field.FieldType)
+                if ((int)fieldNameType != (int)field.FieldType)
                 {
-                    PropertyName.Push(nameof(CreateDocumentRequest.FieldValues));
+                    PropertyName.Push(nameof(CreateDocumentRequest.FieldValueDtos));
                     return DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch);
                 }
             }

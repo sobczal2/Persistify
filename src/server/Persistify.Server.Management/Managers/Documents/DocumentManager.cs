@@ -4,16 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Documents.Search;
 using Persistify.Dtos.Documents.Search.Queries;
-using Persistify.Dtos.Mappers;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.Files;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Documents;
 using Persistify.Server.Persistence.Extensions;
 using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
@@ -122,13 +122,13 @@ public class DocumentManager : Manager, IDocumentManager
     }
 
     public async ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(
-        SearchQueryDto searchQuery, int take,
+        SearchQueryDto searchQueryDto, int take,
         int skip)
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        var searchResults = _indexerStore.Search(searchQuery).ToList();
+        var searchResults = _indexerStore.Search(searchQueryDto).ToList();
 
         searchResults.Sort((a, b) => b.SearchMetadata.Score.CompareTo(a.SearchMetadata.Score));
 
@@ -141,7 +141,7 @@ public class DocumentManager : Manager, IDocumentManager
             {
                 searchRecords.Add(new SearchRecordDto
                 {
-                    Document = DocumentMapper.Map(document),
+                    DocumentDto = document.ToDto(),
                     MetadataList = searchResult.SearchMetadata.ToSearchMetadataList()
                 });
             }

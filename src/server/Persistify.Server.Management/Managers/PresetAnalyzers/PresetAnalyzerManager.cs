@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using Persistify.Domain.PresetAnalyzerDescriptors;
 using Persistify.Server.Configuration.Settings;
+using Persistify.Server.Domain.PresetAnalyzers;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Transactions;
@@ -14,13 +14,13 @@ using Persistify.Server.Persistence.Object;
 using Persistify.Server.Persistence.Primitives;
 using Persistify.Server.Serialization;
 
-namespace Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+namespace Persistify.Server.Management.Managers.PresetAnalyzers;
 
 public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
 {
     private readonly IntStreamRepository _identifierRepository;
-    private readonly ObjectStreamRepository<PresetAnalyzer> _presetAnalyzerRepository;
     private readonly ConcurrentDictionary<string, int> _presetAnalyzerNameIdDictionary;
+    private readonly ObjectStreamRepository<PresetAnalyzer> _presetAnalyzerRepository;
     private volatile int _count;
 
     public PresetAnalyzerManager(
@@ -37,7 +37,8 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         var presetAnalyzerRepositoryMainFileStream =
             fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryMainFileName);
         var presetAnalyzerRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryOffsetLengthFileName);
+            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup
+                .PresetAnalyzerRepositoryOffsetLengthFileName);
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _presetAnalyzerRepository = new ObjectStreamRepository<PresetAnalyzer>(
@@ -113,6 +114,14 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         }
     }
 
+    public int Count()
+    {
+        ThrowIfNotInitialized();
+        ThrowIfCannotRead();
+
+        return _count;
+    }
+
     public void Add(PresetAnalyzer presetAnalyzer)
     {
         ThrowIfNotInitialized();
@@ -164,7 +173,7 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         {
             if (await _presetAnalyzerRepository.DeleteAsync(id, true))
             {
-                if(!_presetAnalyzerNameIdDictionary.TryRemove(presetAnalyzer.Name, out _))
+                if (!_presetAnalyzerNameIdDictionary.TryRemove(presetAnalyzer.Name, out _))
                 {
                     throw new InternalPersistifyException();
                 }

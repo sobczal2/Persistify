@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Templates;
+﻿using Persistify.Server.Domain.Templates;
 
 namespace Persistify.Server.Files;
 

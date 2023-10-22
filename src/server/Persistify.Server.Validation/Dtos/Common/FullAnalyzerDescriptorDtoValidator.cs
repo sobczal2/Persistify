@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Domain.Templates;
-using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Helpers.Results;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
@@ -11,7 +11,7 @@ using Persistify.Server.Validation.Common;
 namespace Persistify.Server.Validation.Dtos.Common;
 
 // TODO: Add tests
-public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescriptorDto>
+public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDto>
 {
     private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
 
@@ -23,20 +23,20 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescript
         PropertyName.Push(nameof(Analyzer));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(FullAnalyzerDescriptorDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(FullAnalyzerDto value)
     {
         var count = 0;
-        foreach (var characterFilterName in value.CharacterFilterNames)
+        foreach (var characterFilterName in value.CharacterSetNames)
         {
             if (string.IsNullOrEmpty(characterFilterName))
             {
-                PropertyName.Push($"{nameof(FullAnalyzerDescriptorDto.CharacterFilterNames)}[{count}]");
+                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
                 return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
             }
 
             if (characterFilterName.Length > 64)
             {
-                PropertyName.Push($"{nameof(FullAnalyzerDescriptorDto.CharacterFilterNames)}[{count}]");
+                PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
                 return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
             }
 
@@ -45,13 +45,13 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescript
 
         if (string.IsNullOrEmpty(value.TokenizerName))
         {
-            PropertyName.Push(nameof(FullAnalyzerDescriptorDto.TokenizerName));
+            PropertyName.Push(nameof(FullAnalyzerDto.TokenizerName));
             return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.TokenizerName.Length > 64)
         {
-            PropertyName.Push(nameof(FullAnalyzerDescriptorDto.TokenizerName));
+            PropertyName.Push(nameof(FullAnalyzerDto.TokenizerName));
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 
@@ -60,13 +60,13 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescript
         {
             if (string.IsNullOrEmpty(tokenFilterName))
             {
-                PropertyName.Push($"{nameof(FullAnalyzerDescriptorDto.TokenFilterNames)}[{count}]");
+                PropertyName.Push($"{nameof(FullAnalyzerDto.TokenFilterNames)}[{count}]");
                 return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
             }
 
             if (tokenFilterName.Length > 64)
             {
-                PropertyName.Push($"{nameof(FullAnalyzerDescriptorDto.TokenFilterNames)}[{count}]");
+                PropertyName.Push($"{nameof(FullAnalyzerDto.TokenFilterNames)}[{count}]");
                 return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
             }
 
@@ -78,16 +78,16 @@ public class FullAnalyzerDescriptorDtoValidator : Validator<FullAnalyzerDescript
         {
             switch (analyzerFactoryResult.Exception)
             {
-                case UnsupportedCharacterFilterException unsupportedCharacterFilterException:
-                    PropertyName.Push($"{nameof(FullAnalyzerDescriptorDto.CharacterFilterNames)}");
+                case UnsupportedCharacterSetException unsupportedCharacterFilterException:
+                    PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}");
                     return ValueTask.FromResult<Result>(
                         DynamicValidationException(unsupportedCharacterFilterException.Message));
                 case UnsupportedTokenizerException unsupportedTokenizerException:
-                    PropertyName.Push(nameof(FullAnalyzerDescriptorDto.TokenizerName));
+                    PropertyName.Push(nameof(FullAnalyzerDto.TokenizerName));
                     return ValueTask.FromResult<Result>(
                         DynamicValidationException(unsupportedTokenizerException.Message));
                 case UnsupportedTokenFilterException unsupportedTokenFilterException:
-                    PropertyName.Push($"{nameof(FullAnalyzerDescriptorDto.TokenFilterNames)}");
+                    PropertyName.Push($"{nameof(FullAnalyzerDto.TokenFilterNames)}");
                     return ValueTask.FromResult<Result>(
                         DynamicValidationException(unsupportedTokenFilterException.Message));
                 default:

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Persistify.Domain.Documents;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Number;
+using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -36,19 +36,21 @@ public class NumberIndexer : IIndexer
         });
     }
 
-    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto query)
+    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto queryDto)
     {
-        if (query is not NumberSearchQueryDto numberSearchQuery || numberSearchQuery.GetFieldName() != FieldName)
+        if (queryDto is not NumberSearchQueryDto numberSearchQueryDto ||
+            numberSearchQueryDto.GetFieldName() != FieldName)
         {
             throw new Exception("Invalid search query");
         }
 
-        return query switch
+        return queryDto switch
         {
-            ExactNumberSearchQueryDto exactNumberSearchQuery => HandleExactNumberSearch(exactNumberSearchQuery),
-            GreaterNumberSearchQueryDto greaterNumberSearchQuery => HandleGreaterNumberSearch(greaterNumberSearchQuery),
-            LessNumberSearchQueryDto lessNumberSearchQuery => HandleLessNumberSearch(lessNumberSearchQuery),
-            RangeNumberSearchQueryDto rangeNumberSearchQuery => HandleRangeNumberSearch(rangeNumberSearchQuery),
+            ExactNumberSearchQueryDto exactNumberSearchQueryDto => HandleExactNumberSearch(exactNumberSearchQueryDto),
+            GreaterNumberSearchQueryDto greaterNumberSearchQueryDto => HandleGreaterNumberSearch(
+                greaterNumberSearchQueryDto),
+            LessNumberSearchQueryDto lessNumberSearchQueryDto => HandleLessNumberSearch(lessNumberSearchQueryDto),
+            RangeNumberSearchQueryDto rangeNumberSearchQueryDto => HandleRangeNumberSearch(rangeNumberSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
@@ -70,39 +72,39 @@ public class NumberIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleGreaterNumberSearch(GreaterNumberSearchQueryDto query)
+    private IEnumerable<SearchResult> HandleGreaterNumberSearch(GreaterNumberSearchQueryDto queryDto)
     {
-        var results = _intervalTree.Search(query.Value, double.MaxValue, (x, y) => x.Value.CompareTo(y));
+        var results = _intervalTree.Search(queryDto.Value, double.MaxValue, (x, y) => x.Value.CompareTo(y));
 
         results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(queryDto.Boost));
         }
     }
 
-    private IEnumerable<SearchResult> HandleLessNumberSearch(LessNumberSearchQueryDto query)
+    private IEnumerable<SearchResult> HandleLessNumberSearch(LessNumberSearchQueryDto queryDto)
     {
-        var results = _intervalTree.Search(double.MinValue, query.Value, (x, y) => x.Value.CompareTo(y));
+        var results = _intervalTree.Search(double.MinValue, queryDto.Value, (x, y) => x.Value.CompareTo(y));
 
         results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(queryDto.Boost));
         }
     }
 
-    private IEnumerable<SearchResult> HandleRangeNumberSearch(RangeNumberSearchQueryDto query)
+    private IEnumerable<SearchResult> HandleRangeNumberSearch(RangeNumberSearchQueryDto queryDto)
     {
-        var results = _intervalTree.Search(query.MinValue, query.MaxValue, (x, y) => x.Value.CompareTo(y));
+        var results = _intervalTree.Search(queryDto.MinValue, queryDto.MaxValue, (x, y) => x.Value.CompareTo(y));
 
         results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
-            yield return new SearchResult(result.DocumentId, new SearchMetadata(query.Boost));
+            yield return new SearchResult(result.DocumentId, new SearchMetadata(queryDto.Boost));
         }
     }
 }

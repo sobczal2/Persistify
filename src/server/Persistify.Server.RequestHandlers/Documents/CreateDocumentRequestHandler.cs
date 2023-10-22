@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Documents;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
@@ -39,10 +38,14 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
         var template = await _templateManager.GetAsync(request.TemplateName) ??
                        throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
-        _document = new Document
+        var fieldValues = new List<FieldValue>();
+
+        foreach (var fieldValueDto in request.FieldValueDtos)
         {
-            FieldValues = request.FieldValues.Select(FieldValueMapper.Map).ToList()
-        };
+            fieldValues.Add(fieldValueDto.ToDomain());
+        }
+
+        _document = new Document { FieldValues = fieldValues };
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ??
                               throw new InternalPersistifyException(nameof(CreateDocumentRequest));

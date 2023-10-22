@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using NSubstitute;
 using Persistify.Requests.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Requests.Documents;
 using Xunit;
 

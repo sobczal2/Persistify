@@ -5,5 +5,4 @@ namespace Persistify.Requests.Internal;
 
 public class InitializeUserManagerRequest : IRequest<InitializeUserManagerResponse>
 {
-
 }

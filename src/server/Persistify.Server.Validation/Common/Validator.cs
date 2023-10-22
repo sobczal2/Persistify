@@ -4,7 +4,6 @@ using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling.Codes;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
-using Persistify.Server.Validation.Shared;
 
 namespace Persistify.Server.Validation.Common;
 

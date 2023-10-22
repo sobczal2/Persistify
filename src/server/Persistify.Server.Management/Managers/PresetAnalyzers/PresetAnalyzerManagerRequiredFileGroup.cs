@@ -2,7 +2,7 @@
 using System.IO;
 using Persistify.Server.Files;
 
-namespace Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+namespace Persistify.Server.Management.Managers.PresetAnalyzers;
 
 public class PresetAnalyzerManagerRequiredFileGroup : IRequiredFileGroup
 {
@@ -18,7 +18,9 @@ public class PresetAnalyzerManagerRequiredFileGroup : IRequiredFileGroup
     {
         return new List<string>
         {
-            IdentifierRepositoryFileName, PresetAnalyzerRepositoryMainFileName, PresetAnalyzerRepositoryOffsetLengthFileName
+            IdentifierRepositoryFileName,
+            PresetAnalyzerRepositoryMainFileName,
+            PresetAnalyzerRepositoryOffsetLengthFileName
         };
     }
 }

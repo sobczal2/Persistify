@@ -1,8 +1,10 @@
-﻿using Persistify.Domain.Templates;
+﻿// using Persistify.Domain.Templates;
+//
+// namespace Persistify.Client.Objects.Analyzers;
+//
+// public interface IAnalyzerDescriptorFactory
+// {
+//     Analyzer? Create(string name);
+// }
 
-namespace Persistify.Client.Objects.Analyzers;
 
-public interface IAnalyzerDescriptorFactory
-{
-    Analyzer? Create(string name);
-}

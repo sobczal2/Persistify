@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
 using Persistify.Dtos.Common;
-using Persistify.Requests.Common;
 using Persistify.Requests.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Validation.Common;
@@ -69,7 +68,7 @@ public class ListTemplatesRequestValidatorTests
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new ListTemplatesRequest { Pagination = new PaginationDto() };
+        var request = new ListTemplatesRequest { PaginationDto = new PaginationDto() };
 
         List<string> propertyNameAtCall = null!;
         _paginationValidator
@@ -81,14 +80,14 @@ public class ListTemplatesRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "ListTemplatesRequest", "Pagination" }));
+            .BeEquivalentTo(new List<string>(new[] { "ListTemplatesRequest", "PaginationDto" }));
     }
 
     [Fact]
     public async Task Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new ListTemplatesRequest { Pagination = new PaginationDto() };
+        var request = new ListTemplatesRequest { PaginationDto = new PaginationDto() };
 
         var validationException = new StaticValidationPersistifyException("Test", "Test");
         _paginationValidator.ValidateAsync(Arg.Any<PaginationDto>()).Returns(validationException);
@@ -105,7 +104,7 @@ public class ListTemplatesRequestValidatorTests
     public async Task Validate_WhenCorrect_ReturnsOk()
     {
         // Arrange
-        var request = new ListTemplatesRequest { Pagination = new PaginationDto() };
+        var request = new ListTemplatesRequest { PaginationDto = new PaginationDto() };
 
         // Act
         var result = await _sut.ValidateAsync(request);

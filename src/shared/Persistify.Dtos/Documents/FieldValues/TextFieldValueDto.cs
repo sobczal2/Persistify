@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Templates;
+﻿using Persistify.Dtos.Common;
 using ProtoBuf;
 
 namespace Persistify.Dtos.Documents.FieldValues;
@@ -9,5 +9,5 @@ public class TextFieldValueDto : FieldValueDto
     [ProtoMember(2)]
     public string Value { get; set; } = default!;
 
-    public override FieldType FieldType => FieldType.Text;
+    public override FieldTypeDto FieldTypeDto => FieldTypeDto.Text;
 }

@@ -2,9 +2,9 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
 using Persistify.Requests.Common;
 using Persistify.Responses.Common;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Transactions;
 using Persistify.Server.Security;
@@ -26,21 +26,6 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
 
     // TODO: move to config
     protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
-
-    protected abstract ValueTask RunAsync(TRequest request, CancellationToken cancellationToken);
-    protected abstract TResponse GetResponse();
-    protected abstract TransactionDescriptor GetTransactionDescriptor(TRequest request);
-    protected abstract Permission GetRequiredPermission(TRequest request);
-
-    protected virtual void Authorize(ClaimsPrincipal claimsPrincipal, TRequest request)
-    {
-        var requiredPermission = GetRequiredPermission(request);
-        var userPermission = claimsPrincipal.GetPermission();
-        if (!userPermission.HasFlag(requiredPermission))
-        {
-            throw new InsufficientPermissionPersistifyException(request?.GetType().Name, requiredPermission);
-        }
-    }
 
     public async ValueTask<TResponse> HandleAsync(TRequest request, ClaimsPrincipal claimsPrincipal,
         CancellationToken cancellationToken)
@@ -64,14 +49,32 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
             await RequestHandlerContext.ValidateAsync(request).ConfigureAwait(false);
             await RunAsync(request, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync().ConfigureAwait(false);
-            return GetResponse();
         }
         catch (Exception exception)
         {
             await transaction.RollbackAsync().ConfigureAwait(false);
             RequestHandlerContext.HandleException(exception);
         }
+        finally
+        {
+            RequestHandlerContext.TransactionState.CurrentTransaction.Value = null;
+        }
 
-        throw new InternalPersistifyException(request?.GetType().Name);
+        return GetResponse();
+    }
+
+    protected abstract ValueTask RunAsync(TRequest request, CancellationToken cancellationToken);
+    protected abstract TResponse GetResponse();
+    protected abstract TransactionDescriptor GetTransactionDescriptor(TRequest request);
+    protected abstract Permission GetRequiredPermission(TRequest request);
+
+    protected virtual void Authorize(ClaimsPrincipal claimsPrincipal, TRequest request)
+    {
+        var requiredPermission = GetRequiredPermission(request);
+        var userPermission = claimsPrincipal.GetPermission();
+        if (!userPermission.HasFlag(requiredPermission))
+        {
+            throw new InsufficientPermissionPersistifyException(request?.GetType().Name, requiredPermission);
+        }
     }
 }

@@ -1,22 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
 using Persistify.Requests.Internal;
 using Persistify.Responses.Internal;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class InitializeTemplateManagerRequestHandler : RequestHandler<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>
+public class
+    InitializeTemplateManagerRequestHandler : RequestHandler<InitializeTemplateManagerRequest,
+        InitializeTemplateManagerResponse>
 {
     private readonly ITemplateManager _templateManager;
 
     public InitializeTemplateManagerRequestHandler(
-        IRequestHandlerContext<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse> requestHandlerContext,
+        IRequestHandlerContext<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>
+            requestHandlerContext,
         ITemplateManager templateManager
     ) : base(
         requestHandlerContext

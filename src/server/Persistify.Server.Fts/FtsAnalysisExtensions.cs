@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Factories;
-using Persistify.Server.Fts.Presets;
+using Persistify.Server.Fts.PresetAnalyzers;
 
 namespace Persistify.Server.Fts;
 

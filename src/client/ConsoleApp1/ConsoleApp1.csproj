@@ -8,14 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Client.Objects\Persistify.Client.Objects.csproj"/>
-    <ProjectReference Include="..\Persistify.Client\Persistify.Client.csproj"/>
-    <ProjectReference Include="..\Persistify.Client.Objects.Generators\Persistify.Client.Objects.Generators.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false"/>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2"/>
   </ItemGroup>
 

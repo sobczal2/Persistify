@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using NSubstitute;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Common;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
-using Persistify.Requests.Common;
 using Persistify.Requests.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
@@ -161,7 +160,7 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new PaginationDto() };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         List<string> propertyNameAtCall = null!;
@@ -174,14 +173,14 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "Pagination" }));
+            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "PaginationDto" }));
     }
 
     [Fact]
     public async Task Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", Pagination = new PaginationDto() };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         var validationException = new StaticValidationPersistifyException("Test", "Test");
@@ -202,8 +201,8 @@ public class SearchDocumentsRequestValidatorTests
         var request = new SearchDocumentsRequest
         {
             TemplateName = "Test",
-            Pagination = new PaginationDto(),
-            SearchQuery = new ExactBoolSearchQueryDto { FieldName = "Test", Value = true, Boost = 1 }
+            PaginationDto = new PaginationDto(),
+            SearchQueryDto = new ExactBoolSearchQueryDto { FieldName = "Test", Value = true, Boost = 1 }
         };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template
         {

@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Persistify.Server.Files;
 using Persistify.Server.Management.Managers.Documents;
-using Persistify.Server.Management.Managers.PresetAnalyzerDescriptors;
+using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Managers.Users;
 using Persistify.Server.Management.Transactions;

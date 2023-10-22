@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling.ErrorMessages;
@@ -11,20 +10,20 @@ public class BoolFieldDtoValidator : Validator<BoolFieldDto>
 {
     public BoolFieldDtoValidator()
     {
-        PropertyName.Push(nameof(BoolField));
+        PropertyName.Push(nameof(BoolFieldDto));
     }
 
     public override ValueTask<Result> ValidateNotNullAsync(BoolFieldDto value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            PropertyName.Push(nameof(BoolField.Name));
+            PropertyName.Push(nameof(BoolFieldDto.Name));
             return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
         }
 
         if (value.Name.Length > 64)
         {
-            PropertyName.Push(nameof(BoolField.Name));
+            PropertyName.Push(nameof(BoolFieldDto.Name));
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
         }
 

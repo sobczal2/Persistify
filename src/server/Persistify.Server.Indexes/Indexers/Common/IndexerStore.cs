@@ -1,11 +1,10 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Templates;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
-using Persistify.Helpers.Algorithms;
+using Persistify.Helpers.Collections;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Indexes.Indexers.Bool;
@@ -30,10 +29,10 @@ public class IndexerStore
         {
             switch (field)
             {
-                case BoolField boolField:
+                case BoolField:
                     _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
                     break;
-                case NumberField numberField:
+                case NumberField:
                     _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
                     break;
                 case TextField textField:
@@ -46,51 +45,53 @@ public class IndexerStore
         }
     }
 
-    public IEnumerable<SearchResult> Search(SearchQueryDto query)
+    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
     {
-        return query switch
+        return queryDto switch
         {
-            FieldSearchQueryDto fieldSearchQuery => FieldSearch(fieldSearchQuery),
-            AndSearchQueryDto andSearchQuery => AndSearch(andSearchQuery),
-            OrSearchQueryDto orSearchQuery => OrSearch(orSearchQuery),
+            FieldSearchQueryDto fieldSearchQueryDto => FieldSearch(fieldSearchQueryDto),
+            AndSearchQueryDto andSearchQueryDto => AndSearch(andSearchQueryDto),
+            OrSearchQueryDto orSearchQueryDto => OrSearch(orSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
 
-    private IEnumerable<SearchResult> FieldSearch(FieldSearchQueryDto query)
+    private IEnumerable<SearchResult> FieldSearch(FieldSearchQueryDto queryDto)
     {
-        if (_indexers.TryGetValue(query.GetFieldName(), out var indexer))
+        if (_indexers.TryGetValue(queryDto.GetFieldName(), out var indexer))
         {
-            return indexer.SearchAsync(query);
+            return indexer.SearchAsync(queryDto);
         }
 
         throw new InternalPersistifyException();
     }
 
-    private IEnumerable<SearchResult> AndSearch(AndSearchQueryDto query)
+    private IEnumerable<SearchResult> AndSearch(AndSearchQueryDto queryDto)
     {
-        var results = new IEnumerable<SearchResult>[query.Queries.Count];
+        var results = new IEnumerable<SearchResult>[queryDto.SearchQueryDtos.Count];
 
         for (var i = 0; i < results.Length; i++)
         {
-            results[i] = Search(query.Queries[i]);
+            results[i] = Search(queryDto.SearchQueryDtos[i]);
         }
 
         return EnumerableHelpers.IntersectSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results);
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), (a, b) => a.Merge(b),
+            results);
     }
 
-    private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto query)
+    private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto queryDto)
     {
-        var results = new IEnumerable<SearchResult>[query.Queries.Count];
+        var results = new IEnumerable<SearchResult>[queryDto.SearchQueryDtos.Count];
 
         for (var i = 0; i < results.Length; i++)
         {
-            results[i] = Search(query.Queries[i]);
+            results[i] = Search(queryDto.SearchQueryDtos[i]);
         }
 
         return EnumerableHelpers.MergeSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), results);
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), (a, b) => a.Merge(b),
+            results);
     }
 
     public void Index(Document document)

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Persistify.Domain.Templates;
-using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Requests.Templates;
 using Persistify.Server.Tests.Integration.Common;
@@ -26,10 +25,7 @@ public class GetTemplateAsyncTests : IntegrationTestBase
                 {
                     Name = "TextField1",
                     Required = true,
-                    AnalyzerDescriptor = new PresetAnalyzerDescriptorDto
-                    {
-                        PresetName = "standard"
-                    }
+                    AnalyzerDto = new PresetNameAnalyzerDto { PresetName = "standard" }
                 }
             }
         };
@@ -41,12 +37,12 @@ public class GetTemplateAsyncTests : IntegrationTestBase
 
         // Assert
         response.Should().NotBeNull();
-        response.Template.Should().NotBeNull();
-        response.Template.Name.Should().Be("TestTemplate");
-        response.Template.Fields.Should().NotBeNull();
-        response.Template.Fields.Should().HaveCount(1);
-        response.Template.Fields[0].Name.Should().Be("TextField1");
-        response.Template.Fields[0].Required.Should().BeTrue();
-        ((TextFieldDto)response.Template.Fields[0]).AnalyzerDescriptor.Should().NotBeNull();
+        response.TemplateDto.Should().NotBeNull();
+        response.TemplateDto.Name.Should().Be("TestTemplate");
+        response.TemplateDto.Fields.Should().NotBeNull();
+        response.TemplateDto.Fields.Should().HaveCount(1);
+        response.TemplateDto.Fields[0].Name.Should().Be("TextField1");
+        response.TemplateDto.Fields[0].Required.Should().BeTrue();
+        ((TextFieldDto)response.TemplateDto.Fields[0]).AnalyzerDto.Should().NotBeNull();
     }
 }

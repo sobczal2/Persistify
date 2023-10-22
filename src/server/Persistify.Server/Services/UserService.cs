@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Persistify.Requests.Users;
 using Persistify.Responses.Users;
 using Persistify.Server.CommandHandlers.Common;
-using Persistify.Server.CommandHandlers.Users;
 using Persistify.Server.Extensions;
 using Persistify.Services;
 using ProtoBuf.Grpc;

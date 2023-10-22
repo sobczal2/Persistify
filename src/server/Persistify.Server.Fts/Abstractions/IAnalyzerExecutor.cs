@@ -6,5 +6,6 @@ namespace Persistify.Server.Fts.Abstractions;
 public interface IAnalyzerExecutor
 {
     int AlphabetLength { get; }
-    IEnumerable<Token> Analyze(string text, AnalyzerMode mode);
+    IEnumerable<SearchToken> AnalyzeForSearch(string input);
+    IEnumerable<IndexToken> AnalyzeForIndex(string input, int documentId);
 }

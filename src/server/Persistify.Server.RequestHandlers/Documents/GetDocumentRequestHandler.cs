@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Documents;
-using Persistify.Domain.Users;
-using Persistify.Dtos.Mappers;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Documents;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Managers.Documents;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Management.Transactions;
+using Persistify.Server.Mappers.Documents;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
@@ -58,7 +58,7 @@ public class GetDocumentRequestHandler : RequestHandler<GetDocumentRequest, GetD
     protected override GetDocumentResponse GetResponse()
     {
         var document = _document ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
-        return new GetDocumentResponse { Document = DocumentMapper.Map(document) };
+        return new GetDocumentResponse { DocumentDto = document.ToDto() };
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest request)

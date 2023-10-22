@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Persistify.Domain.Templates;
-using Persistify.Dtos.Templates.Common;
+using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Helpers.Results;
 using Persistify.Server.ErrorHandling.ErrorMessages;
@@ -10,67 +9,67 @@ namespace Persistify.Server.Validation.Dtos.Fields;
 
 public class TextFieldDtoValidator : Validator<TextFieldDto>
 {
-    private readonly IValidator<FullAnalyzerDescriptorDto> _analyzerDescriptorDtoValidator;
-    private readonly IValidator<PresetAnalyzerDescriptorDto> _presetAnalyzerDescriptorDtoValidator;
+    private readonly IValidator<FullAnalyzerDto> _fullAnalyzerDtoValidator;
+    private readonly IValidator<PresetNameAnalyzerDto> _presetNameDescriptorDtoValidator;
 
     public TextFieldDtoValidator(
-        IValidator<FullAnalyzerDescriptorDto> analyzerDescriptorDtoValidator,
-        IValidator<PresetAnalyzerDescriptorDto> presetAnalyzerDescriptorDtoValidator
-        )
+        IValidator<FullAnalyzerDto> fullAnalyzerDtoValidator,
+        IValidator<PresetNameAnalyzerDto> presetNameDescriptorDtoValidator
+    )
     {
-        _analyzerDescriptorDtoValidator = analyzerDescriptorDtoValidator;
-        _analyzerDescriptorDtoValidator.PropertyName = PropertyName;
-        _presetAnalyzerDescriptorDtoValidator = presetAnalyzerDescriptorDtoValidator;
-        _presetAnalyzerDescriptorDtoValidator.PropertyName = PropertyName;
-        PropertyName.Push(nameof(TextField));
+        _fullAnalyzerDtoValidator = fullAnalyzerDtoValidator;
+        _fullAnalyzerDtoValidator.PropertyName = PropertyName;
+        _presetNameDescriptorDtoValidator = presetNameDescriptorDtoValidator;
+        _presetNameDescriptorDtoValidator.PropertyName = PropertyName;
+        PropertyName.Push(nameof(TextFieldDto));
     }
 
     public override async ValueTask<Result> ValidateNotNullAsync(TextFieldDto value)
     {
         if (string.IsNullOrEmpty(value.Name))
         {
-            PropertyName.Push(nameof(TextField.Name));
+            PropertyName.Push(nameof(TextFieldDto.Name));
             return StaticValidationException(TemplateErrorMessages.NameEmpty);
         }
 
         if (value.Name.Length > 64)
         {
-            PropertyName.Push(nameof(TextField.Name));
+            PropertyName.Push(nameof(TextFieldDto.Name));
             return StaticValidationException(SharedErrorMessages.ValueTooLong);
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (value.AnalyzerDescriptor is null)
+        if (value.AnalyzerDto is null)
         {
-            PropertyName.Push(nameof(TextField.Analyzer));
+            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
             return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
-        if (value.AnalyzerDescriptor is PresetAnalyzerDescriptorDto presetAnalyzerDescriptor)
+        if (value.AnalyzerDto is PresetNameAnalyzerDto presetNameAnalyzerDto)
         {
-            PropertyName.Push(nameof(TextField.Analyzer));
-            var presetAnalyzerDescriptorValidationResult =
-                await _presetAnalyzerDescriptorDtoValidator.ValidateAsync(presetAnalyzerDescriptor);
+            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
+            var presetNameAnalyzerDtoValidationResult =
+                await _presetNameDescriptorDtoValidator.ValidateAsync(presetNameAnalyzerDto);
             PropertyName.Pop();
-            if (presetAnalyzerDescriptorValidationResult.Failure)
+            if (presetNameAnalyzerDtoValidationResult.Failure)
             {
-                return presetAnalyzerDescriptorValidationResult;
+                return presetNameAnalyzerDtoValidationResult;
             }
         }
-        else if (value.AnalyzerDescriptor is FullAnalyzerDescriptorDto fullAnalyzerDescriptor)
+        else if (value.AnalyzerDto is FullAnalyzerDto fullAnalyzerDto)
         {
-            PropertyName.Push(nameof(TextField.Analyzer));
-            var analyzerDescriptorValidationResult =
-                await _analyzerDescriptorDtoValidator.ValidateAsync(fullAnalyzerDescriptor);
+            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
+            var fullAnalyzerDtoValidator =
+                await _fullAnalyzerDtoValidator.ValidateAsync(fullAnalyzerDto);
             PropertyName.Pop();
-            if (analyzerDescriptorValidationResult.Failure)
+            if (fullAnalyzerDtoValidator.Failure)
             {
-                return analyzerDescriptorValidationResult;
+                return fullAnalyzerDtoValidator;
             }
         }
         else
         {
-            PropertyName.Push(nameof(TextField.Analyzer));
+            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
             return StaticValidationException(TemplateErrorMessages.InvalidAnalyzerDescriptor);
         }
 

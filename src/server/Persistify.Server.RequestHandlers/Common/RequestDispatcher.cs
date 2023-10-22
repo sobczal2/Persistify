@@ -14,11 +14,13 @@ public class RequestDispatcher : IRequestDispatcher
 
     public RequestDispatcher(
         IServiceProvider serviceProvider
-        )
+    )
     {
         _serviceProvider = serviceProvider;
     }
-    public ValueTask<TResponse> DispatchAsync<TRequest, TResponse>(TRequest request, ClaimsPrincipal claimsPrincipal, CancellationToken cancellationToken)
+
+    public ValueTask<TResponse> DispatchAsync<TRequest, TResponse>(TRequest request, ClaimsPrincipal claimsPrincipal,
+        CancellationToken cancellationToken)
         where TRequest : IRequest<TResponse>
         where TResponse : IResponse
     {

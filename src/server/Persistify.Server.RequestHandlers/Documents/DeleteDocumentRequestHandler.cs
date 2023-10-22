@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Persistify.Domain.Users;
 using Persistify.Requests.Documents;
 using Persistify.Responses.Documents;
 using Persistify.Server.CommandHandlers.Common;
+using Persistify.Server.Domain.Users;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
@@ -34,7 +34,8 @@ public class DeleteDocumentRequestHandler : RequestHandler<DeleteDocumentRequest
     protected override async ValueTask RunAsync(DeleteDocumentRequest request, CancellationToken cancellationToken)
     {
         var template = await _templateManager.GetAsync(request.TemplateName) ??
-                       throw new NotFoundPersistifyException(nameof(DeleteDocumentRequest), DocumentErrorMessages.TemplateNotFound);
+                       throw new NotFoundPersistifyException(nameof(DeleteDocumentRequest),
+                           DocumentErrorMessages.TemplateNotFound);
 
         var documentManager = _documentManagerStore.GetManager(template.Id) ??
                               throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
@@ -47,7 +48,8 @@ public class DeleteDocumentRequestHandler : RequestHandler<DeleteDocumentRequest
 
         if (!result)
         {
-            throw new NotFoundPersistifyException(nameof(DeleteDocumentRequest), DocumentErrorMessages.DocumentNotFound);
+            throw new NotFoundPersistifyException(nameof(DeleteDocumentRequest),
+                DocumentErrorMessages.DocumentNotFound);
         }
     }
 

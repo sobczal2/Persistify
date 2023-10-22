@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Dtos.Common;
 using Persistify.Helpers.Results;
-using Persistify.Requests.Common;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Validation.Common;
 
@@ -18,13 +17,13 @@ public class PaginationValidator : Validator<PaginationDto>
     {
         if (value.PageNumber < 0)
         {
-            PropertyName.Push(nameof(value.PageNumber));
+            PropertyName.Push(nameof(PaginationDto.PageNumber));
             return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.PageNumberLessThanZero));
         }
 
         if (value.PageSize <= 0)
         {
-            PropertyName.Push(nameof(value.PageSize));
+            PropertyName.Push(nameof(PaginationDto.PageSize));
             return ValueTask.FromResult<Result>(
                 StaticValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero));
         }

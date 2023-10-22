@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Management.Managers;
 using Persistify.Server.Management.Transactions.Exceptions;
 
@@ -135,11 +137,12 @@ public sealed class Transaction : ITransaction
             {
                 await writeManager.ExecutePendingActionsAsync().ConfigureAwait(false);
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                _logger.LogError(
-                    "Error while executing pending actions for transaction {TransactionId} on manager {ManagerName}",
-                    Id, writeManager.GetType().Name);
+                _logger.LogError(exception,
+                    "Error occurred while executing pending actions for manager {ManagerName} in transaction {TransactionId}",
+                    writeManager.Name, Id);
+                throw;
             }
         }
 

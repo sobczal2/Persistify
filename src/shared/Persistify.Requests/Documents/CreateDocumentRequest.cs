@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Persistify.Domain.Documents;
 using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Requests.Common;
 using Persistify.Responses.Documents;
@@ -10,9 +9,14 @@ namespace Persistify.Requests.Documents;
 [ProtoContract]
 public class CreateDocumentRequest : IRequest<CreateDocumentResponse>
 {
+    public CreateDocumentRequest()
+    {
+        FieldValueDtos = new List<FieldValueDto>();
+    }
+
     [ProtoMember(1)]
     public string TemplateName { get; set; } = default!;
 
     [ProtoMember(2)]
-    public List<FieldValueDto> FieldValues { get; set; } = default!;
+    public List<FieldValueDto> FieldValueDtos { get; set; }
 }

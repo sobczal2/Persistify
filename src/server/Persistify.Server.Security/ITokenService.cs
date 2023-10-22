@@ -1,4 +1,4 @@
-﻿using Persistify.Domain.Users;
+﻿using Persistify.Server.Domain.Users;
 
 namespace Persistify.Server.Security;
 

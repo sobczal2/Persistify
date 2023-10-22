@@ -1,5 +1,7 @@
-﻿namespace Persistify.Client.Objects.Core;
+﻿// namespace Persistify.Client.Objects.Core;
+//
+// public interface IPersistifyObjectsClient
+// {
+// }
 
-public interface IPersistifyObjectsClient
-{
-}
+
