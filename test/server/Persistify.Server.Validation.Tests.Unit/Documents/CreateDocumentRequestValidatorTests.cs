@@ -228,8 +228,8 @@ public class CreateDocumentRequestValidatorTests
         result.Failure.Should().BeTrue();
         result.Exception.Should().BeOfType<StaticValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
-        exception.Message.Should().Be("Value null");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues");
+        exception.Message.Should().Be("Field values empty");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos");
     }
 
     [Fact]
@@ -252,7 +252,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValues[0]" }));
+            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValueDtos[0]" }));
     }
 
     [Fact]
@@ -297,7 +297,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValues[0]" }));
+            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValueDtos[0]" }));
     }
 
     [Fact]
@@ -342,7 +342,7 @@ public class CreateDocumentRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValues[0]" }));
+            .BeEquivalentTo(new List<string>(new[] { "CreateDocumentRequest", "FieldValueDtos[0]" }));
     }
 
     [Fact]
@@ -389,7 +389,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos[1].FieldName");
     }
 
     [Fact]
@@ -414,7 +414,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos[1].FieldName");
     }
 
     [Fact]
@@ -439,7 +439,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos[1].FieldName");
     }
 
     [Fact]
@@ -464,7 +464,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos[1].FieldName");
     }
 
     [Fact]
@@ -489,7 +489,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos[1].FieldName");
     }
 
     [Fact]
@@ -514,7 +514,7 @@ public class CreateDocumentRequestValidatorTests
         result.Exception.Should().BeOfType<DynamicValidationPersistifyException>();
         var exception = (PersistifyException)result.Exception;
         exception.Message.Should().Be("Field name not unique");
-        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValues[1].FieldName");
+        exception.PropertyName.Should().Be("CreateDocumentRequest.FieldValueDtos[1].FieldName");
     }
 
     [Fact]

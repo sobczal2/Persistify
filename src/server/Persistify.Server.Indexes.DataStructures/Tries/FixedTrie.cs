@@ -45,31 +45,50 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
 
     public IEnumerable<TItem> Search(TSearchItem item)
     {
-        if (item.Length > Depth)
+        var length = item.Length;
+
+        var repeatedAnyIndexCount = 0;
+
+        for (var i = 0; i < length; i++)
         {
+            if (item.GetIndex(i) == item.RepeatedAnyIndex)
+            {
+                repeatedAnyIndexCount++;
+            }
+        }
+
+        if (repeatedAnyIndexCount == length)
+        {
+            foreach (var result in _root.GetItems())
+            {
+                yield return result;
+            }
+
             yield break;
         }
 
-        var queue = new Queue<(FixedTrieNode<TItem> node, int depth)>();
-        queue.Enqueue((_root, 0));
+        length -= repeatedAnyIndexCount;
+
+        var queue = new Queue<(FixedTrieNode<TItem> node, int searchLenght, int nodeDepth)>();
+        queue.Enqueue((_root, 0, 0));
 
         while (queue.Count > 0)
         {
-            var (node, depth) = queue.Dequeue();
-            var index = item.GetIndex(depth);
+            var (node, searchLenght, nodeDepth) = queue.Dequeue();
+            var index = item.GetIndex(nodeDepth);
             if (index == item.RepeatedAnyIndex)
             {
-                queue.Enqueue((node, depth + 1));
+                queue.Enqueue((node, searchLenght, nodeDepth + 1));
 
                 foreach (var child in node.GetChildren())
                 {
                     if (child != null)
                     {
-                        queue.Enqueue((child, depth));
+                        queue.Enqueue((child, searchLenght, nodeDepth));
                     }
                 }
             }
-            else if (depth == item.Length)
+            else if (searchLenght == length)
             {
                 foreach (var result in node.GetItems())
                 {
@@ -82,7 +101,7 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
                 {
                     if (child != null)
                     {
-                        queue.Enqueue((child, depth + 1));
+                        queue.Enqueue((child, searchLenght + 1, nodeDepth + 1));
                     }
                 }
             }
@@ -91,7 +110,7 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
                 var child = node.GetChild(index);
                 if (child != null)
                 {
-                    queue.Enqueue((child, depth + 1));
+                    queue.Enqueue((child, searchLenght + 1, nodeDepth + 1));
                 }
             }
         }

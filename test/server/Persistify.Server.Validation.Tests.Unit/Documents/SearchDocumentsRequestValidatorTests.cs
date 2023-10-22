@@ -173,7 +173,7 @@ public class SearchDocumentsRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "Pagination" }));
+            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "PaginationDto" }));
     }
 
     [Fact]

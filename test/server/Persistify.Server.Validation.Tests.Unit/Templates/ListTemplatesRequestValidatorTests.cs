@@ -80,7 +80,7 @@ public class ListTemplatesRequestValidatorTests
 
         // Assert
         propertyNameAtCall.Should()
-            .BeEquivalentTo(new List<string>(new[] { "ListTemplatesRequest", "Pagination" }));
+            .BeEquivalentTo(new List<string>(new[] { "ListTemplatesRequest", "PaginationDto" }));
     }
 
     [Fact]

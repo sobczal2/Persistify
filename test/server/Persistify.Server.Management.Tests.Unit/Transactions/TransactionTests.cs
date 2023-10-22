@@ -377,7 +377,7 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task CommitAsync_WhenOneWriteManagerThrowsOnExecutePendingActionsAsync_ConsumesExceptionAndContinues()
+    public async Task CommitAsync_WhenOneWriteManagerThrowsOnExecutePendingActionsAsync_ThrowsException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -389,13 +389,10 @@ public class TransactionTests
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
-        await _sut.CommitAsync();
+        var act = async () => await _sut.CommitAsync();
 
         // Assert
-        foreach (var writeManager in _transactionDescriptor.WriteManagers)
-        {
-            await writeManager.Received(1).ExecutePendingActionsAsync();
-        }
+        await act.Should().ThrowExactlyAsync<Exception>();
     }
 
     [Fact]

@@ -63,7 +63,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         if (value.FieldValueDtos.Count == 0)
         {
             PropertyName.Push(nameof(CreateDocumentRequest.FieldValueDtos));
-            return DynamicValidationException(DocumentErrorMessages.FieldValuesEmpty);
+            return StaticValidationException(DocumentErrorMessages.FieldValuesEmpty);
         }
 
         var template = await _templateManager.GetAsync(value.TemplateName);
