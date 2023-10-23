@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Persistify.Helpers.Results;
 using Persistify.Requests.PresetAnalyzers;
-using Persistify.Requests.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Validation.Common;
@@ -14,7 +13,7 @@ public class GetPresetAnalyzerRequestValidator : Validator<GetPresetAnalyzerRequ
 
     public GetPresetAnalyzerRequestValidator(
         IPresetAnalyzerManager presetAnalyzerManager
-        )
+    )
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         PropertyName.Push(nameof(GetPresetAnalyzerRequest));
@@ -37,7 +36,8 @@ public class GetPresetAnalyzerRequestValidator : Validator<GetPresetAnalyzerRequ
         if (!_presetAnalyzerManager.Exists(value.PresetAnalyzerName))
         {
             PropertyName.Push(nameof(GetPresetAnalyzerRequest.PresetAnalyzerName));
-            return ValueTask.FromResult<Result>(DynamicValidationException(PresetAnalyzerErrorMessages.PresetAnalyzerNotFound));
+            return ValueTask.FromResult<Result>(
+                DynamicValidationException(PresetAnalyzerErrorMessages.PresetAnalyzerNotFound));
         }
 
         return ValueTask.FromResult(Result.Ok);

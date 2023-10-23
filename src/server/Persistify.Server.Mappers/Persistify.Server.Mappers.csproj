@@ -11,7 +11,7 @@
     <ProjectReference Include="..\..\shared\Persistify.Dtos\Persistify.Dtos.csproj"/>
     <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
     <ProjectReference Include="..\Persistify.Server.Domain\Persistify.Server.Domain.csproj"/>
-    <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj" />
+    <ProjectReference Include="..\Persistify.Server.ErrorHandling\Persistify.Server.ErrorHandling.csproj"/>
   </ItemGroup>
 
 </Project>

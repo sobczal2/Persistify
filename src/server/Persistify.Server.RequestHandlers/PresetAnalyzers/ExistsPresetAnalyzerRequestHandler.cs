@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Persistify.Requests.PresetAnalyzers;
-using Persistify.Requests.Templates;
 using Persistify.Responses.PresetAnalyzers;
 using Persistify.Server.CommandHandlers.Common;
 using Persistify.Server.Domain.Users;

@@ -24,7 +24,7 @@ public class SearchMetadata
         }
         else
         {
-            _metadata.Add(name, new SortedSet<string>{ value });
+            _metadata.Add(name, new SortedSet<string> { value });
         }
     }
 

@@ -5,14 +5,13 @@ using Persistify.Requests.PresetAnalyzers;
 using Persistify.Server.ErrorHandling.ErrorMessages;
 using Persistify.Server.Management.Managers.PresetAnalyzers;
 using Persistify.Server.Validation.Common;
-using Persistify.Server.Validation.Dtos.Common;
 
 namespace Persistify.Server.Validation.Requests.PresetAnalyzers;
 
 public class CreatePresetAnalyzerRequestValidator : Validator<CreatePresetAnalyzerRequest>
 {
-    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private readonly IValidator<FullAnalyzerDto> _analyzerDtoValidator;
+    private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public CreatePresetAnalyzerRequestValidator(
         IPresetAnalyzerManager presetAnalyzerManager,

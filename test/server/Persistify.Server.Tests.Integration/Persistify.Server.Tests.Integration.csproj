@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-    <PackageReference Include="Grpc.Net.Client" Version="2.57.0"/>
+    <PackageReference Include="Grpc.Net.Client" Version="2.58.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.12"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2"/>
     <PackageReference Include="xunit" Version="2.5.3"/>

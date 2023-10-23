@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2"/>
     <PackageReference Include="FluentAssertions" Version="6.12.0"/>
-    <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
+    <PackageReference Include="Grpc.Core.Api" Version="2.58.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1"/>
     <PackageReference Include="NSubstitute" Version="5.1.0"/>
     <PackageReference Include="NSubstitute.Analyzers.CSharp" Version="1.0.16">

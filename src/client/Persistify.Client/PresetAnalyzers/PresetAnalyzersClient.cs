@@ -12,11 +12,13 @@ public class PresetAnalyzersClient : SubClient<IPresetAnalyzerService>, IPresetA
     {
     }
 
-    public async Task<CreatePresetAnalyzerResponse> CreatePresetAnalyzerAsync(IPresetAnalyzerService presetAnalyzerService,
+    public async Task<CreatePresetAnalyzerResponse> CreatePresetAnalyzerAsync(
+        IPresetAnalyzerService presetAnalyzerService,
         CreatePresetAnalyzerRequest createPresetAnalyzerRequest, CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<CreatePresetAnalyzerResponse>(
-            async cc => await presetAnalyzerService.CreatePresetAnalyzerAsync(createPresetAnalyzerRequest, cc), callContext
+            async cc => await presetAnalyzerService.CreatePresetAnalyzerAsync(createPresetAnalyzerRequest, cc),
+            callContext
         );
     }
 
@@ -28,27 +30,33 @@ public class PresetAnalyzersClient : SubClient<IPresetAnalyzerService>, IPresetA
         );
     }
 
-    public async Task<ListPresetAnalyzersResponse> ListPresetAnalyzersAsync(IPresetAnalyzerService presetAnalyzerService,
+    public async Task<ListPresetAnalyzersResponse> ListPresetAnalyzersAsync(
+        IPresetAnalyzerService presetAnalyzerService,
         ListPresetAnalyzersRequest listPresetAnalyzersRequest, CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<ListPresetAnalyzersResponse>(
-            async cc => await presetAnalyzerService.ListPresetAnalyzersAsync(listPresetAnalyzersRequest, cc), callContext
+            async cc => await presetAnalyzerService.ListPresetAnalyzersAsync(listPresetAnalyzersRequest, cc),
+            callContext
         );
     }
 
-    public async Task<DeletePresetAnalyzerResponse> DeletePresetAnalyzerAsync(IPresetAnalyzerService presetAnalyzerService,
+    public async Task<DeletePresetAnalyzerResponse> DeletePresetAnalyzerAsync(
+        IPresetAnalyzerService presetAnalyzerService,
         DeletePresetAnalyzerRequest deletePresetAnalyzerRequest, CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<DeletePresetAnalyzerResponse>(
-            async cc => await presetAnalyzerService.DeletePresetAnalyzerAsync(deletePresetAnalyzerRequest, cc), callContext
+            async cc => await presetAnalyzerService.DeletePresetAnalyzerAsync(deletePresetAnalyzerRequest, cc),
+            callContext
         );
     }
 
-    public async Task<ExistsPresetAnalyzerResponse> ExistsPresetAnalyzerAsync(IPresetAnalyzerService presetAnalyzerService,
+    public async Task<ExistsPresetAnalyzerResponse> ExistsPresetAnalyzerAsync(
+        IPresetAnalyzerService presetAnalyzerService,
         ExistsPresetAnalyzerRequest existsPresetAnalyzerRequest, CallContext? callContext = default)
     {
         return await PersistifyClient.CallAuthenticatedServiceAsync<ExistsPresetAnalyzerResponse>(
-            async cc => await presetAnalyzerService.ExistsPresetAnalyzerAsync(existsPresetAnalyzerRequest, cc), callContext
+            async cc => await presetAnalyzerService.ExistsPresetAnalyzerAsync(existsPresetAnalyzerRequest, cc),
+            callContext
         );
     }
 }
