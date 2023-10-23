@@ -20,4 +20,7 @@ public interface ITemplatesClient
 
     Task<DeleteTemplateResponse> DeleteTemplateAsync(ITemplateService templateService,
         DeleteTemplateRequest deleteTemplateRequest, CallContext? callContext = default);
+
+    Task<ExistsTemplateResponse> ExistsTemplateAsync(ITemplateService templateService,
+        ExistsTemplateRequest existsTemplateRequest, CallContext? callContext = default);
 }

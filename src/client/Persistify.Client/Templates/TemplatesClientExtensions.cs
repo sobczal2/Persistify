@@ -40,4 +40,13 @@ public static class TemplatesClientExtensions
         return await persistifyClient.Templates.DeleteTemplateAsync(templateService, deleteTemplateRequest,
             callContext);
     }
+
+    public static async Task<ExistsTemplateResponse> ExistsTemplateAsync(this IPersistifyClient persistifyClient,
+        ExistsTemplateRequest existsTemplateRequest,
+        CallContext? callContext = default)
+    {
+        var templateService = persistifyClient.Templates.GetService();
+        return await persistifyClient.Templates.ExistsTemplateAsync(templateService, existsTemplateRequest,
+            callContext);
+    }
 }

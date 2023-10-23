@@ -20,4 +20,7 @@ public interface IDocumentsClient
 
     Task<DeleteDocumentResponse> DeleteDocumentAsync(IDocumentService documentService,
         DeleteDocumentRequest deleteDocumentRequest, CallContext? callContext = default);
+
+    Task<ExistsDocumentResponse> ExistsDocumentAsync(IDocumentService documentService,
+        ExistsDocumentRequest existsDocumentRequest, CallContext? callContext = default);
 }

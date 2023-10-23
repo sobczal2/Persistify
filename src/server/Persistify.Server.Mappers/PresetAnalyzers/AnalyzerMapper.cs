@@ -9,7 +9,8 @@ public static class AnalyzerMapper
     {
         return new FullAnalyzerDto
         {
-            CharacterSetNames = analyzer.CharacterFilterNames,
+            CharacterSetNames = analyzer.CharacterSetNames,
+            CharacterFilterNames = analyzer.CharacterFilterNames,
             TokenizerName = analyzer.TokenizerName,
             TokenFilterNames = analyzer.TokenFilterNames
         };
@@ -19,7 +20,8 @@ public static class AnalyzerMapper
     {
         return new Analyzer
         {
-            CharacterFilterNames = fullAnalyzerDto.CharacterSetNames,
+            CharacterFilterNames = fullAnalyzerDto.CharacterFilterNames,
+            CharacterSetNames = fullAnalyzerDto.CharacterSetNames,
             TokenizerName = fullAnalyzerDto.TokenizerName,
             TokenFilterNames = fullAnalyzerDto.TokenFilterNames
         };

@@ -5,6 +5,7 @@ using ProtoBuf;
 
 namespace Persistify.Requests.PresetAnalyzers;
 
+[ProtoContract]
 public class CreatePresetAnalyzerRequest : IRequest<CreatePresetAnalyzerResponse>
 {
     [ProtoMember(1)]

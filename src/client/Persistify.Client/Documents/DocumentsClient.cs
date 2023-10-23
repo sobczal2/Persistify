@@ -47,4 +47,13 @@ public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
             async cc => await documentService.DeleteDocumentAsync(deleteDocumentRequest, cc), callContext
         );
     }
+
+    public async Task<ExistsDocumentResponse> ExistsDocumentAsync(IDocumentService documentService,
+        ExistsDocumentRequest existsDocumentRequest,
+        CallContext? callContext = default)
+    {
+        return await PersistifyClient.CallAuthenticatedServiceAsync<ExistsDocumentResponse>(
+            async cc => await documentService.ExistsDocumentAsync(existsDocumentRequest, cc), callContext
+        );
+    }
 }

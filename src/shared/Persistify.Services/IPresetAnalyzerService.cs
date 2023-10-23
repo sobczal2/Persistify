@@ -24,4 +24,8 @@ public interface IPresetAnalyzerService
     [OperationContract]
     ValueTask<DeletePresetAnalyzerResponse> DeletePresetAnalyzerAsync(DeletePresetAnalyzerRequest request,
         CallContext callContext);
+
+    [OperationContract]
+    ValueTask<ExistsPresetAnalyzerResponse> ExistsPresetAnalyzerAsync(ExistsPresetAnalyzerRequest request,
+        CallContext callContext);
 }

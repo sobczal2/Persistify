@@ -116,7 +116,8 @@ public class TextIndexer : IIndexer
         }
     }
 
-    private static void HandleTrieResult(IndexToken trieResult, IDictionary<int, SearchResult> results, float score, Token token)
+    private static void HandleTrieResult(IndexToken trieResult, IDictionary<int, SearchResult> results, float score,
+        Token token)
     {
         foreach (var documentPosition in trieResult.DocumentPositions)
         {
