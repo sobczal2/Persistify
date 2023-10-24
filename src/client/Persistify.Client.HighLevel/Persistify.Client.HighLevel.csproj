@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="34.0.2"/>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Persistify.Client.HighLevel\Persistify.Client.HighLevel.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Dtos\Persistify.Dtos.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
     <ProjectReference Include="..\Persistify.Client.LowLevel\Persistify.Client.LowLevel.csproj" />
   </ItemGroup>
 

@@ -80,13 +80,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Files", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{4966F52A-2A71-4E16-8400-A59C72AA50D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client", "src\client\Persistify.Client\Persistify.Client.csproj", "{CB50A31F-82BF-4E06-B044-9749769D43EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client.LowLevel", "src\client\Persistify.Client.LowLevel\Persistify.Client.LowLevel.csproj", "{CB50A31F-82BF-4E06-B044-9749769D43EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "src\client\ConsoleApp1\ConsoleApp1.csproj", "{60AA5BD1-F670-46EA-8126-F9B50E0D1855}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Server.Tests.Integration", "test\server\Persistify.Server.Tests.Integration\Persistify.Server.Tests.Integration.csproj", "{A9757C71-6C2D-4B24-B760-6B51FFAE5D52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client.Objects", "src\client\Persistify.Client.Objects\Persistify.Client.Objects.csproj", "{2E3D354B-CAF1-44A2-A449-3658CA1471A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client.HighLevel", "src\client\Persistify.Client.HighLevel\Persistify.Client.HighLevel.csproj", "{2E3D354B-CAF1-44A2-A449-3658CA1471A4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistify.Client.Objects.Generators", "src\client\Persistify.Client.Objects.Generators\Persistify.Client.Objects.Generators.csproj", "{03C595FF-3598-40BF-8E45-BC96C6560D72}"
 EndProject
