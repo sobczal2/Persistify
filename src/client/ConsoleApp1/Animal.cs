@@ -1,19 +1,31 @@
-﻿// using Persistify.Client.Objects.Attributes;
-//
-// namespace ConsoleApp1;
-//
-// [PersistifyTemplate]
-// public partial class Animal
-// {
-//     [PersistifyTextField]
-//     public string Name { get; set; } = default!;
-//
-//     [PersistifyNumberField]
-//     public int Age { get; set; }
-//
-//     [PersistifyBoolField]
-//     public bool IsAlive { get; set; }
-// }
+﻿using Persistify.Client.HighLevel.Attributes;
+
+namespace ConsoleApp1;
+
+[PersistifyDocument(name: "Animal")]
+public class Animal
+{
+    [PersistifyTextField]
+    public string Name { get; set; } = default!;
+
+    [PersistifyTextField]
+    public string Species { get; set; } = default!;
+
+    [PersistifyNumberField]
+    public int Age { get; set; }
+
+    [PersistifyNumberField]
+    public double Weight { get; set; }
+
+    [PersistifyNumberField]
+    public double Height { get; set; }
+
+    [PersistifyTextField]
+    public string Color { get; set; } = default!;
+
+    [PersistifyTextField]
+    public string FavoriteToy { get; set; } = default!;
+}
 
 
 

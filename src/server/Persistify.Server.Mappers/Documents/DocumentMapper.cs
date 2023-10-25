@@ -16,6 +16,6 @@ public static class DocumentMapper
             fieldValues.Add(fieldValue.ToDto());
         }
 
-        return new DocumentDto { Id = document.Id, FieldValues = fieldValues };
+        return new DocumentDto { Id = document.Id, FieldValueDtos = fieldValues };
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Persistify.Helpers.Results;
 
@@ -70,5 +71,29 @@ public readonly struct Result<T>
     public TRes Match<TRes>(Func<T, TRes> onSuccess, Func<Exception, TRes> onFailure)
     {
         return Success ? onSuccess(_value!) : onFailure(_exception!);
+    }
+
+    public static Result<T> From(Func<T> func)
+    {
+        try
+        {
+            return func();
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
+
+    public static async Task<Result<T>> FromAsync(Func<Task<T>> func)
+    {
+        try
+        {
+            return await func();
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
     }
 }

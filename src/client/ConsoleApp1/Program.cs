@@ -1,42 +1,32 @@
-﻿// using System.Diagnostics;
-// using System.Reflection;
-// using ConsoleApp1;
-// using Persistify.Client.Core;
-// using Persistify.Client.Documents;
-// using Persistify.Client.Objects.Analyzers;
-// using Persistify.Client.Objects.Converters;
-// using Persistify.Client.Objects.Core;
-// using Persistify.Requests.Documents;
-//
-// var username = "test123456";
-//
-// var client = PersistifyClientBuilder.Create()
-//     .WithBaseUrl(new Uri("http://localhost:5000"))
-//     .WithCredentials("root", "root")
-//     .Build();
-//
-// var fieldValueConverterStore = new DefaultFieldValueConverterStore(Assembly.GetExecutingAssembly());
-// var analyzerDescriptorStore = new AnalyzerDescriptorStore(new[] { new DefaultAnalyzerDescriptorFactory() });
-//
-// var objectClient = new PersistifyObjectsClient(client, fieldValueConverterStore, analyzerDescriptorStore);
-//
-// var stopwatch = new Stopwatch();
-// stopwatch.Start();
-//
-// await objectClient.RegisterTemplateAsync<Animal>();
-//
-// var animal = new Animal { Name = "Dog", Age = 5, IsAlive = true };
-//
-// await objectClient.CreateDocumentAsync(animal);
-//
-// stopwatch.Stop();
-// Console.WriteLine(stopwatch.ElapsedMilliseconds);
-//
-// var document = await client.GetDocumentAsync(new GetDocumentRequest
-// {
-//     DocumentId = 1, TemplateName = "ConsoleApp1.Animal"
-// });
-//
-// Console.WriteLine(document);
+﻿using System.Reflection;
+using ConsoleApp1;
+using Persistify.Client.HighLevel;
+using Persistify.Client.LowLevel.Core;
 
-Console.WriteLine();
+var client = PersistifyClientBuilder
+    .Create()
+    .BuildHighLevel();
+
+(await client.InitializeAsync(Assembly.GetExecutingAssembly()))
+    .OnFailure(error => Console.WriteLine(error.Message));
+
+int id = await client.AddAsync(new Animal
+{
+    Name = "Bobby",
+    Species = "Dog",
+    Age = 5,
+    Weight = 10,
+    Height = 0.5,
+    Color = "Brown",
+    FavoriteToy = "Ball"
+});
+
+Console.WriteLine($"Added animal with id {id}");
+
+var animal = await client.GetAsync<Animal>(id);
+
+Console.WriteLine($"Retrieved animal with id {id}: {animal.Value}");
+
+await client.DeleteAsync<Animal>(id);
+
+Console.WriteLine($"Deleted animal with id {id}");
