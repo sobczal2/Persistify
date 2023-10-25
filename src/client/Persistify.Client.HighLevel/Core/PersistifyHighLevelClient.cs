@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Persistify.Client.HighLevel.Attributes;
 using Persistify.Client.HighLevel.Converters;
 using Persistify.Client.HighLevel.Exceptions;
+using Persistify.Client.HighLevel.Search;
 using Persistify.Client.LowLevel.Core;
 using Persistify.Client.LowLevel.Documents;
 using Persistify.Client.LowLevel.Templates;
@@ -276,6 +277,67 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         return new Result<TDocument>(document);
     }
 
+    public async Task<Result<(List<TDocument> Documents, int TotalCount)>> SearchAsync<TDocument>(
+        Action<SearchDocumentsRequestBuilder<TDocument>> searchRequestBuilderAction) where TDocument : class, new()
+    {
+        var searchRequestBuilder = new SearchDocumentsRequestBuilder<TDocument>(this);
+        searchRequestBuilderAction(searchRequestBuilder);
+        var searchRequest = searchRequestBuilder.Build();
+
+        var searchResult = await LowLevel.SearchDocumentsAsync(searchRequest);
+
+        if (searchResult.Failure)
+        {
+            return new Result<(List<TDocument> Documents, int TotalCount)>(searchResult.Exception);
+        }
+
+        var documents = new List<TDocument>();
+
+        foreach (var searchRecordDto in searchResult.Value.SearchRecordDtos)
+        {
+            var document = new TDocument();
+
+            var fieldTypes = typeof(TDocument)
+                .GetProperties()
+                .Where(x => x.GetCustomAttribute<PersistifyFieldAttribute>() != null);
+
+            foreach (var fieldType in fieldTypes)
+            {
+                var fieldAttribute = fieldType.GetCustomAttribute<PersistifyFieldAttribute>()!;
+                var fieldName = fieldAttribute.Name ?? fieldType.Name;
+                var fieldTypeDto = fieldAttribute.FieldTypeDto;
+
+                var fieldValueDto = searchRecordDto
+                    .DocumentDto
+                    .FieldValueDtos
+                    .FirstOrDefault(x => x.FieldName == fieldName);
+
+                if (fieldValueDto == null)
+                {
+                    throw new PersistifyHighLevelClientException(
+                        $"Field {fieldName} not found in document {typeof(TDocument).FullName}");
+                }
+
+                var fieldValue = fieldValueDto switch
+                {
+                    TextFieldValueDto textFieldValueDto => _converters[(fieldType.PropertyType, fieldTypeDto)]
+                        .ConvertBack(textFieldValueDto.Value),
+                    BoolFieldValueDto boolFieldValueDto => _converters[(fieldType.PropertyType, fieldTypeDto)]
+                        .ConvertBack(boolFieldValueDto.Value),
+                    NumberFieldValueDto numberFieldValueDto => _converters[(fieldType.PropertyType, fieldTypeDto)]
+                        .ConvertBack(numberFieldValueDto.Value),
+                    _ => throw new ArgumentOutOfRangeException()
+                };
+
+                fieldType.SetValue(document, fieldValue);
+            }
+
+            documents.Add(document);
+        }
+
+        return new Result<(List<TDocument> Documents, int TotalCount)>((documents, searchResult.Value.TotalCount));
+    }
+
     public async Task<Result> DeleteAsync<TDocument>(int id)
         where TDocument : new()
     {
@@ -300,5 +362,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         }
 
         return Result.Ok;
+    }
+
+    public IPersistifyConverter? GetConverter(Type type, FieldTypeDto fieldTypeDto)
+    {
+        return _converters[(type, fieldTypeDto)];
     }
 }

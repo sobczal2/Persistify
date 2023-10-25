@@ -25,6 +25,12 @@ public class Animal
 
     [PersistifyTextField]
     public string FavoriteToy { get; set; } = default!;
+
+    [PersistifyBoolField]
+    public bool IsAlive { get; set; }
+
+    [PersistifyBoolField]
+    public bool IsDead { get; set; }
 }
 
 
