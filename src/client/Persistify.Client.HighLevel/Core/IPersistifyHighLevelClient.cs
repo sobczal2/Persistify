@@ -12,6 +12,11 @@ public interface IPersistifyHighLevelClient
     Task<Result> InitializeAsync(params Assembly[] assemblies);
     Task<Result<int>> InitializeTemplatesAsync(params Assembly[] assemblies);
     void InitializeConverters(params Assembly[] assemblies);
-    Task<Result> AddAsync<TDocument>(TDocument document);
-    Task<Result> DeleteAsync<TDocument>(int id);
+
+    Task<Result<int>> AddAsync<TDocument>(TDocument document)
+        where TDocument : new();
+    Task<Result<TDocument>> GetAsync<TDocument>(int id)
+        where TDocument : new();
+    Task<Result> DeleteAsync<TDocument>(int id)
+        where TDocument : new();
 }

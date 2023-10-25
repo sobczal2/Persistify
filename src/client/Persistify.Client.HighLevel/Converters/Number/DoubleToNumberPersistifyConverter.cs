@@ -11,4 +11,9 @@ public class DoubleToNumberPersistifyConverter : IPersistifyConverter
     {
         return from;
     }
+
+    public object ConvertBack(object to)
+    {
+        return to;
+    }
 }

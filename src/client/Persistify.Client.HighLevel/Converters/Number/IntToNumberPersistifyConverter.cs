@@ -13,4 +13,10 @@ public class IntToNumberPersistifyConverter : IPersistifyConverter
         var fromInt = (int)from;
         return (double)fromInt;
     }
+
+    public object ConvertBack(object to)
+    {
+        var toDouble = (double)to;
+        return (int)toDouble;
+    }
 }

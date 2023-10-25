@@ -11,4 +11,9 @@ public class StringToTextPersistifyConverter : IPersistifyConverter
     {
         return from;
     }
+
+    public object ConvertBack(object to)
+    {
+        return to;
+    }
 }

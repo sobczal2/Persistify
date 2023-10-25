@@ -59,6 +59,12 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         {
             var documentAttribute = documentType.GetCustomAttribute<PersistifyDocumentAttribute>()!;
             var templateName = documentAttribute.Name ?? documentType.FullName ?? throw new InvalidOperationException();
+            if (documentType.GetConstructors().All(x => x.GetParameters().Length != 0))
+            {
+                return new Result<int>(new PersistifyHighLevelClientException(
+                    $"Document type {documentType.FullName} does not have a parameterless constructor")
+                );
+            }
 
             var existsResult = await LowLevel.ExistsTemplateAsync(new ExistsTemplateRequest
             {
@@ -139,13 +145,14 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         }
     }
 
-    public async Task<Result> AddAsync<TDocument>(TDocument document)
+    public async Task<Result<int>> AddAsync<TDocument>(TDocument document)
+        where TDocument : new()
     {
         var documentType = typeof(TDocument);
         var documentAttribute = documentType.GetCustomAttribute<PersistifyDocumentAttribute>();
         if (documentAttribute == null)
         {
-            return new Result(new PersistifyHighLevelClientException(
+            return new Result<int>(new PersistifyHighLevelClientException(
                 $"Document type {documentType.FullName} does not have {nameof(PersistifyDocumentAttribute)}")
             );
         }
@@ -199,14 +206,99 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
 
         if (createResult.Failure)
         {
-            return new Result(createResult.Exception);
+            return new Result<int>(createResult.Exception);
+        }
+
+        return new Result<int>(createResult.Value.DocumentId);
+    }
+
+    public async Task<Result<TDocument>> GetAsync<TDocument>(int id)
+        where TDocument : new()
+    {
+        var documentType = typeof(TDocument);
+        var documentAttribute = documentType.GetCustomAttribute<PersistifyDocumentAttribute>();
+        if (documentAttribute == null)
+        {
+            return new Result<TDocument>(new PersistifyHighLevelClientException(
+                $"Document type {documentType.FullName} does not have {nameof(PersistifyDocumentAttribute)}")
+            );
+        }
+
+        var templateName = documentAttribute.Name ?? documentType.FullName ?? throw new InvalidOperationException();
+
+        var getDocumentRequest = new GetDocumentRequest { TemplateName = templateName, DocumentId = id };
+
+        var getResult = await LowLevel.GetDocumentAsync(getDocumentRequest);
+
+        if (getResult.Failure)
+        {
+            return new Result<TDocument>(getResult.Exception);
+        }
+
+        var document = new TDocument();
+
+        var fieldTypes = documentType
+            .GetProperties()
+            .Where(x => x.GetCustomAttribute<PersistifyFieldAttribute>() != null);
+
+        foreach (var fieldType in fieldTypes)
+        {
+            var fieldAttribute = fieldType.GetCustomAttribute<PersistifyFieldAttribute>()!;
+            var fieldName = fieldAttribute.Name ?? fieldType.Name;
+            var fieldTypeDto = fieldAttribute.FieldTypeDto;
+
+            var fieldValueDto = getResult
+                .Value
+                .DocumentDto
+                .FieldValueDtos
+                .FirstOrDefault(x => x.FieldName == fieldName);
+
+            if (fieldValueDto == null)
+            {
+                throw new PersistifyHighLevelClientException(
+                    $"Field {fieldName} not found in document {documentType.FullName}");
+            }
+
+            var fieldValue = fieldValueDto switch
+            {
+                TextFieldValueDto textFieldValueDto => _converters[(fieldType.PropertyType, fieldTypeDto)]
+                    .ConvertBack(textFieldValueDto.Value),
+                BoolFieldValueDto boolFieldValueDto => _converters[(fieldType.PropertyType, fieldTypeDto)]
+                    .ConvertBack(boolFieldValueDto.Value),
+                NumberFieldValueDto numberFieldValueDto => _converters[(fieldType.PropertyType, fieldTypeDto)]
+                    .ConvertBack(numberFieldValueDto.Value),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            fieldType.SetValue(document, fieldValue);
+        }
+
+        return new Result<TDocument>(document);
+    }
+
+    public async Task<Result> DeleteAsync<TDocument>(int id)
+        where TDocument : new()
+    {
+        var documentType = typeof(TDocument);
+        var documentAttribute = documentType.GetCustomAttribute<PersistifyDocumentAttribute>();
+        if (documentAttribute == null)
+        {
+            return new Result(new PersistifyHighLevelClientException(
+                $"Document type {documentType.FullName} does not have {nameof(PersistifyDocumentAttribute)}")
+            );
+        }
+
+        var templateName = documentAttribute.Name ?? documentType.FullName ?? throw new InvalidOperationException();
+
+        var deleteDocumentRequest = new DeleteDocumentRequest { TemplateName = templateName, DocumentId = id, };
+
+        var deleteResult = await LowLevel.DeleteDocumentAsync(deleteDocumentRequest);
+
+        if (deleteResult.Failure)
+        {
+            return new Result(deleteResult.Exception);
         }
 
         return Result.Ok;
-    }
-
-    public Task<Result> DeleteAsync<TDocument>(int id)
-    {
-        throw new NotImplementedException();
     }
 }
