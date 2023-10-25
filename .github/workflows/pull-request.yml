@@ -3,6 +3,8 @@ name: Pull request
 on:
     pull_request:
         branches: [ "main" ]
+    push:
+        branches: [ "main" ]
 
 jobs:
 
@@ -29,9 +31,9 @@ jobs:
                 with:
                     dotnet-version: 7.0.x
 
-            -   name: Execute unit tests
-                timeout-minutes: 5
-                run: dotnet test
-
             -   name: Build
                 run: dotnet build --configuration ${{ matrix.configuration }}
+
+            -   name: Execute unit tests
+                timeout-minutes: 5
+                run: dotnet test --configuration ${{ matrix.configuration }} --no-build --verbosity normal
