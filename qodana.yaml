@@ -3,4 +3,4 @@ linter: jetbrains/qodana-dotnet:latest
 profile:
     name: qodana.recommended
 dot-net:
-    solution: ./Persistify.sln
+    solution: Persistify.sln
