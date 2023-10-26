@@ -38,13 +38,19 @@ var searchResult = await client.SearchAsync<Animal>(builder => builder
                 .ExactBool()
                 .WithField(a => a.IsAlive)
                 .WithValue(true)
-            )
+        )
         .AddQuery(
             q => q
                 .ExactNumber()
                 .WithField(a => a.Age)
                 .WithValue(5)
-            )
+        )
+        .AddQuery(
+            q => q
+                .FullText()
+                .WithField(a => a.Name)
+                .WithValue("Bobby")
+        )
     )
 );
 

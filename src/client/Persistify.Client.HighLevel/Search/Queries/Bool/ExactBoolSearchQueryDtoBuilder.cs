@@ -4,12 +4,14 @@ using System.Linq.Expressions;
 using Persistify.Client.HighLevel.Attributes;
 using Persistify.Client.HighLevel.Core;
 using Persistify.Client.HighLevel.Exceptions;
+using Persistify.Client.HighLevel.Search.Queries.Common;
+using Persistify.Dtos.Common;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
 using Persistify.Helpers.Results;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Bool;
 
-public class ExactBoolSearchQueryDtoBuilder<TDocument> : SearchQueryDtoBuilder<TDocument>
+public class ExactBoolSearchQueryDtoBuilder<TDocument> : FieldSearchQueryDtoBuilder<TDocument, ExactBoolSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
     public ExactBoolSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
@@ -24,51 +26,5 @@ public class ExactBoolSearchQueryDtoBuilder<TDocument> : SearchQueryDtoBuilder<T
         return this;
     }
 
-    public ExactBoolSearchQueryDtoBuilder<TDocument> WithField(Expression<Func<TDocument, object>> field)
-    {
-        if (!(field.Body is UnaryExpression unaryExpression))
-        {
-            throw new PersistifyHighLevelClientException($"Expression {field} is not a unary expression");
-        }
-
-        if (!(unaryExpression.Operand is MemberExpression memberExpression))
-        {
-            throw new PersistifyHighLevelClientException($"Expression {field} is not a member expression");
-        }
-
-        var propertyInfo = typeof(TDocument).GetProperty(memberExpression.Member.Name);
-
-        if (propertyInfo is null)
-        {
-            throw new PersistifyHighLevelClientException(
-                $"Property {memberExpression.Member.Name} not found on type {typeof(TDocument).Name}");
-        }
-
-        var fieldAttribute =
-            propertyInfo.GetCustomAttributes(typeof(PersistifyFieldAttribute), false).FirstOrDefault() as
-                PersistifyFieldAttribute;
-
-        if (fieldAttribute == null)
-        {
-            throw new PersistifyHighLevelClientException(
-                $"Field {field} does not have {nameof(PersistifyFieldAttribute)}");
-        }
-
-        var converter =
-            PersistifyHighLevelClient.GetConverter(unaryExpression.Operand.Type, fieldAttribute.FieldTypeDto);
-
-        if (converter == null)
-        {
-            throw new PersistifyHighLevelClientException($"Converter for field {field} is not found");
-        }
-
-        ((ExactBoolSearchQueryDto)SearchQueryDto!).FieldName = fieldAttribute.Name ?? propertyInfo.Name ?? throw new PersistifyHighLevelClientException($"Property {propertyInfo.Name} does not have name");
-        return this;
-    }
-
-    public ExactBoolSearchQueryDtoBuilder<TDocument> WithBoost(float boost)
-    {
-        ((ExactBoolSearchQueryDto)SearchQueryDto!).Boost = boost;
-        return this;
-    }
+    protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Bool;
 }

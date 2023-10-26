@@ -112,8 +112,6 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             FullTextSearchQueryDto fullTextSearchQueryDto => await ValidateFullTextSearchQueryDtoAsync(
                 fullTextSearchQueryDto,
                 template),
-            PrefixTextSearchQueryDto prefixTextSearchQueryDto => await ValidatePrefixTextSearchQueryDtoAsync(
-                prefixTextSearchQueryDto, template),
             _ => StaticValidationException(SharedErrorMessages.InvalidValue)
         };
     }
@@ -314,21 +312,6 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(FullTextSearchQueryDto));
         PropertyName.Push(nameof(FullTextSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Text);
-        PropertyName.Pop();
-        if (result.Failure)
-        {
-            return result;
-        }
-
-        return Result.Ok;
-    }
-
-    private async ValueTask<Result> ValidatePrefixTextSearchQueryDtoAsync(PrefixTextSearchQueryDto queryDto,
-        Template template)
-    {
-        PropertyName.Push(nameof(PrefixTextSearchQueryDto));
-        PropertyName.Push(nameof(PrefixTextSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Text);
         PropertyName.Pop();
         if (result.Failure)

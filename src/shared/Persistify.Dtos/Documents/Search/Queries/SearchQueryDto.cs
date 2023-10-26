@@ -17,7 +17,6 @@ namespace Persistify.Dtos.Documents.Search.Queries;
 [ProtoInclude(303, typeof(RangeNumberSearchQueryDto))]
 [ProtoInclude(400, typeof(ExactTextSearchQueryDto))]
 [ProtoInclude(401, typeof(FullTextSearchQueryDto))]
-[ProtoInclude(402, typeof(PrefixTextSearchQueryDto))]
 public class SearchQueryDto
 {
     [ProtoMember(1)]

@@ -10,23 +10,17 @@ using Persistify.Dtos.Documents.Search.Queries.Number;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Number;
 
-public class ExactNumberSearchQueryDtoBuilder<TDocument> : FieldSearchQueryDtoBuilder<TDocument, ExactNumberSearchQueryDtoBuilder<TDocument>>
+public class LessNumberSearchQueryDtoBuilder<TDocument> : FieldSearchQueryDtoBuilder<TDocument, LessNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public ExactNumberSearchQueryDtoBuilder(
-        IPersistifyHighLevelClient persistifyHighLevelClient
-    ) : base(
-        persistifyHighLevelClient
-    )
+    public LessNumberSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient) : base(persistifyHighLevelClient)
     {
-        SearchQueryDto = new ExactNumberSearchQueryDto { Boost = 1 };
+        SearchQueryDto = new LessNumberSearchQueryDto { Boost = 1 };
     }
 
-    public ExactNumberSearchQueryDtoBuilder<TDocument> WithValue(
-        double value
-    )
+    public LessNumberSearchQueryDtoBuilder<TDocument> WithValue(double value)
     {
-        ((ExactNumberSearchQueryDto)SearchQueryDto!).Value = value;
+        ((LessNumberSearchQueryDto)SearchQueryDto!).Value = value;
         return this;
     }
 
