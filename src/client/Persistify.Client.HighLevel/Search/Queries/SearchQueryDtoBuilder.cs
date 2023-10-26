@@ -2,6 +2,7 @@
 using Persistify.Client.HighLevel.Exceptions;
 using Persistify.Client.HighLevel.Search.Queries.Aggregates;
 using Persistify.Client.HighLevel.Search.Queries.Bool;
+using Persistify.Client.HighLevel.Search.Queries.Number;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
 using Persistify.Helpers.Results;
@@ -24,9 +25,19 @@ public class SearchQueryDtoBuilder<TDocument>
         return new AndSearchQueryBuilder<TDocument>(PersistifyHighLevelClient);
     }
 
+    public OrSearchQueryDtoBuilder<TDocument> Or()
+    {
+        return new OrSearchQueryDtoBuilder<TDocument>(PersistifyHighLevelClient);
+    }
+
     public ExactBoolSearchQueryDtoBuilder<TDocument> ExactBool()
     {
         return new ExactBoolSearchQueryDtoBuilder<TDocument>(PersistifyHighLevelClient);
+    }
+
+    public ExactNumberSearchQueryDtoBuilder<TDocument> ExactNumber()
+    {
+        return new ExactNumberSearchQueryDtoBuilder<TDocument>(PersistifyHighLevelClient);
     }
 
     internal SearchQueryDto Build()

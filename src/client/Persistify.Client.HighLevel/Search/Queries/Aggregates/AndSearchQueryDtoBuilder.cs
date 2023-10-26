@@ -14,10 +14,16 @@ public class AndSearchQueryBuilder<TDocument> : SearchQueryDtoBuilder<TDocument>
         SearchQueryDto = new AndSearchQueryDto { Boost = 1 };
     }
 
-    public AndSearchQueryBuilder<TDocument> WithQuery(Func<SearchQueryDtoBuilder<TDocument>, SearchQueryDtoBuilder<TDocument>> searchQueryAction)
+    public AndSearchQueryBuilder<TDocument> AddQuery(Func<SearchQueryDtoBuilder<TDocument>, SearchQueryDtoBuilder<TDocument>> searchQueryAction)
     {
         var searchQueryBuilder = new SearchQueryDtoBuilder<TDocument>(PersistifyHighLevelClient);
         ((AndSearchQueryDto)SearchQueryDto!).SearchQueryDtos.Add(searchQueryAction(searchQueryBuilder).Build());
+        return this;
+    }
+
+    public AndSearchQueryBuilder<TDocument> ClearQueries()
+    {
+        ((AndSearchQueryDto)SearchQueryDto!).SearchQueryDtos.Clear();
         return this;
     }
 
