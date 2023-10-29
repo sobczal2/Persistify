@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Persistify.Server.Extensions;
-using Serilog;
 using ILogger = Serilog.ILogger;
+using Serilog;
 
 namespace Persistify.Server;
 
@@ -16,9 +16,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        var tmpLogger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .CreateBootstrapLogger() as ILogger;
+        var tmpLogger =
+            new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger() as ILogger;
         try
         {
             var version = Assembly

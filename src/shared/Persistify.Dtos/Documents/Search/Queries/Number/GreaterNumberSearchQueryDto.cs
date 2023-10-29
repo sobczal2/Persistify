@@ -15,4 +15,9 @@ public class GreaterNumberSearchQueryDto : NumberSearchQueryDto
     {
         return FieldName;
     }
+
+    public override void SetFieldName(string fieldName)
+    {
+        FieldName = fieldName;
+    }
 }

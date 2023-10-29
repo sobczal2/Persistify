@@ -15,4 +15,9 @@ public class LessNumberSearchQueryDto : NumberSearchQueryDto
     {
         return FieldName;
     }
+
+    public override void SetFieldName(string fieldName)
+    {
+        FieldName = fieldName;
+    }
 }

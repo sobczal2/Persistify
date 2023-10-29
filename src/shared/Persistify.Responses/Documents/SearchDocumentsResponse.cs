@@ -8,6 +8,11 @@ namespace Persistify.Responses.Documents;
 [ProtoContract]
 public class SearchDocumentsResponse : IResponse
 {
+    public SearchDocumentsResponse()
+    {
+        SearchRecordDtos = new List<SearchRecordDto>();
+    }
+
     [ProtoMember(1)]
     public List<SearchRecordDto> SearchRecordDtos { get; set; } = default!;
 

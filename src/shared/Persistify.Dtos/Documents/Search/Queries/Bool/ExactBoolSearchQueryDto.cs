@@ -15,4 +15,9 @@ public class ExactBoolSearchQueryDto : BoolSearchQueryDto
     {
         return FieldName;
     }
+
+    public override void SetFieldName(string fieldName)
+    {
+        FieldName = fieldName;
+    }
 }
