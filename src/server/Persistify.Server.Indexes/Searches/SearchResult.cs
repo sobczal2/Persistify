@@ -17,7 +17,9 @@ public class SearchResult
     {
         if (DocumentId != other.DocumentId)
         {
-            throw new InvalidOperationException("Cannot merge search results with different document ids.");
+            throw new InvalidOperationException(
+                "Cannot merge search results with different document ids."
+            );
         }
 
         return new SearchResult(DocumentId, SearchMetadata.Merge(other.SearchMetadata));
