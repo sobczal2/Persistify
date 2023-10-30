@@ -3,6 +3,4 @@ using Persistify.Responses.Internal;
 
 namespace Persistify.Requests.Internal;
 
-public class SetupFileSystemRequest : IRequest<SetupFileSystemResponse>
-{
-}
+public class SetupFileSystemRequest : IRequest<SetupFileSystemResponse> { }

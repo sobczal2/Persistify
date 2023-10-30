@@ -3,6 +3,4 @@
 namespace Persistify.Dtos.Templates.Fields;
 
 [ProtoContract]
-public class NumberFieldDto : FieldDto
-{
-}
+public class NumberFieldDto : FieldDto { }

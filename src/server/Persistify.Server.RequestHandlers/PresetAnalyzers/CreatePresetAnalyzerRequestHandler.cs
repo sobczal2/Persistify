@@ -13,26 +13,32 @@ using Persistify.Server.Mappers.PresetAnalyzers;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
-public class
-    CreatePresetAnalyzerRequestHandler : RequestHandler<CreatePresetAnalyzerRequest, CreatePresetAnalyzerResponse>
+public class CreatePresetAnalyzerRequestHandler
+    : RequestHandler<CreatePresetAnalyzerRequest, CreatePresetAnalyzerResponse>
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public CreatePresetAnalyzerRequestHandler(
-        IRequestHandlerContext<CreatePresetAnalyzerRequest, CreatePresetAnalyzerResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            CreatePresetAnalyzerRequest,
+            CreatePresetAnalyzerResponse
+        > requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override ValueTask RunAsync(CreatePresetAnalyzerRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        CreatePresetAnalyzerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var presetAnalyzer = new PresetAnalyzer
         {
-            Name = request.PresetAnalyzerName, Analyzer = request.FullAnalyzerDto.ToDomain()
+            Name = request.PresetAnalyzerName,
+            Analyzer = request.FullAnalyzerDto.ToDomain()
         };
 
         _presetAnalyzerManager.Add(presetAnalyzer);
@@ -45,7 +51,9 @@ public class
         return new CreatePresetAnalyzerResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreatePresetAnalyzerRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        CreatePresetAnalyzerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

@@ -12,9 +12,7 @@ public class DeleteUserRequestValidator : Validator<DeleteUserRequest>
 {
     private readonly IUserManager _userManager;
 
-    public DeleteUserRequestValidator(
-        IUserManager userManager
-    )
+    public DeleteUserRequestValidator(IUserManager userManager)
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(DeleteUserRequest));
@@ -25,19 +23,25 @@ public class DeleteUserRequestValidator : Validator<DeleteUserRequest>
         if (string.IsNullOrEmpty(value.Username))
         {
             PropertyName.Push(nameof(DeleteUserRequest.Username));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(DeleteUserRequest.Username));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (!_userManager.Exists(value.Username))
         {
             PropertyName.Push(nameof(DeleteUserRequest.Username));
-            return ValueTask.FromResult<Result>(DynamicValidationException(UserErrorMessages.UserNotFound));
+            return ValueTask.FromResult<Result>(
+                DynamicValidationException(UserErrorMessages.UserNotFound)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

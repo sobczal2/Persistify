@@ -13,7 +13,8 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 
     public ListTemplatesRequestValidator(IValidator<PaginationDto> paginationValidator)
     {
-        _paginationValidator = paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
+        _paginationValidator =
+            paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
         _paginationValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(ListTemplatesRequest));
     }

@@ -18,13 +18,17 @@ public class ExistsPresetAnalyzerRequestValidator : Validator<ExistsPresetAnalyz
         if (string.IsNullOrEmpty(value.PresetAnalyzerName))
         {
             PropertyName.Push(nameof(CreatePresetAnalyzerRequest.PresetAnalyzerName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.PresetAnalyzerName.Length > 64)
         {
             PropertyName.Push(nameof(CreatePresetAnalyzerRequest.PresetAnalyzerName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

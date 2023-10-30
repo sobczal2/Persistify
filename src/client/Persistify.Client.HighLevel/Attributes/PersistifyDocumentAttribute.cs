@@ -6,9 +6,8 @@ namespace Persistify.Client.HighLevel.Attributes;
 public class PersistifyDocumentAttribute : Attribute
 {
     public string? Name { get; }
-    public PersistifyDocumentAttribute(
-        string? name = null
-        )
+
+    public PersistifyDocumentAttribute(string? name = null)
     {
         Name = name;
     }

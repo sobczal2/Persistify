@@ -21,28 +21,40 @@ public class RefreshTokenRequestHandler : RequestHandler<RefreshTokenRequest, Re
     public RefreshTokenRequestHandler(
         IRequestHandlerContext<RefreshTokenRequest, RefreshTokenResponse> requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override async ValueTask RunAsync(RefreshTokenRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        RefreshTokenRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var user = await _userManager.GetAsync(request.Username) ??
-                   throw new NotFoundPersistifyException(nameof(RefreshTokenRequest), UserErrorMessages.UserNotFound);
+        var user =
+            await _userManager.GetAsync(request.Username)
+            ?? throw new NotFoundPersistifyException(
+                nameof(RefreshTokenRequest),
+                UserErrorMessages.UserNotFound
+            );
 
         if (await _userManager.CheckRefreshToken(user.Id, request.RefreshToken))
         {
             var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);
 
-            _response = new RefreshTokenResponse { AccessToken = accessToken, RefreshToken = refreshToken };
+            _response = new RefreshTokenResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            };
         }
         else
         {
-            throw new DynamicValidationPersistifyException(nameof(RefreshTokenRequest.RefreshToken),
-                UserErrorMessages.InvalidRefreshToken);
+            throw new DynamicValidationPersistifyException(
+                nameof(RefreshTokenRequest.RefreshToken),
+                UserErrorMessages.InvalidRefreshToken
+            );
         }
     }
 

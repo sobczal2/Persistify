@@ -4,6 +4,4 @@ using ProtoBuf;
 namespace Persistify.Responses.Users;
 
 [ProtoContract]
-public class SetPermissionResponse : IResponse
-{
-}
+public class SetPermissionResponse : IResponse { }

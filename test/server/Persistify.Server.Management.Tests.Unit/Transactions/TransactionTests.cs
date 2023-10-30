@@ -40,7 +40,8 @@ public class TransactionTests
         TransactionDescriptor transactionDescriptor = null!;
 
         // Act
-        Action act = () => _sut = new Transaction(transactionDescriptor, _transactionState, _logger);
+        Action act = () =>
+            _sut = new Transaction(transactionDescriptor, _transactionState, _logger);
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();
@@ -53,7 +54,8 @@ public class TransactionTests
         ITransactionState transactionState = null!;
 
         // Act
-        Action act = () => _sut = new Transaction(_transactionDescriptor, transactionState, _logger);
+        Action act = () =>
+            _sut = new Transaction(_transactionDescriptor, transactionState, _logger);
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();
@@ -66,7 +68,8 @@ public class TransactionTests
         ILogger<Transaction> logger = null!;
 
         // Act
-        Action act = () => _sut = new Transaction(_transactionDescriptor, _transactionState, logger);
+        Action act = () =>
+            _sut = new Transaction(_transactionDescriptor, _transactionState, logger);
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();
@@ -120,7 +123,9 @@ public class TransactionTests
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Assert
-        await _transactionState.Received(1).EnterWriteGlobalLockAsync(_sut.Id, _timeOut, CancellationToken.None);
+        await _transactionState
+            .Received(1)
+            .EnterWriteGlobalLockAsync(_sut.Id, _timeOut, CancellationToken.None);
     }
 
     [Fact]
@@ -134,7 +139,9 @@ public class TransactionTests
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Assert
-        await _transactionState.Received(1).EnterReadGlobalLockAsync(_sut.Id, _timeOut, CancellationToken.None);
+        await _transactionState
+            .Received(1)
+            .EnterReadGlobalLockAsync(_sut.Id, _timeOut, CancellationToken.None);
     }
 
     [Fact]
@@ -144,7 +151,9 @@ public class TransactionTests
         _transactionState.GetCurrentTransaction().Returns(_sut);
         var readManager1 = Substitute.For<IManager>();
         var readManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.ReadManagers.Returns(new[] { readManager1, readManager2 }.ToImmutableList());
+        _transactionDescriptor.ReadManagers.Returns(
+            new[] { readManager1, readManager2 }.ToImmutableList()
+        );
 
         // Act
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
@@ -163,7 +172,9 @@ public class TransactionTests
         _transactionState.GetCurrentTransaction().Returns(_sut);
         var writeManager1 = Substitute.For<IManager>();
         var writeManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.WriteManagers.Returns(new[] { writeManager1, writeManager2 }.ToImmutableList());
+        _transactionDescriptor.WriteManagers.Returns(
+            new[] { writeManager1, writeManager2 }.ToImmutableList()
+        );
 
         // Act
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
@@ -203,8 +214,7 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task
-        PromoteManagerAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
+    public async Task PromoteManagerAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -212,7 +222,8 @@ public class TransactionTests
         _transactionState.GetCurrentTransaction().Returns(Substitute.For<ITransaction>());
 
         // Act
-        var act = async () => await _sut.PromoteManagerAsync(Substitute.For<IManager>(), true, _timeOut);
+        var act = async () =>
+            await _sut.PromoteManagerAsync(Substitute.For<IManager>(), true, _timeOut);
 
         // Assert
         await act.Should().ThrowExactlyAsync<TransactionStateCorruptedException>();
@@ -225,15 +236,15 @@ public class TransactionTests
         _transactionState.GetCurrentTransaction().Returns(_sut);
 
         // Act
-        var act = async () => await _sut.PromoteManagerAsync(Substitute.For<IManager>(), true, _timeOut);
+        var act = async () =>
+            await _sut.PromoteManagerAsync(Substitute.For<IManager>(), true, _timeOut);
 
         // Assert
         await act.Should().ThrowExactlyAsync<InvalidOperationException>();
     }
 
     [Fact]
-    public async Task
-        PromoteManagerAsync_WhenManagerIsAlreadyAReadManagerInThisTransaction_ThrowsInvalidOperationException()
+    public async Task PromoteManagerAsync_WhenManagerIsAlreadyAReadManagerInThisTransaction_ThrowsInvalidOperationException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -249,8 +260,7 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task
-        PromoteManagerAsync_WhenManagerIsAlreadyAWriteManagerInThisTransaction_ThrowsInvalidOperationException()
+    public async Task PromoteManagerAsync_WhenManagerIsAlreadyAWriteManagerInThisTransaction_ThrowsInvalidOperationException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -363,7 +373,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var writeManager1 = Substitute.For<IManager>();
         var writeManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.WriteManagers.Returns(new[] { writeManager1, writeManager2 }.ToImmutableList());
+        _transactionDescriptor.WriteManagers.Returns(
+            new[] { writeManager1, writeManager2 }.ToImmutableList()
+        );
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
@@ -384,8 +396,12 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var writeManager1 = Substitute.For<IManager>();
         var writeManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.WriteManagers.Returns(new[] { writeManager1, writeManager2 }.ToImmutableList());
-        writeManager1.ExecutePendingActionsAsync().Returns(ValueTask.FromException(new Exception()));
+        _transactionDescriptor.WriteManagers.Returns(
+            new[] { writeManager1, writeManager2 }.ToImmutableList()
+        );
+        writeManager1
+            .ExecutePendingActionsAsync()
+            .Returns(ValueTask.FromException(new Exception()));
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
@@ -403,7 +419,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var readManager1 = Substitute.For<IManager>();
         var readManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.ReadManagers.Returns(new[] { readManager1, readManager2 }.ToImmutableList());
+        _transactionDescriptor.ReadManagers.Returns(
+            new[] { readManager1, readManager2 }.ToImmutableList()
+        );
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
@@ -424,7 +442,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var readManager1 = Substitute.For<IManager>();
         var readManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.ReadManagers.Returns(new[] { readManager1, readManager2 }.ToImmutableList());
+        _transactionDescriptor.ReadManagers.Returns(
+            new[] { readManager1, readManager2 }.ToImmutableList()
+        );
         readManager1.EndReadAsync().Returns(ValueTask.FromException(new Exception()));
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
@@ -495,8 +515,7 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task
-        RollbackAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
+    public async Task RollbackAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -531,7 +550,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var writeManager1 = Substitute.For<IManager>();
         var writeManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.WriteManagers.Returns(new[] { writeManager1, writeManager2 }.ToImmutableList());
+        _transactionDescriptor.WriteManagers.Returns(
+            new[] { writeManager1, writeManager2 }.ToImmutableList()
+        );
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
@@ -552,7 +573,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var writeManager1 = Substitute.For<IManager>();
         var writeManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.WriteManagers.Returns(new[] { writeManager1, writeManager2 }.ToImmutableList());
+        _transactionDescriptor.WriteManagers.Returns(
+            new[] { writeManager1, writeManager2 }.ToImmutableList()
+        );
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
@@ -573,7 +596,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var writeManager1 = Substitute.For<IManager>();
         var writeManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.WriteManagers.Returns(new[] { writeManager1, writeManager2 }.ToImmutableList());
+        _transactionDescriptor.WriteManagers.Returns(
+            new[] { writeManager1, writeManager2 }.ToImmutableList()
+        );
         writeManager1.EndWriteAsync().Returns(ValueTask.FromException(new Exception()));
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
@@ -592,7 +617,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var readManager1 = Substitute.For<IManager>();
         var readManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.ReadManagers.Returns(new[] { readManager1, readManager2 }.ToImmutableList());
+        _transactionDescriptor.ReadManagers.Returns(
+            new[] { readManager1, readManager2 }.ToImmutableList()
+        );
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 
         // Act
@@ -613,7 +640,9 @@ public class TransactionTests
         _transactionState.CurrentTransaction.Returns(new AsyncLocal<ITransaction?>());
         var readManager1 = Substitute.For<IManager>();
         var readManager2 = Substitute.For<IManager>();
-        _transactionDescriptor.ReadManagers.Returns(new[] { readManager1, readManager2 }.ToImmutableList());
+        _transactionDescriptor.ReadManagers.Returns(
+            new[] { readManager1, readManager2 }.ToImmutableList()
+        );
         readManager1.EndReadAsync().Returns(ValueTask.FromException(new Exception()));
         await _sut.BeginAsync(_timeOut, CancellationToken.None);
 

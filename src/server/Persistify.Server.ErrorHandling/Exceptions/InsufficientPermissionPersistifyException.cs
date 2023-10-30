@@ -5,9 +5,13 @@ namespace Persistify.Server.ErrorHandling.Exceptions;
 
 public class InsufficientPermissionPersistifyException : PersistifyException
 {
-    public InsufficientPermissionPersistifyException(string? requestName, Permission requiredPermission) : base(
-        requestName ?? "Unknown", $"Insufficient permission. Required permission: {requiredPermission}",
-        PersistifyErrorCode.InsufficientPermission)
-    {
-    }
+    public InsufficientPermissionPersistifyException(
+        string? requestName,
+        Permission requiredPermission
+    )
+        : base(
+            requestName ?? "Unknown",
+            $"Insufficient permission. Required permission: {requiredPermission}",
+            PersistifyErrorCode.InsufficientPermission
+        ) { }
 }

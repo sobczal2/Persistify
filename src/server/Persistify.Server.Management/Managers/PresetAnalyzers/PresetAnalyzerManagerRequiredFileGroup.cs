@@ -6,8 +6,10 @@ namespace Persistify.Server.Management.Managers.PresetAnalyzers;
 
 public class PresetAnalyzerManagerRequiredFileGroup : IRequiredFileGroup
 {
-    public static string IdentifierRepositoryFileName => Path.Join("PresetAnalyzer", "identifier.bin");
-    public static string PresetAnalyzerRepositoryMainFileName => Path.Join("PresetAnalyzer", "object.bin");
+    public static string IdentifierRepositoryFileName =>
+        Path.Join("PresetAnalyzer", "identifier.bin");
+    public static string PresetAnalyzerRepositoryMainFileName =>
+        Path.Join("PresetAnalyzer", "object.bin");
 
     public static string PresetAnalyzerRepositoryOffsetLengthFileName =>
         Path.Join("PresetAnalyzer", "offsetLength.bin");

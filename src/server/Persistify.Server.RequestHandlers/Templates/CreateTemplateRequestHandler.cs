@@ -16,7 +16,8 @@ using Persistify.Server.Mappers.Templates;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
-public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplateRequest, CreateTemplateResponse>
+public sealed class CreateTemplateRequestHandler
+    : RequestHandler<CreateTemplateRequest, CreateTemplateResponse>
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private readonly ITemplateManager _templateManager;
@@ -26,26 +27,27 @@ public sealed class CreateTemplateRequestHandler : RequestHandler<CreateTemplate
         IRequestHandlerContext<CreateTemplateRequest, CreateTemplateResponse> requestHandlerContext,
         ITemplateManager templateManager,
         IPresetAnalyzerManager presetAnalyzerManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
         _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override async ValueTask RunAsync(CreateTemplateRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        CreateTemplateRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _template = new Template
         {
             Name = request.TemplateName,
             Fields = await request.Fields.ListSelectAsync(
                 x =>
-                    x.ToDomain(async name =>
-                        (
-                            await _presetAnalyzerManager.GetAsync(name)
-                        )?
-                        .Analyzer ?? throw new InternalPersistifyException(nameof(CreateTemplateRequest))
+                    x.ToDomain(
+                        async name =>
+                            (await _presetAnalyzerManager.GetAsync(name))?.Analyzer
+                            ?? throw new InternalPersistifyException(nameof(CreateTemplateRequest))
                     )
             )
         };

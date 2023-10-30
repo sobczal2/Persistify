@@ -33,18 +33,20 @@ public class TemplateManager : Manager, ITemplateManager
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions
-    ) : base(
-        transactionState
     )
+        : base(transactionState)
     {
         _fileHandler = fileHandler;
         _documentManagerStore = documentManagerStore;
-        var identifierFileStream =
-            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.IdentifierRepositoryFileName);
-        var templateRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.TemplateRepositoryMainFileName);
-        var templateRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(TemplateManagerRequiredFileGroup.TemplateRepositoryOffsetLengthFileName);
+        var identifierFileStream = fileStreamFactory.CreateStream(
+            TemplateManagerRequiredFileGroup.IdentifierRepositoryFileName
+        );
+        var templateRepositoryMainFileStream = fileStreamFactory.CreateStream(
+            TemplateManagerRequiredFileGroup.TemplateRepositoryMainFileName
+        );
+        var templateRepositoryOffsetLengthFileStream = fileStreamFactory.CreateStream(
+            TemplateManagerRequiredFileGroup.TemplateRepositoryOffsetLengthFileName
+        );
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _templateRepository = new ObjectStreamRepository<Template>(
@@ -161,7 +163,8 @@ public class TemplateManager : Manager, ITemplateManager
                 throw new InternalPersistifyException();
             }
 
-            await TransactionState.GetCurrentTransaction()
+            await TransactionState
+                .GetCurrentTransaction()
                 .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
             documentManager.Initialize();
@@ -196,7 +199,8 @@ public class TemplateManager : Manager, ITemplateManager
                     throw new InternalPersistifyException();
                 }
 
-                await TransactionState.GetCurrentTransaction()
+                await TransactionState
+                    .GetCurrentTransaction()
                     .PromoteManagerAsync(documentManager, true, TransactionTimeout);
 
                 _fileHandler.DeleteFilesForTemplate(template);

@@ -24,7 +24,8 @@ public interface IPersistifyHighLevelClient
         where TDocument : new();
 
     Task<Result<(List<TDocument> Documents, int TotalCount)>> SearchAsync<TDocument>(
-        Action<SearchDocumentsRequestBuilder<TDocument>> searchRequestBuilderAction)
+        Action<SearchDocumentsRequestBuilder<TDocument>> searchRequestBuilderAction
+    )
         where TDocument : class, new();
 
     Task<Result> DeleteAsync<TDocument>(int id)

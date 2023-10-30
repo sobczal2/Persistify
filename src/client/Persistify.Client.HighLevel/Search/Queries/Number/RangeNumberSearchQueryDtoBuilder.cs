@@ -10,10 +10,12 @@ using Persistify.Dtos.Documents.Search.Queries.Number;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Number;
 
-public class RangeNumberSearchQueryDtoBuilder<TDocument> : FieldSearchQueryDtoBuilder<TDocument, RangeNumberSearchQueryDtoBuilder<TDocument>>
+public class RangeNumberSearchQueryDtoBuilder<TDocument>
+    : FieldSearchQueryDtoBuilder<TDocument, RangeNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public RangeNumberSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient) : base(persistifyHighLevelClient)
+    public RangeNumberSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+        : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new RangeNumberSearchQueryDto { Boost = 1 };
     }

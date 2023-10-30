@@ -67,7 +67,9 @@ public class SearchDocumentsRequestValidatorTests
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest" }));
+        _sut.PropertyName
+            .Should()
+            .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest" }));
         _paginationValidator.Received().PropertyName = _sut.PropertyName;
     }
 
@@ -160,7 +162,11 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
+        var request = new SearchDocumentsRequest
+        {
+            TemplateName = "Test",
+            PaginationDto = new PaginationDto()
+        };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         List<string> propertyNameAtCall = null!;
@@ -172,7 +178,8 @@ public class SearchDocumentsRequestValidatorTests
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should()
+        propertyNameAtCall
+            .Should()
             .BeEquivalentTo(new List<string>(new[] { "SearchDocumentsRequest", "PaginationDto" }));
     }
 
@@ -180,7 +187,11 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
+        var request = new SearchDocumentsRequest
+        {
+            TemplateName = "Test",
+            PaginationDto = new PaginationDto()
+        };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         var validationException = new StaticValidationPersistifyException("Test", "Test");
@@ -202,12 +213,16 @@ public class SearchDocumentsRequestValidatorTests
         {
             TemplateName = "Test",
             PaginationDto = new PaginationDto(),
-            SearchQueryDto = new ExactBoolSearchQueryDto { FieldName = "Test", Value = true, Boost = 1 }
+            SearchQueryDto = new ExactBoolSearchQueryDto
+            {
+                FieldName = "Test",
+                Value = true,
+                Boost = 1
+            }
         };
-        _templateManager.GetAsync(request.TemplateName).Returns(new Template
-        {
-            Fields = new List<Field> { new BoolField { Name = "Test" } }
-        });
+        _templateManager
+            .GetAsync(request.TemplateName)
+            .Returns(new Template { Fields = new List<Field> { new BoolField { Name = "Test" } } });
 
         // Act
         var result = await _sut.ValidateAsync(request);

@@ -13,49 +13,69 @@ public class DocumentService : IDocumentService
 {
     private readonly IRequestDispatcher _requestDispatcher;
 
-    public DocumentService(
-        IRequestDispatcher requestDispatcher
-    )
+    public DocumentService(IRequestDispatcher requestDispatcher)
     {
         _requestDispatcher = requestDispatcher;
     }
 
     [Authorize]
-    public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(CreateDocumentRequest request,
-        CallContext callContext)
+    public async ValueTask<CreateDocumentResponse> CreateDocumentAsync(
+        CreateDocumentRequest request,
+        CallContext callContext
+    )
     {
-        return await _requestDispatcher.DispatchAsync<CreateDocumentRequest, CreateDocumentResponse>(request,
-            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<
+            CreateDocumentRequest,
+            CreateDocumentResponse
+        >(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
-    public async ValueTask<GetDocumentResponse> GetDocumentAsync(GetDocumentRequest request, CallContext callContext)
+    public async ValueTask<GetDocumentResponse> GetDocumentAsync(
+        GetDocumentRequest request,
+        CallContext callContext
+    )
     {
-        return await _requestDispatcher.DispatchAsync<GetDocumentRequest, GetDocumentResponse>(request,
-            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<GetDocumentRequest, GetDocumentResponse>(
+            request,
+            callContext.GetClaimsPrincipal(),
+            callContext.CancellationToken
+        );
     }
 
     [Authorize]
-    public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(SearchDocumentsRequest request,
-        CallContext callContext)
+    public async ValueTask<SearchDocumentsResponse> SearchDocumentsAsync(
+        SearchDocumentsRequest request,
+        CallContext callContext
+    )
     {
-        return await _requestDispatcher.DispatchAsync<SearchDocumentsRequest, SearchDocumentsResponse>(request,
-            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<
+            SearchDocumentsRequest,
+            SearchDocumentsResponse
+        >(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
-    public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(DeleteDocumentRequest request,
-        CallContext callContext)
+    public async ValueTask<DeleteDocumentResponse> DeleteDocumentAsync(
+        DeleteDocumentRequest request,
+        CallContext callContext
+    )
     {
-        return await _requestDispatcher.DispatchAsync<DeleteDocumentRequest, DeleteDocumentResponse>(request,
-            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<
+            DeleteDocumentRequest,
+            DeleteDocumentResponse
+        >(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 
     [Authorize]
-    public async ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(ExistsDocumentRequest request,
-        CallContext callContext)
+    public async ValueTask<ExistsDocumentResponse> ExistsDocumentAsync(
+        ExistsDocumentRequest request,
+        CallContext callContext
+    )
     {
-        return await _requestDispatcher.DispatchAsync<ExistsDocumentRequest, ExistsDocumentResponse>(request,
-            callContext.GetClaimsPrincipal(), callContext.CancellationToken);
+        return await _requestDispatcher.DispatchAsync<
+            ExistsDocumentRequest,
+            ExistsDocumentResponse
+        >(request, callContext.GetClaimsPrincipal(), callContext.CancellationToken);
     }
 }

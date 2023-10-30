@@ -11,22 +11,27 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class
-    InitializeUserManagerRequestHandler : RequestHandler<InitializeUserManagerRequest, InitializeUserManagerResponse>
+public class InitializeUserManagerRequestHandler
+    : RequestHandler<InitializeUserManagerRequest, InitializeUserManagerResponse>
 {
     private readonly IUserManager _userManager;
 
     public InitializeUserManagerRequestHandler(
-        IRequestHandlerContext<InitializeUserManagerRequest, InitializeUserManagerResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            InitializeUserManagerRequest,
+            InitializeUserManagerResponse
+        > requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override ValueTask RunAsync(InitializeUserManagerRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        InitializeUserManagerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _userManager.Initialize();
 
@@ -38,7 +43,9 @@ public class
         return new InitializeUserManagerResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(InitializeUserManagerRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        InitializeUserManagerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

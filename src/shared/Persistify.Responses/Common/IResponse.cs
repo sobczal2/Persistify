@@ -1,5 +1,3 @@
 ﻿namespace Persistify.Responses.Common;
 
-public interface IResponse
-{
-}
+public interface IResponse { }

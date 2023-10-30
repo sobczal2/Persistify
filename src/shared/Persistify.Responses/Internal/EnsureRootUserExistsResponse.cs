@@ -2,6 +2,4 @@
 
 namespace Persistify.Responses.Internal;
 
-public class EnsureRootUserExistsResponse : IResponse
-{
-}
+public class EnsureRootUserExistsResponse : IResponse { }

@@ -79,7 +79,8 @@ public class ListTemplatesRequestValidatorTests
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should()
+        propertyNameAtCall
+            .Should()
             .BeEquivalentTo(new List<string>(new[] { "ListTemplatesRequest", "PaginationDto" }));
     }
 

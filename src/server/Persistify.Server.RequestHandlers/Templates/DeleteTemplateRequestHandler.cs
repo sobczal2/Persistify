@@ -12,21 +12,24 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
-public class DeleteTemplateRequestHandler : RequestHandler<DeleteTemplateRequest, DeleteTemplateResponse>
+public class DeleteTemplateRequestHandler
+    : RequestHandler<DeleteTemplateRequest, DeleteTemplateResponse>
 {
     private readonly ITemplateManager _templateManager;
 
     public DeleteTemplateRequestHandler(
         IRequestHandlerContext<DeleteTemplateRequest, DeleteTemplateResponse> requestHandlerContext,
         ITemplateManager templateManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(DeleteTemplateRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        DeleteTemplateRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var template = await _templateManager.GetAsync(request.TemplateName);
 

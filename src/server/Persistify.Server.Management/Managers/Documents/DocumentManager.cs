@@ -36,22 +36,22 @@ public class DocumentManager : Manager, IDocumentManager
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions,
         IAnalyzerExecutorFactory analyzerExecutorFactory
-    ) : base(
-        transactionState
     )
+        : base(transactionState)
     {
         _template = template;
 
         _indexerStore = new IndexerStore(template, analyzerExecutorFactory);
 
-        var identifierFileStream =
-            fileStreamFactory.CreateStream(DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id));
-        var documentRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(
-                DocumentManagerFileGroupForTemplate.DocumentRepositoryMainFileName(_template.Id));
-        var documentRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(
-                DocumentManagerFileGroupForTemplate.DocumentRepositoryOffsetLengthFileName(_template.Id));
+        var identifierFileStream = fileStreamFactory.CreateStream(
+            DocumentManagerFileGroupForTemplate.IdentifierFileName(_template.Id)
+        );
+        var documentRepositoryMainFileStream = fileStreamFactory.CreateStream(
+            DocumentManagerFileGroupForTemplate.DocumentRepositoryMainFileName(_template.Id)
+        );
+        var documentRepositoryOffsetLengthFileStream = fileStreamFactory.CreateStream(
+            DocumentManagerFileGroupForTemplate.DocumentRepositoryOffsetLengthFileName(_template.Id)
+        );
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _documentRepository = new ObjectStreamRepository<Document>(
@@ -122,8 +122,10 @@ public class DocumentManager : Manager, IDocumentManager
     }
 
     public async ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(
-        SearchQueryDto searchQueryDto, int take,
-        int skip)
+        SearchQueryDto searchQueryDto,
+        int take,
+        int skip
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -139,11 +141,13 @@ public class DocumentManager : Manager, IDocumentManager
             var document = await _documentRepository.ReadAsync(searchResult.DocumentId, true);
             if (document != null)
             {
-                searchRecords.Add(new SearchRecordDto
-                {
-                    DocumentDto = document.ToDto(),
-                    MetadataList = searchResult.SearchMetadata.ToSearchMetadataList()
-                });
+                searchRecords.Add(
+                    new SearchRecordDto
+                    {
+                        DocumentDto = document.ToDto(),
+                        MetadataList = searchResult.SearchMetadata.ToSearchMetadataList()
+                    }
+                );
             }
         }
 

@@ -21,21 +21,26 @@ public class CreateUserRequestHandler : RequestHandler<CreateUserRequest, Create
         IRequestHandlerContext<CreateUserRequest, CreateUserResponse> requestHandlerContext,
         IUserManager userManager,
         IPasswordService passwordService
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
         _passwordService = passwordService;
     }
 
-    protected override ValueTask RunAsync(CreateUserRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        CreateUserRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var (hash, salt) = _passwordService.HashPassword(request.Password);
 
         var user = new User
         {
-            Username = request.Username, PasswordHash = hash, PasswordSalt = salt, Permission = Permission.None
+            Username = request.Username,
+            PasswordHash = hash,
+            PasswordSalt = salt,
+            Permission = Permission.None
         };
 
         _userManager.Add(user);

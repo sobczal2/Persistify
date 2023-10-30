@@ -5,9 +5,12 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.Validation.Requests.Internal;
 
-public class EnsureBuildInPresetAnalyzersExistRequestValidator : Validator<EnsureBuildInPresetAnalyzersExistRequest>
+public class EnsureBuildInPresetAnalyzersExistRequestValidator
+    : Validator<EnsureBuildInPresetAnalyzersExistRequest>
 {
-    public override ValueTask<Result> ValidateNotNullAsync(EnsureBuildInPresetAnalyzersExistRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        EnsureBuildInPresetAnalyzersExistRequest value
+    )
     {
         return new ValueTask<Result>(Result.Ok);
     }

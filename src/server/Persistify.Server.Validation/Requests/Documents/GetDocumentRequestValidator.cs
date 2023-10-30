@@ -12,11 +12,10 @@ public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
 {
     private readonly ITemplateManager _templateManager;
 
-    public GetDocumentRequestValidator(
-        ITemplateManager templateManager
-    )
+    public GetDocumentRequestValidator(ITemplateManager templateManager)
     {
-        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
+        _templateManager =
+            templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(GetDocumentRequest));
     }
 
@@ -25,25 +24,33 @@ public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(GetDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(GetDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (!_templateManager.Exists(value.TemplateName))
         {
             PropertyName.Push(nameof(GetDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(DynamicValidationException(DocumentErrorMessages.TemplateNotFound));
+            return ValueTask.FromResult<Result>(
+                DynamicValidationException(DocumentErrorMessages.TemplateNotFound)
+            );
         }
 
         if (value.DocumentId <= 0)
         {
             PropertyName.Push(nameof(GetDocumentRequest.DocumentId));
-            return ValueTask.FromResult<Result>(StaticValidationException(DocumentErrorMessages.InvalidDocumentId));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(DocumentErrorMessages.InvalidDocumentId)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

@@ -16,7 +16,8 @@ using Persistify.Server.Mappers.Templates;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
-public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, ListTemplatesResponse>
+public class ListTemplatesRequestHandler
+    : RequestHandler<ListTemplatesRequest, ListTemplatesResponse>
 {
     private readonly ITemplateManager _templateManager;
     private List<Template>? _templates;
@@ -25,14 +26,16 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
     public ListTemplatesRequestHandler(
         IRequestHandlerContext<ListTemplatesRequest, ListTemplatesResponse> requestHandlerContext,
         ITemplateManager templateManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(ListTemplatesRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        ListTemplatesRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var skip = request.PaginationDto.PageNumber * request.PaginationDto.PageSize;
         var take = request.PaginationDto.PageSize;
@@ -42,11 +45,13 @@ public class ListTemplatesRequestHandler : RequestHandler<ListTemplatesRequest, 
 
     protected override ListTemplatesResponse GetResponse()
     {
-        var templates = _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
+        var templates =
+            _templates ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest));
         return new ListTemplatesResponse
         {
             TemplateDtos = templates.ListSelect(x => x.ToDto()),
-            TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
+            TotalCount =
+                _totalCount ?? throw new InternalPersistifyException(nameof(ListTemplatesRequest))
         };
     }
 

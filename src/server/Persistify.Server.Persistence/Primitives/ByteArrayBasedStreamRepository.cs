@@ -8,7 +8,9 @@ using Persistify.Server.Persistence.Abstractions;
 
 namespace Persistify.Server.Persistence.Primitives;
 
-public abstract class ByteArrayBasedStreamRepository<TValue> : IValueTypeStreamRepository<TValue>, IDisposable
+public abstract class ByteArrayBasedStreamRepository<TValue>
+    : IValueTypeStreamRepository<TValue>,
+        IDisposable
 {
     private readonly ByteArrayStreamRepository _innerRepository;
     private readonly SemaphoreSlim _semaphore;
@@ -39,7 +41,11 @@ public abstract class ByteArrayBasedStreamRepository<TValue> : IValueTypeStreamR
             : await ReadAsyncImpl(key);
     }
 
-    public async IAsyncEnumerable<(int key, TValue value)> ReadRangeAsync(int take, int skip, bool useLock)
+    public async IAsyncEnumerable<(int key, TValue value)> ReadRangeAsync(
+        int take,
+        int skip,
+        bool useLock
+    )
     {
         if (take <= 0)
         {
@@ -92,7 +98,11 @@ public abstract class ByteArrayBasedStreamRepository<TValue> : IValueTypeStreamR
             throw new ArgumentException(nameof(value));
         }
 
-        await (useLock ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value)) : WriteAsyncImpl(key, value));
+        await (
+            useLock
+                ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value))
+                : WriteAsyncImpl(key, value)
+        );
     }
 
     public async ValueTask<bool> DeleteAsync(int key, bool useLock)

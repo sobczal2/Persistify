@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Persistify.Server.Indexes.DataStructures.Trees;
 
-public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
+public class IntervalTree<TItem> : ITree<TItem>
+    where TItem : IComparable<TItem>
 {
     private IntervalTreeNode<TItem>? _root;
 
@@ -47,8 +48,13 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
         return BalanceNode(node);
     }
 
-    private static void Search<TValue>(IntervalTreeNode<TItem>? node, TValue min, TValue max,
-        Func<TItem, TValue, int> comparer, ICollection<TItem> result)
+    private static void Search<TValue>(
+        IntervalTreeNode<TItem>? node,
+        TValue min,
+        TValue max,
+        Func<TItem, TValue, int> comparer,
+        ICollection<TItem> result
+    )
     {
         if (node is null)
         {
@@ -71,8 +77,11 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
         }
     }
 
-    private IntervalTreeNode<TItem>? Remove(IntervalTreeNode<TItem>? node, Predicate<TItem> predicate,
-        ref int removedCount)
+    private IntervalTreeNode<TItem>? Remove(
+        IntervalTreeNode<TItem>? node,
+        Predicate<TItem> predicate,
+        ref int removedCount
+    )
     {
         if (node == null)
         {
@@ -135,7 +144,6 @@ public class IntervalTree<TItem> : ITree<TItem> where TItem : IComparable<TItem>
 
         return node;
     }
-
 
     private static void UpdateNodeHeight(IntervalTreeNode<TItem> node)
     {

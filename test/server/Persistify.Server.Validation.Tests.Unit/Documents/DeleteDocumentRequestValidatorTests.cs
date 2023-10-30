@@ -25,7 +25,9 @@ public class DeleteDocumentRequestValidatorTests
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "DeleteDocumentRequest" });
+        _sut.PropertyName
+            .Should()
+            .BeEquivalentTo(new List<string> { "DeleteDocumentRequest" });
     }
 
     [Fact]
@@ -65,7 +67,11 @@ public class DeleteDocumentRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new DeleteDocumentRequest { TemplateName = new string('a', 65), DocumentId = 1 };
+        var request = new DeleteDocumentRequest
+        {
+            TemplateName = new string('a', 65),
+            DocumentId = 1
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);

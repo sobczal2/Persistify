@@ -2,6 +2,4 @@
 
 namespace Persistify.Responses.Internal;
 
-public class InitializePresetAnalyzerManagerResponse : IResponse
-{
-}
+public class InitializePresetAnalyzerManagerResponse : IResponse { }

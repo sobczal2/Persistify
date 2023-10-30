@@ -18,14 +18,10 @@ public class IdleTimeoutFileStreamFactoryTests
     {
         var logger = Substitute.For<ILogger<IdleTimeoutFileStreamFactory>>();
         var storageSettingsOptions = Substitute.For<IOptions<StorageSettings>>();
-        storageSettingsOptions.Value.Returns(new StorageSettings
-        {
-            DataPath = "dataPath", IdleFileTimeout = TimeSpan.FromMinutes(1)
-        });
-        _sut = new IdleTimeoutFileStreamFactory(
-            storageSettingsOptions,
-            logger
+        storageSettingsOptions.Value.Returns(
+            new StorageSettings { DataPath = "dataPath", IdleFileTimeout = TimeSpan.FromMinutes(1) }
         );
+        _sut = new IdleTimeoutFileStreamFactory(storageSettingsOptions, logger);
     }
 
     [Fact]
@@ -38,10 +34,7 @@ public class IdleTimeoutFileStreamFactoryTests
         // Act
         var action = new Action(() =>
         {
-            var unused = new IdleTimeoutFileStreamFactory(
-                storageSettingsOptions,
-                logger
-            );
+            var unused = new IdleTimeoutFileStreamFactory(storageSettingsOptions, logger);
         });
 
         // Assert
@@ -58,10 +51,7 @@ public class IdleTimeoutFileStreamFactoryTests
         // Act
         var action = new Action(() =>
         {
-            var unused = new IdleTimeoutFileStreamFactory(
-                storageSettingsOptions,
-                logger
-            );
+            var unused = new IdleTimeoutFileStreamFactory(storageSettingsOptions, logger);
         });
 
         // Assert

@@ -32,6 +32,3 @@ public class Animal
     [PersistifyBoolField]
     public bool IsDead { get; set; }
 }
-
-
-

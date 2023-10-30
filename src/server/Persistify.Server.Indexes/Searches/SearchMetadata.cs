@@ -36,7 +36,9 @@ public class SearchMetadata
         };
         foreach (var (name, value) in _metadata)
         {
-            searchMetadataList.Add(new SearchMetadataDto { Name = name, Value = string.Join(", ", value) });
+            searchMetadataList.Add(
+                new SearchMetadataDto { Name = name, Value = string.Join(", ", value) }
+            );
         }
 
         return searchMetadataList;

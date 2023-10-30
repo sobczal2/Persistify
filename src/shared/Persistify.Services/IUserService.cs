@@ -10,7 +10,10 @@ namespace Persistify.Services;
 public interface IUserService
 {
     [OperationContract]
-    ValueTask<CreateUserResponse> CreateUserAsync(CreateUserRequest request, CallContext callContext);
+    ValueTask<CreateUserResponse> CreateUserAsync(
+        CreateUserRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
     ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext callContext);
@@ -19,21 +22,35 @@ public interface IUserService
     ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext callContext);
 
     [OperationContract]
-    ValueTask<SetPermissionResponse> SetPermissionAsync(SetPermissionRequest request, CallContext callContext);
+    ValueTask<SetPermissionResponse> SetPermissionAsync(
+        SetPermissionRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
-    ValueTask<DeleteUserResponse> DeleteUserAsync(DeleteUserRequest request, CallContext callContext);
+    ValueTask<DeleteUserResponse> DeleteUserAsync(
+        DeleteUserRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
-    ValueTask<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request, CallContext callContext);
+    ValueTask<RefreshTokenResponse> RefreshTokenAsync(
+        RefreshTokenRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
-    ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request,
-        CallContext callContext);
+    ValueTask<ChangeUserPasswordResponse> ChangeUserPasswordAsync(
+        ChangeUserPasswordRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
     ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext);
 
     [OperationContract]
-    ValueTask<ExistsUserResponse> ExistsUserAsync(ExistsUserRequest request, CallContext callContext);
+    ValueTask<ExistsUserResponse> ExistsUserAsync(
+        ExistsUserRequest request,
+        CallContext callContext
+    );
 }

@@ -4,6 +4,4 @@ using ProtoBuf;
 namespace Persistify.Responses.Users;
 
 [ProtoContract]
-public class ChangeUserPasswordResponse : IResponse
-{
-}
+public class ChangeUserPasswordResponse : IResponse { }

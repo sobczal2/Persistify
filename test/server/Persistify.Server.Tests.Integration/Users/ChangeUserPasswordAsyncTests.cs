@@ -24,9 +24,10 @@ public class ChangeUserPasswordAsyncTests : IntegrationTestBase
 
         // Assert
         response.Should().NotBeNull();
-        var signInResponse =
-            await UserService.SignInAsync(new SignInRequest { Username = username, Password = "test2" },
-                new CallContext());
+        var signInResponse = await UserService.SignInAsync(
+            new SignInRequest { Username = username, Password = "test2" },
+            new CallContext()
+        );
         signInResponse.Should().NotBeNull();
     }
 }

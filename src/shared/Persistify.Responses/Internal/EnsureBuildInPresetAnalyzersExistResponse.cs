@@ -2,6 +2,4 @@
 
 namespace Persistify.Responses.Internal;
 
-public class EnsureBuildInPresetAnalyzersExistResponse : IResponse
-{
-}
+public class EnsureBuildInPresetAnalyzersExistResponse : IResponse { }

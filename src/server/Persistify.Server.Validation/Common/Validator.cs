@@ -32,14 +32,20 @@ public abstract class Validator<T> : IValidator<T>
     {
         var reversedPropertyNames = new List<string>(PropertyName);
         reversedPropertyNames.Reverse();
-        return new StaticValidationPersistifyException(string.Join('.', reversedPropertyNames), message);
+        return new StaticValidationPersistifyException(
+            string.Join('.', reversedPropertyNames),
+            message
+        );
     }
 
     protected PersistifyException DynamicValidationException(string message)
     {
         var reversedPropertyNames = new List<string>(PropertyName);
         reversedPropertyNames.Reverse();
-        return new DynamicValidationPersistifyException(string.Join('.', reversedPropertyNames), message);
+        return new DynamicValidationPersistifyException(
+            string.Join('.', reversedPropertyNames),
+            message
+        );
     }
 
     protected PersistifyException Exception(string message, PersistifyErrorCode errorCode)

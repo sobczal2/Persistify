@@ -37,7 +37,11 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _accessSemaphoreSlim.Dispose();
     }
 
-    public async ValueTask<bool> EnterReadLockAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterReadLockAsync(
+        Guid id,
+        TimeSpan timeout,
+        CancellationToken cancellationToken
+    )
     {
         if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {
@@ -47,7 +51,11 @@ public sealed class ReadWriteAsyncLock : IDisposable
         while (_pendingWriters > 0)
         {
             _accessSemaphoreSlim.Release();
-            if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
+            if (
+                !await _accessSemaphoreSlim
+                    .WaitAsync(timeout, cancellationToken)
+                    .ConfigureAwait(false)
+            )
             {
                 return false;
             }
@@ -105,7 +113,11 @@ public sealed class ReadWriteAsyncLock : IDisposable
         _readSemaphoreSlim.Release();
     }
 
-    public async ValueTask<bool> EnterWriteLockAsync(Guid id, TimeSpan timeout, CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterWriteLockAsync(
+        Guid id,
+        TimeSpan timeout,
+        CancellationToken cancellationToken
+    )
     {
         if (!await _accessSemaphoreSlim.WaitAsync(timeout, cancellationToken).ConfigureAwait(false))
         {

@@ -11,9 +11,7 @@ public class PresetAnalyzerDescriptorDtoValidator : Validator<PresetNameAnalyzer
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
-    public PresetAnalyzerDescriptorDtoValidator(
-        IPresetAnalyzerManager presetAnalyzerManager
-    )
+    public PresetAnalyzerDescriptorDtoValidator(IPresetAnalyzerManager presetAnalyzerManager)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         PropertyName.Push(nameof(PresetNameAnalyzerDto));
@@ -24,20 +22,25 @@ public class PresetAnalyzerDescriptorDtoValidator : Validator<PresetNameAnalyzer
         if (string.IsNullOrEmpty(value.PresetName))
         {
             PropertyName.Push(nameof(PresetNameAnalyzerDto.PresetName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.PresetName.Length > 64)
         {
             PropertyName.Push(nameof(PresetNameAnalyzerDto.PresetName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (!_presetAnalyzerManager.Exists(value.PresetName))
         {
             PropertyName.Push(nameof(PresetNameAnalyzerDto.PresetName));
             return ValueTask.FromResult<Result>(
-                DynamicValidationException(TemplateErrorMessages.PresetAnalyzerNotFound));
+                DynamicValidationException(TemplateErrorMessages.PresetAnalyzerNotFound)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

@@ -36,7 +36,8 @@ public class PersistifyClientBuilder
         GrpcClientFactory.AllowUnencryptedHttp2 = true;
         var httpClientHandler = new HttpClientHandler
         {
-            ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
         };
         var httpClient = new HttpClient(httpClientHandler);
         var baseUri = new Uri(_baseAddress.ToString().TrimEnd('/'));

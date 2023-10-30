@@ -44,9 +44,12 @@ public class LocalFileProvider : IFileProvider
 
         if (!Directory.Exists(Path.GetDirectoryName(absolutePath)))
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ??
-                                      throw new InvalidOperationException(
-                                          $"Could not get directory name from {absolutePath}"));
+            Directory.CreateDirectory(
+                Path.GetDirectoryName(absolutePath)
+                    ?? throw new InvalidOperationException(
+                        $"Could not get directory name from {absolutePath}"
+                    )
+            );
         }
 
         File.Create(absolutePath).Dispose();

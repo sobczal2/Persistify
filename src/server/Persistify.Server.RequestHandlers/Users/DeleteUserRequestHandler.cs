@@ -19,17 +19,20 @@ public class DeleteUserRequestHandler : RequestHandler<DeleteUserRequest, Delete
     public DeleteUserRequestHandler(
         IRequestHandlerContext<DeleteUserRequest, DeleteUserResponse> requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override async ValueTask RunAsync(DeleteUserRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        DeleteUserRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var user = await _userManager.GetAsync(request.Username) ??
-                   throw new InternalPersistifyException(nameof(DeleteUserRequest));
+        var user =
+            await _userManager.GetAsync(request.Username)
+            ?? throw new InternalPersistifyException(nameof(DeleteUserRequest));
 
         if (!await _userManager.RemoveAsync(user.Id))
         {

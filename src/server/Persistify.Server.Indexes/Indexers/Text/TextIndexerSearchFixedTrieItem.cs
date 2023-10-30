@@ -9,9 +9,7 @@ public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
     private readonly int[] _alphabetIndexMap;
     private readonly Token _token;
 
-    public TextIndexerSearchFixedTrieItem(
-        Token token
-    )
+    public TextIndexerSearchFixedTrieItem(Token token)
     {
         _token = token;
 

@@ -14,28 +14,33 @@ using Persistify.Server.Security;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class
-    EnsureRootUserExistsRequestHandler : RequestHandler<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>
+public class EnsureRootUserExistsRequestHandler
+    : RequestHandler<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>
 {
     private readonly IPasswordService _passwordService;
     private readonly IOptions<RootSettings> _rootSettingsOptions;
     private readonly IUserManager _userManager;
 
     public EnsureRootUserExistsRequestHandler(
-        IRequestHandlerContext<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            EnsureRootUserExistsRequest,
+            EnsureRootUserExistsResponse
+        > requestHandlerContext,
         IUserManager userManager,
         IPasswordService passwordService,
         IOptions<RootSettings> rootSettingsOptions
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
         _passwordService = passwordService;
         _rootSettingsOptions = rootSettingsOptions;
     }
 
-    protected override ValueTask RunAsync(EnsureRootUserExistsRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        EnsureRootUserExistsRequest request,
+        CancellationToken cancellationToken
+    )
     {
         if (!_userManager.Exists(_rootSettingsOptions.Value.Username))
         {
@@ -60,7 +65,9 @@ public class
         return new EnsureRootUserExistsResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(EnsureRootUserExistsRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        EnsureRootUserExistsRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

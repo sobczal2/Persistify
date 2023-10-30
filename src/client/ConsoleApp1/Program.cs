@@ -18,28 +18,31 @@ var tasks = new List<Task>();
 
 for (var i = 0; i < 10; i++)
 {
-    tasks.Add(Task.Run(async () =>
-    {
-        for (var j = 0; j < 100_000; j++)
+    tasks.Add(
+        Task.Run(async () =>
         {
-            id = await client.AddAsync(
-                new Animal
-                {
-                    Name = $"Bobby {j} and his friends have a very long name that is longer than 100 characters and is used to test the full text search",
-                    Species = "Dog",
-                    Age = 5,
-                    Weight = 10,
-                    Height = 0.5,
-                    Color = "Brown",
-                    FavoriteToy = "Ball",
-                    IsAlive = true,
-                    IsDead = false
-                }
-            );
+            for (var j = 0; j < 100_000; j++)
+            {
+                id = await client.AddAsync(
+                    new Animal
+                    {
+                        Name =
+                            $"Bobby {j} and his friends have a very long name that is longer than 100 characters and is used to test the full text search",
+                        Species = "Dog",
+                        Age = 5,
+                        Weight = 10,
+                        Height = 0.5,
+                        Color = "Brown",
+                        FavoriteToy = "Ball",
+                        IsAlive = true,
+                        IsDead = false
+                    }
+                );
 
-            Console.WriteLine($"Added animal with id {id}");
-        }
-    }));
+                Console.WriteLine($"Added animal with id {id}");
+            }
+        })
+    );
 }
 
 await Task.WhenAll(tasks);

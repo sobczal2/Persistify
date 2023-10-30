@@ -11,24 +11,30 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class InitializePresetAnalyzerManagerRequestHandler : RequestHandler<
-    InitializePresetAnalyzerManagerRequest, InitializePresetAnalyzerManagerResponse>
+public class InitializePresetAnalyzerManagerRequestHandler
+    : RequestHandler<
+        InitializePresetAnalyzerManagerRequest,
+        InitializePresetAnalyzerManagerResponse
+    >
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public InitializePresetAnalyzerManagerRequestHandler(
-        IRequestHandlerContext<InitializePresetAnalyzerManagerRequest,
-            InitializePresetAnalyzerManagerResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            InitializePresetAnalyzerManagerRequest,
+            InitializePresetAnalyzerManagerResponse
+        > requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override ValueTask RunAsync(InitializePresetAnalyzerManagerRequest request,
-        CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        InitializePresetAnalyzerManagerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _presetAnalyzerManager.Initialize();
 
@@ -41,7 +47,8 @@ public class InitializePresetAnalyzerManagerRequestHandler : RequestHandler<
     }
 
     protected override TransactionDescriptor GetTransactionDescriptor(
-        InitializePresetAnalyzerManagerRequest request)
+        InitializePresetAnalyzerManagerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -50,7 +57,9 @@ public class InitializePresetAnalyzerManagerRequestHandler : RequestHandler<
         );
     }
 
-    protected override Permission GetRequiredPermission(InitializePresetAnalyzerManagerRequest request)
+    protected override Permission GetRequiredPermission(
+        InitializePresetAnalyzerManagerRequest request
+    )
     {
         return Permission.PresetAnalyzerWrite;
     }

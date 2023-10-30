@@ -22,17 +22,23 @@ public class GetUserRequestHandler : RequestHandler<GetUserRequest, GetUserRespo
     public GetUserRequestHandler(
         IRequestHandlerContext<GetUserRequest, GetUserResponse> requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override async ValueTask RunAsync(GetUserRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        GetUserRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        _user = await _userManager.GetAsync(request.Username) ??
-                throw new NotFoundPersistifyException(nameof(GetUserRequest), UserErrorMessages.UserNotFound);
+        _user =
+            await _userManager.GetAsync(request.Username)
+            ?? throw new NotFoundPersistifyException(
+                nameof(GetUserRequest),
+                UserErrorMessages.UserNotFound
+            );
     }
 
     protected override GetUserResponse GetResponse()

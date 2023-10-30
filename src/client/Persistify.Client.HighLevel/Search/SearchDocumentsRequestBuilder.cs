@@ -11,16 +11,15 @@ using Persistify.Requests.Documents;
 
 namespace Persistify.Client.HighLevel.Search;
 
-public class SearchDocumentsRequestBuilder<TDocument> where TDocument : class
+public class SearchDocumentsRequestBuilder<TDocument>
+    where TDocument : class
 {
     private readonly string _templateName;
     private PaginationDto _paginationDto;
     private SearchQueryDtoBuilder<TDocument>? _searchQueryDtoBuilder;
     private IPersistifyHighLevelClient _persistifyHighLevelClient;
 
-    public SearchDocumentsRequestBuilder(
-        IPersistifyHighLevelClient persistifyHighLevelClient
-    )
+    public SearchDocumentsRequestBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
     {
         _persistifyHighLevelClient = persistifyHighLevelClient;
         var documentType = typeof(TDocument);
@@ -28,10 +27,14 @@ public class SearchDocumentsRequestBuilder<TDocument> where TDocument : class
         if (documentAttribute == null)
         {
             throw new PersistifyHighLevelClientException(
-                $"Document type {documentType.FullName} does not have {nameof(PersistifyDocumentAttribute)}");
+                $"Document type {documentType.FullName} does not have {nameof(PersistifyDocumentAttribute)}"
+            );
         }
 
-        _templateName = documentAttribute.Name ?? documentType.FullName ?? throw new InvalidOperationException();
+        _templateName =
+            documentAttribute.Name
+            ?? documentType.FullName
+            ?? throw new InvalidOperationException();
 
         _paginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 };
     }
@@ -43,7 +46,8 @@ public class SearchDocumentsRequestBuilder<TDocument> where TDocument : class
     }
 
     public SearchDocumentsRequestBuilder<TDocument> WithSearchQuery(
-        Func<SearchQueryDtoBuilder<TDocument>, SearchQueryDtoBuilder<TDocument>> searchQueryAction)
+        Func<SearchQueryDtoBuilder<TDocument>, SearchQueryDtoBuilder<TDocument>> searchQueryAction
+    )
     {
         var searchQueryBuilder = new SearchQueryDtoBuilder<TDocument>(_persistifyHighLevelClient);
         _searchQueryDtoBuilder = searchQueryAction(searchQueryBuilder);
@@ -58,7 +62,8 @@ public class SearchDocumentsRequestBuilder<TDocument> where TDocument : class
             TemplateName = _templateName,
             PaginationDto = _paginationDto,
             SearchQueryDto =
-                searchQueryDto ?? throw new PersistifyHighLevelClientException("Search query is not set")
+                searchQueryDto
+                ?? throw new PersistifyHighLevelClientException("Search query is not set")
         };
     }
 }

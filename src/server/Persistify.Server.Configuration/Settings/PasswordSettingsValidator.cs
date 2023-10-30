@@ -6,9 +6,7 @@ public class PasswordSettingsValidator : AbstractValidator<PasswordSettings>
 {
     public PasswordSettingsValidator()
     {
-        RuleFor(x => x.Algorithm)
-            .IsInEnum()
-            .WithMessage("The hashing algorithm is not valid.");
+        RuleFor(x => x.Algorithm).IsInEnum().WithMessage("The hashing algorithm is not valid.");
         RuleFor(x => x.Iterations)
             .GreaterThan(0)
             .WithMessage("The iterations must be greater than zero.");

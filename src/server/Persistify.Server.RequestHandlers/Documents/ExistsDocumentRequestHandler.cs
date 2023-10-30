@@ -14,7 +14,8 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
-public class ExistsDocumentRequestHandler : RequestHandler<ExistsDocumentRequest, ExistsDocumentResponse>
+public class ExistsDocumentRequestHandler
+    : RequestHandler<ExistsDocumentRequest, ExistsDocumentResponse>
 {
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly ITemplateManager _templateManager;
@@ -24,25 +25,31 @@ public class ExistsDocumentRequestHandler : RequestHandler<ExistsDocumentRequest
         IRequestHandlerContext<ExistsDocumentRequest, ExistsDocumentResponse> requestHandlerContext,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(ExistsDocumentRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        ExistsDocumentRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ??
-                       throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var template =
+            await _templateManager.GetAsync(request.TemplateName)
+            ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ??
-                              throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var documentManager =
+            _documentManagerStore.GetManager(template.Id)
+            ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
-        await RequestHandlerContext
-            .CurrentTransaction
-            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await RequestHandlerContext.CurrentTransaction.PromoteManagerAsync(
+            documentManager,
+            true,
+            TransactionTimeout
+        );
 
         _exists = await documentManager.ExistsAsync(request.DocumentId);
     }

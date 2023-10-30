@@ -20,14 +20,16 @@ public class ExistsUserRequestHandler : RequestHandler<ExistsUserRequest, Exists
     public ExistsUserRequestHandler(
         IRequestHandlerContext<ExistsUserRequest, ExistsUserResponse> requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override ValueTask RunAsync(ExistsUserRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        ExistsUserRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _exists = _userManager.Exists(request.Username);
 

@@ -18,13 +18,17 @@ public class ExistsUserRequestValidator : Validator<ExistsUserRequest>
         if (string.IsNullOrEmpty(value.Username))
         {
             PropertyName.Push(nameof(GetUserRequest.Username));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(GetUserRequest.Username));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

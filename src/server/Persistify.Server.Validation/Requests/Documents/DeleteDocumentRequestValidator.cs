@@ -8,8 +8,7 @@ namespace Persistify.Server.Validation.Requests.Documents;
 
 public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
 {
-    public DeleteDocumentRequestValidator(
-    )
+    public DeleteDocumentRequestValidator()
     {
         PropertyName.Push(nameof(DeleteDocumentRequest));
     }
@@ -19,19 +18,25 @@ public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.TemplateName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (value.DocumentId <= 0)
         {
             PropertyName.Push(nameof(DeleteDocumentRequest.DocumentId));
-            return ValueTask.FromResult<Result>(StaticValidationException(DocumentErrorMessages.InvalidDocumentId));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(DocumentErrorMessages.InvalidDocumentId)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

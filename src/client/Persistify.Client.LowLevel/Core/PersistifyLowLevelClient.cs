@@ -17,7 +17,7 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
     internal PersistifyLowLevelClient(
         GrpcChannel channel,
         PersistifyCredentials persistifyCredentials
-        )
+    )
     {
         Channel = channel;
         PersistifyCredentials = persistifyCredentials;
@@ -51,7 +51,9 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
 
         if (callContext.Value.RequestHeaders == null)
         {
-            return new Result<TResponse>(new PersistifyLowLevelClientException("Request headers are null"));
+            return new Result<TResponse>(
+                new PersistifyLowLevelClientException("Request headers are null")
+            );
         }
 
         if (string.IsNullOrEmpty(PersistifyCredentials.AccessToken))
@@ -67,13 +69,18 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
 
         var serviceCallResult = await serviceCall(callContext.Value);
 
-        if (serviceCallResult is not
-            { Failure: true, Exception: RpcException { StatusCode: StatusCode.Unauthenticated } })
+        if (
+            serviceCallResult
+            is not {
+                Failure: true,
+                Exception: RpcException { StatusCode: StatusCode.Unauthenticated }
+            }
+        )
         {
             return serviceCallResult;
         }
 
-        var handleUnauthenticated= await SaveTokenAsync(callContext);
+        var handleUnauthenticated = await SaveTokenAsync(callContext);
         if (handleUnauthenticated.Failure)
         {
             return new Result<TResponse>(handleUnauthenticated.Exception);
@@ -86,7 +93,11 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
     private async Task<Result> AuthenticateAsync(CallContext? callContext)
     {
         var result = await this.SignInAsync(
-            new SignInRequest { Username = PersistifyCredentials.Username, Password = PersistifyCredentials.Password },
+            new SignInRequest
+            {
+                Username = PersistifyCredentials.Username,
+                Password = PersistifyCredentials.Password
+            },
             callContext
         );
 
@@ -125,8 +136,10 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
             return Result.Ok;
         }
 
-        if (refreshTokenResult is { Failure: true, Exception: RpcException ex } &&
-            ex.StatusCode != StatusCode.Unauthenticated)
+        if (
+            refreshTokenResult is { Failure: true, Exception: RpcException ex }
+            && ex.StatusCode != StatusCode.Unauthenticated
+        )
         {
             return new Result(ex);
         }
@@ -148,12 +161,17 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
             throw new Exception("Access token is null or empty");
         }
 
-        var existingHeader = callContext.RequestHeaders.FirstOrDefault(h => h.Key == "Authorization");
+        var existingHeader = callContext.RequestHeaders.FirstOrDefault(
+            h => h.Key == "Authorization"
+        );
         if (existingHeader != null)
         {
             callContext.RequestHeaders.Remove(existingHeader);
         }
 
-        callContext.RequestHeaders.Add("Authorization", $"Bearer {PersistifyCredentials.AccessToken}");
+        callContext.RequestHeaders.Add(
+            "Authorization",
+            $"Bearer {PersistifyCredentials.AccessToken}"
+        );
     }
 }

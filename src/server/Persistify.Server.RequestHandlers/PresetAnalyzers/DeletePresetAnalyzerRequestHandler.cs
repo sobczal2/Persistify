@@ -11,22 +11,27 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
-public class
-    DeletePresetAnalyzerRequestHandler : RequestHandler<DeletePresetAnalyzerRequest, DeletePresetAnalyzerResponse>
+public class DeletePresetAnalyzerRequestHandler
+    : RequestHandler<DeletePresetAnalyzerRequest, DeletePresetAnalyzerResponse>
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public DeletePresetAnalyzerRequestHandler(
-        IRequestHandlerContext<DeletePresetAnalyzerRequest, DeletePresetAnalyzerResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            DeletePresetAnalyzerRequest,
+            DeletePresetAnalyzerResponse
+        > requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override ValueTask RunAsync(DeletePresetAnalyzerRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        DeletePresetAnalyzerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _presetAnalyzerManager.RemoveAsync(request.PresetAnalyzerName);
 
@@ -38,7 +43,9 @@ public class
         return new DeletePresetAnalyzerResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(DeletePresetAnalyzerRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        DeletePresetAnalyzerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

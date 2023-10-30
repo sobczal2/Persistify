@@ -11,24 +11,27 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class
-    InitializeTemplateManagerRequestHandler : RequestHandler<InitializeTemplateManagerRequest,
-        InitializeTemplateManagerResponse>
+public class InitializeTemplateManagerRequestHandler
+    : RequestHandler<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>
 {
     private readonly ITemplateManager _templateManager;
 
     public InitializeTemplateManagerRequestHandler(
-        IRequestHandlerContext<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>
-            requestHandlerContext,
+        IRequestHandlerContext<
+            InitializeTemplateManagerRequest,
+            InitializeTemplateManagerResponse
+        > requestHandlerContext,
         ITemplateManager templateManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
     }
 
-    protected override ValueTask RunAsync(InitializeTemplateManagerRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        InitializeTemplateManagerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _templateManager.Initialize();
 
@@ -40,7 +43,9 @@ public class
         return new InitializeTemplateManagerResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(InitializeTemplateManagerRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        InitializeTemplateManagerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

@@ -8,14 +8,17 @@ public class TemplateManagerRequiredFileGroup : IRequiredFileGroup
 {
     public static string IdentifierRepositoryFileName => Path.Join("Template", "identifier.bin");
     public static string TemplateRepositoryMainFileName => Path.Join("Template", "object.bin");
-    public static string TemplateRepositoryOffsetLengthFileName => Path.Join("Template", "offsetLength.bin");
+    public static string TemplateRepositoryOffsetLengthFileName =>
+        Path.Join("Template", "offsetLength.bin");
     public string FileGroupName => "TemplateManager";
 
     public IEnumerable<string> GetFileNames()
     {
         return new List<string>
         {
-            IdentifierRepositoryFileName, TemplateRepositoryMainFileName, TemplateRepositoryOffsetLengthFileName
+            IdentifierRepositoryFileName,
+            TemplateRepositoryMainFileName,
+            TemplateRepositoryOffsetLengthFileName
         };
     }
 }

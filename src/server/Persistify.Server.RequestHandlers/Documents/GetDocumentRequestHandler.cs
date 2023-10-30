@@ -26,38 +26,47 @@ public class GetDocumentRequestHandler : RequestHandler<GetDocumentRequest, GetD
         IRequestHandlerContext<GetDocumentRequest, GetDocumentResponse> requestHandlerContext,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(GetDocumentRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        GetDocumentRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ??
-                       throw new InternalPersistifyException(nameof(GetDocumentRequest));
+        var template =
+            await _templateManager.GetAsync(request.TemplateName)
+            ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ??
-                              throw new InternalPersistifyException(nameof(GetDocumentRequest));
+        var documentManager =
+            _documentManagerStore.GetManager(template.Id)
+            ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
 
-        await RequestHandlerContext
-            .CurrentTransaction
-            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await RequestHandlerContext.CurrentTransaction.PromoteManagerAsync(
+            documentManager,
+            true,
+            TransactionTimeout
+        );
 
         _document = await documentManager.GetAsync(request.DocumentId);
 
         if (_document is null)
         {
-            throw new DynamicValidationPersistifyException(nameof(GetDocumentRequest.DocumentId),
-                DocumentErrorMessages.InvalidDocumentId);
+            throw new DynamicValidationPersistifyException(
+                nameof(GetDocumentRequest.DocumentId),
+                DocumentErrorMessages.InvalidDocumentId
+            );
         }
     }
 
     protected override GetDocumentResponse GetResponse()
     {
-        var document = _document ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
+        var document =
+            _document ?? throw new InternalPersistifyException(nameof(GetDocumentRequest));
         return new GetDocumentResponse { DocumentDto = document.ToDto() };
     }
 

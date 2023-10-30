@@ -12,8 +12,11 @@ public interface IDocumentManager : IManager
     ValueTask<bool> ExistsAsync(int id);
     IAsyncEnumerable<Document> ListAsync(int take, int skip);
 
-    ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(SearchQueryDto searchQueryDto, int take,
-        int skip);
+    ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(
+        SearchQueryDto searchQueryDto,
+        int take,
+        int skip
+    );
 
     int Count();
     void Add(Document document);

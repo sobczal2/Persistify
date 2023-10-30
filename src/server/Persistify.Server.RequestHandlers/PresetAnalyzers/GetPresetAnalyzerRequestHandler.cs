@@ -14,33 +14,43 @@ using Persistify.Server.Mappers.PresetAnalyzers;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
-public class GetPresetAnalyzerRequestHandler : RequestHandler<GetPresetAnalyzerRequest, GetPresetAnalyzerResponse>
+public class GetPresetAnalyzerRequestHandler
+    : RequestHandler<GetPresetAnalyzerRequest, GetPresetAnalyzerResponse>
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private PresetAnalyzer? _presetAnalyzer;
 
     public GetPresetAnalyzerRequestHandler(
-        IRequestHandlerContext<GetPresetAnalyzerRequest, GetPresetAnalyzerResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            GetPresetAnalyzerRequest,
+            GetPresetAnalyzerResponse
+        > requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override async ValueTask RunAsync(GetPresetAnalyzerRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        GetPresetAnalyzerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _presetAnalyzer = await _presetAnalyzerManager.GetAsync(request.PresetAnalyzerName);
     }
 
     protected override GetPresetAnalyzerResponse GetResponse()
     {
-        var presetAnalyzer = _presetAnalyzer ?? throw new InternalPersistifyException(nameof(GetPresetAnalyzerRequest));
+        var presetAnalyzer =
+            _presetAnalyzer
+            ?? throw new InternalPersistifyException(nameof(GetPresetAnalyzerRequest));
         return new GetPresetAnalyzerResponse { PresetAnalyzerDto = presetAnalyzer.ToDto() };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(GetPresetAnalyzerRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        GetPresetAnalyzerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

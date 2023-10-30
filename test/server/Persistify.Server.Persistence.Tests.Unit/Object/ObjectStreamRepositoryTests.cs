@@ -129,7 +129,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task ReadAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var key = -1;
@@ -212,7 +214,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ExistsAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task ExistsAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var key = -1;
@@ -258,13 +262,17 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync());
+        var action = new Func<Task>(
+            async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync()
+        );
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -273,13 +281,17 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenTakeIsEqualToZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task ReadRangeAsync_WhenTakeIsEqualToZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var take = 0;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync());
+        var action = new Func<Task>(
+            async () => await _sut.ReadRangeAsync(take, 0, useLock).ToListAsync()
+        );
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -362,13 +374,15 @@ public class ObjectStreamRepositoryTests
         await _sut.WriteAsync(1, new TestClass { Id = 2 }, false);
         await _sut.WriteAsync(2, new TestClass { Id = 3 }, false);
 
-
         // Act
         var result = await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync();
 
         // Assert
         result.Should().HaveCount(1);
-        result.FirstOrDefault(x => x.Key == 2).Value.Should().BeEquivalentTo(new TestClass { Id = 3 });
+        result
+            .FirstOrDefault(x => x.Key == 2)
+            .Value.Should()
+            .BeEquivalentTo(new TestClass { Id = 3 });
     }
 
     [Theory]
@@ -421,7 +435,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task WriteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var key = -1;
@@ -489,7 +505,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenMultipleObjectsAreWritten_ExtendsStreamToLengthDivisibleBySectorSize(bool useLock)
+    public async Task WriteAsync_WhenMultipleObjectsAreWritten_ExtendsStreamToLengthDivisibleBySectorSize(
+        bool useLock
+    )
     {
         // Arrange
         var key0 = 0;
@@ -511,9 +529,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task
-        WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
-            bool useLock)
+    public async Task WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
+        bool useLock
+    )
     {
         // Arrange
         var key0 = 0;
@@ -538,9 +556,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task
-        WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
-            bool useLock)
+    public async Task WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
+        bool useLock
+    )
     {
         // Arrange
         var key0 = 0;
@@ -565,7 +583,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(bool useLock)
+    public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(
+        bool useLock
+    )
     {
         // Arrange
         var key0 = 0;
@@ -591,7 +611,8 @@ public class ObjectStreamRepositoryTests
     [InlineData(false)]
     [InlineData(true)]
     public async Task WriteAsync_WhenOverridingNotLastValueWithShorterValue_WritesValueAndDoesNotExtendStream(
-        bool useLock)
+        bool useLock
+    )
     {
         // Arrange
         var key0 = 0;
@@ -617,7 +638,8 @@ public class ObjectStreamRepositoryTests
     [InlineData(false)]
     [InlineData(true)]
     public async Task WriteAsync_WhenOverridingLastValueWithShorterValue_ShrinksStreamToLengthDivisibleBySectorSize(
-        bool useLock)
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -636,7 +658,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var key = -1;
@@ -716,7 +740,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectIsLast_RemovesValueAndTruncatesStream(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectIsLast_RemovesValueAndTruncatesStream(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -735,7 +761,8 @@ public class ObjectStreamRepositoryTests
     [InlineData(false)]
     [InlineData(true)]
     public async Task DeleteAsync_WhenKeyIsCorrectAndMultipleObjectsExist_ShrinksStreamToLengthDivisibleBySectorSize(
-        bool useLock)
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;

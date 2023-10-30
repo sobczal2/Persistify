@@ -21,13 +21,12 @@ public class IntegrationTestBase : IDisposable
     {
         _factory = new PersistifyServerWebApplicationFactory();
         var rootSettings = _factory.Services.GetRequiredService<IOptions<RootSettings>>().Value;
-        RootCredentials = (
-            rootSettings.Username,
-            rootSettings.Password
-        );
+        RootCredentials = (rootSettings.Username, rootSettings.Password);
         var client = _factory.CreateDefaultClient();
-        _grpcChannel =
-            GrpcChannel.ForAddress(_factory.Server.BaseAddress, new GrpcChannelOptions { HttpClient = client });
+        _grpcChannel = GrpcChannel.ForAddress(
+            _factory.Server.BaseAddress,
+            new GrpcChannelOptions { HttpClient = client }
+        );
     }
 
     public IUserService UserService => _grpcChannel.CreateGrpcService<IUserService>();
@@ -46,15 +45,17 @@ public class IntegrationTestBase : IDisposable
     {
         var request = new SignInRequest { Username = username, Password = password };
         var response = await UserService.SignInAsync(request, new CallContext());
-        return new CallContext(new CallOptions(new Metadata
-        {
-            new("Authorization", $"Bearer {response.AccessToken}")
-        }));
+        return new CallContext(
+            new CallOptions(new Metadata { new("Authorization", $"Bearer {response.AccessToken}") })
+        );
     }
 
     protected async Task<CallContext> GetAuthorizedCallContextAsRootAsync()
     {
-        return await GetAuthorizedCallContextAsync(RootCredentials.Username, RootCredentials.Password);
+        return await GetAuthorizedCallContextAsync(
+            RootCredentials.Username,
+            RootCredentials.Password
+        );
     }
 
     protected async Task CreateUserAsync(string username, string password)

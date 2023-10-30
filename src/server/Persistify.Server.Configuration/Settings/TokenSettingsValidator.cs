@@ -7,9 +7,7 @@ public class TokenSettingsValidator : AbstractValidator<TokenSettings>
 {
     public TokenSettingsValidator()
     {
-        RuleFor(x => x.Type)
-            .IsInEnum()
-            .WithMessage("The token type must be a valid token type.");
+        RuleFor(x => x.Type).IsInEnum().WithMessage("The token type must be a valid token type.");
 
         RuleFor(x => x.Secret)
             .NotEmpty()
@@ -25,7 +23,9 @@ public class TokenSettingsValidator : AbstractValidator<TokenSettings>
             .GreaterThan(TimeSpan.Zero)
             .WithMessage("The refresh token lifetime must be greater than zero.")
             .GreaterThanOrEqualTo(x => x.AccessTokenLifetime)
-            .WithMessage("The refresh token lifetime must be greater than or equal to the access token lifetime.");
+            .WithMessage(
+                "The refresh token lifetime must be greater than or equal to the access token lifetime."
+            );
 
         RuleFor(x => x.RefreshTokenLength)
             .GreaterThan(0)

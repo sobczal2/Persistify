@@ -42,16 +42,26 @@ public class ManagementExtensionsTests
         actual.Should().BeSameAs(services);
         services.Should().HaveCount(12);
         services.Should().Contain(x => x.ImplementationType == typeof(TemplateManager));
-        services.Should().Contain(x => x.ImplementationType == typeof(IdleTimeoutFileStreamFactory));
+        services
+            .Should()
+            .Contain(x => x.ImplementationType == typeof(IdleTimeoutFileStreamFactory));
         services.Should().Contain(x => x.ImplementationType == typeof(FileHandler));
         services.Should().Contain(x => x.ImplementationType == typeof(LocalFileProvider));
-        services.Should().Contain(x => x.ImplementationType == typeof(TemplateManagerRequiredFileGroup));
+        services
+            .Should()
+            .Contain(x => x.ImplementationType == typeof(TemplateManagerRequiredFileGroup));
         services.Should().Contain(x => x.ImplementationType == typeof(DocumentManagerStore));
-        services.Should().Contain(x => x.ImplementationType == typeof(DocumentManagerFileGroupForTemplate));
+        services
+            .Should()
+            .Contain(x => x.ImplementationType == typeof(DocumentManagerFileGroupForTemplate));
         services.Should().Contain(x => x.ImplementationType == typeof(TransactionState));
         services.Should().Contain(x => x.ImplementationType == typeof(UserManager));
-        services.Should().Contain(x => x.ImplementationType == typeof(UserManagerRequiredFileGroup));
+        services
+            .Should()
+            .Contain(x => x.ImplementationType == typeof(UserManagerRequiredFileGroup));
         services.Should().Contain(x => x.ImplementationType == typeof(PresetAnalyzerManager));
-        services.Should().Contain(x => x.ImplementationType == typeof(PresetAnalyzerManagerRequiredFileGroup));
+        services
+            .Should()
+            .Contain(x => x.ImplementationType == typeof(PresetAnalyzerManagerRequiredFileGroup));
     }
 }
