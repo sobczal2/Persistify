@@ -4,6 +4,7 @@ using Persistify.Dtos.Common;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
+using Persistify.Dtos.Documents.Search.Queries.Common;
 using Persistify.Dtos.Documents.Search.Queries.Number;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Helpers.Results;
@@ -126,8 +127,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 => await ValidateExactTextSearchQueryDtoAsync(exactTextSearchQueryDto, template),
             FullTextSearchQueryDto fullTextSearchQueryDto
                 => await ValidateFullTextSearchQueryDtoAsync(fullTextSearchQueryDto, template),
+            AllSearchQueryDto allSearchQueryDto
+                => await ValidateAllSearchQueryDtoAsync(allSearchQueryDto, template),
             _ => StaticValidationException(SharedErrorMessages.InvalidValue)
         };
+    }
+
+    private ValueTask<Result> ValidateAllSearchQueryDtoAsync(
+        AllSearchQueryDto allSearchQueryDto,
+        Template template
+    )
+    {
+        return ValueTask.FromResult(Result.Ok);
     }
 
     private async ValueTask<Result> ValidateAndSearchQueryDtoAsync(
