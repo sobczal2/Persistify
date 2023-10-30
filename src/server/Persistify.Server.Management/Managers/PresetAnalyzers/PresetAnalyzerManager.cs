@@ -28,17 +28,18 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         IFileStreamFactory fileStreamFactory,
         ISerializer serializer,
         IOptions<RepositorySettings> repositorySettingsOptions
-    ) : base(
-        transactionState
     )
+        : base(transactionState)
     {
-        var identifierFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.IdentifierRepositoryFileName);
-        var presetAnalyzerRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryMainFileName);
-        var presetAnalyzerRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(PresetAnalyzerManagerRequiredFileGroup
-                .PresetAnalyzerRepositoryOffsetLengthFileName);
+        var identifierFileStream = fileStreamFactory.CreateStream(
+            PresetAnalyzerManagerRequiredFileGroup.IdentifierRepositoryFileName
+        );
+        var presetAnalyzerRepositoryMainFileStream = fileStreamFactory.CreateStream(
+            PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryMainFileName
+        );
+        var presetAnalyzerRepositoryOffsetLengthFileStream = fileStreamFactory.CreateStream(
+            PresetAnalyzerManagerRequiredFileGroup.PresetAnalyzerRepositoryOffsetLengthFileName
+        );
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _presetAnalyzerRepository = new ObjectStreamRepository<PresetAnalyzer>(
@@ -69,7 +70,9 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
 
             _count = 0;
 
-            await foreach (var (key, presetAnalyzer) in _presetAnalyzerRepository.ReadAllAsync(true))
+            await foreach (
+                var (key, presetAnalyzer) in _presetAnalyzerRepository.ReadAllAsync(true)
+            )
             {
                 _presetAnalyzerNameIdDictionary.TryAdd(presetAnalyzer.Name, key);
 
@@ -108,7 +111,9 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
 
-        await foreach (var (_, template) in _presetAnalyzerRepository.ReadRangeAsync(take, skip, true))
+        await foreach (
+            var (_, template) in _presetAnalyzerRepository.ReadRangeAsync(take, skip, true)
+        )
         {
             yield return template;
         }

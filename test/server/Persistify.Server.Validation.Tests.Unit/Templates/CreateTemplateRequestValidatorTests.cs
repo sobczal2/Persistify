@@ -29,8 +29,12 @@ public class CreateTemplateRequestValidatorTests
         _boolFieldValidator = Substitute.For<IValidator<BoolFieldDto>>();
         _templateManager = Substitute.For<ITemplateManager>();
 
-        _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, _boolFieldValidator,
-            _templateManager);
+        _sut = new CreateTemplateRequestValidator(
+            _textFieldValidator,
+            _numberFieldValidator,
+            _boolFieldValidator,
+            _templateManager
+        );
     }
 
     [Fact]
@@ -40,8 +44,12 @@ public class CreateTemplateRequestValidatorTests
 
         // Act
         Action act = () =>
-            _sut = new CreateTemplateRequestValidator(null!, _numberFieldValidator, _boolFieldValidator,
-                _templateManager);
+            _sut = new CreateTemplateRequestValidator(
+                null!,
+                _numberFieldValidator,
+                _boolFieldValidator,
+                _templateManager
+            );
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -54,8 +62,12 @@ public class CreateTemplateRequestValidatorTests
 
         // Act
         Action act = () =>
-            _sut = new CreateTemplateRequestValidator(_textFieldValidator, null!, _boolFieldValidator,
-                _templateManager);
+            _sut = new CreateTemplateRequestValidator(
+                _textFieldValidator,
+                null!,
+                _boolFieldValidator,
+                _templateManager
+            );
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -68,8 +80,12 @@ public class CreateTemplateRequestValidatorTests
 
         // Act
         Action act = () =>
-            _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, null!,
-                _templateManager);
+            _sut = new CreateTemplateRequestValidator(
+                _textFieldValidator,
+                _numberFieldValidator,
+                null!,
+                _templateManager
+            );
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -82,8 +98,12 @@ public class CreateTemplateRequestValidatorTests
 
         // Act
         Action act = () =>
-            _sut = new CreateTemplateRequestValidator(_textFieldValidator, _numberFieldValidator, _boolFieldValidator,
-                null!);
+            _sut = new CreateTemplateRequestValidator(
+                _textFieldValidator,
+                _numberFieldValidator,
+                _boolFieldValidator,
+                null!
+            );
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -97,7 +117,9 @@ public class CreateTemplateRequestValidatorTests
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest" });
+        _sut.PropertyName
+            .Should()
+            .BeEquivalentTo(new List<string> { "CreateTemplateRequest" });
         _textFieldValidator.Received().PropertyName = _sut.PropertyName;
         _numberFieldValidator.Received().PropertyName = _sut.PropertyName;
         _boolFieldValidator.Received().PropertyName = _sut.PropertyName;
@@ -123,7 +145,11 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsNull_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest { TemplateName = null!, Fields = new List<FieldDto>() };
+        var request = new CreateTemplateRequest
+        {
+            TemplateName = null!,
+            Fields = new List<FieldDto>()
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -140,7 +166,11 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest { TemplateName = string.Empty, Fields = new List<FieldDto>() };
+        var request = new CreateTemplateRequest
+        {
+            TemplateName = string.Empty,
+            Fields = new List<FieldDto>()
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -157,7 +187,11 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenTemplateNameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest { TemplateName = new string('a', 65), Fields = new List<FieldDto>() };
+        var request = new CreateTemplateRequest
+        {
+            TemplateName = new string('a', 65),
+            Fields = new List<FieldDto>()
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -174,7 +208,11 @@ public class CreateTemplateRequestValidatorTests
     public async Task Validate_WhenNoFields_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateTemplateRequest { TemplateName = "template", Fields = new List<FieldDto>() };
+        var request = new CreateTemplateRequest
+        {
+            TemplateName = "template",
+            Fields = new List<FieldDto>()
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -193,7 +231,8 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template", Fields = new List<FieldDto> { new TextFieldDto() }
+            TemplateName = "template",
+            Fields = new List<FieldDto> { new TextFieldDto() }
         };
         List<string> propertyNameAtCall = null!;
         _textFieldValidator
@@ -204,7 +243,9 @@ public class CreateTemplateRequestValidatorTests
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
+        propertyNameAtCall
+            .Should()
+            .BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
     }
 
     [Fact]
@@ -213,12 +254,11 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template", Fields = new List<FieldDto> { new TextFieldDto() }
+            TemplateName = "template",
+            Fields = new List<FieldDto> { new TextFieldDto() }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
-        _textFieldValidator
-            .ValidateAsync(Arg.Any<TextFieldDto>())
-            .Returns(validationException);
+        _textFieldValidator.ValidateAsync(Arg.Any<TextFieldDto>()).Returns(validationException);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -234,7 +274,8 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template", Fields = new List<FieldDto> { new NumberFieldDto() }
+            TemplateName = "template",
+            Fields = new List<FieldDto> { new NumberFieldDto() }
         };
         List<string> propertyNameAtCall = null!;
         _numberFieldValidator
@@ -245,7 +286,9 @@ public class CreateTemplateRequestValidatorTests
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
+        propertyNameAtCall
+            .Should()
+            .BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
     }
 
     [Fact]
@@ -254,12 +297,11 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template", Fields = new List<FieldDto> { new NumberFieldDto() }
+            TemplateName = "template",
+            Fields = new List<FieldDto> { new NumberFieldDto() }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
-        _numberFieldValidator
-            .ValidateAsync(Arg.Any<NumberFieldDto>())
-            .Returns(validationException);
+        _numberFieldValidator.ValidateAsync(Arg.Any<NumberFieldDto>()).Returns(validationException);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -275,7 +317,8 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template", Fields = new List<FieldDto> { new BoolFieldDto() }
+            TemplateName = "template",
+            Fields = new List<FieldDto> { new BoolFieldDto() }
         };
         List<string> propertyNameAtCall = null!;
         _boolFieldValidator
@@ -286,7 +329,9 @@ public class CreateTemplateRequestValidatorTests
         await _sut.ValidateAsync(request);
 
         // Assert
-        propertyNameAtCall.Should().BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
+        propertyNameAtCall
+            .Should()
+            .BeEquivalentTo(new List<string> { "CreateTemplateRequest", "Fields[0]" });
     }
 
     [Fact]
@@ -295,12 +340,11 @@ public class CreateTemplateRequestValidatorTests
         // Arrange
         var request = new CreateTemplateRequest
         {
-            TemplateName = "template", Fields = new List<FieldDto> { new BoolFieldDto() }
+            TemplateName = "template",
+            Fields = new List<FieldDto> { new BoolFieldDto() }
         };
         var validationException = new StaticValidationPersistifyException("Test", "Test");
-        _boolFieldValidator
-            .ValidateAsync(Arg.Any<BoolFieldDto>())
-            .Returns(validationException);
+        _boolFieldValidator.ValidateAsync(Arg.Any<BoolFieldDto>()).Returns(validationException);
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -317,7 +361,11 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto> { new TextFieldDto { Name = "name" }, new TextFieldDto { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto { Name = "name" },
+                new TextFieldDto { Name = "name" }
+            }
         };
 
         // Act
@@ -340,7 +388,8 @@ public class CreateTemplateRequestValidatorTests
             TemplateName = "template",
             Fields = new List<FieldDto>
             {
-                new NumberFieldDto { Name = "name" }, new NumberFieldDto { Name = "name" }
+                new NumberFieldDto { Name = "name" },
+                new NumberFieldDto { Name = "name" }
             }
         };
 
@@ -362,7 +411,11 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto> { new BoolFieldDto { Name = "name" }, new BoolFieldDto { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new BoolFieldDto { Name = "name" },
+                new BoolFieldDto { Name = "name" }
+            }
         };
 
         // Act
@@ -383,7 +436,11 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto> { new TextFieldDto { Name = "name" }, new NumberFieldDto { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto { Name = "name" },
+                new NumberFieldDto { Name = "name" }
+            }
         };
 
         // Act
@@ -404,7 +461,11 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto> { new TextFieldDto { Name = "name" }, new BoolFieldDto { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new TextFieldDto { Name = "name" },
+                new BoolFieldDto { Name = "name" }
+            }
         };
 
         // Act
@@ -425,7 +486,11 @@ public class CreateTemplateRequestValidatorTests
         var request = new CreateTemplateRequest
         {
             TemplateName = "template",
-            Fields = new List<FieldDto> { new NumberFieldDto { Name = "name" }, new BoolFieldDto { Name = "name" } }
+            Fields = new List<FieldDto>
+            {
+                new NumberFieldDto { Name = "name" },
+                new BoolFieldDto { Name = "name" }
+            }
         };
 
         // Act

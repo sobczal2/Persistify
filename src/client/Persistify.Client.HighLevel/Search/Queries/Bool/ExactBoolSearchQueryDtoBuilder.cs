@@ -11,7 +11,8 @@ using Persistify.Helpers.Results;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Bool;
 
-public class ExactBoolSearchQueryDtoBuilder<TDocument> : FieldSearchQueryDtoBuilder<TDocument, ExactBoolSearchQueryDtoBuilder<TDocument>>
+public class ExactBoolSearchQueryDtoBuilder<TDocument>
+    : FieldSearchQueryDtoBuilder<TDocument, ExactBoolSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
     public ExactBoolSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)

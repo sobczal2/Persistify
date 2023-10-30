@@ -23,14 +23,16 @@ public class ListUsersRequestHandler : RequestHandler<ListUsersRequest, ListUser
     public ListUsersRequestHandler(
         IRequestHandlerContext<ListUsersRequest, ListUsersResponse> requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override async ValueTask RunAsync(ListUsersRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        ListUsersRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var skip = request.Pagination.PageNumber * request.Pagination.PageSize;
         var take = request.Pagination.PageSize;
@@ -48,7 +50,8 @@ public class ListUsersRequestHandler : RequestHandler<ListUsersRequest, ListUser
         return new ListUsersResponse
         {
             Users = _userDtos ?? throw new InternalPersistifyException(nameof(ListUsersRequest)),
-            TotalCount = _totalCount ?? throw new InternalPersistifyException(nameof(ListUsersRequest))
+            TotalCount =
+                _totalCount ?? throw new InternalPersistifyException(nameof(ListUsersRequest))
         };
     }
 

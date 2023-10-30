@@ -13,11 +13,20 @@ public static class RequestHandlersExtensions
 
         var commands = typeof(RequestHandler<,>).Assembly
             .GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false, BaseType.IsGenericType: true } &&
-                        t.BaseType?.GetGenericTypeDefinition() == typeof(RequestHandler<,>))
-            .Select(t => (Type: t,
-                Interface: typeof(IRequestHandler<,>).MakeGenericType(t.BaseType?.GetGenericArguments() ??
-                                                                      Array.Empty<Type>())))
+            .Where(
+                t =>
+                    t is { IsClass: true, IsAbstract: false, BaseType.IsGenericType: true }
+                    && t.BaseType?.GetGenericTypeDefinition() == typeof(RequestHandler<,>)
+            )
+            .Select(
+                t =>
+                    (
+                        Type: t,
+                        Interface: typeof(IRequestHandler<,>).MakeGenericType(
+                            t.BaseType?.GetGenericArguments() ?? Array.Empty<Type>()
+                        )
+                    )
+            )
             .ToList();
 
         foreach (var (type, @interface) in commands)

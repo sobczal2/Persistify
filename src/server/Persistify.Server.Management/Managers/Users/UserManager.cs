@@ -37,23 +37,27 @@ public class UserManager : Manager, IUserManager
         IClock clock,
         ITokenService tokenService,
         IOptions<TokenSettings> tokenSettingsOptions
-    ) : base(
-        transactionState
     )
+        : base(transactionState)
     {
         _clock = clock;
         _tokenService = tokenService;
         _tokenSettings = tokenSettingsOptions.Value;
-        var identifierFileStream =
-            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.IdentifierRepositoryFileName);
-        var userRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.UserRepositoryMainFileName);
-        var userRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.UserRepositoryOffsetLengthFileName);
-        var refreshTokenRepositoryMainFileStream =
-            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.RefreshTokenRepositoryMainFileName);
-        var refreshTokenRepositoryOffsetLengthFileStream =
-            fileStreamFactory.CreateStream(UserManagerRequiredFileGroup.RefreshTokenRepositoryOffsetLengthFileName);
+        var identifierFileStream = fileStreamFactory.CreateStream(
+            UserManagerRequiredFileGroup.IdentifierRepositoryFileName
+        );
+        var userRepositoryMainFileStream = fileStreamFactory.CreateStream(
+            UserManagerRequiredFileGroup.UserRepositoryMainFileName
+        );
+        var userRepositoryOffsetLengthFileStream = fileStreamFactory.CreateStream(
+            UserManagerRequiredFileGroup.UserRepositoryOffsetLengthFileName
+        );
+        var refreshTokenRepositoryMainFileStream = fileStreamFactory.CreateStream(
+            UserManagerRequiredFileGroup.RefreshTokenRepositoryMainFileName
+        );
+        var refreshTokenRepositoryOffsetLengthFileStream = fileStreamFactory.CreateStream(
+            UserManagerRequiredFileGroup.RefreshTokenRepositoryOffsetLengthFileName
+        );
 
         _identifierRepository = new IntStreamRepository(identifierFileStream);
         _userRepository = new ObjectStreamRepository<User>(

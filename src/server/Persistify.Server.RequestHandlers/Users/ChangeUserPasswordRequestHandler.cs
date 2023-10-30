@@ -13,27 +13,34 @@ using Persistify.Server.Security;
 
 namespace Persistify.Server.CommandHandlers.Users;
 
-public class ChangeUserPasswordRequestHandler : RequestHandler<ChangeUserPasswordRequest, ChangeUserPasswordResponse>
+public class ChangeUserPasswordRequestHandler
+    : RequestHandler<ChangeUserPasswordRequest, ChangeUserPasswordResponse>
 {
     private readonly IPasswordService _passwordService;
     private readonly IUserManager _userManager;
 
     public ChangeUserPasswordRequestHandler(
-        IRequestHandlerContext<ChangeUserPasswordRequest, ChangeUserPasswordResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            ChangeUserPasswordRequest,
+            ChangeUserPasswordResponse
+        > requestHandlerContext,
         IUserManager userManager,
         IPasswordService passwordService
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
         _passwordService = passwordService;
     }
 
-    protected override async ValueTask RunAsync(ChangeUserPasswordRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        ChangeUserPasswordRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var user = await _userManager
-            .GetAsync(request.Username) ?? throw new InternalPersistifyException(nameof(ChangeUserPasswordRequest));
+        var user =
+            await _userManager.GetAsync(request.Username)
+            ?? throw new InternalPersistifyException(nameof(ChangeUserPasswordRequest));
 
         var (hash, salt) = _passwordService.HashPassword(request.Password);
 
@@ -48,7 +55,9 @@ public class ChangeUserPasswordRequestHandler : RequestHandler<ChangeUserPasswor
         return new ChangeUserPasswordResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ChangeUserPasswordRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        ChangeUserPasswordRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

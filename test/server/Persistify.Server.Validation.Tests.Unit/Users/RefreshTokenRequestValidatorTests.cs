@@ -99,7 +99,11 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenUsernameIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest { Username = string.Empty, RefreshToken = "refreshToken" };
+        var request = new RefreshTokenRequest
+        {
+            Username = string.Empty,
+            RefreshToken = "refreshToken"
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -116,7 +120,11 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest { Username = new string('a', 65), RefreshToken = "refreshToken" };
+        var request = new RefreshTokenRequest
+        {
+            Username = new string('a', 65),
+            RefreshToken = "refreshToken"
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -150,7 +158,11 @@ public class RefreshTokenRequestValidatorTests
     public async Task Validate_WhenRefreshTokenIsEmpty_ReturnsValidationException()
     {
         // Arrange
-        var request = new RefreshTokenRequest { Username = "username", RefreshToken = string.Empty };
+        var request = new RefreshTokenRequest
+        {
+            Username = "username",
+            RefreshToken = string.Empty
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -170,7 +182,11 @@ public class RefreshTokenRequestValidatorTests
         var bytes = new byte[129];
         Random.Shared.NextBytes(bytes);
         var refreshToken = Convert.ToBase64String(bytes);
-        var request = new RefreshTokenRequest { Username = "username", RefreshToken = refreshToken };
+        var request = new RefreshTokenRequest
+        {
+            Username = "username",
+            RefreshToken = refreshToken
+        };
 
         _tokenOptions.Value.Returns(new TokenSettings { RefreshTokenLength = 128 });
 
@@ -192,7 +208,11 @@ public class RefreshTokenRequestValidatorTests
         var bytes = new byte[128];
         Random.Shared.NextBytes(bytes);
         var refreshToken = Convert.ToBase64String(bytes);
-        var request = new RefreshTokenRequest { Username = "username", RefreshToken = refreshToken };
+        var request = new RefreshTokenRequest
+        {
+            Username = "username",
+            RefreshToken = refreshToken
+        };
 
         _tokenOptions.Value.Returns(new TokenSettings { RefreshTokenLength = 128 });
 

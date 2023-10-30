@@ -5,15 +5,22 @@ namespace Persistify.Helpers.Collections;
 
 public static class EnumerableHelpers
 {
-    public static IEnumerable<T> MergeSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc,
-        params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> MergeSorted<T>(
+        IComparer<T> comparer,
+        Func<T, T, T> mergeFunc,
+        params IEnumerable<T>[] enumerables
+    )
     {
         var enumerators = GetEnumerators(enumerables);
-        var heap = new SortedSet<(T Value, int Index)>(Comparer<(T Value, int Index)>.Create((x, y) =>
-        {
-            var comp = comparer.Compare(x.Value, y.Value);
-            return comp != 0 ? comp : x.Index.CompareTo(y.Index);
-        }));
+        var heap = new SortedSet<(T Value, int Index)>(
+            Comparer<(T Value, int Index)>.Create(
+                (x, y) =>
+                {
+                    var comp = comparer.Compare(x.Value, y.Value);
+                    return comp != 0 ? comp : x.Index.CompareTo(y.Index);
+                }
+            )
+        );
 
         for (var i = 0; i < enumerators.Length; i++)
         {
@@ -64,8 +71,11 @@ public static class EnumerableHelpers
         }
     }
 
-    public static IEnumerable<T> IntersectSorted<T>(IComparer<T> comparer, Func<T, T, T> mergeFunc,
-        params IEnumerable<T>[] enumerables)
+    public static IEnumerable<T> IntersectSorted<T>(
+        IComparer<T> comparer,
+        Func<T, T, T> mergeFunc,
+        params IEnumerable<T>[] enumerables
+    )
     {
         if (enumerables.Length == 0)
         {
@@ -176,7 +186,6 @@ public static class EnumerableHelpers
             }
         }
     }
-
 
     public static IEnumerator<T>[] GetEnumerators<T>(IEnumerable<T>[] enumerables)
     {

@@ -12,14 +12,13 @@ using Persistify.Dtos.Documents.Search.Queries.Bool;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Common;
 
-public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf> : SearchQueryDtoBuilder<TDocument>
+public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
+    : SearchQueryDtoBuilder<TDocument>
     where TDocument : class
     where TSelf : FieldSearchQueryDtoBuilder<TDocument, TSelf>
 {
-    public FieldSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient) : base(
-        persistifyHighLevelClient)
-    {
-    }
+    public FieldSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+        : base(persistifyHighLevelClient) { }
 
     protected abstract FieldTypeDto FieldTypeDto { get; }
 
@@ -33,10 +32,15 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf> : SearchQuery
             }
             else
             {
-                throw new ArgumentException("The provided expression does not target a property.", nameof(field));
+                throw new ArgumentException(
+                    "The provided expression does not target a property.",
+                    nameof(field)
+                );
             }
         }
-        else if (field.Body is UnaryExpression unary && unary.Operand is MemberExpression memberOperand)
+        else if (
+            field.Body is UnaryExpression unary && unary.Operand is MemberExpression memberOperand
+        )
         {
             if (memberOperand.Member is PropertyInfo property)
             {
@@ -44,7 +48,10 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf> : SearchQuery
             }
             else
             {
-                throw new ArgumentException("The provided expression does not target a property.", nameof(field));
+                throw new ArgumentException(
+                    "The provided expression does not target a property.",
+                    nameof(field)
+                );
             }
         }
         else
@@ -58,31 +65,43 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf> : SearchQuery
         var propertyInfo = GetPropertyInfo(field);
 
         var fieldAttribute =
-            propertyInfo.GetCustomAttributes(typeof(PersistifyFieldAttribute), false).FirstOrDefault() as
-                PersistifyFieldAttribute;
+            propertyInfo
+                .GetCustomAttributes(typeof(PersistifyFieldAttribute), false)
+                .FirstOrDefault() as PersistifyFieldAttribute;
 
         if (fieldAttribute == null)
         {
             throw new PersistifyHighLevelClientException(
-                $"Field {field} does not have {nameof(PersistifyFieldAttribute)}");
+                $"Field {field} does not have {nameof(PersistifyFieldAttribute)}"
+            );
         }
 
-        var converter =
-            PersistifyHighLevelClient.GetConverter(propertyInfo.PropertyType, fieldAttribute.FieldTypeDto);
+        var converter = PersistifyHighLevelClient.GetConverter(
+            propertyInfo.PropertyType,
+            fieldAttribute.FieldTypeDto
+        );
 
         if (converter == null)
         {
-            throw new PersistifyHighLevelClientException($"Converter for field {field} is not found");
+            throw new PersistifyHighLevelClientException(
+                $"Converter for field {field} is not found"
+            );
         }
 
         if (fieldAttribute.FieldTypeDto != FieldTypeDto)
         {
             throw new PersistifyHighLevelClientException(
-                $"Field {field} is not of type {nameof(FieldTypeDto)}");
+                $"Field {field} is not of type {nameof(FieldTypeDto)}"
+            );
         }
 
-        ((FieldSearchQueryDto)SearchQueryDto!).SetFieldName(fieldAttribute.Name ?? propertyInfo.Name ??
-            throw new PersistifyHighLevelClientException($"Property {propertyInfo.Name} does not have name"));
+        ((FieldSearchQueryDto)SearchQueryDto!).SetFieldName(
+            fieldAttribute.Name
+                ?? propertyInfo.Name
+                ?? throw new PersistifyHighLevelClientException(
+                    $"Property {propertyInfo.Name} does not have name"
+                )
+        );
         return (TSelf)this;
     }
 }

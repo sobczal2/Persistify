@@ -4,8 +4,9 @@ namespace Persistify.Server.ErrorHandling.Exceptions;
 
 public class UnauthenticatedPersistifyException : PersistifyException
 {
-    public UnauthenticatedPersistifyException(string? requestName, string message = "Unauthenticated") : base(
-        requestName ?? "Unknown", message, PersistifyErrorCode.Unauthenticated)
-    {
-    }
+    public UnauthenticatedPersistifyException(
+        string? requestName,
+        string message = "Unauthenticated"
+    )
+        : base(requestName ?? "Unknown", message, PersistifyErrorCode.Unauthenticated) { }
 }

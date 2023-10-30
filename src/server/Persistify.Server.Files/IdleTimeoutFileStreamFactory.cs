@@ -30,9 +30,6 @@ public class IdleTimeoutFileStreamFactory : IFileStreamFactory
 
         _logger.LogTrace("Creating IdleTimeoutFileStream for {FilePath}", filePath);
 
-        return new IdleTimeoutFileStream(
-            _storageSettings.IdleFileTimeout,
-            filePath
-        );
+        return new IdleTimeoutFileStream(_storageSettings.IdleFileTimeout, filePath);
     }
 }

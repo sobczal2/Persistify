@@ -25,30 +25,40 @@ public class SignInRequestHandler : RequestHandler<SignInRequest, SignInResponse
         IRequestHandlerContext<SignInRequest, SignInResponse> requestHandlerContext,
         IUserManager userManager,
         IPasswordService passwordService
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
         _passwordService = passwordService;
     }
 
-    protected override async ValueTask RunAsync(SignInRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        SignInRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var user = await _userManager.GetAsync(request.Username);
 
         if (user is null)
         {
-            throw new UnauthenticatedPersistifyException(nameof(SignInRequest.Username),
-                UserErrorMessages.InvalidCredentials);
+            throw new UnauthenticatedPersistifyException(
+                nameof(SignInRequest.Username),
+                UserErrorMessages.InvalidCredentials
+            );
         }
 
-        var passwordCorrect = _passwordService.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt);
+        var passwordCorrect = _passwordService.VerifyPassword(
+            request.Password,
+            user.PasswordHash,
+            user.PasswordSalt
+        );
 
         if (!passwordCorrect)
         {
-            throw new UnauthenticatedPersistifyException(nameof(SignInRequest.Username),
-                UserErrorMessages.InvalidCredentials);
+            throw new UnauthenticatedPersistifyException(
+                nameof(SignInRequest.Username),
+                UserErrorMessages.InvalidCredentials
+            );
         }
 
         var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);

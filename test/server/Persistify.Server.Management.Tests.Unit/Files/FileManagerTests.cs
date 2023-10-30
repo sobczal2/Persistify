@@ -28,12 +28,7 @@ public class FileManagerTests
         IEnumerable<IFileGroupForTemplate> fileGroupsForTemplate
     )
     {
-        _sut = new FileHandler(
-            _logger,
-            _fileProvider,
-            requiredFileGroups,
-            fileGroupsForTemplate
-        );
+        _sut = new FileHandler(_logger, _fileProvider, requiredFileGroups, fileGroupsForTemplate);
     }
 
     [Fact]
@@ -168,7 +163,9 @@ public class FileManagerTests
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
         var template = new Template();
-        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
+        fileGroupForTemplate
+            .GetFileNamesForTemplate(template)
+            .Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(false);
@@ -187,7 +184,9 @@ public class FileManagerTests
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
         var template = new Template();
-        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
+        fileGroupForTemplate
+            .GetFileNamesForTemplate(template)
+            .Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(true);
@@ -206,7 +205,9 @@ public class FileManagerTests
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
         var template = new Template();
-        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
+        fileGroupForTemplate
+            .GetFileNamesForTemplate(template)
+            .Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(true);
@@ -225,7 +226,9 @@ public class FileManagerTests
         // Arrange
         var fileGroupForTemplate = Substitute.For<IFileGroupForTemplate>();
         var template = new Template();
-        fileGroupForTemplate.GetFileNamesForTemplate(template).Returns(new List<string> { "file1" });
+        fileGroupForTemplate
+            .GetFileNamesForTemplate(template)
+            .Returns(new List<string> { "file1" });
         var fileGroupsForTemplate = new List<IFileGroupForTemplate> { fileGroupForTemplate };
         var requiredFileGroups = Substitute.For<IEnumerable<IRequiredFileGroup>>();
         _fileProvider.Exists("file1").Returns(false);

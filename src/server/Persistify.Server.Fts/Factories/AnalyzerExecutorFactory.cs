@@ -15,14 +15,15 @@ namespace Persistify.Server.Fts.Factories;
 
 public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
 {
-    private static readonly ConcurrentBag<string> SupportedCharacterFilters =
-        new();
+    private static readonly ConcurrentBag<string> SupportedCharacterFilters = new();
 
     private static readonly ConcurrentBag<string> SupportedCharacterSets =
         new() { "lowercase_letters", "uppercase_letters", "digits" };
 
-    private static readonly ConcurrentBag<string> SupportedTokenizers = new() { "standard", "whitespace" };
-    private static readonly ConcurrentBag<string> SupportedTokenFilters = new() { "lowercase", "suffix" };
+    private static readonly ConcurrentBag<string> SupportedTokenizers =
+        new() { "standard", "whitespace" };
+    private static readonly ConcurrentBag<string> SupportedTokenFilters =
+        new() { "lowercase", "suffix" };
 
     public Result Validate(FullAnalyzerDto analyzerDto)
     {

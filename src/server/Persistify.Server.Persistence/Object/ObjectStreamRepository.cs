@@ -36,9 +36,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         _mainStream = mainStream ?? throw new ArgumentNullException(nameof(mainStream));
         _serializer = serializer ?? throw new ArgumentNullException(nameof(serializer));
         _sectorSize = sectorSize;
-        _offsetLengthRepository =
-            new IntPairStreamRepository(offsetLengthStream ??
-                                        throw new ArgumentNullException(nameof(offsetLengthStream)));
+        _offsetLengthRepository = new IntPairStreamRepository(
+            offsetLengthStream ?? throw new ArgumentNullException(nameof(offsetLengthStream))
+        );
         _buffer = new byte[_sectorSize];
         _semaphore = new SemaphoreSlim(1, 1);
     }
@@ -59,7 +59,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ReadAsyncImpl(key)) : await ReadAsyncImpl(key);
+        return useLock
+            ? await _semaphore.WrapAsync(() => ReadAsyncImpl(key))
+            : await ReadAsyncImpl(key);
     }
 
     public async ValueTask<bool> ExistsAsync(int key, bool useLock)
@@ -69,10 +71,16 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ExistsAsyncImpl(key)) : await ExistsAsyncImpl(key);
+        return useLock
+            ? await _semaphore.WrapAsync(() => ExistsAsyncImpl(key))
+            : await ExistsAsyncImpl(key);
     }
 
-    public async IAsyncEnumerable<(int Key, TValue Value)> ReadRangeAsync(int take, int skip, bool useLock)
+    public async IAsyncEnumerable<(int Key, TValue Value)> ReadRangeAsync(
+        int take,
+        int skip,
+        bool useLock
+    )
     {
         if (take <= 0)
         {
@@ -125,7 +133,11 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             throw new ArgumentNullException(nameof(value));
         }
 
-        await (useLock ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value)) : WriteAsyncImpl(key, value));
+        await (
+            useLock
+                ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value))
+                : WriteAsyncImpl(key, value)
+        );
     }
 
     public async ValueTask<bool> DeleteAsync(int key, bool useLock)
@@ -135,7 +147,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => DeleteAsyncImpl(key)) : await DeleteAsyncImpl(key);
+        return useLock
+            ? await _semaphore.WrapAsync(() => DeleteAsyncImpl(key))
+            : await DeleteAsyncImpl(key);
     }
 
     public void Clear(bool useLock)
@@ -184,7 +198,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
     {
         _mainStream.Seek(0, SeekOrigin.Begin);
 
-        await foreach (var (key, offsetLength) in _offsetLengthRepository.ReadRangeAsync(take, skip, false))
+        await foreach (
+            var (key, offsetLength) in _offsetLengthRepository.ReadRangeAsync(take, skip, false)
+        )
         {
             var (offset, length) = offsetLength;
             var byteOffset = SectorsToBytes(offset);
@@ -251,7 +267,12 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         EnsureStreamCorrectLength(_mainStream.Position);
     }
 
-    private async ValueTask WriteAtOffset(int id, int offset, ReadOnlyMemory<byte> serialized, bool isLast)
+    private async ValueTask WriteAtOffset(
+        int id,
+        int offset,
+        ReadOnlyMemory<byte> serialized,
+        bool isLast
+    )
     {
         var byteOffset = SectorsToBytes(offset);
         _mainStream.Seek(byteOffset, SeekOrigin.Begin);

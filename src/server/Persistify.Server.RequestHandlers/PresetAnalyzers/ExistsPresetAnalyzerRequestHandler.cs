@@ -12,23 +12,28 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.PresetAnalyzers;
 
-public class
-    ExistsPresetAnalyzerRequestHandler : RequestHandler<ExistsPresetAnalyzerRequest, ExistsPresetAnalyzerResponse>
+public class ExistsPresetAnalyzerRequestHandler
+    : RequestHandler<ExistsPresetAnalyzerRequest, ExistsPresetAnalyzerResponse>
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
     private bool? _exists;
 
     public ExistsPresetAnalyzerRequestHandler(
-        IRequestHandlerContext<ExistsPresetAnalyzerRequest, ExistsPresetAnalyzerResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            ExistsPresetAnalyzerRequest,
+            ExistsPresetAnalyzerResponse
+        > requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
     }
 
-    protected override ValueTask RunAsync(ExistsPresetAnalyzerRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        ExistsPresetAnalyzerRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _exists = _presetAnalyzerManager.Exists(request.PresetAnalyzerName);
 
@@ -39,11 +44,15 @@ public class
     {
         return new ExistsPresetAnalyzerResponse
         {
-            Exists = _exists ?? throw new InternalPersistifyException(nameof(ExistsPresetAnalyzerRequest))
+            Exists =
+                _exists
+                ?? throw new InternalPersistifyException(nameof(ExistsPresetAnalyzerRequest))
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ExistsPresetAnalyzerRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        ExistsPresetAnalyzerRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

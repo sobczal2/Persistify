@@ -39,7 +39,8 @@ public class ReadWriteAsyncLockTests
         await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
 
         // Act
-        Func<Task> act = async () => await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
+        Func<Task> act = async () =>
+            await _sut.EnterReadLockAsync(id, DefaultTimeout, DefaultCancellationToken);
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();

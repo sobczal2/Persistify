@@ -21,8 +21,10 @@ public class CreateUserAsyncTests : IntegrationTestBase
 
         // Assert
         response.Should().NotBeNull();
-        var getUserResponse =
-            await UserService.GetUserAsync(new GetUserRequest { Username = request.Username }, callContext);
+        var getUserResponse = await UserService.GetUserAsync(
+            new GetUserRequest { Username = request.Username },
+            callContext
+        );
         getUserResponse.Should().NotBeNull();
         getUserResponse.User.Username.Should().Be(request.Username);
         getUserResponse.User.Permission.Should().Be((int)Permission.None);

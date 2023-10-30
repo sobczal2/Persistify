@@ -15,9 +15,8 @@ public class WhitespaceTokenizer : ITokenizer
         while (index < text.Length)
         {
             var whitespaceIndex = text[index..].IndexOfAny(WhitespaceChars);
-            var token = whitespaceIndex == -1
-                ? text[index..]
-                : text.Substring(index, whitespaceIndex);
+            var token =
+                whitespaceIndex == -1 ? text[index..] : text.Substring(index, whitespaceIndex);
 
             yield return new SearchToken(token, alphabet);
             index += token.Length + 1;
@@ -31,11 +30,14 @@ public class WhitespaceTokenizer : ITokenizer
         while (index < text.Length)
         {
             var whitespaceIndex = text[index..].IndexOfAny(WhitespaceChars);
-            var token = whitespaceIndex == -1
-                ? text[index..]
-                : text.Substring(index, whitespaceIndex);
+            var token =
+                whitespaceIndex == -1 ? text[index..] : text.Substring(index, whitespaceIndex);
 
-            yield return new IndexToken(token, alphabet, new DocumentPosition(documentId, index, 1));
+            yield return new IndexToken(
+                token,
+                alphabet,
+                new DocumentPosition(documentId, index, 1)
+            );
             index += token.Length + 1;
         }
     }

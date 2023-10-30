@@ -41,11 +41,15 @@ public class CreatePresetAnalyzerRequestValidator : Validator<CreatePresetAnalyz
         if (_presetAnalyzerManager.Exists(value.PresetAnalyzerName))
         {
             PropertyName.Push(nameof(CreatePresetAnalyzerRequest.PresetAnalyzerName));
-            return DynamicValidationException(PresetAnalyzerErrorMessages.PresetAnalyzerNameNotUnique);
+            return DynamicValidationException(
+                PresetAnalyzerErrorMessages.PresetAnalyzerNameNotUnique
+            );
         }
 
         PropertyName.Push(nameof(CreatePresetAnalyzerRequest.FullAnalyzerDto));
-        var analyzerDtoValidationResult = await _analyzerDtoValidator.ValidateAsync(value.FullAnalyzerDto);
+        var analyzerDtoValidationResult = await _analyzerDtoValidator.ValidateAsync(
+            value.FullAnalyzerDto
+        );
         PropertyName.Pop();
         if (analyzerDtoValidationResult.Failure)
         {

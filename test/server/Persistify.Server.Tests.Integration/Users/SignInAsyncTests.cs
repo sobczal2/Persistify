@@ -17,7 +17,11 @@ public class SignInAsyncTests : IntegrationTestBase
     public async Task SignInAsync_WhenCredentialsAreValid_ReturnsOk()
     {
         // Arrange
-        var request = new SignInRequest { Username = RootCredentials.Username, Password = RootCredentials.Password };
+        var request = new SignInRequest
+        {
+            Username = RootCredentials.Username,
+            Password = RootCredentials.Password
+        };
 
         // Act
         var response = await UserService.SignInAsync(request, new CallContext());
@@ -37,7 +41,9 @@ public class SignInAsyncTests : IntegrationTestBase
         var request = new SignInRequest { Username = "invalid", Password = "invalid" };
 
         // Act
-        var action = new Func<Task>(async () => await UserService.SignInAsync(request, new CallContext()));
+        var action = new Func<Task>(
+            async () => await UserService.SignInAsync(request, new CallContext())
+        );
 
         // Assert
         await action.Should().ThrowAsync<RpcException>().WithStatusCode(StatusCode.Unauthenticated);
@@ -47,10 +53,16 @@ public class SignInAsyncTests : IntegrationTestBase
     public async Task SignInAsync_WhenPasswordIsInvalid_ReturnsUnauthenticated()
     {
         // Arrange
-        var request = new SignInRequest { Username = RootCredentials.Username, Password = "invalid" };
+        var request = new SignInRequest
+        {
+            Username = RootCredentials.Username,
+            Password = "invalid"
+        };
 
         // Act
-        var action = new Func<Task>(async () => await UserService.SignInAsync(request, new CallContext()));
+        var action = new Func<Task>(
+            async () => await UserService.SignInAsync(request, new CallContext())
+        );
 
         // Assert
         await action.Should().ThrowAsync<RpcException>().WithStatusCode(StatusCode.Unauthenticated);

@@ -30,27 +30,39 @@ public class StartupActionHostedService : BackgroundService
 
         await _requestDispatcher.DispatchAsync<SetupFileSystemRequest, SetupFileSystemResponse>(
             new SetupFileSystemRequest(),
-            internalClaimsPrincipal, stoppingToken);
+            internalClaimsPrincipal,
+            stoppingToken
+        );
 
-        await _requestDispatcher.DispatchAsync<InitializeTemplateManagerRequest, InitializeTemplateManagerResponse>(
-            new InitializeTemplateManagerRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<
+            InitializeTemplateManagerRequest,
+            InitializeTemplateManagerResponse
+        >(new InitializeTemplateManagerRequest(), internalClaimsPrincipal, stoppingToken);
 
-        await _requestDispatcher.DispatchAsync<InitializeDocumentManagersRequest, InitializeDocumentManagersResponse>(
-            new InitializeDocumentManagersRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<
+            InitializeDocumentManagersRequest,
+            InitializeDocumentManagersResponse
+        >(new InitializeDocumentManagersRequest(), internalClaimsPrincipal, stoppingToken);
 
-        await _requestDispatcher.DispatchAsync<InitializeUserManagerRequest, InitializeUserManagerResponse>(
-            new InitializeUserManagerRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<
+            InitializeUserManagerRequest,
+            InitializeUserManagerResponse
+        >(new InitializeUserManagerRequest(), internalClaimsPrincipal, stoppingToken);
 
-        await _requestDispatcher.DispatchAsync<EnsureRootUserExistsRequest, EnsureRootUserExistsResponse>(
-            new EnsureRootUserExistsRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<
+            EnsureRootUserExistsRequest,
+            EnsureRootUserExistsResponse
+        >(new EnsureRootUserExistsRequest(), internalClaimsPrincipal, stoppingToken);
 
-        await _requestDispatcher.DispatchAsync<InitializePresetAnalyzerManagerRequest,
-            InitializePresetAnalyzerManagerResponse>(
-            new InitializePresetAnalyzerManagerRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<
+            InitializePresetAnalyzerManagerRequest,
+            InitializePresetAnalyzerManagerResponse
+        >(new InitializePresetAnalyzerManagerRequest(), internalClaimsPrincipal, stoppingToken);
 
-        await _requestDispatcher.DispatchAsync<EnsureBuildInPresetAnalyzersExistRequest,
-            EnsureBuildInPresetAnalyzersExistResponse>(
-            new EnsureBuildInPresetAnalyzersExistRequest(), internalClaimsPrincipal, stoppingToken);
+        await _requestDispatcher.DispatchAsync<
+            EnsureBuildInPresetAnalyzersExistRequest,
+            EnsureBuildInPresetAnalyzersExistResponse
+        >(new EnsureBuildInPresetAnalyzersExistRequest(), internalClaimsPrincipal, stoppingToken);
 
         _logger.LogInformation("Startup actions executed");
     }

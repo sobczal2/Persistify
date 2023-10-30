@@ -12,9 +12,7 @@ public class ChangeUserPasswordRequestValidator : Validator<ChangeUserPasswordRe
 {
     private readonly IUserManager _userManager;
 
-    public ChangeUserPasswordRequestValidator(
-        IUserManager userManager
-    )
+    public ChangeUserPasswordRequestValidator(IUserManager userManager)
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(ChangeUserPasswordRequest));
@@ -25,31 +23,41 @@ public class ChangeUserPasswordRequestValidator : Validator<ChangeUserPasswordRe
         if (string.IsNullOrEmpty(value.Username))
         {
             PropertyName.Push(nameof(ChangeUserPasswordRequest.Username));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.Username.Length > 64)
         {
             PropertyName.Push(nameof(ChangeUserPasswordRequest.Username));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (!_userManager.Exists(value.Username))
         {
             PropertyName.Push(nameof(ChangeUserPasswordRequest.Username));
-            return ValueTask.FromResult<Result>(DynamicValidationException(UserErrorMessages.UserNotFound));
+            return ValueTask.FromResult<Result>(
+                DynamicValidationException(UserErrorMessages.UserNotFound)
+            );
         }
 
         if (string.IsNullOrEmpty(value.Password))
         {
             PropertyName.Push(nameof(ChangeUserPasswordRequest.Password));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.Password.Length > 1024)
         {
             PropertyName.Push(nameof(ChangeUserPasswordRequest.Password));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

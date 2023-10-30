@@ -29,8 +29,7 @@ public class DeleteTemplateRequestValidatorTests
         // Arrange
 
         // Act
-        Action act = () =>
-            _sut = new DeleteTemplateRequestValidator(null!);
+        Action act = () => _sut = new DeleteTemplateRequestValidator(null!);
 
         // Assert
         act.Should().Throw<ArgumentNullException>();
@@ -44,7 +43,9 @@ public class DeleteTemplateRequestValidatorTests
         // Act
 
         // Assert
-        _sut.PropertyName.Should().BeEquivalentTo(new List<string> { "DeleteTemplateRequest" });
+        _sut.PropertyName
+            .Should()
+            .BeEquivalentTo(new List<string> { "DeleteTemplateRequest" });
     }
 
     [Fact]

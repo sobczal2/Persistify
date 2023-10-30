@@ -9,7 +9,8 @@ using Persistify.Server.Validation.Common;
 
 namespace Persistify.Server.CommandHandlers.Common;
 
-public class RequestHandlerContext<TRequest, TResponse> : IRequestHandlerContext<TRequest, TResponse>
+public class RequestHandlerContext<TRequest, TResponse>
+    : IRequestHandlerContext<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     where TResponse : IResponse
 {

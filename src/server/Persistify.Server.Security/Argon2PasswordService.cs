@@ -11,9 +11,7 @@ public class Argon2PasswordService : IPasswordService
 {
     private readonly PasswordSettings _passwordSettings;
 
-    public Argon2PasswordService(
-        IOptions<PasswordSettings> passwordSettingsOptions
-    )
+    public Argon2PasswordService(IOptions<PasswordSettings> passwordSettingsOptions)
     {
         _passwordSettings = passwordSettingsOptions.Value;
     }

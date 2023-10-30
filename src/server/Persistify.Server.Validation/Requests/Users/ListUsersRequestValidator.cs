@@ -10,9 +10,7 @@ public class ListUsersRequestValidator : Validator<ListUsersRequest>
 {
     private readonly IValidator<PaginationDto> _paginationValidator;
 
-    public ListUsersRequestValidator(
-        IValidator<PaginationDto> paginationValidator
-    )
+    public ListUsersRequestValidator(IValidator<PaginationDto> paginationValidator)
     {
         _paginationValidator = paginationValidator;
         PropertyName.Push(nameof(ListUsersRequest));

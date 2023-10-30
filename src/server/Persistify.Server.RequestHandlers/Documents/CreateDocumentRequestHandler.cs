@@ -15,7 +15,8 @@ using Persistify.Server.Mappers.Documents;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
-public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocumentRequest, CreateDocumentResponse>
+public sealed class CreateDocumentRequestHandler
+    : RequestHandler<CreateDocumentRequest, CreateDocumentResponse>
 {
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly ITemplateManager _templateManager;
@@ -25,18 +26,21 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
         IRequestHandlerContext<CreateDocumentRequest, CreateDocumentResponse> requestHandlerContext,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(CreateDocumentRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        CreateDocumentRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ??
-                       throw new InternalPersistifyException(nameof(CreateDocumentRequest));
+        var template =
+            await _templateManager.GetAsync(request.TemplateName)
+            ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
         var fieldValues = new List<FieldValue>();
 
@@ -47,11 +51,15 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
 
         _document = new Document { FieldValues = fieldValues };
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ??
-                              throw new InternalPersistifyException(nameof(CreateDocumentRequest));
+        var documentManager =
+            _documentManagerStore.GetManager(template.Id)
+            ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest));
 
-        await RequestHandlerContext.CurrentTransaction
-            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await RequestHandlerContext.CurrentTransaction.PromoteManagerAsync(
+            documentManager,
+            true,
+            TransactionTimeout
+        );
 
         documentManager.Add(_document);
     }
@@ -60,7 +68,9 @@ public sealed class CreateDocumentRequestHandler : RequestHandler<CreateDocument
     {
         return new CreateDocumentResponse
         {
-            DocumentId = _document?.Id ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest))
+            DocumentId =
+                _document?.Id
+                ?? throw new InternalPersistifyException(nameof(CreateDocumentRequest))
         };
     }
 

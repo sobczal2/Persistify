@@ -18,8 +18,10 @@ public static class ListExtensions
         return result;
     }
 
-    public static async ValueTask<List<TTo>> ListSelectAsync<TFrom, TTo>(this List<TFrom> list,
-        Func<TFrom, ValueTask<TTo>> selector)
+    public static async ValueTask<List<TTo>> ListSelectAsync<TFrom, TTo>(
+        this List<TFrom> list,
+        Func<TFrom, ValueTask<TTo>> selector
+    )
     {
         var result = new List<TTo>(list.Count);
 

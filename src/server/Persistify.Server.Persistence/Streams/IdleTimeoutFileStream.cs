@@ -13,10 +13,7 @@ public class IdleTimeoutFileStream : Stream
     private CancellationTokenSource? _cancellationTokenSource;
     private FileStream? _fileStream;
 
-    public IdleTimeoutFileStream(
-        TimeSpan idleFileTimeout,
-        string filePath
-    )
+    public IdleTimeoutFileStream(TimeSpan idleFileTimeout, string filePath)
     {
         _filePath = filePath;
         _lock = new object();
@@ -77,7 +74,12 @@ public class IdleTimeoutFileStream : Stream
     {
         lock (_lock)
         {
-            _fileStream ??= new FileStream(_filePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+            _fileStream ??= new FileStream(
+                _filePath,
+                FileMode.Open,
+                FileAccess.ReadWrite,
+                FileShare.None
+            );
             CancelCloseFileTask();
             ScheduleCloseFile();
         }
@@ -92,19 +94,20 @@ public class IdleTimeoutFileStream : Stream
     private void ScheduleCloseFile()
     {
         _cancellationTokenSource = new CancellationTokenSource();
-        Task.Delay(_idleFileTimeout, _cancellationTokenSource.Token).ContinueWith(t =>
-        {
-            if (t.IsCanceled)
+        Task.Delay(_idleFileTimeout, _cancellationTokenSource.Token)
+            .ContinueWith(t =>
             {
-                return;
-            }
+                if (t.IsCanceled)
+                {
+                    return;
+                }
 
-            lock (_lock)
-            {
-                _fileStream?.Dispose();
-                _fileStream = null;
-            }
-        });
+                lock (_lock)
+                {
+                    _fileStream?.Dispose();
+                    _fileStream = null;
+                }
+            });
     }
 
     public override void Flush()

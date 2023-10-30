@@ -1,4 +1,7 @@
-﻿namespace Persistify.Client.LowLevel.Core;
+﻿using Grpc.Net.Client;
+using ProtoBuf.Grpc.Client;
+
+namespace Persistify.Client.LowLevel.Core;
 
 public class PersistifyClientBuilder
 {
@@ -30,8 +33,18 @@ public class PersistifyClientBuilder
 
     public IPersistifyLowLevelClient BuildLowLevel()
     {
+        GrpcClientFactory.AllowUnencryptedHttp2 = true;
+        var httpClientHandler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        };
+        var httpClient = new HttpClient(httpClientHandler);
+        var baseUri = new Uri(_baseAddress.ToString().TrimEnd('/'));
+        httpClient.BaseAddress = baseUri;
+
         return new PersistifyLowLevelClient(
-            _baseAddress,
+            GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient }),
             _persistifyCredentials
         );
     }

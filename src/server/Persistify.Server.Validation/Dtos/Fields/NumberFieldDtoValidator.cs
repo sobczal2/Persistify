@@ -18,13 +18,17 @@ public class NumberFieldDtoValidator : Validator<NumberFieldDto>
         if (string.IsNullOrEmpty(value.Name))
         {
             PropertyName.Push(nameof(NumberFieldDto.Name));
-            return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(TemplateErrorMessages.NameEmpty)
+            );
         }
 
         if (value.Name.Length > 64)
         {
             PropertyName.Push(nameof(NumberFieldDto.Name));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

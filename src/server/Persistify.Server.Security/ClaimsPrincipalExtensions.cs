@@ -7,13 +7,14 @@ namespace Persistify.Server.Security;
 
 public static class ClaimsPrincipalExtensions
 {
-    public static ClaimsPrincipal InternalClaimsPrincipal => GetClaimsPrincipal(0, "Internal", Permission.All);
-    public static ClaimsPrincipal UnknownClaimsPrincipal => GetClaimsPrincipal(-1, "Unknown", Permission.None);
+    public static ClaimsPrincipal InternalClaimsPrincipal =>
+        GetClaimsPrincipal(0, "Internal", Permission.All);
+    public static ClaimsPrincipal UnknownClaimsPrincipal =>
+        GetClaimsPrincipal(-1, "Unknown", Permission.None);
 
     public static Permission GetPermission(this ClaimsPrincipal claimsPrincipal)
     {
-        var permissionClaim =
-            claimsPrincipal.FindFirst(ClaimTypes.Permission);
+        var permissionClaim = claimsPrincipal.FindFirst(ClaimTypes.Permission);
 
         if (permissionClaim is null)
         {
@@ -31,7 +32,8 @@ public static class ClaimsPrincipalExtensions
     public static ClaimsPrincipal GetClaimsPrincipal(int id, string username, Permission permission)
     {
         return new ClaimsPrincipal(
-            new ClaimsIdentity(new List<Claim>
+            new ClaimsIdentity(
+                new List<Claim>
                 {
                     new(ClaimTypes.Id, id.ToString()),
                     new(ClaimTypes.Username, username),

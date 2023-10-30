@@ -12,9 +12,7 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
 {
     private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
 
-    public FullAnalyzerDtoValidator(
-        IAnalyzerExecutorFactory analyzerExecutorFactory
-    )
+    public FullAnalyzerDtoValidator(IAnalyzerExecutorFactory analyzerExecutorFactory)
     {
         _analyzerExecutorFactory = analyzerExecutorFactory;
         PropertyName.Push(nameof(Analyzer));
@@ -28,13 +26,17 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
             if (string.IsNullOrEmpty(characterSetName))
             {
                 PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
-                return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
+                return ValueTask.FromResult<Result>(
+                    StaticValidationException(TemplateErrorMessages.NameEmpty)
+                );
             }
 
             if (characterSetName.Length > 64)
             {
                 PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
-                return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+                return ValueTask.FromResult<Result>(
+                    StaticValidationException(SharedErrorMessages.ValueTooLong)
+                );
             }
 
             count++;
@@ -46,13 +48,17 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
             if (string.IsNullOrEmpty(characterFilterName))
             {
                 PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
-                return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
+                return ValueTask.FromResult<Result>(
+                    StaticValidationException(TemplateErrorMessages.NameEmpty)
+                );
             }
 
             if (characterFilterName.Length > 64)
             {
                 PropertyName.Push($"{nameof(FullAnalyzerDto.CharacterSetNames)}[{count}]");
-                return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+                return ValueTask.FromResult<Result>(
+                    StaticValidationException(SharedErrorMessages.ValueTooLong)
+                );
             }
 
             count++;
@@ -61,13 +67,17 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
         if (string.IsNullOrEmpty(value.TokenizerName))
         {
             PropertyName.Push(nameof(FullAnalyzerDto.TokenizerName));
-            return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(TemplateErrorMessages.NameEmpty)
+            );
         }
 
         if (value.TokenizerName.Length > 64)
         {
             PropertyName.Push(nameof(FullAnalyzerDto.TokenizerName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         count = 0;
@@ -76,13 +86,17 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
             if (string.IsNullOrEmpty(tokenFilterName))
             {
                 PropertyName.Push($"{nameof(FullAnalyzerDto.TokenFilterNames)}[{count}]");
-                return ValueTask.FromResult<Result>(StaticValidationException(TemplateErrorMessages.NameEmpty));
+                return ValueTask.FromResult<Result>(
+                    StaticValidationException(TemplateErrorMessages.NameEmpty)
+                );
             }
 
             if (tokenFilterName.Length > 64)
             {
                 PropertyName.Push($"{nameof(FullAnalyzerDto.TokenFilterNames)}[{count}]");
-                return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+                return ValueTask.FromResult<Result>(
+                    StaticValidationException(SharedErrorMessages.ValueTooLong)
+                );
             }
 
             count++;

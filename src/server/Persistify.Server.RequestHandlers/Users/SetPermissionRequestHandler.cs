@@ -12,24 +12,28 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Users;
 
-public class SetPermissionRequestHandler : RequestHandler<SetPermissionRequest, SetPermissionResponse>
+public class SetPermissionRequestHandler
+    : RequestHandler<SetPermissionRequest, SetPermissionResponse>
 {
     private readonly IUserManager _userManager;
 
     public SetPermissionRequestHandler(
         IRequestHandlerContext<SetPermissionRequest, SetPermissionResponse> requestHandlerContext,
         IUserManager userManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _userManager = userManager;
     }
 
-    protected override async ValueTask RunAsync(SetPermissionRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        SetPermissionRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var user = await _userManager.GetAsync(request.Username) ??
-                   throw new InternalPersistifyException(nameof(SetPermissionRequest));
+        var user =
+            await _userManager.GetAsync(request.Username)
+            ?? throw new InternalPersistifyException(nameof(SetPermissionRequest));
 
         user.Permission = (Permission)request.Permission;
 
@@ -46,7 +50,8 @@ public class SetPermissionRequestHandler : RequestHandler<SetPermissionRequest, 
         return new TransactionDescriptor(
             false,
             new List<IManager>(),
-            new List<IManager> { _userManager });
+            new List<IManager> { _userManager }
+        );
     }
 
     protected override Permission GetRequiredPermission(SetPermissionRequest request)

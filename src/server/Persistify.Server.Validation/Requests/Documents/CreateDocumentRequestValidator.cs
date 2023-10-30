@@ -26,16 +26,20 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         ITemplateManager templateManager
     )
     {
-        _textFieldValueDtoValidator = textFieldValueDtoValidator ??
-                                      throw new ArgumentNullException(nameof(textFieldValueDtoValidator));
+        _textFieldValueDtoValidator =
+            textFieldValueDtoValidator
+            ?? throw new ArgumentNullException(nameof(textFieldValueDtoValidator));
         _textFieldValueDtoValidator.PropertyName = PropertyName;
-        _numberFieldValueDtoValidator = numberFieldValueDtoValidator ??
-                                        throw new ArgumentNullException(nameof(numberFieldValueDtoValidator));
+        _numberFieldValueDtoValidator =
+            numberFieldValueDtoValidator
+            ?? throw new ArgumentNullException(nameof(numberFieldValueDtoValidator));
         _numberFieldValueDtoValidator.PropertyName = PropertyName;
-        _boolFieldValueDtoValidator = boolFieldValueDtoValidator ??
-                                      throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
+        _boolFieldValueDtoValidator =
+            boolFieldValueDtoValidator
+            ?? throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
         _boolFieldValueDtoValidator.PropertyName = PropertyName;
-        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
+        _templateManager =
+            templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateDocumentRequest));
     }
 
@@ -74,14 +78,15 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             return DynamicValidationException(DocumentErrorMessages.TemplateNotFound);
         }
 
-
         for (var i = 0; i < value.FieldValueDtos.Count; i++)
         {
             PropertyName.Push($"{nameof(CreateDocumentRequest.FieldValueDtos)}[{i}]");
             switch (value.FieldValueDtos[i])
             {
                 case TextFieldValueDto textFieldValueDto:
-                    var textFieldValueDtoResult = await _textFieldValueDtoValidator.ValidateAsync(textFieldValueDto);
+                    var textFieldValueDtoResult = await _textFieldValueDtoValidator.ValidateAsync(
+                        textFieldValueDto
+                    );
                     if (!textFieldValueDtoResult.Success)
                     {
                         return textFieldValueDtoResult;
@@ -98,7 +103,9 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 
                     break;
                 case BoolFieldValueDto boolFieldValueDto:
-                    var boolFieldValueDtoResult = await _boolFieldValueDtoValidator.ValidateAsync(boolFieldValueDto);
+                    var boolFieldValueDtoResult = await _boolFieldValueDtoValidator.ValidateAsync(
+                        boolFieldValueDto
+                    );
                     if (!boolFieldValueDtoResult.Success)
                     {
                         return boolFieldValueDtoResult;

@@ -4,7 +4,6 @@ namespace Persistify.Server.Management.Transactions.Exceptions;
 
 public class TransactionStateCorruptedException : Exception
 {
-    public TransactionStateCorruptedException() : base("Transaction state corrupted")
-    {
-    }
+    public TransactionStateCorruptedException()
+        : base("Transaction state corrupted") { }
 }

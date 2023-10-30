@@ -11,9 +11,7 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 {
     private readonly ITemplateManager _templateManager;
 
-    public GetTemplateRequestValidator(
-        ITemplateManager templateManager
-    )
+    public GetTemplateRequestValidator(ITemplateManager templateManager)
     {
         _templateManager = templateManager;
         PropertyName.Push(nameof(GetTemplateRequest));
@@ -24,19 +22,25 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
         if (string.IsNullOrEmpty(value.TemplateName))
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.TemplateName.Length > 64)
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (!_templateManager.Exists(value.TemplateName))
         {
             PropertyName.Push(nameof(GetTemplateRequest.TemplateName));
-            return ValueTask.FromResult<Result>(DynamicValidationException(TemplateErrorMessages.TemplateNotFound));
+            return ValueTask.FromResult<Result>(
+                DynamicValidationException(TemplateErrorMessages.TemplateNotFound)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

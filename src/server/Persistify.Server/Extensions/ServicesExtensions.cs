@@ -23,21 +23,25 @@ namespace Persistify.Server.Extensions;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddServicesConfiguration(this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddServicesConfiguration(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
         services.Configure<HostOptions>(opt => opt.ShutdownTimeout = TimeSpan.FromMinutes(1));
         services.AddCodeFirstGrpc();
         services.AddCodeFirstGrpcReflection();
         services.AddGrpc(opt =>
         {
-            var grpcSettings = configuration
-                                   .GetRequiredSection(GrpcSettings.SectionName)
-                                   .Get<GrpcSettings>() ??
-                               throw new InvalidOperationException(
-                                   $"Could not load {GrpcSettings.SectionName} from configuration");
+            var grpcSettings =
+                configuration.GetRequiredSection(GrpcSettings.SectionName).Get<GrpcSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {GrpcSettings.SectionName} from configuration"
+                );
 
-            opt.ResponseCompressionLevel = Enum.Parse<CompressionLevel>(grpcSettings.ResponseCompressionLevel);
+            opt.ResponseCompressionLevel = Enum.Parse<CompressionLevel>(
+                grpcSettings.ResponseCompressionLevel
+            );
             opt.ResponseCompressionAlgorithm = grpcSettings.ResponseCompressionAlgorithm;
             opt.EnableDetailedErrors = grpcSettings.EnableDetailedErrors;
             opt.MaxReceiveMessageSize = grpcSettings.MaxReceiveMessageSize;
@@ -48,33 +52,45 @@ public static class ServicesExtensions
         services.AddAuthorization();
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                var tokenSettings = configuration
-                                        .GetRequiredSection(TokenSettings.SectionName)
-                                        .Get<TokenSettings>() ??
-                                    throw new InvalidOperationException(
-                                        $"Could not load {TokenSettings.SectionName} from configuration");
-
-                var clock = services.BuildServiceProvider().GetRequiredService<IClock>();
-
-                options.TokenValidationParameters = new TokenValidationParameters
+            .AddJwtBearer(
+                JwtBearerDefaults.AuthenticationScheme,
+                options =>
                 {
-                    ValidateLifetime = true,
-                    LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+                    var tokenSettings =
+                        configuration
+                            .GetRequiredSection(TokenSettings.SectionName)
+                            .Get<TokenSettings>()
+                        ?? throw new InvalidOperationException(
+                            $"Could not load {TokenSettings.SectionName} from configuration"
+                        );
+
+                    var clock = services.BuildServiceProvider().GetRequiredService<IClock>();
+
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        var now = clock.UtcNow;
-                        return notBefore <= now && expires >= now;
-                    },
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenSettings.Secret)),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    RequireExpirationTime = true,
-                    RequireSignedTokens = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+                        ValidateLifetime = true,
+                        LifetimeValidator = (
+                            notBefore,
+                            expires,
+                            securityToken,
+                            validationParameters
+                        ) =>
+                        {
+                            var now = clock.UtcNow;
+                            return notBefore <= now && expires >= now;
+                        },
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(tokenSettings.Secret)
+                        ),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        RequireExpirationTime = true,
+                        RequireSignedTokens = true,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                }
+            );
 
         services.AddSerialization(configuration);
         services.AddValidation();

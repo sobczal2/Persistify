@@ -13,41 +13,60 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
-public class SearchDocumentsRequestHandler : RequestHandler<SearchDocumentsRequest, SearchDocumentsResponse>
+public class SearchDocumentsRequestHandler
+    : RequestHandler<SearchDocumentsRequest, SearchDocumentsResponse>
 {
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly ITemplateManager _templateManager;
     private SearchDocumentsResponse? _response;
 
     public SearchDocumentsRequestHandler(
-        IRequestHandlerContext<SearchDocumentsRequest, SearchDocumentsResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            SearchDocumentsRequest,
+            SearchDocumentsResponse
+        > requestHandlerContext,
         IDocumentManagerStore documentManagerStore,
         ITemplateManager templateManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _documentManagerStore = documentManagerStore;
         _templateManager = templateManager;
     }
 
-    protected override async ValueTask RunAsync(SearchDocumentsRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        SearchDocumentsRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ??
-                       throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
+        var template =
+            await _templateManager.GetAsync(request.TemplateName)
+            ?? throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
 
         var skip = request.PaginationDto.PageNumber * request.PaginationDto.PageSize;
         var take = request.PaginationDto.PageSize;
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ??
-                              throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
+        var documentManager =
+            _documentManagerStore.GetManager(template.Id)
+            ?? throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
 
-        await RequestHandlerContext.CurrentTransaction
-            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await RequestHandlerContext.CurrentTransaction.PromoteManagerAsync(
+            documentManager,
+            true,
+            TransactionTimeout
+        );
 
-        var (searchRecords, count) = await documentManager.SearchAsync(request.SearchQueryDto, take, skip);
+        var (searchRecords, count) = await documentManager.SearchAsync(
+            request.SearchQueryDto,
+            take,
+            skip
+        );
 
-        _response = new SearchDocumentsResponse { SearchRecordDtos = searchRecords, TotalCount = count };
+        _response = new SearchDocumentsResponse
+        {
+            SearchRecordDtos = searchRecords,
+            TotalCount = count
+        };
     }
 
     protected override SearchDocumentsResponse GetResponse()
@@ -55,7 +74,9 @@ public class SearchDocumentsRequestHandler : RequestHandler<SearchDocumentsReque
         return _response ?? throw new InternalPersistifyException(nameof(SearchDocumentsRequest));
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(SearchDocumentsRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        SearchDocumentsRequest request
+    )
     {
         return new TransactionDescriptor(
             false,

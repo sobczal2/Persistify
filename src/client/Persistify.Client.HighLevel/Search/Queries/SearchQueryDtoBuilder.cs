@@ -74,6 +74,7 @@ public class SearchQueryDtoBuilder<TDocument>
 
     internal SearchQueryDto Build()
     {
-        return SearchQueryDto ?? throw new PersistifyHighLevelClientException("Search query is not set");
+        return SearchQueryDto
+            ?? throw new PersistifyHighLevelClientException("Search query is not set");
     }
 }

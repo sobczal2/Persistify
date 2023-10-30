@@ -2,9 +2,6 @@
 
 public class PersistifyLowLevelClientException : Exception
 {
-    public PersistifyLowLevelClientException(
-        string message
-    ) : base(message)
-    {
-    }
+    public PersistifyLowLevelClientException(string message)
+        : base(message) { }
 }

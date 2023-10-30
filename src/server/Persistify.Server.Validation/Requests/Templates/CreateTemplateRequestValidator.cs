@@ -28,12 +28,14 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
             textFieldDtoValidator ?? throw new ArgumentNullException(nameof(textFieldDtoValidator));
         _textFieldDtoValidator.PropertyName = PropertyName;
         _numberFieldDtoValidator =
-            numberFieldDtoValidator ?? throw new ArgumentNullException(nameof(numberFieldDtoValidator));
+            numberFieldDtoValidator
+            ?? throw new ArgumentNullException(nameof(numberFieldDtoValidator));
         _numberFieldDtoValidator.PropertyName = PropertyName;
         _boolFieldDtoValidator =
             boolFieldDtoValidator ?? throw new ArgumentNullException(nameof(boolFieldDtoValidator));
         _boolFieldDtoValidator.PropertyName = PropertyName;
-        _templateManager = templateManager ?? throw new ArgumentNullException(nameof(templateManager));
+        _templateManager =
+            templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateTemplateRequest));
     }
 
@@ -76,7 +78,9 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
             switch (value.Fields[i])
             {
                 case TextFieldDto textFieldValue:
-                    var textFieldDtoResult = await _textFieldDtoValidator.ValidateAsync(textFieldValue);
+                    var textFieldDtoResult = await _textFieldDtoValidator.ValidateAsync(
+                        textFieldValue
+                    );
                     if (!textFieldDtoResult.Success)
                     {
                         return textFieldDtoResult;
@@ -84,7 +88,9 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 
                     break;
                 case NumberFieldDto numberFieldValue:
-                    var numberFieldDtoResult = await _numberFieldDtoValidator.ValidateAsync(numberFieldValue);
+                    var numberFieldDtoResult = await _numberFieldDtoValidator.ValidateAsync(
+                        numberFieldValue
+                    );
                     if (!numberFieldDtoResult.Success)
                     {
                         return numberFieldDtoResult;
@@ -92,7 +98,9 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 
                     break;
                 case BoolFieldDto boolFieldValue:
-                    var boolFieldDtoResult = await _boolFieldDtoValidator.ValidateAsync(boolFieldValue);
+                    var boolFieldDtoResult = await _boolFieldDtoValidator.ValidateAsync(
+                        boolFieldValue
+                    );
                     if (!boolFieldDtoResult.Success)
                     {
                         return boolFieldDtoResult;

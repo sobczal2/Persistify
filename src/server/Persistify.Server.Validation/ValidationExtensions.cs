@@ -11,14 +11,26 @@ public static class ValidationExtensions
     {
         var assembly = Assembly.GetExecutingAssembly();
 
-        var validatorTypes = assembly.GetTypes()
-            .Where(t => t is { IsClass: true, IsAbstract: false } && t.GetInterfaces()
-                .Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidator<>)));
+        var validatorTypes = assembly
+            .GetTypes()
+            .Where(
+                t =>
+                    t is { IsClass: true, IsAbstract: false }
+                    && t.GetInterfaces()
+                        .Any(
+                            i =>
+                                i.IsGenericType
+                                && i.GetGenericTypeDefinition() == typeof(IValidator<>)
+                        )
+            );
 
         foreach (var validatorType in validatorTypes)
         {
-            var interfaceType = validatorType.GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidator<>));
+            var interfaceType = validatorType
+                .GetInterfaces()
+                .First(
+                    i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidator<>)
+                );
 
             services.AddTransient(interfaceType, validatorType);
         }

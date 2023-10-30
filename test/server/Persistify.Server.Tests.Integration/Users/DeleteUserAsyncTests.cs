@@ -26,8 +26,10 @@ public class DeleteUserAsyncTests : IntegrationTestBase
         response.Should().NotBeNull();
         try
         {
-            var getUserResponse =
-                await UserService.GetUserAsync(new GetUserRequest { Username = request.Username }, callContext);
+            var getUserResponse = await UserService.GetUserAsync(
+                new GetUserRequest { Username = request.Username },
+                callContext
+            );
             getUserResponse.Should().BeNull();
         }
         catch (RpcException ex)

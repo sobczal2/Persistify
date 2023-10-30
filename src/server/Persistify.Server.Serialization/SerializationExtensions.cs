@@ -9,9 +9,14 @@ namespace Persistify.Server.Serialization;
 
 public static class SerializationExtensions
 {
-    public static IServiceCollection AddSerialization(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddSerialization(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        var storageSettings = configuration.GetSection(StorageSettings.SectionName).Get<StorageSettings>()!;
+        var storageSettings = configuration
+            .GetSection(StorageSettings.SectionName)
+            .Get<StorageSettings>()!;
 
         switch (storageSettings.SerializerType)
         {

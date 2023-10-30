@@ -27,9 +27,20 @@ public class SuffixTokenFilter : ITokenFilter
                 var suffix = suffixSpan.ToString();
 
                 var charsCut = j;
-                tokens.Add(new IndexToken(suffix, token.Alphabet,
-                    token.DocumentPositions.Select(x => new DocumentPosition(x.DocumentId, x.Position + charsCut,
-                        (token.Term.Length - charsCut) / (float)token.Term.Length))));
+                tokens.Add(
+                    new IndexToken(
+                        suffix,
+                        token.Alphabet,
+                        token.DocumentPositions.Select(
+                            x =>
+                                new DocumentPosition(
+                                    x.DocumentId,
+                                    x.Position + charsCut,
+                                    (token.Term.Length - charsCut) / (float)token.Term.Length
+                                )
+                        )
+                    )
+                );
             }
         }
 

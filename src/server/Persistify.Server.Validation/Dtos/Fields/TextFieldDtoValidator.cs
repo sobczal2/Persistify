@@ -59,8 +59,9 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
         else if (value.AnalyzerDto is FullAnalyzerDto fullAnalyzerDto)
         {
             PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
-            var fullAnalyzerDtoValidator =
-                await _fullAnalyzerDtoValidator.ValidateAsync(fullAnalyzerDto);
+            var fullAnalyzerDtoValidator = await _fullAnalyzerDtoValidator.ValidateAsync(
+                fullAnalyzerDto
+            );
             PropertyName.Pop();
             if (fullAnalyzerDtoValidator.Failure)
             {

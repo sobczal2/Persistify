@@ -12,7 +12,8 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Templates;
 
-public class ExistsTemplateRequestHandler : RequestHandler<ExistsTemplateRequest, ExistsTemplateResponse>
+public class ExistsTemplateRequestHandler
+    : RequestHandler<ExistsTemplateRequest, ExistsTemplateResponse>
 {
     private readonly ITemplateManager _templateManager;
     private bool? _exists;
@@ -20,14 +21,16 @@ public class ExistsTemplateRequestHandler : RequestHandler<ExistsTemplateRequest
     public ExistsTemplateRequestHandler(
         IRequestHandlerContext<ExistsTemplateRequest, ExistsTemplateResponse> requestHandlerContext,
         ITemplateManager templateManager
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
     }
 
-    protected override ValueTask RunAsync(ExistsTemplateRequest request, CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        ExistsTemplateRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _exists = _templateManager.Exists(request.TemplateName);
 

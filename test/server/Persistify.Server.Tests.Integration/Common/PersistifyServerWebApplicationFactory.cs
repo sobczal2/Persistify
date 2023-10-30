@@ -15,13 +15,16 @@ public class PersistifyServerWebApplicationFactory : WebApplicationFactory<Progr
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         _dataDirectoryInfo = Directory.CreateTempSubdirectory();
-        builder.UseConfiguration(new ConfigurationBuilder()
-            .AddJsonFile("appsettings.Testing.json")
-            .AddInMemoryCollection(new Dictionary<string, string>
-            {
-                { "Storage:DataPath", _dataDirectoryInfo.FullName }
-            }!)
-            .Build()
+        builder.UseConfiguration(
+            new ConfigurationBuilder()
+                .AddJsonFile("appsettings.Testing.json")
+                .AddInMemoryCollection(
+                    new Dictionary<string, string>
+                    {
+                        { "Storage:DataPath", _dataDirectoryInfo.FullName }
+                    }!
+                )
+                .Build()
         );
 
         builder.ConfigureLogging(cfg =>

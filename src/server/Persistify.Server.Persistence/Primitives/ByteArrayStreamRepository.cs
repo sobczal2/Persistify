@@ -16,10 +16,7 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
     private readonly SemaphoreSlim _semaphore;
     private readonly Stream _stream;
 
-    public ByteArrayStreamRepository(
-        Stream stream,
-        int size
-    )
+    public ByteArrayStreamRepository(Stream stream, int size)
     {
         if (size <= 0)
         {
@@ -49,10 +46,16 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => ReadAsyncImpl(key)) : await ReadAsyncImpl(key);
+        return useLock
+            ? await _semaphore.WrapAsync(() => ReadAsyncImpl(key))
+            : await ReadAsyncImpl(key);
     }
 
-    public async IAsyncEnumerable<(int key, byte[] value)> ReadRangeAsync(int take, int skip, bool useLock)
+    public async IAsyncEnumerable<(int key, byte[] value)> ReadRangeAsync(
+        int take,
+        int skip,
+        bool useLock
+    )
     {
         if (take <= 0)
         {
@@ -110,7 +113,11 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentException(nameof(value));
         }
 
-        await (useLock ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value)) : WriteAsyncImpl(key, value));
+        await (
+            useLock
+                ? _semaphore.WrapAsync(() => WriteAsyncImpl(key, value))
+                : WriteAsyncImpl(key, value)
+        );
     }
 
     public async ValueTask<bool> DeleteAsync(int key, bool useLock)
@@ -120,7 +127,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             throw new ArgumentOutOfRangeException(nameof(key));
         }
 
-        return useLock ? await _semaphore.WrapAsync(() => DeleteAsyncImpl(key)) : await DeleteAsyncImpl(key);
+        return useLock
+            ? await _semaphore.WrapAsync(() => DeleteAsyncImpl(key))
+            : await DeleteAsyncImpl(key);
     }
 
     public void Clear(bool useLock)

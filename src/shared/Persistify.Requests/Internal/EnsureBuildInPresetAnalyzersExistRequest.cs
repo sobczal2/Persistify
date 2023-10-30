@@ -3,6 +3,5 @@ using Persistify.Responses.Internal;
 
 namespace Persistify.Requests.Internal;
 
-public class EnsureBuildInPresetAnalyzersExistRequest : IRequest<EnsureBuildInPresetAnalyzersExistResponse>
-{
-}
+public class EnsureBuildInPresetAnalyzersExistRequest
+    : IRequest<EnsureBuildInPresetAnalyzersExistResponse> { }

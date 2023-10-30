@@ -23,7 +23,8 @@ public sealed class Transaction : ITransaction
     {
         _transactionDescriptor =
             transactionDescriptor ?? throw new ArgumentNullException(nameof(transactionDescriptor));
-        _transactionState = transactionState ?? throw new ArgumentNullException(nameof(transactionState));
+        _transactionState =
+            transactionState ?? throw new ArgumentNullException(nameof(transactionState));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         Id = Guid.NewGuid();
@@ -34,8 +35,7 @@ public sealed class Transaction : ITransaction
 
     public TransactionPhase Phase { get; private set; }
 
-    public async ValueTask BeginAsync(TimeSpan timeOut,
-        CancellationToken cancellationToken)
+    public async ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken)
     {
         _logger.LogDebug("Begin transaction {TransactionId}", Id);
 
@@ -51,11 +51,15 @@ public sealed class Transaction : ITransaction
 
         if (_transactionDescriptor.ExclusiveGlobal)
         {
-            await _transactionState.EnterWriteGlobalLockAsync(Id, timeOut, cancellationToken).ConfigureAwait(false);
+            await _transactionState
+                .EnterWriteGlobalLockAsync(Id, timeOut, cancellationToken)
+                .ConfigureAwait(false);
         }
         else
         {
-            await _transactionState.EnterReadGlobalLockAsync(Id, timeOut, cancellationToken).ConfigureAwait(false);
+            await _transactionState
+                .EnterReadGlobalLockAsync(Id, timeOut, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         foreach (var readManager in _transactionDescriptor.ReadManagers)
@@ -75,8 +79,12 @@ public sealed class Transaction : ITransaction
 
     public async ValueTask PromoteManagerAsync(IManager manager, bool write, TimeSpan timeOut)
     {
-        _logger.LogDebug("Promote manager {ManagerName} to {Write} in transaction {TransactionId}",
-            manager.Name, write ? "write" : "read", Id);
+        _logger.LogDebug(
+            "Promote manager {ManagerName} to {Write} in transaction {TransactionId}",
+            manager.Name,
+            write ? "write" : "read",
+            Id
+        );
 
         if (Phase != TransactionPhase.Started)
         {
@@ -109,8 +117,12 @@ public sealed class Transaction : ITransaction
             _transactionDescriptor.AddReadManager(manager);
         }
 
-        _logger.LogDebug("Manager {ManagerName} promoted to {Write} in transaction {TransactionId}",
-            manager.Name, write ? "write" : "read", Id);
+        _logger.LogDebug(
+            "Manager {ManagerName} promoted to {Write} in transaction {TransactionId}",
+            manager.Name,
+            write ? "write" : "read",
+            Id
+        );
     }
 
     public async ValueTask CommitAsync()
@@ -137,9 +149,12 @@ public sealed class Transaction : ITransaction
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception,
+                _logger.LogError(
+                    exception,
                     "Error occurred while executing pending actions for manager {ManagerName} in transaction {TransactionId}",
-                    writeManager.Name, Id);
+                    writeManager.Name,
+                    Id
+                );
                 throw;
             }
         }

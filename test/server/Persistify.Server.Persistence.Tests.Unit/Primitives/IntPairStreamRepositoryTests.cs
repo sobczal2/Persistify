@@ -131,13 +131,17 @@ public class IntPairStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var skip = -1;
 
         // Act
-        var action = new Func<Task>(async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync());
+        var action = new Func<Task>(
+            async () => await _sut.ReadRangeAsync(1000, skip, useLock).ToListAsync()
+        );
 
         // Assert
         await action.Should().ThrowAsync<ArgumentOutOfRangeException>();
@@ -278,7 +282,9 @@ public class IntPairStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task WriteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var id = -1;
@@ -349,7 +355,9 @@ public class IntPairStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task DeleteAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var id = -1;
@@ -421,7 +429,9 @@ public class IntPairStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ReturnsFalse(bool useLock)
+    public async Task DeleteAsync_WhenIdBelongsToStreamButIsAlreadyDeleted_ReturnsFalse(
+        bool useLock
+    )
     {
         // Arrange
         var id1 = 0;

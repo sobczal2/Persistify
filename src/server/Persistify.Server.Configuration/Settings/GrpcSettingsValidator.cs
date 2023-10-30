@@ -8,7 +8,9 @@ public class GrpcSettingsValidator : AbstractValidator<GrpcSettings>
     {
         RuleFor(x => x.ResponseCompressionLevel)
             .Matches(@"^(Optimal|Fastest|NoCompression|SmallestSize)$")
-            .WithMessage("The compression level must be either Optimal, Fastest, NoCompression or SmallestSize");
+            .WithMessage(
+                "The compression level must be either Optimal, Fastest, NoCompression or SmallestSize"
+            );
 
         RuleFor(x => x.ResponseCompressionAlgorithm)
             .Matches(@"^(gzip|Identity)$")

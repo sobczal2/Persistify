@@ -27,10 +27,7 @@ public class LocalFileProviderTests : IDisposable
         _storageSettings = Substitute.For<IOptions<StorageSettings>>();
         _storageSettings.Value.Returns(new StorageSettings { DataPath = _tempDirectoryPath });
 
-        _sut = new LocalFileProvider(
-            _logger,
-            _storageSettings
-        );
+        _sut = new LocalFileProvider(_logger, _storageSettings);
     }
 
     public void Dispose()
@@ -50,10 +47,7 @@ public class LocalFileProviderTests : IDisposable
         // Act
         var action = new Action(() =>
         {
-            var unused = new LocalFileProvider(
-                logger,
-                _storageSettings
-            );
+            var unused = new LocalFileProvider(logger, _storageSettings);
         });
 
         // Assert
@@ -69,10 +63,7 @@ public class LocalFileProviderTests : IDisposable
         // Act
         var action = new Action(() =>
         {
-            var unused = new LocalFileProvider(
-                _logger,
-                storageSettings
-            );
+            var unused = new LocalFileProvider(_logger, storageSettings);
         });
 
         // Assert
@@ -129,7 +120,9 @@ public class LocalFileProviderTests : IDisposable
         // Arrange
         var relativePath = "test/test.txt";
         var absolutePath = Path.Combine(_tempDirectoryPath, relativePath);
-        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should()
+        Directory
+            .Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException())
+            .Should()
             .BeFalse();
         File.Exists(absolutePath).Should().BeFalse();
 
@@ -137,7 +130,9 @@ public class LocalFileProviderTests : IDisposable
         _sut.Create(relativePath);
 
         // Assert
-        Directory.Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException()).Should()
+        Directory
+            .Exists(Path.GetDirectoryName(absolutePath) ?? throw new InvalidOperationException())
+            .Should()
             .BeTrue();
         File.Exists(absolutePath).Should().BeTrue();
     }

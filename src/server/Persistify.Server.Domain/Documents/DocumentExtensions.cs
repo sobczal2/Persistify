@@ -8,7 +8,10 @@ public static class DocumentExtensions
         return fieldValue as BoolFieldValue;
     }
 
-    public static NumberFieldValue? GetNumberFieldValueByName(this Document document, string fieldName)
+    public static NumberFieldValue? GetNumberFieldValueByName(
+        this Document document,
+        string fieldName
+    )
     {
         var fieldValue = document.GetFieldValueByName(fieldName);
         return fieldValue as NumberFieldValue;

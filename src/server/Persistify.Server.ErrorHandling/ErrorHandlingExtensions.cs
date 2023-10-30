@@ -10,7 +10,10 @@ public static class ErrorHandlingExtensions
     public static IServiceCollection AddErrorHandling(this IServiceCollection services)
     {
         services.AddSingleton<IExceptionHandler, GrpcExceptionHandler>();
-        services.AddSingleton<IPersistifyErrorCodeMapper<StatusCode>, GrpcPersistifyErrorCodeMapper>();
+        services.AddSingleton<
+            IPersistifyErrorCodeMapper<StatusCode>,
+            GrpcPersistifyErrorCodeMapper
+        >();
 
         return services;
     }

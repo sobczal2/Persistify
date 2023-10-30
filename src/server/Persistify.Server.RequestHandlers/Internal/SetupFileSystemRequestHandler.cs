@@ -11,21 +11,27 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class SetupFileSystemRequestHandler : RequestHandler<SetupFileSystemRequest, SetupFileSystemResponse>
+public class SetupFileSystemRequestHandler
+    : RequestHandler<SetupFileSystemRequest, SetupFileSystemResponse>
 {
     private readonly IFileHandler _fileHandler;
 
     public SetupFileSystemRequestHandler(
-        IRequestHandlerContext<SetupFileSystemRequest, SetupFileSystemResponse> requestHandlerContext,
+        IRequestHandlerContext<
+            SetupFileSystemRequest,
+            SetupFileSystemResponse
+        > requestHandlerContext,
         IFileHandler fileHandler
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _fileHandler = fileHandler;
     }
 
-    protected override async ValueTask RunAsync(SetupFileSystemRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        SetupFileSystemRequest request,
+        CancellationToken cancellationToken
+    )
     {
         _fileHandler.EnsureRequiredFiles();
 
@@ -37,13 +43,11 @@ public class SetupFileSystemRequestHandler : RequestHandler<SetupFileSystemReque
         return new SetupFileSystemResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(SetupFileSystemRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        SetupFileSystemRequest request
+    )
     {
-        return new TransactionDescriptor(
-            true,
-            new List<IManager>(),
-            new List<IManager>()
-        );
+        return new TransactionDescriptor(true, new List<IManager>(), new List<IManager>());
     }
 
     protected override Permission GetRequiredPermission(SetupFileSystemRequest request)

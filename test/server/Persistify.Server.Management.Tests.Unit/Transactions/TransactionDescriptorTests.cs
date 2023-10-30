@@ -18,7 +18,9 @@ public class TransactionDescriptorTests
         var writeManagers = new List<IManager>();
 
         // Act
-        var exception = Record.Exception(() => new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers));
+        var exception = Record.Exception(
+            () => new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers)
+        );
 
         // Assert
         Assert.NotNull(exception);
@@ -34,7 +36,9 @@ public class TransactionDescriptorTests
         List<IManager> writeManagers = null!;
 
         // Act
-        var exception = Record.Exception(() => new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers));
+        var exception = Record.Exception(
+            () => new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers)
+        );
 
         // Assert
         Assert.NotNull(exception);
@@ -50,7 +54,11 @@ public class TransactionDescriptorTests
         var writeManagers = new List<IManager>();
 
         // Act
-        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var transactionDescriptor = new TransactionDescriptor(
+            exclusiveGlobal,
+            readManagers,
+            writeManagers
+        );
 
         // Assert
         Assert.Equal(exclusiveGlobal, transactionDescriptor.ExclusiveGlobal);
@@ -65,7 +73,11 @@ public class TransactionDescriptorTests
         var exclusiveGlobal = false;
         var readManagers = new List<IManager>();
         var writeManagers = new List<IManager>();
-        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var transactionDescriptor = new TransactionDescriptor(
+            exclusiveGlobal,
+            readManagers,
+            writeManagers
+        );
         IManager manager = null!;
 
         // Act
@@ -83,7 +95,11 @@ public class TransactionDescriptorTests
         var exclusiveGlobal = false;
         var readManagers = new List<IManager>();
         var writeManagers = new List<IManager>();
-        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var transactionDescriptor = new TransactionDescriptor(
+            exclusiveGlobal,
+            readManagers,
+            writeManagers
+        );
         var manager = Substitute.For<IManager>();
 
         // Act
@@ -100,7 +116,11 @@ public class TransactionDescriptorTests
         var exclusiveGlobal = false;
         var readManagers = new List<IManager>();
         var writeManagers = new List<IManager>();
-        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var transactionDescriptor = new TransactionDescriptor(
+            exclusiveGlobal,
+            readManagers,
+            writeManagers
+        );
         IManager manager = null!;
 
         // Act
@@ -118,7 +138,11 @@ public class TransactionDescriptorTests
         var exclusiveGlobal = false;
         var readManagers = new List<IManager>();
         var writeManagers = new List<IManager>();
-        var transactionDescriptor = new TransactionDescriptor(exclusiveGlobal, readManagers, writeManagers);
+        var transactionDescriptor = new TransactionDescriptor(
+            exclusiveGlobal,
+            readManagers,
+            writeManagers
+        );
         var manager = Substitute.For<IManager>();
 
         // Act

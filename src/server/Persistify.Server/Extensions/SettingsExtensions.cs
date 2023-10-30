@@ -8,72 +8,92 @@ namespace Persistify.Server.Extensions;
 
 public static class SettingsExtensions
 {
-    public static IServiceCollection AddSettingsConfiguration(this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddSettingsConfiguration(
+        this IServiceCollection services,
+        IConfiguration configuration
+    )
     {
-        var grpcSettingsSection = configuration
-            .GetRequiredSection(GrpcSettings.SectionName);
+        var grpcSettingsSection = configuration.GetRequiredSection(GrpcSettings.SectionName);
         var grpcSettingsValidator = new GrpcSettingsValidator();
-        grpcSettingsValidator.ValidateAndThrow(grpcSettingsSection.Get<GrpcSettings>() ??
-                                               throw new InvalidOperationException(
-                                                   $"Could not load {GrpcSettings.SectionName} from configuration"));
+        grpcSettingsValidator.ValidateAndThrow(
+            grpcSettingsSection.Get<GrpcSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {GrpcSettings.SectionName} from configuration"
+                )
+        );
         services.Configure<GrpcSettings>(grpcSettingsSection);
 
-        var storageSettingsSection = configuration
-            .GetRequiredSection(StorageSettings.SectionName);
+        var storageSettingsSection = configuration.GetRequiredSection(StorageSettings.SectionName);
         var storageSettingsValidator = new StorageSettingsValidator();
-        storageSettingsValidator.ValidateAndThrow(storageSettingsSection.Get<StorageSettings>() ??
-                                                  throw new InvalidOperationException(
-                                                      $"Could not load {StorageSettings.SectionName} from configuration"));
+        storageSettingsValidator.ValidateAndThrow(
+            storageSettingsSection.Get<StorageSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {StorageSettings.SectionName} from configuration"
+                )
+        );
         services.Configure<StorageSettings>(storageSettingsSection);
 
-        var loggingSettingsSection = configuration
-            .GetRequiredSection(LoggingSettings.SectionName);
+        var loggingSettingsSection = configuration.GetRequiredSection(LoggingSettings.SectionName);
 
         var loggingSettingsValidator = new LoggingSettingsValidator();
-        loggingSettingsValidator.ValidateAndThrow(loggingSettingsSection.Get<LoggingSettings>() ??
-                                                  throw new InvalidOperationException(
-                                                      $"Could not load {LoggingSettings.SectionName} from configuration"));
+        loggingSettingsValidator.ValidateAndThrow(
+            loggingSettingsSection.Get<LoggingSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {LoggingSettings.SectionName} from configuration"
+                )
+        );
 
         services.Configure<LoggingSettings>(loggingSettingsSection);
 
-        var repositorySettingsSection = configuration
-            .GetRequiredSection(RepositorySettings.SectionName);
+        var repositorySettingsSection = configuration.GetRequiredSection(
+            RepositorySettings.SectionName
+        );
 
         var repositorySettingsValidator = new RepositorySettingsValidator();
-        repositorySettingsValidator.ValidateAndThrow(repositorySettingsSection.Get<RepositorySettings>() ??
-                                                     throw new InvalidOperationException(
-                                                         $"Could not load {RepositorySettings.SectionName} from configuration"));
+        repositorySettingsValidator.ValidateAndThrow(
+            repositorySettingsSection.Get<RepositorySettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {RepositorySettings.SectionName} from configuration"
+                )
+        );
 
         services.Configure<RepositorySettings>(repositorySettingsSection);
 
-        var passwordSettingsSection = configuration
-            .GetRequiredSection(PasswordSettings.SectionName);
+        var passwordSettingsSection = configuration.GetRequiredSection(
+            PasswordSettings.SectionName
+        );
 
         var passwordSettingsValidator = new PasswordSettingsValidator();
-        passwordSettingsValidator.ValidateAndThrow(passwordSettingsSection.Get<PasswordSettings>() ??
-                                                   throw new InvalidOperationException(
-                                                       $"Could not load {PasswordSettings.SectionName} from configuration"));
+        passwordSettingsValidator.ValidateAndThrow(
+            passwordSettingsSection.Get<PasswordSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {PasswordSettings.SectionName} from configuration"
+                )
+        );
 
         services.Configure<PasswordSettings>(passwordSettingsSection);
 
-        var tokenSettingsSection = configuration
-            .GetRequiredSection(TokenSettings.SectionName);
+        var tokenSettingsSection = configuration.GetRequiredSection(TokenSettings.SectionName);
 
         var tokenSettingsValidator = new TokenSettingsValidator();
-        tokenSettingsValidator.ValidateAndThrow(tokenSettingsSection.Get<TokenSettings>() ??
-                                                throw new InvalidOperationException(
-                                                    $"Could not load {TokenSettings.SectionName} from configuration"));
+        tokenSettingsValidator.ValidateAndThrow(
+            tokenSettingsSection.Get<TokenSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {TokenSettings.SectionName} from configuration"
+                )
+        );
 
         services.Configure<TokenSettings>(tokenSettingsSection);
 
-        var rootSettingsSection = configuration
-            .GetRequiredSection(RootSettings.SectionName);
+        var rootSettingsSection = configuration.GetRequiredSection(RootSettings.SectionName);
 
         var rootSettingsValidator = new RootSettingsValidator();
-        rootSettingsValidator.ValidateAndThrow(rootSettingsSection.Get<RootSettings>() ??
-                                               throw new InvalidOperationException(
-                                                   $"Could not load {RootSettings.SectionName} from configuration"));
+        rootSettingsValidator.ValidateAndThrow(
+            rootSettingsSection.Get<RootSettings>()
+                ?? throw new InvalidOperationException(
+                    $"Could not load {RootSettings.SectionName} from configuration"
+                )
+        );
 
         services.Configure<RootSettings>(rootSettingsSection);
 

@@ -23,16 +23,26 @@ public class TransactionState : ITransactionState
         return CurrentTransaction.Value ?? throw new TransactionStateCorruptedException();
     }
 
-    public async ValueTask<bool> EnterReadGlobalLockAsync(Guid transactionId, TimeSpan timeOut,
-        CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterReadGlobalLockAsync(
+        Guid transactionId,
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    )
     {
-        return await _globalLock.EnterReadLockAsync(transactionId, timeOut, cancellationToken).ConfigureAwait(false);
+        return await _globalLock
+            .EnterReadLockAsync(transactionId, timeOut, cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async ValueTask<bool> EnterWriteGlobalLockAsync(Guid transactionId, TimeSpan timeOut,
-        CancellationToken cancellationToken)
+    public async ValueTask<bool> EnterWriteGlobalLockAsync(
+        Guid transactionId,
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    )
     {
-        return await _globalLock.EnterWriteLockAsync(transactionId, timeOut, cancellationToken).ConfigureAwait(false);
+        return await _globalLock
+            .EnterWriteLockAsync(transactionId, timeOut, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async ValueTask ExitReadGlobalLockAsync(Guid transactionId)

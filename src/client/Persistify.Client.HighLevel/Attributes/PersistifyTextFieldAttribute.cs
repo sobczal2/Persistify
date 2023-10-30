@@ -10,7 +10,8 @@ public class PersistifyTextFieldAttribute : PersistifyFieldAttribute
         string? name = null,
         bool required = true,
         string? analyzerPresetName = null
-    ) : base(name, required)
+    )
+        : base(name, required)
     {
         AnalyzerPresetName = analyzerPresetName;
     }

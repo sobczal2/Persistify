@@ -288,9 +288,7 @@ public class ResultTTests
         var expected = new object();
 
         // Act
-        var actual = result.Match(
-            _ => expected,
-            _ => new object());
+        var actual = result.Match(_ => expected, _ => new object());
 
         // Assert
         actual.Should().Be(expected);
@@ -305,15 +303,11 @@ public class ResultTTests
         var expected = new object();
 
         // Act
-        var actual = result.Match(
-            _ => new object(),
-            _ => expected);
+        var actual = result.Match(_ => new object(), _ => expected);
 
         // Assert
         actual.Should().Be(expected);
     }
 
-    private class TestClassForResult
-    {
-    }
+    private class TestClassForResult { }
 }

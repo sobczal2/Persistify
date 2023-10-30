@@ -24,15 +24,18 @@ public class FileHandler : IFileHandler
         _fileProvider = fileProvider ?? throw new ArgumentNullException(nameof(fileProvider));
         _requiredFileGroups =
             requiredFileGroups ?? throw new ArgumentNullException(nameof(requiredFileGroups));
-        _fileGroupsForTemplate = fileGroupsForTemplate ??
-                                 throw new ArgumentNullException(nameof(fileGroupsForTemplate));
+        _fileGroupsForTemplate =
+            fileGroupsForTemplate ?? throw new ArgumentNullException(nameof(fileGroupsForTemplate));
     }
 
     public void EnsureRequiredFiles()
     {
         foreach (var fileGroup in _requiredFileGroups)
         {
-            _logger.LogTrace("Ensuring required files for {FileGroupName}", fileGroup.FileGroupName);
+            _logger.LogTrace(
+                "Ensuring required files for {FileGroupName}",
+                fileGroup.FileGroupName
+            );
             var fileNames = fileGroup.GetFileNames();
             foreach (var fileName in fileNames)
             {
@@ -53,8 +56,11 @@ public class FileHandler : IFileHandler
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {
-            _logger.LogTrace("Creating files for template {TemplateId} for {FileGroupName}", template.Id,
-                fileGroup.FileGroupName);
+            _logger.LogTrace(
+                "Creating files for template {TemplateId} for {FileGroupName}",
+                template.Id,
+                fileGroup.FileGroupName
+            );
             var fileNames = fileGroup.GetFileNamesForTemplate(template);
             foreach (var fileName in fileNames)
             {
@@ -74,8 +80,11 @@ public class FileHandler : IFileHandler
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {
-            _logger.LogTrace("Deleting files for template {TemplateId} for {FileGroupName}", template.Id,
-                fileGroup.FileGroupName);
+            _logger.LogTrace(
+                "Deleting files for template {TemplateId} for {FileGroupName}",
+                template.Id,
+                fileGroup.FileGroupName
+            );
             var fileNames = fileGroup.GetFileNamesForTemplate(template);
             foreach (var fileName in fileNames)
             {

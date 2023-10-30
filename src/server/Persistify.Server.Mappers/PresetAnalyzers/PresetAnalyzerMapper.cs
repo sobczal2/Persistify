@@ -7,6 +7,10 @@ public static class PresetAnalyzerMapper
 {
     public static PresetAnalyzerDto ToDto(this PresetAnalyzer presetAnalyzer)
     {
-        return new PresetAnalyzerDto { Name = presetAnalyzer.Name, FullAnalyzerDto = presetAnalyzer.Analyzer.ToDto() };
+        return new PresetAnalyzerDto
+        {
+            Name = presetAnalyzer.Name,
+            FullAnalyzerDto = presetAnalyzer.Analyzer.ToDto()
+        };
     }
 }

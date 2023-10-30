@@ -30,7 +30,12 @@ public class IdleTimeoutFileStreamTests : IDisposable
     {
         try
         {
-            using var stream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            using var stream = new FileStream(
+                _filePath,
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                FileShare.None
+            );
             stream.Close();
         }
         catch (IOException)

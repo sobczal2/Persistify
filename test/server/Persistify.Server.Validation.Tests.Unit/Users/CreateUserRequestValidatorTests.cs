@@ -101,7 +101,11 @@ public class CreateUserRequestValidatorTests
     public async Task Validate_WhenUsernameIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateUserRequest { Username = new string('a', 65), Password = "password" };
+        var request = new CreateUserRequest
+        {
+            Username = new string('a', 65),
+            Password = "password"
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);
@@ -170,7 +174,11 @@ public class CreateUserRequestValidatorTests
     public async Task Validate_WhenPasswordIsTooLong_ReturnsValidationException()
     {
         // Arrange
-        var request = new CreateUserRequest { Username = "username", Password = new string('a', 1025) };
+        var request = new CreateUserRequest
+        {
+            Username = "username",
+            Password = new string('a', 1025)
+        };
 
         // Act
         var result = await _sut.ValidateAsync(request);

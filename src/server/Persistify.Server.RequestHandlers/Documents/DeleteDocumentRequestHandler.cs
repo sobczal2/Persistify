@@ -14,7 +14,8 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Documents;
 
-public class DeleteDocumentRequestHandler : RequestHandler<DeleteDocumentRequest, DeleteDocumentResponse>
+public class DeleteDocumentRequestHandler
+    : RequestHandler<DeleteDocumentRequest, DeleteDocumentResponse>
 {
     private readonly IDocumentManagerStore _documentManagerStore;
     private readonly ITemplateManager _templateManager;
@@ -23,33 +24,43 @@ public class DeleteDocumentRequestHandler : RequestHandler<DeleteDocumentRequest
         IRequestHandlerContext<DeleteDocumentRequest, DeleteDocumentResponse> requestHandlerContext,
         ITemplateManager templateManager,
         IDocumentManagerStore documentManagerStore
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _templateManager = templateManager;
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(DeleteDocumentRequest request, CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        DeleteDocumentRequest request,
+        CancellationToken cancellationToken
+    )
     {
-        var template = await _templateManager.GetAsync(request.TemplateName) ??
-                       throw new NotFoundPersistifyException(nameof(DeleteDocumentRequest),
-                           DocumentErrorMessages.TemplateNotFound);
+        var template =
+            await _templateManager.GetAsync(request.TemplateName)
+            ?? throw new NotFoundPersistifyException(
+                nameof(DeleteDocumentRequest),
+                DocumentErrorMessages.TemplateNotFound
+            );
 
-        var documentManager = _documentManagerStore.GetManager(template.Id) ??
-                              throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
+        var documentManager =
+            _documentManagerStore.GetManager(template.Id)
+            ?? throw new InternalPersistifyException(nameof(DeleteDocumentRequest));
 
-        await RequestHandlerContext
-            .CurrentTransaction
-            .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+        await RequestHandlerContext.CurrentTransaction.PromoteManagerAsync(
+            documentManager,
+            true,
+            TransactionTimeout
+        );
 
         var result = await documentManager.RemoveAsync(request.DocumentId);
 
         if (!result)
         {
-            throw new NotFoundPersistifyException(nameof(DeleteDocumentRequest),
-                DocumentErrorMessages.DocumentNotFound);
+            throw new NotFoundPersistifyException(
+                nameof(DeleteDocumentRequest),
+                DocumentErrorMessages.DocumentNotFound
+            );
         }
     }
 

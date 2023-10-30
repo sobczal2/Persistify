@@ -17,9 +17,7 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
 {
     protected readonly IRequestHandlerContext<TRequest, TResponse> RequestHandlerContext;
 
-    public RequestHandler(
-        IRequestHandlerContext<TRequest, TResponse> requestHandlerContext
-    )
+    public RequestHandler(IRequestHandlerContext<TRequest, TResponse> requestHandlerContext)
     {
         RequestHandlerContext = requestHandlerContext;
     }
@@ -27,8 +25,11 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
     // TODO: move to config
     protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
 
-    public async ValueTask<TResponse> HandleAsync(TRequest request, ClaimsPrincipal claimsPrincipal,
-        CancellationToken cancellationToken)
+    public async ValueTask<TResponse> HandleAsync(
+        TRequest request,
+        ClaimsPrincipal claimsPrincipal,
+        CancellationToken cancellationToken
+    )
     {
         Authorize(claimsPrincipal, request);
 
@@ -42,8 +43,7 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
 
         RequestHandlerContext.TransactionState.CurrentTransaction.Value = transaction;
 
-        await transaction.BeginAsync(TransactionTimeout, cancellationToken)
-            .ConfigureAwait(false);
+        await transaction.BeginAsync(TransactionTimeout, cancellationToken).ConfigureAwait(false);
         try
         {
             await RequestHandlerContext.ValidateAsync(request).ConfigureAwait(false);
@@ -74,7 +74,10 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
         var userPermission = claimsPrincipal.GetPermission();
         if (!userPermission.HasFlag(requiredPermission))
         {
-            throw new InsufficientPermissionPersistifyException(request?.GetType().Name, requiredPermission);
+            throw new InsufficientPermissionPersistifyException(
+                request?.GetType().Name,
+                requiredPermission
+            );
         }
     }
 }

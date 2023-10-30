@@ -12,27 +12,33 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class EnsureBuildInPresetAnalyzersExistRequestHandler : RequestHandler<EnsureBuildInPresetAnalyzersExistRequest,
-    EnsureBuildInPresetAnalyzersExistResponse>
+public class EnsureBuildInPresetAnalyzersExistRequestHandler
+    : RequestHandler<
+        EnsureBuildInPresetAnalyzersExistRequest,
+        EnsureBuildInPresetAnalyzersExistResponse
+    >
 {
     private readonly IEnumerable<IBuiltInPresetAnalyzer> _buildInPresetAnalyzers;
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
     public EnsureBuildInPresetAnalyzersExistRequestHandler(
-        IRequestHandlerContext<EnsureBuildInPresetAnalyzersExistRequest, EnsureBuildInPresetAnalyzersExistResponse>
-            requestHandlerContext,
+        IRequestHandlerContext<
+            EnsureBuildInPresetAnalyzersExistRequest,
+            EnsureBuildInPresetAnalyzersExistResponse
+        > requestHandlerContext,
         IPresetAnalyzerManager presetAnalyzerManager,
         IEnumerable<IBuiltInPresetAnalyzer> buildInPresetAnalyzers
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         _buildInPresetAnalyzers = buildInPresetAnalyzers;
     }
 
-    protected override ValueTask RunAsync(EnsureBuildInPresetAnalyzersExistRequest request,
-        CancellationToken cancellationToken)
+    protected override ValueTask RunAsync(
+        EnsureBuildInPresetAnalyzersExistRequest request,
+        CancellationToken cancellationToken
+    )
     {
         foreach (var builtInPresetAnalyzer in _buildInPresetAnalyzers)
         {
@@ -51,7 +57,9 @@ public class EnsureBuildInPresetAnalyzersExistRequestHandler : RequestHandler<En
         return new EnsureBuildInPresetAnalyzersExistResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(EnsureBuildInPresetAnalyzersExistRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        EnsureBuildInPresetAnalyzersExistRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -60,7 +68,9 @@ public class EnsureBuildInPresetAnalyzersExistRequestHandler : RequestHandler<En
         );
     }
 
-    protected override Permission GetRequiredPermission(EnsureBuildInPresetAnalyzersExistRequest request)
+    protected override Permission GetRequiredPermission(
+        EnsureBuildInPresetAnalyzersExistRequest request
+    )
     {
         return Permission.PresetAnalyzerWrite;
     }

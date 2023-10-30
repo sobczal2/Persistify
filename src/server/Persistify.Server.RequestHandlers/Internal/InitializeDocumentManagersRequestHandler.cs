@@ -12,33 +12,37 @@ using Persistify.Server.Management.Transactions;
 
 namespace Persistify.Server.CommandHandlers.Internal;
 
-public class
-    InitializeDocumentManagersRequestHandler : RequestHandler<InitializeDocumentManagersRequest,
-        InitializeDocumentManagersResponse>
+public class InitializeDocumentManagersRequestHandler
+    : RequestHandler<InitializeDocumentManagersRequest, InitializeDocumentManagersResponse>
 {
     private readonly IDocumentManagerStore _documentManagerStore;
 
     public InitializeDocumentManagersRequestHandler(
-        IRequestHandlerContext<InitializeDocumentManagersRequest, InitializeDocumentManagersResponse>
-            requestHandlerContext,
+        IRequestHandlerContext<
+            InitializeDocumentManagersRequest,
+            InitializeDocumentManagersResponse
+        > requestHandlerContext,
         IDocumentManagerStore documentManagerStore
-    ) : base(
-        requestHandlerContext
     )
+        : base(requestHandlerContext)
     {
         _documentManagerStore = documentManagerStore;
     }
 
-    protected override async ValueTask RunAsync(InitializeDocumentManagersRequest request,
-        CancellationToken cancellationToken)
+    protected override async ValueTask RunAsync(
+        InitializeDocumentManagersRequest request,
+        CancellationToken cancellationToken
+    )
     {
         var documentManagers = _documentManagerStore.GetManagers().ToList();
 
         foreach (var documentManager in documentManagers)
         {
-            await RequestHandlerContext
-                .CurrentTransaction
-                .PromoteManagerAsync(documentManager, true, TransactionTimeout);
+            await RequestHandlerContext.CurrentTransaction.PromoteManagerAsync(
+                documentManager,
+                true,
+                TransactionTimeout
+            );
             documentManager.Initialize();
         }
     }
@@ -48,13 +52,11 @@ public class
         return new InitializeDocumentManagersResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(InitializeDocumentManagersRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        InitializeDocumentManagersRequest request
+    )
     {
-        return new TransactionDescriptor(
-            false,
-            new List<IManager>(),
-            new List<IManager>()
-        );
+        return new TransactionDescriptor(false, new List<IManager>(), new List<IManager>());
     }
 
     protected override Permission GetRequiredPermission(InitializeDocumentManagersRequest request)

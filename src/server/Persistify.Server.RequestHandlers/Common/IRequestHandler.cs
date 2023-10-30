@@ -10,6 +10,9 @@ public interface IRequestHandler<in TRequest, TResponse>
     where TRequest : IRequest<TResponse>
     where TResponse : IResponse
 {
-    ValueTask<TResponse> HandleAsync(TRequest request, ClaimsPrincipal claimsPrincipal,
-        CancellationToken cancellationToken);
+    ValueTask<TResponse> HandleAsync(
+        TRequest request,
+        ClaimsPrincipal claimsPrincipal,
+        CancellationToken cancellationToken
+    );
 }

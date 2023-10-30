@@ -20,10 +20,7 @@ public class AnalyzerExecutor : IAnalyzerExecutor
         IEnumerable<ITokenFilter> tokenFilters
     )
     {
-        _alphabet = characterSets
-            .SelectMany(x => x.Characters)
-            .Distinct()
-            .ToArray();
+        _alphabet = characterSets.SelectMany(x => x.Characters).Distinct().ToArray();
 
         Array.Sort(_alphabet);
 
@@ -76,9 +73,8 @@ public class AnalyzerExecutor : IAnalyzerExecutor
     {
         foreach (var token in tokens)
         {
-            token.Term = new string(token.Term
-                .Where(x => Array.BinarySearch(_alphabet, x) >= 0)
-                .ToArray()
+            token.Term = new string(
+                token.Term.Where(x => Array.BinarySearch(_alphabet, x) >= 0).ToArray()
             );
         }
     }
@@ -87,9 +83,10 @@ public class AnalyzerExecutor : IAnalyzerExecutor
     {
         foreach (var token in tokens)
         {
-            token.Term = new string(token.Term
-                .Where(x => Array.BinarySearch(_alphabet, x) >= 0 || x == '?' || x == '*')
-                .ToArray()
+            token.Term = new string(
+                token.Term
+                    .Where(x => Array.BinarySearch(_alphabet, x) >= 0 || x == '?' || x == '*')
+                    .ToArray()
             );
         }
     }

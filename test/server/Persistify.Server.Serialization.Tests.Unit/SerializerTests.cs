@@ -6,7 +6,8 @@ using Xunit;
 
 namespace Persistify.Server.Serialization.Tests.Unit;
 
-public abstract class SerializerTests<TSerializer> where TSerializer : ISerializer
+public abstract class SerializerTests<TSerializer>
+    where TSerializer : ISerializer
 {
     private readonly TSerializer _sut;
 

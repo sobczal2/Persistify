@@ -18,14 +18,17 @@ public class PaginationValidator : Validator<PaginationDto>
         if (value.PageNumber < 0)
         {
             PropertyName.Push(nameof(PaginationDto.PageNumber));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.PageNumberLessThanZero));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.PageNumberLessThanZero)
+            );
         }
 
         if (value.PageSize <= 0)
         {
             PropertyName.Push(nameof(PaginationDto.PageSize));
             return ValueTask.FromResult<Result>(
-                StaticValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero));
+                StaticValidationException(SharedErrorMessages.PageSizeLessThanOrEqualToZero)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

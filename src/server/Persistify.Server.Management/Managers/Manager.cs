@@ -15,9 +15,7 @@ public abstract class Manager : IManager
     protected readonly ITransactionState TransactionState;
     private bool _isInitialized;
 
-    protected Manager(
-        ITransactionState transactionState
-    )
+    protected Manager(ITransactionState transactionState)
     {
         TransactionState = transactionState;
         _readWriteAsyncLock = new ReadWriteAsyncLock();
@@ -33,21 +31,31 @@ public abstract class Manager : IManager
     protected TimeSpan TransactionTimeout => TimeSpan.FromSeconds(30);
     public abstract string Name { get; }
 
-
     public virtual void Initialize()
     {
         _isInitialized = true;
     }
 
-    public async ValueTask<bool> BeginReadAsync(TimeSpan timeOut, CancellationToken cancellationToken)
+    public async ValueTask<bool> BeginReadAsync(
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    )
     {
-        return await _readWriteAsyncLock.EnterReadLockAsync(TransactionId, timeOut, cancellationToken)
+        return await _readWriteAsyncLock
+            .EnterReadLockAsync(TransactionId, timeOut, cancellationToken)
             .ConfigureAwait(false);
     }
 
-    public async ValueTask<bool> BeginWriteAsync(TimeSpan timeOut, CancellationToken cancellationToken)
+    public async ValueTask<bool> BeginWriteAsync(
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    )
     {
-        return await _readWriteAsyncLock.EnterWriteLockAsync(TransactionId, timeOut, cancellationToken);
+        return await _readWriteAsyncLock.EnterWriteLockAsync(
+            TransactionId,
+            timeOut,
+            cancellationToken
+        );
     }
 
     public async ValueTask EndReadAsync()

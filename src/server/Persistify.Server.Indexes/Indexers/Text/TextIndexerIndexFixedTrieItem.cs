@@ -6,9 +6,7 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexerIndexFixedTrieItem : IndexFixedTrieItem<IndexToken>
 {
-    public TextIndexerIndexFixedTrieItem(
-        IndexToken value
-    )
+    public TextIndexerIndexFixedTrieItem(IndexToken value)
     {
         Value = value;
     }

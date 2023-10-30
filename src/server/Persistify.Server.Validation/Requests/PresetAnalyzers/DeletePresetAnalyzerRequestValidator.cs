@@ -11,9 +11,7 @@ public class DeletePresetAnalyzerRequestValidator : Validator<DeletePresetAnalyz
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
-    public DeletePresetAnalyzerRequestValidator(
-        IPresetAnalyzerManager presetAnalyzerManager
-    )
+    public DeletePresetAnalyzerRequestValidator(IPresetAnalyzerManager presetAnalyzerManager)
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         PropertyName.Push(nameof(DeletePresetAnalyzerRequest));
@@ -24,20 +22,25 @@ public class DeletePresetAnalyzerRequestValidator : Validator<DeletePresetAnalyz
         if (string.IsNullOrEmpty(value.PresetAnalyzerName))
         {
             PropertyName.Push(nameof(DeletePresetAnalyzerRequest.PresetAnalyzerName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueNull));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueNull)
+            );
         }
 
         if (value.PresetAnalyzerName.Length > 64)
         {
             PropertyName.Push(nameof(DeletePresetAnalyzerRequest.PresetAnalyzerName));
-            return ValueTask.FromResult<Result>(StaticValidationException(SharedErrorMessages.ValueTooLong));
+            return ValueTask.FromResult<Result>(
+                StaticValidationException(SharedErrorMessages.ValueTooLong)
+            );
         }
 
         if (!_presetAnalyzerManager.Exists(value.PresetAnalyzerName))
         {
             PropertyName.Push(nameof(DeletePresetAnalyzerRequest.PresetAnalyzerName));
             return ValueTask.FromResult<Result>(
-                DynamicValidationException(PresetAnalyzerErrorMessages.PresetAnalyzerNotFound));
+                DynamicValidationException(PresetAnalyzerErrorMessages.PresetAnalyzerNotFound)
+            );
         }
 
         return ValueTask.FromResult(Result.Ok);

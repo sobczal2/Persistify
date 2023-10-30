@@ -9,6 +9,7 @@ public static class CallContextExtensions
 {
     public static ClaimsPrincipal GetClaimsPrincipal(this CallContext callContext)
     {
-        return callContext.ServerCallContext?.GetHttpContext().User ?? ClaimsPrincipalExtensions.UnknownClaimsPrincipal;
+        return callContext.ServerCallContext?.GetHttpContext().User
+            ?? ClaimsPrincipalExtensions.UnknownClaimsPrincipal;
     }
 }
