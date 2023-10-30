@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
+using Persistify.Dtos.Documents.Search.Queries.Common;
 using Persistify.Helpers.Collections;
 using Persistify.Server.Domain.Documents;
 using Persistify.Server.Domain.Templates;
@@ -17,11 +18,9 @@ namespace Persistify.Server.Indexes.Indexers.Common;
 public class IndexerStore
 {
     private readonly ConcurrentDictionary<string, IIndexer> _indexers;
+    private readonly IIndexer _allIndexer;
 
-    public IndexerStore(
-        Template template,
-        IAnalyzerExecutorFactory analyzerExecutorFactory
-    )
+    public IndexerStore(Template template, IAnalyzerExecutorFactory analyzerExecutorFactory)
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
 
@@ -43,6 +42,8 @@ public class IndexerStore
                     throw new InternalPersistifyException();
             }
         }
+
+        _allIndexer = new AllIndexer();
     }
 
     public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
@@ -52,6 +53,9 @@ public class IndexerStore
             FieldSearchQueryDto fieldSearchQueryDto => FieldSearch(fieldSearchQueryDto),
             AndSearchQueryDto andSearchQueryDto => AndSearch(andSearchQueryDto),
             OrSearchQueryDto orSearchQueryDto => OrSearch(orSearchQueryDto),
+            NotSearchQueryDto notSearchQueryDto
+                => Negate(Search(notSearchQueryDto.SearchQueryDto), notSearchQueryDto.Boost),
+            AllSearchQueryDto allSearchQueryDto => _allIndexer.Search(allSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
@@ -60,7 +64,7 @@ public class IndexerStore
     {
         if (_indexers.TryGetValue(queryDto.GetFieldName(), out var indexer))
         {
-            return indexer.SearchAsync(queryDto);
+            return indexer.Search(queryDto);
         }
 
         throw new InternalPersistifyException();
@@ -76,8 +80,10 @@ public class IndexerStore
         }
 
         return EnumerableHelpers.IntersectSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), (a, b) => a.Merge(b),
-            results);
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
+            (a, b) => a.Merge(b),
+            results
+        );
     }
 
     private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto queryDto)
@@ -90,23 +96,48 @@ public class IndexerStore
         }
 
         return EnumerableHelpers.MergeSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)), (a, b) => a.Merge(b),
-            results);
+            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
+            (a, b) => a.Merge(b),
+            results
+        );
+    }
+
+    private IEnumerable<SearchResult> Negate(IEnumerable<SearchResult> results, float boost)
+    {
+        var resultEnumerator = results.GetEnumerator();
+        var allSearchResults = _allIndexer.Search(new AllSearchQueryDto() { Boost = boost });
+
+        foreach (var allSearchResult in allSearchResults)
+        {
+            if (
+                resultEnumerator.MoveNext()
+                && resultEnumerator.Current.DocumentId == allSearchResult.DocumentId
+            )
+            {
+                continue;
+            }
+
+            yield return allSearchResult;
+        }
     }
 
     public void Index(Document document)
     {
         foreach (var indexer in _indexers.Values)
         {
-            indexer.IndexAsync(document);
+            indexer.Index(document);
         }
+
+        _allIndexer.Index(document);
     }
 
     public void Delete(Document document)
     {
         foreach (var indexer in _indexers.Values)
         {
-            indexer.DeleteAsync(document);
+            indexer.Delete(document);
         }
+
+        _allIndexer.Delete(document);
     }
 }

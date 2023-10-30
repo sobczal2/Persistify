@@ -6,5 +6,5 @@ namespace Persistify.Dtos.Documents.Search.Queries.Aggregates;
 public class NotSearchQueryDto : SearchQueryDto
 {
     [ProtoMember(2)]
-    public SearchQueryDto QueryDto { get; set; } = default!;
+    public SearchQueryDto SearchQueryDto { get; set; } = default!;
 }

@@ -1,5 +1,6 @@
 ﻿using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
+using Persistify.Dtos.Documents.Search.Queries.Common;
 using Persistify.Dtos.Documents.Search.Queries.Number;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using ProtoBuf;
@@ -17,6 +18,7 @@ namespace Persistify.Dtos.Documents.Search.Queries;
 [ProtoInclude(303, typeof(RangeNumberSearchQueryDto))]
 [ProtoInclude(400, typeof(ExactTextSearchQueryDto))]
 [ProtoInclude(401, typeof(FullTextSearchQueryDto))]
+[ProtoInclude(500, typeof(AllSearchQueryDto))]
 public class SearchQueryDto
 {
     [ProtoMember(1)]

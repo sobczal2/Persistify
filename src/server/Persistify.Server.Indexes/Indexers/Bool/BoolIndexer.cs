@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
+using Persistify.Helpers.Collections;
 using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.Indexers.Common;
@@ -11,20 +13,19 @@ namespace Persistify.Server.Indexes.Indexers.Bool;
 
 public class BoolIndexer : IIndexer
 {
-    private readonly SortedSet<int> _falseDocuments;
-
-    private readonly SortedSet<int> _trueDocuments;
+    private readonly BitArray _trueDocuments;
+    private readonly BitArray _falseDocuments;
 
     public BoolIndexer(string fieldName)
     {
         FieldName = fieldName;
-        _trueDocuments = new SortedSet<int>();
-        _falseDocuments = new SortedSet<int>();
+        _trueDocuments = new BitArray(0);
+        _falseDocuments = new BitArray(0);
     }
 
     public string FieldName { get; }
 
-    public void IndexAsync(Document document)
+    public void Index(Document document)
     {
         var boolFieldValue = document.GetBoolFieldValueByName(FieldName);
         if (boolFieldValue == null)
@@ -34,48 +35,58 @@ public class BoolIndexer : IIndexer
 
         if (boolFieldValue.Value)
         {
-            _trueDocuments.Add(document.Id);
+            _trueDocuments.SetEnsureCapacity(document.Id, true);
         }
         else
         {
-            _falseDocuments.Add(document.Id);
+            _falseDocuments.SetEnsureCapacity(document.Id, true);
         }
     }
 
-    public IEnumerable<SearchResult> SearchAsync(SearchQueryDto queryDto)
+    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
     {
-        if (queryDto is not BoolSearchQueryDto boolSearchQueryDto || boolSearchQueryDto.GetFieldName() != FieldName)
+        if (
+            queryDto is not BoolSearchQueryDto boolSearchQueryDto
+            || boolSearchQueryDto.GetFieldName() != FieldName
+        )
         {
             throw new Exception("Invalid search query");
         }
 
         return boolSearchQueryDto switch
         {
-            ExactBoolSearchQueryDto exactBoolSearchQueryDto => HandleExactBoolSearch(exactBoolSearchQueryDto),
+            ExactBoolSearchQueryDto exactBoolSearchQueryDto
+                => HandleExactBoolSearch(exactBoolSearchQueryDto),
             _ => throw new InternalPersistifyException(message: "Invalid search query")
         };
     }
 
-    public void DeleteAsync(Document document)
+    public void Delete(Document document)
     {
-        _trueDocuments.Remove(document.Id);
-        _falseDocuments.Remove(document.Id);
+        _trueDocuments.SetEnsureCapacity(document.Id, false);
+        _falseDocuments.SetEnsureCapacity(document.Id, false);
     }
 
     private IEnumerable<SearchResult> HandleExactBoolSearch(ExactBoolSearchQueryDto queryDto)
     {
         if (queryDto.Value)
         {
-            foreach (var documentId in _trueDocuments)
+            for (var i = 0; i < _trueDocuments.Length; i++)
             {
-                yield return new SearchResult(documentId, new SearchMetadata(queryDto.Boost));
+                if (_trueDocuments[i])
+                {
+                    yield return new SearchResult(i, new SearchMetadata(queryDto.Boost));
+                }
             }
         }
         else
         {
-            foreach (var documentId in _falseDocuments)
+            for (var i = 0; i < _falseDocuments.Length; i++)
             {
-                yield return new SearchResult(documentId, new SearchMetadata(queryDto.Boost));
+                if (_falseDocuments[i])
+                {
+                    yield return new SearchResult(i, new SearchMetadata(queryDto.Boost));
+                }
             }
         }
     }
