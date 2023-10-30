@@ -14,10 +14,12 @@ namespace Persistify.Client.LowLevel.Core;
 
 public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
 {
-    internal PersistifyLowLevelClient(Uri baseAddress, PersistifyCredentials persistifyCredentials)
+    internal PersistifyLowLevelClient(
+        GrpcChannel channel,
+        PersistifyCredentials persistifyCredentials
+        )
     {
-        GrpcClientFactory.AllowUnencryptedHttp2 = true;
-        Channel = GrpcChannel.ForAddress(baseAddress);
+        Channel = channel;
         PersistifyCredentials = persistifyCredentials;
         Users = new UsersClient(this);
         Templates = new TemplatesClient(this);
@@ -76,7 +78,7 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
         {
             return new Result<TResponse>(handleUnauthenticated.Exception);
         }
-        
+
         SetAuthorizationHeader(callContext.Value);
         return await serviceCall(callContext.Value);
     }

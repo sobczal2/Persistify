@@ -19,6 +19,11 @@ public class LocalFileProvider : IFileProvider
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         ArgumentNullException.ThrowIfNull(storageSettingsOptions, nameof(storageSettingsOptions));
         _storageSettings = storageSettingsOptions.Value;
+
+        if (!Directory.Exists(_storageSettings.DataPath))
+        {
+            Directory.CreateDirectory(_storageSettings.DataPath);
+        }
     }
 
     public bool Exists(string relativePath)
