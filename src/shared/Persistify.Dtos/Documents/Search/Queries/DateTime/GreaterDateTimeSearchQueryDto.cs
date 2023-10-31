@@ -1,16 +1,15 @@
-﻿using System;
-using ProtoBuf;
+﻿using ProtoBuf;
 
-namespace Persistify.Dtos.Documents.Search.Queries.Date;
+namespace Persistify.Dtos.Documents.Search.Queries.DateTime;
 
 [ProtoContract]
-public class ExactDateSearchQueryDto : DateSearchQueryDto
+public class GreaterDateTimeSearchQueryDto : DateTimeSearchQueryDto
 {
     [ProtoMember(2)]
     public string FieldName { get; set; } = null!;
 
     [ProtoMember(3)]
-    public DateTime Value { get; set; }
+    public System.DateTime Value { get; set; }
 
     public override string GetFieldName()
     {

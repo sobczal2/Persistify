@@ -2,4 +2,6 @@
 
 namespace Persistify.Responses.Internal;
 
-public class SetupFileSystemResponse : IResponse { }
+public class SetupFileSystemResponse : IResponse
+{
+}

@@ -10,7 +10,9 @@ namespace Persistify.Client.LowLevel.PresetAnalyzers;
 public class PresetAnalyzersClient : SubClient<IPresetAnalyzerService>, IPresetAnalyzersClient
 {
     internal PresetAnalyzersClient(PersistifyLowLevelClient persistifyLowLevelClient)
-        : base(persistifyLowLevelClient) { }
+        : base(persistifyLowLevelClient)
+    {
+    }
 
     public async Task<CreatePresetAnalyzerResponse> CreatePresetAnalyzerAsync(
         IPresetAnalyzerService presetAnalyzerService,

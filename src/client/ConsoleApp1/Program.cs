@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using ConsoleApp1;
-using Persistify.Client.HighLevel;
+using Persistify.Client.HighLevel.Extensions;
 using Persistify.Client.LowLevel.Core;
 
 var client = PersistifyClientBuilder

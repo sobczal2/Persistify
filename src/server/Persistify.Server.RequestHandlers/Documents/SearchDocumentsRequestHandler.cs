@@ -62,11 +62,7 @@ public class SearchDocumentsRequestHandler
             skip
         );
 
-        _response = new SearchDocumentsResponse
-        {
-            SearchRecordDtos = searchRecords,
-            TotalCount = count
-        };
+        _response = new SearchDocumentsResponse { SearchRecordDtos = searchRecords, TotalCount = count };
     }
 
     protected override SearchDocumentsResponse GetResponse()

@@ -4,4 +4,6 @@ using ProtoBuf;
 namespace Persistify.Responses.PresetAnalyzers;
 
 [ProtoContract]
-public class CreatePresetAnalyzerResponse : IResponse { }
+public class CreatePresetAnalyzerResponse : IResponse
+{
+}

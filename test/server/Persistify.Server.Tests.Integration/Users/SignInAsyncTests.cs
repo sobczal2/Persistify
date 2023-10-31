@@ -17,11 +17,7 @@ public class SignInAsyncTests : IntegrationTestBase
     public async Task SignInAsync_WhenCredentialsAreValid_ReturnsOk()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = RootCredentials.Username,
-            Password = RootCredentials.Password
-        };
+        var request = new SignInRequest { Username = RootCredentials.Username, Password = RootCredentials.Password };
 
         // Act
         var response = await UserService.SignInAsync(request, new CallContext());
@@ -53,11 +49,7 @@ public class SignInAsyncTests : IntegrationTestBase
     public async Task SignInAsync_WhenPasswordIsInvalid_ReturnsUnauthenticated()
     {
         // Arrange
-        var request = new SignInRequest
-        {
-            Username = RootCredentials.Username,
-            Password = "invalid"
-        };
+        var request = new SignInRequest { Username = RootCredentials.Username, Password = "invalid" };
 
         // Act
         var action = new Func<Task>(

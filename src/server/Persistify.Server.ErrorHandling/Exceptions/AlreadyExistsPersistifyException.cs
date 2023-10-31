@@ -8,5 +8,7 @@ public class AlreadyExistsPersistifyException : PersistifyException
         string? requestName = null,
         string message = "Not found"
     )
-        : base(requestName ?? "Unknown", message, PersistifyErrorCode.AlreadyExists) { }
+        : base(requestName ?? "Unknown", message, PersistifyErrorCode.AlreadyExists)
+    {
+    }
 }

@@ -4,4 +4,6 @@ using ProtoBuf;
 namespace Persistify.Responses.Users;
 
 [ProtoContract]
-public class CreateUserResponse : IResponse { }
+public class CreateUserResponse : IResponse
+{
+}

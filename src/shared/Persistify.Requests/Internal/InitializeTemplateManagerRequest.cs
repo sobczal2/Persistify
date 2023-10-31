@@ -3,4 +3,6 @@ using Persistify.Responses.Internal;
 
 namespace Persistify.Requests.Internal;
 
-public class InitializeTemplateManagerRequest : IRequest<InitializeTemplateManagerResponse> { }
+public class InitializeTemplateManagerRequest : IRequest<InitializeTemplateManagerResponse>
+{
+}

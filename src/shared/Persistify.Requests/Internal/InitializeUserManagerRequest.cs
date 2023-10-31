@@ -3,4 +3,6 @@ using Persistify.Responses.Internal;
 
 namespace Persistify.Requests.Internal;
 
-public class InitializeUserManagerRequest : IRequest<InitializeUserManagerResponse> { }
+public class InitializeUserManagerRequest : IRequest<InitializeUserManagerResponse>
+{
+}

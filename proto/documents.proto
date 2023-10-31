@@ -1,17 +1,17 @@
 syntax = "proto3";
 package Persistify.Services;
 
-message AndSearchQuery {
-   repeated SearchQuery Queries = 2;
+message AllSearchQueryDto {
 }
-message BoolFieldValue {
+message AndSearchQueryDto {
+   repeated SearchQueryDto SearchQueryDtos = 2;
+}
+message BoolFieldValueDto {
    bool Value = 2;
 }
 message CreateDocumentRequest {
    string TemplateName = 1;
-   repeated FieldValue TextFieldValues = 2;
-   repeated FieldValue NumberFieldValues = 3;
-   repeated FieldValue BoolFieldValues = 4;
+   repeated FieldValueDto FieldValueDtos = 2;
 }
 message CreateDocumentResponse {
    int32 DocumentId = 1;
@@ -22,23 +22,21 @@ message DeleteDocumentRequest {
 }
 message DeleteDocumentResponse {
 }
-message Document {
+message DocumentDto {
    int32 Id = 1;
-   repeated FieldValue TextFieldValues = 2;
-   repeated FieldValue NumberFieldValues = 3;
-   repeated FieldValue BoolFieldValues = 4;
+   repeated FieldValueDto FieldValueDtos = 2;
 }
-message ExactBoolSearchQuery {
-   bool Value = 2;
-   string FieldName = 3;
+message ExactBoolSearchQueryDto {
+   string FieldName = 2;
+   bool Value = 3;
 }
-message ExactNumberSearchQuery {
-   double Value = 2;
-   string FieldName = 3;
+message ExactNumberSearchQueryDto {
+   string FieldName = 2;
+   double Value = 3;
 }
-message ExactTextSearchQuery {
-   string Value = 2;
-   string FieldName = 3;
+message ExactTextSearchQueryDto {
+   string FieldName = 2;
+   string Value = 3;
 }
 message ExistsDocumentRequest {
    string TemplateName = 1;
@@ -47,89 +45,85 @@ message ExistsDocumentRequest {
 message ExistsDocumentResponse {
    bool Exists = 1;
 }
-message FieldValue {
+message FieldValueDto {
    string FieldName = 1;
    oneof subtype {
-      BoolFieldValue BoolFieldValue = 100;
-      NumberFieldValue NumberFieldValue = 101;
-      TextFieldValue TextFieldValue = 102;
+      BoolFieldValueDto BoolFieldValueDto = 100;
+      NumberFieldValueDto NumberFieldValueDto = 101;
+      TextFieldValueDto TextFieldValueDto = 102;
    }
 }
-message FullTextSearchQuery {
-   string Value = 2;
-   string FieldName = 3;
+message FullTextSearchQueryDto {
+   string FieldName = 2;
+   string Value = 3;
 }
 message GetDocumentRequest {
    string TemplateName = 1;
    int32 DocumentId = 2;
 }
 message GetDocumentResponse {
-   Document Document = 1;
+   DocumentDto DocumentDto = 1;
 }
-message GreaterNumberSearchQuery {
+message GreaterNumberSearchQueryDto {
    string FieldName = 2;
    double Value = 3;
 }
-message LessNumberSearchQuery {
+message LessNumberSearchQueryDto {
    string FieldName = 2;
    double Value = 3;
 }
-message NotSearchQuery {
-   SearchQuery Query = 2;
+message NotSearchQueryDto {
+   SearchQueryDto SearchQueryDto = 2;
 }
-message NumberFieldValue {
+message NumberFieldValueDto {
    double Value = 2;
 }
-message OrSearchQuery {
-   repeated SearchQuery Queries = 2;
+message OrSearchQueryDto {
+   repeated SearchQueryDto SearchQueryDtos = 2;
 }
-message Pagination {
+message PaginationDto {
    int32 PageNumber = 1;
    int32 PageSize = 2;
 }
-message PrefixTextSearchQuery {
-   string Value = 2;
-   string FieldName = 3;
-}
-message RangeNumberSearchQuery {
+message RangeNumberSearchQueryDto {
    string FieldName = 2;
    double MinValue = 3;
    double MaxValue = 4;
 }
 message SearchDocumentsRequest {
    string TemplateName = 1;
-   Pagination Pagination = 2;
-   SearchQuery SearchQuery = 3;
+   PaginationDto PaginationDto = 2;
+   SearchQueryDto SearchQueryDto = 3;
 }
 message SearchDocumentsResponse {
-   repeated SearchRecord SearchRecords = 1;
+   repeated SearchRecordDto SearchRecordDtos = 1;
    int32 TotalCount = 2;
 }
-message SearchMetadata {
+message SearchMetadataDto {
    string Name = 1;
    string Value = 2;
 }
-message SearchQuery {
+message SearchQueryDto {
    float Boost = 1;
    oneof subtype {
-      AndSearchQuery AndSearchQuery = 100;
-      NotSearchQuery NotSearchQuery = 101;
-      OrSearchQuery OrSearchQuery = 102;
-      ExactBoolSearchQuery ExactBoolSearchQuery = 200;
-      ExactNumberSearchQuery ExactNumberSearchQuery = 300;
-      GreaterNumberSearchQuery GreaterNumberSearchQuery = 301;
-      LessNumberSearchQuery LessNumberSearchQuery = 302;
-      RangeNumberSearchQuery RangeNumberSearchQuery = 303;
-      ExactTextSearchQuery ExactTextSearchQuery = 400;
-      FullTextSearchQuery FullTextSearchQuery = 401;
-      PrefixTextSearchQuery PrefixTextSearchQuery = 402;
+      AndSearchQueryDto AndSearchQueryDto = 100;
+      NotSearchQueryDto NotSearchQueryDto = 101;
+      OrSearchQueryDto OrSearchQueryDto = 102;
+      ExactBoolSearchQueryDto ExactBoolSearchQueryDto = 200;
+      ExactNumberSearchQueryDto ExactNumberSearchQueryDto = 300;
+      GreaterNumberSearchQueryDto GreaterNumberSearchQueryDto = 301;
+      LessNumberSearchQueryDto LessNumberSearchQueryDto = 302;
+      RangeNumberSearchQueryDto RangeNumberSearchQueryDto = 303;
+      ExactTextSearchQueryDto ExactTextSearchQueryDto = 400;
+      FullTextSearchQueryDto FullTextSearchQueryDto = 401;
+      AllSearchQueryDto AllSearchQueryDto = 500;
    }
 }
-message SearchRecord {
-   Document Document = 1;
-   repeated SearchMetadata MetadataList = 2;
+message SearchRecordDto {
+   DocumentDto DocumentDto = 1;
+   repeated SearchMetadataDto MetadataList = 2;
 }
-message TextFieldValue {
+message TextFieldValueDto {
    string Value = 2;
 }
 service DocumentService {

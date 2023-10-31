@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Persistify.Dtos.Documents.Search.Queries;
-using Persistify.Dtos.Documents.Search.Queries.Date;
-using Persistify.Dtos.Documents.Search.Queries.Number;
+using Persistify.Dtos.Documents.Search.Queries.DateTime;
 using Persistify.Server.Domain.Documents;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.DataStructures.Trees;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Indexes.Searches;
 
-namespace Persistify.Server.Indexes.Indexers.Date;
+namespace Persistify.Server.Indexes.Indexers.DateTime;
 
-public class DateIndexer : IIndexer
+public class DateTimeIndexer : IIndexer
 {
-    private readonly IntervalTree<DateIndexerIntervalTreeRecord> _intervalTree;
+    private readonly IntervalTree<DateTimeIndexerIntervalTreeRecord> _intervalTree;
 
-    public DateIndexer(string fieldName)
+    public DateTimeIndexer(string fieldName)
     {
         FieldName = fieldName;
-        _intervalTree = new IntervalTree<DateIndexerIntervalTreeRecord>();
+        _intervalTree = new IntervalTree<DateTimeIndexerIntervalTreeRecord>();
     }
 
     public string FieldName { get; }
@@ -33,25 +31,21 @@ public class DateIndexer : IIndexer
 
     public void Index(Document document)
     {
-        var dateFieldValue = document.GetDateFieldValueByName(FieldName);
+        var dateFieldValue = document.GetDateTimeFieldValueByName(FieldName);
         if (dateFieldValue is null)
         {
             throw new InternalPersistifyException();
         }
 
         _intervalTree.Insert(
-            new DateIndexerIntervalTreeRecord
-            {
-                DocumentId = document.Id,
-                Value = dateFieldValue.Value
-            }
+            new DateTimeIndexerIntervalTreeRecord { DocumentId = document.Id, Value = dateFieldValue.Value }
         );
     }
 
     public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
     {
         if (
-            queryDto is not DateSearchQueryDto dateSearchQueryDto
+            queryDto is not DateTimeSearchQueryDto dateSearchQueryDto
             || dateSearchQueryDto.GetFieldName() != FieldName
         )
         {
@@ -60,19 +54,19 @@ public class DateIndexer : IIndexer
 
         return dateSearchQueryDto switch
         {
-            ExactDateSearchQueryDto exactDateSearchQueryDto
-                => HandleExactDateSearch(exactDateSearchQueryDto),
-            GreaterDateSearchQueryDto greaterDateSearchQueryDto
-                => HandleGreaterDateSearch(greaterDateSearchQueryDto),
-            LessDateSearchQueryDto lessDateSearchQueryDto
-                => HandleLessDateSearch(lessDateSearchQueryDto),
-            RangeDateSearchQueryDto rangeDateSearchQueryDto
-                => HandleRangeDateSearch(rangeDateSearchQueryDto),
+            ExactDateTimeSearchQueryDto exactDateSearchQueryDto
+                => HandleExactDateTimeSearch(exactDateSearchQueryDto),
+            GreaterDateTimeSearchQueryDto greaterDateSearchQueryDto
+                => HandleGreaterDateTimeSearch(greaterDateSearchQueryDto),
+            LessDateTimeSearchQueryDto lessDateSearchQueryDto
+                => HandleLessDateTimeSearch(lessDateSearchQueryDto),
+            RangeDateTimeSearchQueryDto rangeDateSearchQueryDto
+                => HandleRangeDateTimeSearch(rangeDateSearchQueryDto),
             _ => throw new InternalPersistifyException()
         };
     }
 
-    private IEnumerable<SearchResult> HandleExactDateSearch(ExactDateSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleExactDateTimeSearch(ExactDateTimeSearchQueryDto queryDto)
     {
         var results = _intervalTree.Search(
             queryDto.Value,
@@ -88,7 +82,7 @@ public class DateIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleGreaterDateSearch(GreaterDateSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleGreaterDateTimeSearch(GreaterDateTimeSearchQueryDto queryDto)
     {
         var results = _intervalTree.Search(
             queryDto.Value,
@@ -104,7 +98,7 @@ public class DateIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleLessDateSearch(LessDateSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleLessDateTimeSearch(LessDateTimeSearchQueryDto queryDto)
     {
         var results = _intervalTree.Search(
             queryDto.Value,
@@ -120,13 +114,13 @@ public class DateIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleRangeDateSearch(
-        RangeDateSearchQueryDto rangeDateSearchQueryDto
+    private IEnumerable<SearchResult> HandleRangeDateTimeSearch(
+        RangeDateTimeSearchQueryDto rangeDateTimeSearchQueryDto
     )
     {
         var results = _intervalTree.Search(
-            rangeDateSearchQueryDto.MinValue,
-            rangeDateSearchQueryDto.MaxValue,
+            rangeDateTimeSearchQueryDto.MinValue,
+            rangeDateTimeSearchQueryDto.MaxValue,
             (x, y) => x.Value.CompareTo(y)
         );
 
@@ -136,7 +130,7 @@ public class DateIndexer : IIndexer
         {
             yield return new SearchResult(
                 result.DocumentId,
-                new SearchMetadata(rangeDateSearchQueryDto.Boost)
+                new SearchMetadata(rangeDateTimeSearchQueryDto.Boost)
             );
         }
     }

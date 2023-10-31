@@ -3,4 +3,6 @@
 namespace Persistify.Dtos.Templates.Fields;
 
 [ProtoContract]
-public class BoolFieldDto : FieldDto { }
+public class BoolFieldDto : FieldDto
+{
+}

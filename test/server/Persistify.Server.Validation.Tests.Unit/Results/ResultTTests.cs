@@ -309,5 +309,7 @@ public class ResultTTests
         actual.Should().Be(expected);
     }
 
-    private class TestClassForResult { }
+    private class TestClassForResult
+    {
+    }
 }

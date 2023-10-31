@@ -26,7 +26,7 @@ public class GenerateImageCommand : Command
 
     private async Task Handle(string path)
     {
-        var persistifySlnPath = Path.Combine(path, "Persistify.sln");
+        var persistifySlnPath = Path.GetFullPath(Path.Combine(path, "Persistify.sln"));
 
         if (!File.Exists(persistifySlnPath))
         {
@@ -35,6 +35,7 @@ public class GenerateImageCommand : Command
         }
 
         var persistifyDockerFilePath = Path.Combine(path, "src", "server", "Persistify.Server", "Dockerfile");
+
 
         if (!File.Exists(persistifyDockerFilePath))
         {
@@ -45,9 +46,7 @@ public class GenerateImageCommand : Command
         var getPersistifyVersionProcess = Process.Start(
             new ProcessStartInfo("nbgv", "get-version -f json")
             {
-                WorkingDirectory = path,
-                RedirectStandardOutput = true,
-                UseShellExecute = false
+                WorkingDirectory = path, RedirectStandardOutput = true, UseShellExecute = false
             }
         );
 
@@ -71,11 +70,9 @@ public class GenerateImageCommand : Command
         var persistifyImageName = $"persistify:{persistifyVersion}";
 
         var buildPersistifyImageProcess = Process.Start(
-            new ProcessStartInfo("docker", $"build -t {persistifyImageName} .")
+            new ProcessStartInfo("docker", $"build -t {persistifyImageName} -f {persistifyDockerFilePath} .")
             {
-                WorkingDirectory = Path.GetDirectoryName(persistifyDockerFilePath),
-                RedirectStandardOutput = true,
-                UseShellExecute = false
+                WorkingDirectory = path, RedirectStandardOutput = true, UseShellExecute = false
             }
         );
 
@@ -90,7 +87,6 @@ public class GenerateImageCommand : Command
         if (buildPersistifyImageProcess.ExitCode != 0)
         {
             Console.WriteLine("Docker build failed");
-            return;
         }
     }
 

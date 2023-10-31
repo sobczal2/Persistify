@@ -13,8 +13,8 @@ namespace Persistify.Server.Indexes.Indexers.Bool;
 
 public class BoolIndexer : IIndexer
 {
-    private readonly BitArray _trueDocuments;
     private readonly BitArray _falseDocuments;
+    private readonly BitArray _trueDocuments;
 
     public BoolIndexer(string fieldName)
     {

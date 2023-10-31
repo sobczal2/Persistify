@@ -6,9 +6,7 @@ using Persistify.Client.HighLevel.Attributes;
 using Persistify.Client.HighLevel.Core;
 using Persistify.Client.HighLevel.Exceptions;
 using Persistify.Dtos.Common;
-using Persistify.Dtos.Documents.FieldValues;
 using Persistify.Dtos.Documents.Search.Queries;
-using Persistify.Dtos.Documents.Search.Queries.Bool;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Common;
 
@@ -18,7 +16,9 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
     where TSelf : FieldSearchQueryDtoBuilder<TDocument, TSelf>
 {
     public FieldSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
-        : base(persistifyHighLevelClient) { }
+        : base(persistifyHighLevelClient)
+    {
+    }
 
     protected abstract FieldTypeDto FieldTypeDto { get; }
 
@@ -30,15 +30,14 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
             {
                 return property;
             }
-            else
-            {
-                throw new ArgumentException(
-                    "The provided expression does not target a property.",
-                    nameof(field)
-                );
-            }
+
+            throw new ArgumentException(
+                "The provided expression does not target a property.",
+                nameof(field)
+            );
         }
-        else if (
+
+        if (
             field.Body is UnaryExpression unary && unary.Operand is MemberExpression memberOperand
         )
         {
@@ -46,18 +45,14 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
             {
                 return property;
             }
-            else
-            {
-                throw new ArgumentException(
-                    "The provided expression does not target a property.",
-                    nameof(field)
-                );
-            }
+
+            throw new ArgumentException(
+                "The provided expression does not target a property.",
+                nameof(field)
+            );
         }
-        else
-        {
-            throw new ArgumentException("Invalid expression format.", nameof(field));
-        }
+
+        throw new ArgumentException("Invalid expression format.", nameof(field));
     }
 
     public TSelf WithField<T>(Expression<Func<TDocument, T>> field)
@@ -97,10 +92,10 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
 
         ((FieldSearchQueryDto)SearchQueryDto!).SetFieldName(
             fieldAttribute.Name
-                ?? propertyInfo.Name
-                ?? throw new PersistifyHighLevelClientException(
-                    $"Property {propertyInfo.Name} does not have name"
-                )
+            ?? propertyInfo.Name
+            ?? throw new PersistifyHighLevelClientException(
+                $"Property {propertyInfo.Name} does not have name"
+            )
         );
         return (TSelf)this;
     }

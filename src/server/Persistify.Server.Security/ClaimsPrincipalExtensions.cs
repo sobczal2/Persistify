@@ -9,6 +9,7 @@ public static class ClaimsPrincipalExtensions
 {
     public static ClaimsPrincipal InternalClaimsPrincipal =>
         GetClaimsPrincipal(0, "Internal", Permission.All);
+
     public static ClaimsPrincipal UnknownClaimsPrincipal =>
         GetClaimsPrincipal(-1, "Unknown", Permission.None);
 

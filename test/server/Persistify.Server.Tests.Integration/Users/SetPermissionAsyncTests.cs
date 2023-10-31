@@ -20,8 +20,7 @@ public class SetPermissionAsyncTests : IntegrationTestBase
 
         var request = new SetPermissionRequest
         {
-            Username = RootCredentials.Username,
-            Permission = (int)Permission.TemplateRead
+            Username = RootCredentials.Username, Permission = (int)Permission.TemplateRead
         };
 
         // Act

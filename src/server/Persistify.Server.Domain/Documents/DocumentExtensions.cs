@@ -23,9 +23,9 @@ public static class DocumentExtensions
         return fieldValue as TextFieldValue;
     }
 
-    public static DateFieldValue? GetDateFieldValueByName(this Document document, string fieldName)
+    public static DateTimeFieldValue? GetDateTimeFieldValueByName(this Document document, string fieldName)
     {
         var fieldValue = document.GetFieldValueByName(fieldName);
-        return fieldValue as DateFieldValue;
+        return fieldValue as DateTimeFieldValue;
     }
 }

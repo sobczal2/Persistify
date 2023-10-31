@@ -30,11 +30,7 @@ public class NumberIndexer : IIndexer
         }
 
         _intervalTree.Insert(
-            new NumberIndexerIntervalTreeRecord
-            {
-                DocumentId = document.Id,
-                Value = numberFieldValue.Value
-            }
+            new NumberIndexerIntervalTreeRecord { DocumentId = document.Id, Value = numberFieldValue.Value }
         );
     }
 

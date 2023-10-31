@@ -20,12 +20,12 @@ public static class RequestHandlersExtensions
             )
             .Select(
                 t =>
-                    (
-                        Type: t,
-                        Interface: typeof(IRequestHandler<,>).MakeGenericType(
-                            t.BaseType?.GetGenericArguments() ?? Array.Empty<Type>()
-                        )
+                (
+                    Type: t,
+                    Interface: typeof(IRequestHandler<,>).MakeGenericType(
+                        t.BaseType?.GetGenericArguments() ?? Array.Empty<Type>()
                     )
+                )
             )
             .ToList();
 

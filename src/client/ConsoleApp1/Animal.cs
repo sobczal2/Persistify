@@ -2,7 +2,7 @@
 
 namespace ConsoleApp1;
 
-[PersistifyDocument(name: "Animal")]
+[PersistifyDocument("Animal")]
 public class Animal
 {
     [PersistifyTextField]

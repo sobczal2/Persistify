@@ -6,7 +6,9 @@ namespace Persistify.Server.Persistence.Primitives;
 public class IntStreamRepository : ByteArrayBasedStreamRepository<int>
 {
     public IntStreamRepository(Stream stream)
-        : base(stream, sizeof(int)) { }
+        : base(stream, sizeof(int))
+    {
+    }
 
     protected override int BytesToValue(byte[] bytes)
     {

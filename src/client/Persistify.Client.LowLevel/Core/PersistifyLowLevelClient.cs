@@ -8,7 +8,6 @@ using Persistify.Client.LowLevel.Users;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Users;
 using ProtoBuf.Grpc;
-using ProtoBuf.Grpc.Client;
 
 namespace Persistify.Client.LowLevel.Core;
 
@@ -71,7 +70,8 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
 
         if (
             serviceCallResult
-            is not {
+            is not
+            {
                 Failure: true,
                 Exception: RpcException { StatusCode: StatusCode.Unauthenticated }
             }
@@ -93,11 +93,7 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
     private async Task<Result> AuthenticateAsync(CallContext? callContext)
     {
         var result = await this.SignInAsync(
-            new SignInRequest
-            {
-                Username = PersistifyCredentials.Username,
-                Password = PersistifyCredentials.Password
-            },
+            new SignInRequest { Username = PersistifyCredentials.Username, Password = PersistifyCredentials.Password },
             callContext
         );
 

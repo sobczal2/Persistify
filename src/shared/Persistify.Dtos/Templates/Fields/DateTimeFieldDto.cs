@@ -3,4 +3,6 @@
 namespace Persistify.Dtos.Templates.Fields;
 
 [ProtoContract]
-public class DateFieldDto : FieldDto { }
+public class DateTimeFieldDto : FieldDto
+{
+}

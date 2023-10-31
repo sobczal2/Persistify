@@ -1,0 +1,63 @@
+syntax = "proto3";
+package Persistify.Services;
+
+message AnalyzerDto {
+   oneof subtype {
+      FullAnalyzerDto FullAnalyzerDto = 1;
+      PresetNameAnalyzerDto PresetNameAnalyzerDto = 2;
+   }
+}
+message CreatePresetAnalyzerRequest {
+   string PresetAnalyzerName = 1;
+   AnalyzerDto FullAnalyzerDto = 2;
+}
+message CreatePresetAnalyzerResponse {
+}
+message DeletePresetAnalyzerRequest {
+   string PresetAnalyzerName = 1;
+}
+message DeletePresetAnalyzerResponse {
+}
+message ExistsPresetAnalyzerRequest {
+   string PresetAnalyzerName = 1;
+}
+message ExistsPresetAnalyzerResponse {
+   bool Exists = 1;
+}
+message FullAnalyzerDto {
+   repeated string CharacterFilterNames = 1;
+   repeated string CharacterSetNames = 2;
+   string TokenizerName = 3;
+   repeated string TokenFilterNames = 4;
+}
+message GetPresetAnalyzerRequest {
+   string PresetAnalyzerName = 1;
+}
+message GetPresetAnalyzerResponse {
+   PresetAnalyzerDto PresetAnalyzerDto = 1;
+}
+message ListPresetAnalyzersRequest {
+   PaginationDto PaginationDto = 1;
+}
+message ListPresetAnalyzersResponse {
+   repeated PresetAnalyzerDto PresetAnalyzerDtos = 1;
+   int32 TotalCount = 2;
+}
+message PaginationDto {
+   int32 PageNumber = 1;
+   int32 PageSize = 2;
+}
+message PresetAnalyzerDto {
+   string Name = 1;
+   AnalyzerDto FullAnalyzerDto = 2;
+}
+message PresetNameAnalyzerDto {
+   string PresetName = 1;
+}
+service PresetAnalyzerService {
+   rpc CreatePresetAnalyzer (CreatePresetAnalyzerRequest) returns (CreatePresetAnalyzerResponse);
+   rpc DeletePresetAnalyzer (DeletePresetAnalyzerRequest) returns (DeletePresetAnalyzerResponse);
+   rpc ExistsPresetAnalyzer (ExistsPresetAnalyzerRequest) returns (ExistsPresetAnalyzerResponse);
+   rpc GetPresetAnalyzer (GetPresetAnalyzerRequest) returns (GetPresetAnalyzerResponse);
+   rpc ListPresetAnalyzers (ListPresetAnalyzersRequest) returns (ListPresetAnalyzersResponse);
+}

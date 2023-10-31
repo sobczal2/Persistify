@@ -8,6 +8,7 @@ public interface ITransactionState
 {
     AsyncLocal<ITransaction?> CurrentTransaction { get; }
     ITransaction GetCurrentTransaction();
+
     ValueTask<bool> EnterReadGlobalLockAsync(
         Guid transactionId,
         TimeSpan timeOut,

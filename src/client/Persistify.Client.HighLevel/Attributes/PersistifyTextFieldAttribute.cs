@@ -4,8 +4,6 @@ namespace Persistify.Client.HighLevel.Attributes;
 
 public class PersistifyTextFieldAttribute : PersistifyFieldAttribute
 {
-    public string? AnalyzerPresetName { get; }
-
     public PersistifyTextFieldAttribute(
         string? name = null,
         bool required = true,
@@ -15,6 +13,8 @@ public class PersistifyTextFieldAttribute : PersistifyFieldAttribute
     {
         AnalyzerPresetName = analyzerPresetName;
     }
+
+    public string? AnalyzerPresetName { get; }
 
     public override FieldTypeDto FieldTypeDto => FieldTypeDto.Text;
 }

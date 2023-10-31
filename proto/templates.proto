@@ -1,19 +1,17 @@
 syntax = "proto3";
 package Persistify.Services;
 
-message AnalyzerDescriptor {
+message AnalyzerDto {
    oneof subtype {
-      FullAnalyzerDescriptor FullAnalyzerDescriptor = 100;
-      PresetAnalyzerDescriptor PresetAnalyzerDescriptor = 101;
+      FullAnalyzerDto FullAnalyzerDto = 1;
+      PresetNameAnalyzerDto PresetNameAnalyzerDto = 2;
    }
 }
-message BoolField {
+message BoolFieldDto {
 }
 message CreateTemplateRequest {
    string TemplateName = 1;
-   repeated Field TextFields = 2;
-   repeated Field NumberFields = 3;
-   repeated Field BoolFields = 4;
+   repeated FieldDto Fields = 2;
 }
 message CreateTemplateResponse {
 }
@@ -28,48 +26,49 @@ message ExistsTemplateRequest {
 message ExistsTemplateResponse {
    bool Exists = 1;
 }
-message Field {
+message FieldDto {
    string Name = 1;
    bool Required = 2;
    oneof subtype {
-      BoolField BoolField = 100;
-      NumberField NumberField = 101;
-      TextField TextField = 102;
+      BoolFieldDto BoolFieldDto = 100;
+      NumberFieldDto NumberFieldDto = 101;
+      TextFieldDto TextFieldDto = 102;
    }
 }
-message FullAnalyzerDescriptor {
+message FullAnalyzerDto {
+   repeated string CharacterFilterNames = 1;
+   repeated string CharacterSetNames = 2;
+   string TokenizerName = 3;
+   repeated string TokenFilterNames = 4;
 }
 message GetTemplateRequest {
    string TemplateName = 1;
 }
 message GetTemplateResponse {
-   Template Template = 1;
+   TemplateDto TemplateDto = 1;
 }
 message ListTemplatesRequest {
-   Pagination Pagination = 1;
+   PaginationDto PaginationDto = 1;
 }
 message ListTemplatesResponse {
-   repeated Template Templates = 1;
+   repeated TemplateDto TemplateDtos = 1;
    int32 TotalCount = 2;
 }
-message NumberField {
+message NumberFieldDto {
 }
-message Pagination {
+message PaginationDto {
    int32 PageNumber = 1;
    int32 PageSize = 2;
 }
-message PresetAnalyzerDescriptor {
+message PresetNameAnalyzerDto {
    string PresetName = 1;
 }
-message Template {
-   int32 Id = 1;
-   string Name = 2;
-   repeated Field TextFields = 3;
-   repeated Field NumberFields = 4;
-   repeated Field BoolFields = 5;
+message TemplateDto {
+   string Name = 1;
+   repeated FieldDto Fields = 2;
 }
-message TextField {
-   AnalyzerDescriptor AnalyzerDescriptor = 3;
+message TextFieldDto {
+   AnalyzerDto AnalyzerDto = 3;
 }
 service TemplateService {
    rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);

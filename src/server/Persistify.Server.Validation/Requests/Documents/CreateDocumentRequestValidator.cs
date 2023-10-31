@@ -15,6 +15,7 @@ namespace Persistify.Server.Validation.Requests.Documents;
 public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
     private readonly IValidator<BoolFieldValueDto> _boolFieldValueDtoValidator;
+    private readonly IValidator<DateTimeFieldValueDto> _dateTimeFieldValueDtoValidator;
     private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
@@ -23,6 +24,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         IValidator<TextFieldValueDto> textFieldValueDtoValidator,
         IValidator<NumberFieldValueDto> numberFieldValueDtoValidator,
         IValidator<BoolFieldValueDto> boolFieldValueDtoValidator,
+        IValidator<DateTimeFieldValueDto> dateTimeFieldValueDtoValidator,
         ITemplateManager templateManager
     )
     {
@@ -38,6 +40,9 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
             boolFieldValueDtoValidator
             ?? throw new ArgumentNullException(nameof(boolFieldValueDtoValidator));
         _boolFieldValueDtoValidator.PropertyName = PropertyName;
+        _dateTimeFieldValueDtoValidator = dateTimeFieldValueDtoValidator ??
+                                          throw new ArgumentNullException(nameof(dateTimeFieldValueDtoValidator));
+        _dateTimeFieldValueDtoValidator.PropertyName = PropertyName;
         _templateManager =
             templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateDocumentRequest));
@@ -109,6 +114,15 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
                     if (!boolFieldValueDtoResult.Success)
                     {
                         return boolFieldValueDtoResult;
+                    }
+
+                    break;
+                case DateTimeFieldValueDto dateTimeFieldValueDto:
+                    var dateTimeFieldValueDtoResult =
+                        await _dateTimeFieldValueDtoValidator.ValidateAsync(dateTimeFieldValueDto);
+                    if (!dateTimeFieldValueDtoResult.Success)
+                    {
+                        return dateTimeFieldValueDtoResult;
                     }
 
                     break;

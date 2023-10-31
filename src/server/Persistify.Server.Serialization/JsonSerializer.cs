@@ -23,6 +23,6 @@ public class JsonSerializer : ISerializer
         }
 
         return System.Text.Json.JsonSerializer.Deserialize<T>(bytes.Span)
-            ?? throw new InvalidOperationException();
+               ?? throw new InvalidOperationException();
     }
 }

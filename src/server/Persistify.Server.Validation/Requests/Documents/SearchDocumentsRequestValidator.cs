@@ -5,13 +5,13 @@ using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
 using Persistify.Dtos.Documents.Search.Queries.Bool;
 using Persistify.Dtos.Documents.Search.Queries.Common;
+using Persistify.Dtos.Documents.Search.Queries.DateTime;
 using Persistify.Dtos.Documents.Search.Queries.Number;
 using Persistify.Dtos.Documents.Search.Queries.Text;
 using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.ErrorMessages;
-using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Management.Managers.Templates;
 using Persistify.Server.Validation.Common;
 
@@ -104,6 +104,8 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 => await ValidateOrSearchQueryDtoAsync(orSearchQueryDto, template),
             NotSearchQueryDto notSearchQueryDto
                 => await ValidateNotSearchQueryDtoAsync(notSearchQueryDto, template),
+            AllSearchQueryDto allSearchQueryDto
+                => await ValidateAllSearchQueryDtoAsync(allSearchQueryDto, template),
             ExactBoolSearchQueryDto exactBoolSearchQueryDto
                 => await ValidateExactBoolSearchQueryDtoAsync(exactBoolSearchQueryDto, template),
             ExactNumberSearchQueryDto exactNumberSearchQueryDto
@@ -127,8 +129,26 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
                 => await ValidateExactTextSearchQueryDtoAsync(exactTextSearchQueryDto, template),
             FullTextSearchQueryDto fullTextSearchQueryDto
                 => await ValidateFullTextSearchQueryDtoAsync(fullTextSearchQueryDto, template),
-            AllSearchQueryDto allSearchQueryDto
-                => await ValidateAllSearchQueryDtoAsync(allSearchQueryDto, template),
+            ExactDateTimeSearchQueryDto exactDateTimeSearchQueryDto
+                => await ValidateExactDateTimeSearchQueryDtoAsync(
+                    exactDateTimeSearchQueryDto,
+                    template
+                ),
+            GreaterDateTimeSearchQueryDto greaterDateTimeSearchQueryDto
+                => await ValidateGreaterDateTimeSearchQueryDtoAsync(
+                    greaterDateTimeSearchQueryDto,
+                    template
+                ),
+            LessDateTimeSearchQueryDto lessDateTimeSearchQueryDto
+                => await ValidateLessDateTimeSearchQueryDtoAsync(
+                    lessDateTimeSearchQueryDto,
+                    template
+                ),
+            RangeDateTimeSearchQueryDto rangeDateTimeSearchQueryDto
+                => await ValidateRangeDateTimeSearchQueryDtoAsync(
+                    rangeDateTimeSearchQueryDto,
+                    template
+                ),
             _ => StaticValidationException(SharedErrorMessages.InvalidValue)
         };
     }
@@ -213,7 +233,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private ValueTask<Result> ValidateFieldName(
         string fieldName,
         Template template,
-        IndexType indexType
+        FieldType fieldType
     )
     {
         if (string.IsNullOrEmpty(fieldName))
@@ -239,17 +259,21 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
             );
         }
 
-        switch (indexType)
+        switch (fieldType)
         {
-            case IndexType.Boolean when field.FieldType != FieldType.Bool:
+            case FieldType.Bool when field.FieldType != FieldType.Bool:
                 return ValueTask.FromResult<Result>(
                     DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch)
                 );
-            case IndexType.Number when field.FieldType != FieldType.Number:
+            case FieldType.Number when field.FieldType != FieldType.Number:
                 return ValueTask.FromResult<Result>(
                     DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch)
                 );
-            case IndexType.Text when field.FieldType != FieldType.Text:
+            case FieldType.Text when field.FieldType != FieldType.Text:
+                return ValueTask.FromResult<Result>(
+                    DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch)
+                );
+            case FieldType.DateTime when field.FieldType != FieldType.DateTime:
                 return ValueTask.FromResult<Result>(
                     DynamicValidationException(DocumentErrorMessages.FieldTypeMismatch)
                 );
@@ -265,7 +289,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(ExactBoolSearchQueryDto));
         PropertyName.Push(nameof(ExactBoolSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Boolean);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Bool);
         PropertyName.Pop();
         if (result.Failure)
         {
@@ -282,7 +306,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(ExactNumberSearchQueryDto));
         PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Number);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
         PropertyName.Pop();
         if (result.Failure)
         {
@@ -299,7 +323,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(GreaterNumberSearchQueryDto));
         PropertyName.Push(nameof(GreaterNumberSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Number);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
         PropertyName.Pop();
         if (result.Failure)
         {
@@ -316,7 +340,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(LessNumberSearchQueryDto));
         PropertyName.Push(nameof(LessNumberSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Number);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
         PropertyName.Pop();
         if (result.Failure)
         {
@@ -333,7 +357,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(RangeNumberSearchQueryDto));
         PropertyName.Push(nameof(RangeNumberSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Number);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
         PropertyName.Pop();
         if (result.Failure)
         {
@@ -356,7 +380,7 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(ExactTextSearchQueryDto));
         PropertyName.Push(nameof(ExactTextSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Text);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Text);
         PropertyName.Pop();
         if (result.Failure)
         {
@@ -373,7 +397,67 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     {
         PropertyName.Push(nameof(FullTextSearchQueryDto));
         PropertyName.Push(nameof(FullTextSearchQueryDto.FieldName));
-        var result = await ValidateFieldName(queryDto.FieldName, template, IndexType.Text);
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Text);
+        PropertyName.Pop();
+        if (result.Failure)
+        {
+            return result;
+        }
+
+        return Result.Ok;
+    }
+
+    private async ValueTask<Result> ValidateRangeDateTimeSearchQueryDtoAsync(RangeDateTimeSearchQueryDto queryDto,
+        Template template)
+    {
+        PropertyName.Push(nameof(RangeDateTimeSearchQueryDto));
+        PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
+        PropertyName.Pop();
+        if (result.Failure)
+        {
+            return result;
+        }
+
+        return Result.Ok;
+    }
+
+    private async ValueTask<Result> ValidateLessDateTimeSearchQueryDtoAsync(LessDateTimeSearchQueryDto queryDto,
+        Template template)
+    {
+        PropertyName.Push(nameof(LessDateTimeSearchQueryDto));
+        PropertyName.Push(nameof(LessDateTimeSearchQueryDto.FieldName));
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
+        PropertyName.Pop();
+        if (result.Failure)
+        {
+            return result;
+        }
+
+        return Result.Ok;
+    }
+
+    private async ValueTask<Result> ValidateGreaterDateTimeSearchQueryDtoAsync(GreaterDateTimeSearchQueryDto queryDto,
+        Template template)
+    {
+        PropertyName.Push(nameof(GreaterDateTimeSearchQueryDto));
+        PropertyName.Push(nameof(GreaterDateTimeSearchQueryDto.FieldName));
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
+        PropertyName.Pop();
+        if (result.Failure)
+        {
+            return result;
+        }
+
+        return Result.Ok;
+    }
+
+    private async ValueTask<Result> ValidateExactDateTimeSearchQueryDtoAsync(ExactDateTimeSearchQueryDto queryDto,
+        Template template)
+    {
+        PropertyName.Push(nameof(ExactDateTimeSearchQueryDto));
+        PropertyName.Push(nameof(ExactDateTimeSearchQueryDto.FieldName));
+        var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
         PropertyName.Pop();
         if (result.Failure)
         {

@@ -17,9 +17,9 @@ public static class SettingsExtensions
         var grpcSettingsValidator = new GrpcSettingsValidator();
         grpcSettingsValidator.ValidateAndThrow(
             grpcSettingsSection.Get<GrpcSettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {GrpcSettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {GrpcSettings.SectionName} from configuration"
+            )
         );
         services.Configure<GrpcSettings>(grpcSettingsSection);
 
@@ -27,9 +27,9 @@ public static class SettingsExtensions
         var storageSettingsValidator = new StorageSettingsValidator();
         storageSettingsValidator.ValidateAndThrow(
             storageSettingsSection.Get<StorageSettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {StorageSettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {StorageSettings.SectionName} from configuration"
+            )
         );
         services.Configure<StorageSettings>(storageSettingsSection);
 
@@ -38,9 +38,9 @@ public static class SettingsExtensions
         var loggingSettingsValidator = new LoggingSettingsValidator();
         loggingSettingsValidator.ValidateAndThrow(
             loggingSettingsSection.Get<LoggingSettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {LoggingSettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {LoggingSettings.SectionName} from configuration"
+            )
         );
 
         services.Configure<LoggingSettings>(loggingSettingsSection);
@@ -52,9 +52,9 @@ public static class SettingsExtensions
         var repositorySettingsValidator = new RepositorySettingsValidator();
         repositorySettingsValidator.ValidateAndThrow(
             repositorySettingsSection.Get<RepositorySettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {RepositorySettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {RepositorySettings.SectionName} from configuration"
+            )
         );
 
         services.Configure<RepositorySettings>(repositorySettingsSection);
@@ -66,9 +66,9 @@ public static class SettingsExtensions
         var passwordSettingsValidator = new PasswordSettingsValidator();
         passwordSettingsValidator.ValidateAndThrow(
             passwordSettingsSection.Get<PasswordSettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {PasswordSettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {PasswordSettings.SectionName} from configuration"
+            )
         );
 
         services.Configure<PasswordSettings>(passwordSettingsSection);
@@ -78,9 +78,9 @@ public static class SettingsExtensions
         var tokenSettingsValidator = new TokenSettingsValidator();
         tokenSettingsValidator.ValidateAndThrow(
             tokenSettingsSection.Get<TokenSettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {TokenSettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {TokenSettings.SectionName} from configuration"
+            )
         );
 
         services.Configure<TokenSettings>(tokenSettingsSection);
@@ -90,9 +90,9 @@ public static class SettingsExtensions
         var rootSettingsValidator = new RootSettingsValidator();
         rootSettingsValidator.ValidateAndThrow(
             rootSettingsSection.Get<RootSettings>()
-                ?? throw new InvalidOperationException(
-                    $"Could not load {RootSettings.SectionName} from configuration"
-                )
+            ?? throw new InvalidOperationException(
+                $"Could not load {RootSettings.SectionName} from configuration"
+            )
         );
 
         services.Configure<RootSettings>(rootSettingsSection);

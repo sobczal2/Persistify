@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Persistify.Client.HighLevel\Persistify.Client.HighLevel.csproj" />
-    <ProjectReference Include="..\Persistify.Client.LowLevel\Persistify.Client.LowLevel.csproj" />
+    <ProjectReference Include="..\Persistify.Client.HighLevel\Persistify.Client.HighLevel.csproj"/>
+    <ProjectReference Include="..\Persistify.Client.LowLevel\Persistify.Client.LowLevel.csproj"/>
   </ItemGroup>
 
 </Project>

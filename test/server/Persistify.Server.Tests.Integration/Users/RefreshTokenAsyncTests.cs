@@ -15,14 +15,12 @@ public class RefreshTokenAsyncTests : IntegrationTestBase
         // Arrange
         var signInRequest = new SignInRequest
         {
-            Username = RootCredentials.Username,
-            Password = RootCredentials.Password
+            Username = RootCredentials.Username, Password = RootCredentials.Password
         };
         var signInResponse = await UserService.SignInAsync(signInRequest, new CallContext());
         var request = new RefreshTokenRequest
         {
-            Username = RootCredentials.Username,
-            RefreshToken = signInResponse.RefreshToken
+            Username = RootCredentials.Username, RefreshToken = signInResponse.RefreshToken
         };
 
         // Act

@@ -19,10 +19,7 @@ public class PersistifyServerWebApplicationFactory : WebApplicationFactory<Progr
             new ConfigurationBuilder()
                 .AddJsonFile("appsettings.Testing.json")
                 .AddInMemoryCollection(
-                    new Dictionary<string, string>
-                    {
-                        { "Storage:DataPath", _dataDirectoryInfo.FullName }
-                    }!
+                    new Dictionary<string, string> { { "Storage:DataPath", _dataDirectoryInfo.FullName } }!
                 )
                 .Build()
         );

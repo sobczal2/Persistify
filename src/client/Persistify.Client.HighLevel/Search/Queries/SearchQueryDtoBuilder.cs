@@ -5,8 +5,6 @@ using Persistify.Client.HighLevel.Search.Queries.Bool;
 using Persistify.Client.HighLevel.Search.Queries.Number;
 using Persistify.Client.HighLevel.Search.Queries.Text;
 using Persistify.Dtos.Documents.Search.Queries;
-using Persistify.Dtos.Documents.Search.Queries.Bool;
-using Persistify.Helpers.Results;
 
 namespace Persistify.Client.HighLevel.Search.Queries;
 
@@ -75,6 +73,6 @@ public class SearchQueryDtoBuilder<TDocument>
     internal SearchQueryDto Build()
     {
         return SearchQueryDto
-            ?? throw new PersistifyHighLevelClientException("Search query is not set");
+               ?? throw new PersistifyHighLevelClientException("Search query is not set");
     }
 }
