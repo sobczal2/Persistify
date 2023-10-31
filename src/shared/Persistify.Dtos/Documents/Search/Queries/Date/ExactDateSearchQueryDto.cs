@@ -1,8 +1,7 @@
 ﻿using System;
-using Persistify.Dtos.Documents.Search.Queries.Date;
 using ProtoBuf;
 
-namespace Persistify.Dtos.Documents.Search.Queries.Number;
+namespace Persistify.Dtos.Documents.Search.Queries.Date;
 
 [ProtoContract]
 public class ExactDateSearchQueryDto : DateSearchQueryDto
