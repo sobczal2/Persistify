@@ -1,19 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>persistify-tools</ToolCommandName>
+    <PackageId>persistify-tools</PackageId>
+    <Authors>Łukasz Sobczak</Authors>
+    <Description>CLI tool for Persistify</Description>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="protobuf-net.Grpc.Reflection" Version="1.1.1" />
-      <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="protobuf-net.Grpc.Reflection" Version="1.1.1"/>
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
+    <PackageReference Include="System.Text.Json" Version="7.0.3"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj"/>
+  </ItemGroup>
 
 </Project>
