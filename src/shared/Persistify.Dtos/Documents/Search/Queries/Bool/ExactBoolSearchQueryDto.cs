@@ -6,10 +6,10 @@ namespace Persistify.Dtos.Documents.Search.Queries.Bool;
 public class ExactBoolSearchQueryDto : BoolSearchQueryDto
 {
     [ProtoMember(2)]
-    public bool Value { get; set; }
+    public string FieldName { get; set; } = null!;
 
     [ProtoMember(3)]
-    public string FieldName { get; set; } = null!;
+    public bool Value { get; set; }
 
     public override string GetFieldName()
     {

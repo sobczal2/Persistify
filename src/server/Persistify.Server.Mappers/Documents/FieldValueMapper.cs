@@ -28,6 +28,12 @@ public static class FieldValueMapper
                     FieldName = textFieldValue.FieldName,
                     Value = textFieldValue.Value
                 },
+            DateFieldValue dateFieldValue
+                => new DateFieldValueDto
+                {
+                    FieldName = dateFieldValue.FieldName,
+                    Value = dateFieldValue.Value
+                },
             _ => throw new InternalPersistifyException(nameof(FieldValueMapper))
         };
     }
