@@ -7,21 +7,21 @@ using Persistify.Dtos.Documents.Search.Queries.DateTime;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Date;
 
-public class GreaterDateSearchQueryDtoBuilder<TDocument>
-    : FieldSearchQueryDtoBuilder<TDocument, GreaterNumberSearchQueryDtoBuilder<TDocument>>
+public class LessDateTimeSearchQueryDtoBuilder<TDocument>
+    : FieldSearchQueryDtoBuilder<TDocument, LessNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public GreaterDateSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public LessDateTimeSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
         : base(persistifyHighLevelClient)
     {
-        SearchQueryDto = new GreaterDateTimeSearchQueryDto { Boost = 1 };
+        SearchQueryDto = new LessDateTimeSearchQueryDto { Boost = 1 };
     }
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public GreaterDateSearchQueryDtoBuilder<TDocument> WithValue(DateTime value)
+    public LessDateTimeSearchQueryDtoBuilder<TDocument> WithValue(DateTime value)
     {
-        ((GreaterDateTimeSearchQueryDto)SearchQueryDto!).Value = value;
+        ((LessDateTimeSearchQueryDto)SearchQueryDto!).Value = value;
         return this;
     }
 }

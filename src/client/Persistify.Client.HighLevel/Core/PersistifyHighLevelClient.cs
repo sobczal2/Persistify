@@ -219,6 +219,15 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                                 fieldType.GetValue(document)
                             )
                     },
+                FieldTypeDto.DateTime
+                    => new DateTimeFieldValueDto
+                    {
+                        FieldName = fieldName,
+                        Value = (DateTime)
+                            _converters[(fieldType.PropertyType, fieldTypeDto)].Convert(
+                                fieldType.GetValue(document)
+                            )
+                    },
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -305,6 +314,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                     => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
                         numberFieldValueDto.Value
                     ),
+                DateTimeFieldValueDto dateTimeFieldValueDto
+                    => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
+                        dateTimeFieldValueDto.Value
+                    ),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -370,6 +383,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                     NumberFieldValueDto numberFieldValueDto
                         => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
                             numberFieldValueDto.Value
+                        ),
+                    DateTimeFieldValueDto dateTimeFieldValueDto
+                        => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
+                            dateTimeFieldValueDto.Value
                         ),
                     _ => throw new ArgumentOutOfRangeException()
                 };

@@ -7,11 +7,11 @@ using Persistify.Dtos.Documents.Search.Queries.DateTime;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Date;
 
-public class RangeDateSearchQueryDtoBuilder<TDocument>
+public class RangeDateTimeSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, RangeNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public RangeDateSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public RangeDateTimeSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new RangeDateTimeSearchQueryDto { Boost = 1 };
@@ -19,13 +19,13 @@ public class RangeDateSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public RangeDateSearchQueryDtoBuilder<TDocument> WithMinValue(DateTime minValue)
+    public RangeDateTimeSearchQueryDtoBuilder<TDocument> WithMinValue(DateTime minValue)
     {
         ((RangeDateTimeSearchQueryDto)SearchQueryDto!).MinValue = minValue;
         return this;
     }
 
-    public RangeDateSearchQueryDtoBuilder<TDocument> WithMaxValue(DateTime maxValue)
+    public RangeDateTimeSearchQueryDtoBuilder<TDocument> WithMaxValue(DateTime maxValue)
     {
         ((RangeDateTimeSearchQueryDto)SearchQueryDto!).MaxValue = maxValue;
         return this;

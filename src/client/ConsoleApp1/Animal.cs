@@ -31,4 +31,7 @@ public class Animal
 
     [PersistifyBoolField]
     public bool IsDead { get; set; }
+
+    [PersistifyDateTimeField]
+    public DateTime CreatedAt { get; set; }
 }
