@@ -6,6 +6,6 @@ namespace Persistify.Server.Domain.Documents;
 [ProtoContract]
 public class DateTimeFieldValue : FieldValue
 {
-    [ProtoMember(1)]
+    [ProtoMember(2)]
     public DateTime Value { get; set; }
 }

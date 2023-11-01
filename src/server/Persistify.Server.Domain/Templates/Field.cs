@@ -7,6 +7,7 @@ namespace Persistify.Server.Domain.Templates;
 [ProtoInclude(101, typeof(NumberField))]
 [ProtoInclude(102, typeof(TextField))]
 [ProtoInclude(103, typeof(DateTimeField))]
+[ProtoInclude(104, typeof(BinaryField))]
 public abstract class Field
 {
     [ProtoMember(1)]

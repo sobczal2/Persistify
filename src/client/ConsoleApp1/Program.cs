@@ -5,8 +5,8 @@ using Persistify.Client.LowLevel.Core;
 
 var client = PersistifyClientBuilder
     .Create()
-    .WithBaseUrl(new Uri("https://localhost:5000"))
-    .WithConnectionSettings(ConnectionSettings.TlsNoVerify)
+    .WithBaseUrl(new Uri("http://localhost:5000"))
+    .WithConnectionSettings(ConnectionSettings.NoTls)
     .BuildHighLevel();
 
 (await client.InitializeAsync(Assembly.GetExecutingAssembly())).OnFailure(
@@ -23,15 +23,10 @@ for (var j = 0; j < 1_000; j++)
         {
             Name =
                 $"Bobby {j} and his friends have a very long name that is longer than 100 characters and is used to test the full text search",
-            Species = "Dog",
             Age = 5,
-            Weight = 10,
-            Height = 0.5,
-            Color = "Brown",
-            FavoriteToy = "Ball",
             IsAlive = true,
-            IsDead = false,
-            CreatedAt = DateTime.UtcNow
+            BirthDate = DateTime.UtcNow,
+            Picture = new byte[] { 1, 2, 3, 4, 5 }
         }
     );
 

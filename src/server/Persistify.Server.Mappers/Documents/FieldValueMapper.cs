@@ -18,6 +18,8 @@ public static class FieldValueMapper
                 => new TextFieldValueDto { FieldName = textFieldValue.FieldName, Value = textFieldValue.Value },
             DateTimeFieldValue dateFieldValue
                 => new DateTimeFieldValueDto { FieldName = dateFieldValue.FieldName, Value = dateFieldValue.Value },
+            BinaryFieldValue binaryFieldValue
+                => new BinaryFieldValueDto { FieldName = binaryFieldValue.FieldName, Value = binaryFieldValue.Value },
             _ => throw new InternalPersistifyException(nameof(FieldValueMapper))
         };
     }
