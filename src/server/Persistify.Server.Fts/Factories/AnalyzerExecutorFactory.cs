@@ -22,6 +22,7 @@ public class AnalyzerExecutorFactory : IAnalyzerExecutorFactory
 
     private static readonly ConcurrentBag<string> SupportedTokenizers =
         new() { "standard", "whitespace" };
+
     private static readonly ConcurrentBag<string> SupportedTokenFilters =
         new() { "lowercase", "suffix" };
 

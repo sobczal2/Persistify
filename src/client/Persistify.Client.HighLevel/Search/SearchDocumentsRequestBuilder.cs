@@ -5,8 +5,6 @@ using Persistify.Client.HighLevel.Core;
 using Persistify.Client.HighLevel.Exceptions;
 using Persistify.Client.HighLevel.Search.Queries;
 using Persistify.Dtos.Common;
-using Persistify.Dtos.Documents.Search.Queries;
-using Persistify.Helpers.Results;
 using Persistify.Requests.Documents;
 
 namespace Persistify.Client.HighLevel.Search;
@@ -14,10 +12,10 @@ namespace Persistify.Client.HighLevel.Search;
 public class SearchDocumentsRequestBuilder<TDocument>
     where TDocument : class
 {
+    private readonly IPersistifyHighLevelClient _persistifyHighLevelClient;
     private readonly string _templateName;
     private PaginationDto _paginationDto;
     private SearchQueryDtoBuilder<TDocument>? _searchQueryDtoBuilder;
-    private IPersistifyHighLevelClient _persistifyHighLevelClient;
 
     public SearchDocumentsRequestBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
     {

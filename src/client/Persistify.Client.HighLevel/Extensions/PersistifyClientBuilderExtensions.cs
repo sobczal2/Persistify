@@ -1,7 +1,7 @@
 ﻿using Persistify.Client.HighLevel.Core;
 using Persistify.Client.LowLevel.Core;
 
-namespace Persistify.Client.HighLevel;
+namespace Persistify.Client.HighLevel.Extensions;
 
 public static class PersistifyClientBuilderExtensions
 {

@@ -32,6 +32,7 @@ public static class FieldMapper
                         _ => throw new ArgumentOutOfRangeException(nameof(textFieldDto.AnalyzerDto))
                     }
                 },
+            DateTimeFieldDto => new DateTimeField { Name = fieldDto.Name, Required = fieldDto.Required },
             _ => throw new ArgumentOutOfRangeException(nameof(fieldDto))
         };
     }
@@ -45,10 +46,9 @@ public static class FieldMapper
             TextField textField
                 => new TextFieldDto
                 {
-                    Name = field.Name,
-                    Required = field.Required,
-                    AnalyzerDto = textField.Analyzer.ToDto()
+                    Name = field.Name, Required = field.Required, AnalyzerDto = textField.Analyzer.ToDto()
                 },
+            DateTimeField => new DateTimeFieldDto { Name = field.Name, Required = field.Required },
             _ => throw new ArgumentOutOfRangeException(nameof(field))
         };
     }

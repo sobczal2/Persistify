@@ -8,10 +8,6 @@ public static class TemplateMapper
 {
     public static TemplateDto ToDto(this Template template)
     {
-        return new TemplateDto
-        {
-            Name = template.Name,
-            Fields = template.Fields.ListSelect(x => x.ToDto())
-        };
+        return new TemplateDto { Name = template.Name, Fields = template.Fields.ListSelect(x => x.ToDto()) };
     }
 }

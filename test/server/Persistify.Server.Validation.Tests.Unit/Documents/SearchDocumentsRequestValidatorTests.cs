@@ -162,11 +162,7 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenCorrect_CallsPaginationValidatorWithCorrectPropertyName()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = "Test",
-            PaginationDto = new PaginationDto()
-        };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         List<string> propertyNameAtCall = null!;
@@ -187,11 +183,7 @@ public class SearchDocumentsRequestValidatorTests
     public async Task Validate_WhenPaginationValidatorReturnsValidationException_ReturnsValidationException()
     {
         // Arrange
-        var request = new SearchDocumentsRequest
-        {
-            TemplateName = "Test",
-            PaginationDto = new PaginationDto()
-        };
+        var request = new SearchDocumentsRequest { TemplateName = "Test", PaginationDto = new PaginationDto() };
         _templateManager.GetAsync(request.TemplateName).Returns(new Template());
 
         var validationException = new StaticValidationPersistifyException("Test", "Test");
@@ -213,12 +205,7 @@ public class SearchDocumentsRequestValidatorTests
         {
             TemplateName = "Test",
             PaginationDto = new PaginationDto(),
-            SearchQueryDto = new ExactBoolSearchQueryDto
-            {
-                FieldName = "Test",
-                Value = true,
-                Boost = 1
-            }
+            SearchQueryDto = new ExactBoolSearchQueryDto { FieldName = "Test", Value = true, Boost = 1 }
         };
         _templateManager
             .GetAsync(request.TemplateName)

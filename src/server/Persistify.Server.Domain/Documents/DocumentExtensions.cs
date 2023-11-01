@@ -22,4 +22,10 @@ public static class DocumentExtensions
         var fieldValue = document.GetFieldValueByName(fieldName);
         return fieldValue as TextFieldValue;
     }
+
+    public static DateTimeFieldValue? GetDateTimeFieldValueByName(this Document document, string fieldName)
+    {
+        var fieldValue = document.GetFieldValueByName(fieldName);
+        return fieldValue as DateTimeFieldValue;
+    }
 }

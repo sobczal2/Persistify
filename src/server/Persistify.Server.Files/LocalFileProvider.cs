@@ -46,9 +46,9 @@ public class LocalFileProvider : IFileProvider
         {
             Directory.CreateDirectory(
                 Path.GetDirectoryName(absolutePath)
-                    ?? throw new InvalidOperationException(
-                        $"Could not get directory name from {absolutePath}"
-                    )
+                ?? throw new InvalidOperationException(
+                    $"Could not get directory name from {absolutePath}"
+                )
             );
         }
 

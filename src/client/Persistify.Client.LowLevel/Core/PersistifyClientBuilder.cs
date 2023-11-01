@@ -1,17 +1,18 @@
 ﻿using Grpc.Net.Client;
-using ProtoBuf.Grpc.Client;
 
 namespace Persistify.Client.LowLevel.Core;
 
 public class PersistifyClientBuilder
 {
     private Uri _baseAddress;
+    private ConnectionSettings _connectionSettings;
     private PersistifyCredentials _persistifyCredentials;
 
     private PersistifyClientBuilder()
     {
         _baseAddress = new Uri("http://localhost:5000");
         _persistifyCredentials = new PersistifyCredentials("root", "root");
+        _connectionSettings = ConnectionSettings.NoTls;
     }
 
     public static PersistifyClientBuilder Create()
@@ -31,20 +32,39 @@ public class PersistifyClientBuilder
         return this;
     }
 
+    public PersistifyClientBuilder WithConnectionSettings(ConnectionSettings connectionSettings)
+    {
+        _connectionSettings = connectionSettings;
+        return this;
+    }
+
     public IPersistifyLowLevelClient BuildLowLevel()
     {
-        GrpcClientFactory.AllowUnencryptedHttp2 = true;
-        var httpClientHandler = new HttpClientHandler
+        var httpClient = new HttpClient { DefaultRequestVersion = new Version(2, 0) };
+
+        switch (_connectionSettings)
         {
-            ServerCertificateCustomValidationCallback =
-                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-        };
-        var httpClient = new HttpClient(httpClientHandler);
-        var baseUri = new Uri(_baseAddress.ToString().TrimEnd('/'));
-        httpClient.BaseAddress = baseUri;
+            case ConnectionSettings.NoTls:
+                break;
+
+            case ConnectionSettings.TlsVerify:
+                httpClient = new HttpClient(new HttpClientHandler());
+                break;
+
+            case ConnectionSettings.TlsNoVerify:
+                httpClient = new HttpClient(new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback =
+                        HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                });
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(_connectionSettings), "Unsupported connection settings.");
+        }
 
         return new PersistifyLowLevelClient(
-            GrpcChannel.ForAddress(baseUri, new GrpcChannelOptions { HttpClient = httpClient }),
+            GrpcChannel.ForAddress(_baseAddress, new GrpcChannelOptions { HttpClient = httpClient }),
             _persistifyCredentials
         );
     }

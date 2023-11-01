@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using ConsoleApp1;
-using Persistify.Client.HighLevel;
+using Persistify.Client.HighLevel.Extensions;
 using Persistify.Client.LowLevel.Core;
 
 var client = PersistifyClientBuilder
     .Create()
     .WithBaseUrl(new Uri("https://localhost:5000"))
+    .WithConnectionSettings(ConnectionSettings.TlsNoVerify)
     .BuildHighLevel();
 
 (await client.InitializeAsync(Assembly.GetExecutingAssembly())).OnFailure(
@@ -14,38 +15,28 @@ var client = PersistifyClientBuilder
 
 var id = 0;
 
-var tasks = new List<Task>();
 
-for (var i = 0; i < 10; i++)
+for (var j = 0; j < 1_000; j++)
 {
-    tasks.Add(
-        Task.Run(async () =>
+    id = await client.AddAsync(
+        new Animal
         {
-            for (var j = 0; j < 100_000; j++)
-            {
-                id = await client.AddAsync(
-                    new Animal
-                    {
-                        Name =
-                            $"Bobby {j} and his friends have a very long name that is longer than 100 characters and is used to test the full text search",
-                        Species = "Dog",
-                        Age = 5,
-                        Weight = 10,
-                        Height = 0.5,
-                        Color = "Brown",
-                        FavoriteToy = "Ball",
-                        IsAlive = true,
-                        IsDead = false
-                    }
-                );
-
-                Console.WriteLine($"Added animal with id {id}");
-            }
-        })
+            Name =
+                $"Bobby {j} and his friends have a very long name that is longer than 100 characters and is used to test the full text search",
+            Species = "Dog",
+            Age = 5,
+            Weight = 10,
+            Height = 0.5,
+            Color = "Brown",
+            FavoriteToy = "Ball",
+            IsAlive = true,
+            IsDead = false,
+            CreatedAt = DateTime.UtcNow
+        }
     );
-}
 
-await Task.WhenAll(tasks);
+    Console.WriteLine($"Added animal with id {id}");
+}
 
 Console.WriteLine($"Added animal with id {id}");
 

@@ -6,10 +6,10 @@ namespace Persistify.Dtos.Documents.Search.Queries.Text;
 public class ExactTextSearchQueryDto : TextSearchQueryDto
 {
     [ProtoMember(2)]
-    public string Value { get; set; } = null!;
+    public string FieldName { get; set; } = null!;
 
     [ProtoMember(3)]
-    public string FieldName { get; set; } = null!;
+    public string Value { get; set; } = null!;
 
     public override string GetFieldName()
     {

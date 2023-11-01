@@ -23,7 +23,6 @@ namespace Persistify.Client.HighLevel.Core;
 
 public class PersistifyHighLevelClient : IPersistifyHighLevelClient
 {
-    public IPersistifyLowLevelClient LowLevel { get; }
     private readonly ConcurrentDictionary<
         (Type From, FieldTypeDto To),
         IPersistifyConverter
@@ -35,6 +34,8 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         _converters =
             new ConcurrentDictionary<(Type From, FieldTypeDto To), IPersistifyConverter>();
     }
+
+    public IPersistifyLowLevelClient LowLevel { get; }
 
     public async Task<Result> InitializeAsync(params Assembly[] assemblies)
     {
@@ -111,25 +112,23 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                             AnalyzerDto = new PresetNameAnalyzerDto
                             {
                                 PresetName =
-                                    (
-                                        (PersistifyTextFieldAttribute)fieldAttribute
-                                    ).AnalyzerPresetName ?? "standard"
+                                (
+                                    (PersistifyTextFieldAttribute)fieldAttribute
+                                ).AnalyzerPresetName ?? "standard"
                             }
                         },
                     FieldTypeDto.Bool => new BoolFieldDto { Name = fieldName, Required = required },
                     FieldTypeDto.Number
                         => new NumberFieldDto { Name = fieldName, Required = required },
+                    FieldTypeDto.DateTime
+                        => new DateTimeFieldDto { Name = fieldName, Required = required },
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
                 fieldDtos.Add(fieldDto);
             }
 
-            var createTemplateRequest = new CreateTemplateRequest
-            {
-                TemplateName = templateName,
-                Fields = fieldDtos
-            };
+            var createTemplateRequest = new CreateTemplateRequest { TemplateName = templateName, Fields = fieldDtos };
 
             var createTemplateResult = await LowLevel.CreateTemplateAsync(createTemplateRequest);
 
@@ -220,6 +219,15 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                                 fieldType.GetValue(document)
                             )
                     },
+                FieldTypeDto.DateTime
+                    => new DateTimeFieldValueDto
+                    {
+                        FieldName = fieldName,
+                        Value = (DateTime)
+                            _converters[(fieldType.PropertyType, fieldTypeDto)].Convert(
+                                fieldType.GetValue(document)
+                            )
+                    },
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -228,8 +236,7 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
 
         var createDocumentRequest = new CreateDocumentRequest
         {
-            TemplateName = templateName,
-            FieldValueDtos = fieldValueDtos,
+            TemplateName = templateName, FieldValueDtos = fieldValueDtos
         };
 
         var createResult = await LowLevel.CreateDocumentAsync(createDocumentRequest);
@@ -261,11 +268,7 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
             ?? documentType.FullName
             ?? throw new InvalidOperationException();
 
-        var getDocumentRequest = new GetDocumentRequest
-        {
-            TemplateName = templateName,
-            DocumentId = id
-        };
+        var getDocumentRequest = new GetDocumentRequest { TemplateName = templateName, DocumentId = id };
 
         var getResult = await LowLevel.GetDocumentAsync(getDocumentRequest);
 
@@ -310,6 +313,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                 NumberFieldValueDto numberFieldValueDto
                     => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
                         numberFieldValueDto.Value
+                    ),
+                DateTimeFieldValueDto dateTimeFieldValueDto
+                    => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
+                        dateTimeFieldValueDto.Value
                     ),
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -377,6 +384,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                         => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
                             numberFieldValueDto.Value
                         ),
+                    DateTimeFieldValueDto dateTimeFieldValueDto
+                        => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
+                            dateTimeFieldValueDto.Value
+                        ),
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
@@ -410,11 +421,7 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
             ?? documentType.FullName
             ?? throw new InvalidOperationException();
 
-        var deleteDocumentRequest = new DeleteDocumentRequest
-        {
-            TemplateName = templateName,
-            DocumentId = id,
-        };
+        var deleteDocumentRequest = new DeleteDocumentRequest { TemplateName = templateName, DocumentId = id };
 
         var deleteResult = await LowLevel.DeleteDocumentAsync(deleteDocumentRequest);
 

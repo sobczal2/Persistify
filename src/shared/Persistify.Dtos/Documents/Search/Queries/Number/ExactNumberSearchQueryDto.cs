@@ -6,10 +6,10 @@ namespace Persistify.Dtos.Documents.Search.Queries.Number;
 public class ExactNumberSearchQueryDto : NumberSearchQueryDto
 {
     [ProtoMember(2)]
-    public double Value { get; set; }
+    public string FieldName { get; set; } = null!;
 
     [ProtoMember(3)]
-    public string FieldName { get; set; } = null!;
+    public double Value { get; set; }
 
     public override string GetFieldName()
     {

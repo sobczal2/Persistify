@@ -529,9 +529,10 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
-        bool useLock
-    )
+    public async Task
+        WriteAsync_WhenOverridingNotLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
+            bool useLock
+        )
     {
         // Arrange
         var key0 = 0;
@@ -556,9 +557,10 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
-        bool useLock
-    )
+    public async Task
+        WriteAsync_WhenOverridingLastValueWithLongerValue_WritesValueAndExtendsStreamToLengthDivisibleBySectorSize(
+            bool useLock
+        )
     {
         // Arrange
         var key0 = 0;

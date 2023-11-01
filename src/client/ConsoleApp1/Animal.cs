@@ -2,7 +2,7 @@
 
 namespace ConsoleApp1;
 
-[PersistifyDocument(name: "Animal")]
+[PersistifyDocument("Animal")]
 public class Animal
 {
     [PersistifyTextField]
@@ -31,4 +31,7 @@ public class Animal
 
     [PersistifyBoolField]
     public bool IsDead { get; set; }
+
+    [PersistifyDateTimeField]
+    public DateTime CreatedAt { get; set; }
 }

@@ -6,6 +6,7 @@ namespace Persistify.Dtos.Templates.Fields;
 [ProtoInclude(100, typeof(BoolFieldDto))]
 [ProtoInclude(101, typeof(NumberFieldDto))]
 [ProtoInclude(102, typeof(TextFieldDto))]
+[ProtoInclude(103, typeof(DateTimeFieldDto))]
 public class FieldDto
 {
     [ProtoMember(1)]

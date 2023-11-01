@@ -1,0 +1,81 @@
+syntax = "proto3";
+package Persistify.Services;
+
+message ChangeUserPasswordRequest {
+   string Username = 1;
+   string Password = 2;
+}
+message ChangeUserPasswordResponse {
+}
+message CreateUserRequest {
+   string Username = 1;
+   string Password = 2;
+}
+message CreateUserResponse {
+}
+message DeleteUserRequest {
+   string Username = 1;
+}
+message DeleteUserResponse {
+}
+message ExistsUserRequest {
+   string Username = 1;
+}
+message ExistsUserResponse {
+   bool Exists = 1;
+}
+message GetUserRequest {
+   string Username = 1;
+}
+message GetUserResponse {
+   UserDto User = 1;
+}
+message ListUsersRequest {
+   PaginationDto Pagination = 1;
+}
+message ListUsersResponse {
+   repeated UserDto Users = 1;
+   int32 TotalCount = 2;
+}
+message PaginationDto {
+   int32 PageNumber = 1;
+   int32 PageSize = 2;
+}
+message RefreshTokenRequest {
+   string Username = 1;
+   string RefreshToken = 2;
+}
+message RefreshTokenResponse {
+   string AccessToken = 1;
+   string RefreshToken = 2;
+}
+message SetPermissionRequest {
+   string Username = 1;
+   int32 Permission = 2;
+}
+message SetPermissionResponse {
+}
+message SignInRequest {
+   string Username = 1;
+   string Password = 2;
+}
+message SignInResponse {
+   UserDto User = 1;
+   string AccessToken = 2;
+   string RefreshToken = 3;
+}
+message UserDto {
+   string Username = 1;
+   int32 Permission = 2;
+}
+service UserService {
+   rpc ChangeUserPassword (ChangeUserPasswordRequest) returns (ChangeUserPasswordResponse);
+   rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+   rpc DeleteUser (DeleteUserRequest) returns (DeleteUserResponse);
+   rpc ExistsUser (ExistsUserRequest) returns (ExistsUserResponse);
+   rpc GetUser (GetUserRequest) returns (GetUserResponse);
+   rpc ListUsers (ListUsersRequest) returns (ListUsersResponse);
+   rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse);
+   rpc SetPermission (SetPermissionRequest) returns (SetPermissionResponse);
+   rpc SignIn (SignInRequest) returns (SignInResponse);
+}

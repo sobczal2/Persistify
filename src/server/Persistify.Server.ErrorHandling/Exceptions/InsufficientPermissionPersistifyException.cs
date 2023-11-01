@@ -13,5 +13,7 @@ public class InsufficientPermissionPersistifyException : PersistifyException
             requestName ?? "Unknown",
             $"Insufficient permission. Required permission: {requiredPermission}",
             PersistifyErrorCode.InsufficientPermission
-        ) { }
+        )
+    {
+    }
 }

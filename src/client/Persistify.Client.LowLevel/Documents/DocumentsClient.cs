@@ -10,7 +10,9 @@ namespace Persistify.Client.LowLevel.Documents;
 public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
 {
     internal DocumentsClient(PersistifyLowLevelClient persistifyLowLevelClient)
-        : base(persistifyLowLevelClient) { }
+        : base(persistifyLowLevelClient)
+    {
+    }
 
     public async Task<Result<CreateDocumentResponse>> CreateDocumentAsync(
         IDocumentService documentService,

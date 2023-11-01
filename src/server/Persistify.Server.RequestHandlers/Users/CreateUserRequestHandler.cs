@@ -37,10 +37,7 @@ public class CreateUserRequestHandler : RequestHandler<CreateUserRequest, Create
 
         var user = new User
         {
-            Username = request.Username,
-            PasswordHash = hash,
-            PasswordSalt = salt,
-            Permission = Permission.None
+            Username = request.Username, PasswordHash = hash, PasswordSalt = salt, Permission = Permission.None
         };
 
         _userManager.Add(user);

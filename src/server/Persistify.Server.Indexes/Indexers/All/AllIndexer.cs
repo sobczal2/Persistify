@@ -8,7 +8,7 @@ using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Indexes.Indexers.Common;
 using Persistify.Server.Indexes.Searches;
 
-namespace Persistify.Server.Indexes.Indexers.Bool;
+namespace Persistify.Server.Indexes.Indexers.All;
 
 public class AllIndexer : IIndexer
 {

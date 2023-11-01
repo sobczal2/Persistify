@@ -10,7 +10,9 @@ namespace Persistify.Client.LowLevel.Templates;
 public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
 {
     internal TemplatesClient(PersistifyLowLevelClient persistifyLowLevelClient)
-        : base(persistifyLowLevelClient) { }
+        : base(persistifyLowLevelClient)
+    {
+    }
 
     public async Task<Result<CreateTemplateResponse>> CreateTemplateAsync(
         ITemplateService templateService,

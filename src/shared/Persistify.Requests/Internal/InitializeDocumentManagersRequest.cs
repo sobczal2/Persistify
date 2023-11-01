@@ -3,4 +3,6 @@ using Persistify.Responses.Internal;
 
 namespace Persistify.Requests.Internal;
 
-public class InitializeDocumentManagersRequest : IRequest<InitializeDocumentManagersResponse> { }
+public class InitializeDocumentManagersRequest : IRequest<InitializeDocumentManagersResponse>
+{
+}

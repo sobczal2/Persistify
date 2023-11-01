@@ -37,8 +37,7 @@ public class CreatePresetAnalyzerRequestHandler
     {
         var presetAnalyzer = new PresetAnalyzer
         {
-            Name = request.PresetAnalyzerName,
-            Analyzer = request.FullAnalyzerDto.ToDomain()
+            Name = request.PresetAnalyzerName, Analyzer = request.FullAnalyzerDto.ToDomain()
         };
 
         _presetAnalyzerManager.Add(presetAnalyzer);

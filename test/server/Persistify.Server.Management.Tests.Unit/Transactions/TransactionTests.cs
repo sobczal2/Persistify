@@ -214,7 +214,8 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task PromoteManagerAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
+    public async Task
+        PromoteManagerAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -244,7 +245,8 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task PromoteManagerAsync_WhenManagerIsAlreadyAReadManagerInThisTransaction_ThrowsInvalidOperationException()
+    public async Task
+        PromoteManagerAsync_WhenManagerIsAlreadyAReadManagerInThisTransaction_ThrowsInvalidOperationException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -260,7 +262,8 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task PromoteManagerAsync_WhenManagerIsAlreadyAWriteManagerInThisTransaction_ThrowsInvalidOperationException()
+    public async Task
+        PromoteManagerAsync_WhenManagerIsAlreadyAWriteManagerInThisTransaction_ThrowsInvalidOperationException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);
@@ -515,7 +518,8 @@ public class TransactionTests
     }
 
     [Fact]
-    public async Task RollbackAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
+    public async Task
+        RollbackAsync_WhenCurrentTransactionIsNotThisTransaction_ThrowsTransactionStateCorruptedException()
     {
         // Arrange
         _transactionState.GetCurrentTransaction().Returns(_sut);

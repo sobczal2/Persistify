@@ -43,11 +43,7 @@ public class RefreshTokenRequestHandler : RequestHandler<RefreshTokenRequest, Re
         {
             var (accessToken, refreshToken) = await _userManager.CreateTokens(user.Id);
 
-            _response = new RefreshTokenResponse
-            {
-                AccessToken = accessToken,
-                RefreshToken = refreshToken
-            };
+            _response = new RefreshTokenResponse { AccessToken = accessToken, RefreshToken = refreshToken };
         }
         else
         {

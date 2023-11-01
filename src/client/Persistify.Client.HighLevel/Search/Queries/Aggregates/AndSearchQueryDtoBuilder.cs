@@ -1,7 +1,6 @@
 ﻿using System;
 using Persistify.Client.HighLevel.Core;
 using Persistify.Dtos.Documents.Search.Queries.Aggregates;
-using Persistify.Helpers.Results;
 
 namespace Persistify.Client.HighLevel.Search.Queries.Aggregates;
 

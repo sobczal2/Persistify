@@ -33,10 +33,7 @@ public class ListTemplatesAsyncTests : IntegrationTestBase
         };
 
         await TemplateService.CreateTemplateAsync(addTemplateRequest, callContext);
-        var request = new ListTemplatesRequest
-        {
-            PaginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 }
-        };
+        var request = new ListTemplatesRequest { PaginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 } };
 
         // Act
         var response = await TemplateService.ListTemplatesAsync(request, callContext);

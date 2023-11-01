@@ -8,12 +8,12 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Grpc.Net.Client" Version="2.58.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.58.0"/>
     <PackageReference Include="protobuf-net.Grpc" Version="1.1.1"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj" />
+    <ProjectReference Include="..\..\shared\Persistify.Helpers\Persistify.Helpers.csproj"/>
     <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj"/>
   </ItemGroup>
 

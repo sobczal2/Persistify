@@ -3,4 +3,6 @@
 namespace Persistify.Requests.Common;
 
 public interface IRequest<TResponse>
-    where TResponse : IResponse { }
+    where TResponse : IResponse
+{
+}

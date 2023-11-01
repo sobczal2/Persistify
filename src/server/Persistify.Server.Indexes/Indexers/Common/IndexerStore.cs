@@ -8,7 +8,9 @@ using Persistify.Server.Domain.Documents;
 using Persistify.Server.Domain.Templates;
 using Persistify.Server.ErrorHandling.Exceptions;
 using Persistify.Server.Fts.Abstractions;
+using Persistify.Server.Indexes.Indexers.All;
 using Persistify.Server.Indexes.Indexers.Bool;
+using Persistify.Server.Indexes.Indexers.DateTime;
 using Persistify.Server.Indexes.Indexers.Number;
 using Persistify.Server.Indexes.Indexers.Text;
 using Persistify.Server.Indexes.Searches;
@@ -17,8 +19,8 @@ namespace Persistify.Server.Indexes.Indexers.Common;
 
 public class IndexerStore
 {
-    private readonly ConcurrentDictionary<string, IIndexer> _indexers;
     private readonly IIndexer _allIndexer;
+    private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
     public IndexerStore(Template template, IAnalyzerExecutorFactory analyzerExecutorFactory)
     {
@@ -37,6 +39,9 @@ public class IndexerStore
                 case TextField textField:
                     var analyzer = analyzerExecutorFactory.Create(textField.Analyzer);
                     _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
+                    break;
+                case DateTimeField:
+                    _indexers.TryAdd(field.Name, new DateTimeIndexer(field.Name));
                     break;
                 default:
                     throw new InternalPersistifyException();
@@ -104,8 +109,8 @@ public class IndexerStore
 
     private IEnumerable<SearchResult> Negate(IEnumerable<SearchResult> results, float boost)
     {
-        var resultEnumerator = results.GetEnumerator();
-        var allSearchResults = _allIndexer.Search(new AllSearchQueryDto() { Boost = boost });
+        using var resultEnumerator = results.GetEnumerator();
+        var allSearchResults = _allIndexer.Search(new AllSearchQueryDto { Boost = boost });
 
         foreach (var allSearchResult in allSearchResults)
         {

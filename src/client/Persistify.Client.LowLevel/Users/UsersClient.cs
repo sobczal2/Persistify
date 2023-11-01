@@ -10,7 +10,9 @@ namespace Persistify.Client.LowLevel.Users;
 public class UsersClient : SubClient<IUserService>, IUsersClient
 {
     internal UsersClient(PersistifyLowLevelClient persistifyLowLevelClient)
-        : base(persistifyLowLevelClient) { }
+        : base(persistifyLowLevelClient)
+    {
+    }
 
     public async Task<Result<SignInResponse>> SignInAsync(
         IUserService userService,

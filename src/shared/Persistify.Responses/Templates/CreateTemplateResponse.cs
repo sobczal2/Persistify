@@ -4,4 +4,6 @@ using ProtoBuf;
 namespace Persistify.Responses.Templates;
 
 [ProtoContract]
-public class CreateTemplateResponse : IResponse { }
+public class CreateTemplateResponse : IResponse
+{
+}

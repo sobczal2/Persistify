@@ -8,5 +8,7 @@ public class UnauthenticatedPersistifyException : PersistifyException
         string? requestName,
         string message = "Unauthenticated"
     )
-        : base(requestName ?? "Unknown", message, PersistifyErrorCode.Unauthenticated) { }
+        : base(requestName ?? "Unknown", message, PersistifyErrorCode.Unauthenticated)
+    {
+    }
 }

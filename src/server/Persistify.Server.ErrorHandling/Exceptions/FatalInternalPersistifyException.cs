@@ -8,5 +8,7 @@ public class FatalInternalPersistifyException : PersistifyException
         string? requestName = null,
         string message = "Fatal internal error"
     )
-        : base(requestName ?? "Unknown", message, PersistifyErrorCode.FatalInternalFailure) { }
+        : base(requestName ?? "Unknown", message, PersistifyErrorCode.FatalInternalFailure)
+    {
+    }
 }

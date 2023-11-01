@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Persistify.Dtos.Documents.Search.Queries;
 using Persistify.Dtos.Documents.Search.Queries.Number;
 using Persistify.Server.Domain.Documents;
@@ -25,17 +24,13 @@ public class NumberIndexer : IIndexer
     public void Index(Document document)
     {
         var numberFieldValue = document.GetNumberFieldValueByName(FieldName);
-        if (numberFieldValue == null)
+        if (numberFieldValue is null)
         {
             throw new InternalPersistifyException();
         }
 
         _intervalTree.Insert(
-            new NumberIndexerIntervalTreeRecord
-            {
-                DocumentId = document.Id,
-                Value = numberFieldValue.Value
-            }
+            new NumberIndexerIntervalTreeRecord { DocumentId = document.Id, Value = numberFieldValue.Value }
         );
     }
 
@@ -46,7 +41,7 @@ public class NumberIndexer : IIndexer
             || numberSearchQueryDto.GetFieldName() != FieldName
         )
         {
-            throw new Exception("Invalid search query");
+            throw new InternalPersistifyException();
         }
 
         return queryDto switch
@@ -65,7 +60,10 @@ public class NumberIndexer : IIndexer
 
     public void Delete(Document document)
     {
-        _intervalTree.Remove(x => x.DocumentId == document.Id);
+        if (_intervalTree.Remove(x => x.DocumentId == document.Id) == 0)
+        {
+            throw new InternalPersistifyException();
+        }
     }
 
     private IEnumerable<SearchResult> HandleExactNumberSearch(ExactNumberSearchQueryDto query)

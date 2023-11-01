@@ -5,5 +5,7 @@ namespace Persistify.Server.Persistence.Exceptions;
 public class RepositoryCorruptedException : Exception
 {
     public RepositoryCorruptedException()
-        : base("Repository is corrupted") { }
+        : base("Repository is corrupted")
+    {
+    }
 }

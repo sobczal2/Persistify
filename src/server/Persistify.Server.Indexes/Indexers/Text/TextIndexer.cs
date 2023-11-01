@@ -17,11 +17,13 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 public class TextIndexer : IIndexer
 {
     private readonly IAnalyzerExecutor _analyzerExecutor;
+
     private readonly FixedTrie<
         TextIndexerIndexFixedTrieItem,
         TextIndexerSearchFixedTrieItem,
         IndexToken
     > _fixedTrie;
+
     private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
 
     public TextIndexer(string fieldName, IAnalyzerExecutor analyzerExecutor)
@@ -47,11 +49,7 @@ public class TextIndexer : IIndexer
         }
 
         _intervalTree.Insert(
-            new TextIndexerIntervalTreeRecord
-            {
-                DocumentId = document.Id,
-                Value = textFieldValue.Value
-            }
+            new TextIndexerIntervalTreeRecord { DocumentId = document.Id, Value = textFieldValue.Value }
         );
 
         var tokens = _analyzerExecutor.AnalyzeForIndex(textFieldValue.Value, document.Id);

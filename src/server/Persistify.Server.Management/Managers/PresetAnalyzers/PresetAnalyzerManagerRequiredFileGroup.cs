@@ -8,6 +8,7 @@ public class PresetAnalyzerManagerRequiredFileGroup : IRequiredFileGroup
 {
     public static string IdentifierRepositoryFileName =>
         Path.Join("PresetAnalyzer", "identifier.bin");
+
     public static string PresetAnalyzerRepositoryMainFileName =>
         Path.Join("PresetAnalyzer", "object.bin");
 
