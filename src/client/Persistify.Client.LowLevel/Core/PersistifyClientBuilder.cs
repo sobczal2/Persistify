@@ -1,13 +1,12 @@
 ﻿using Grpc.Net.Client;
-using ProtoBuf.Grpc.Client;
 
 namespace Persistify.Client.LowLevel.Core;
 
 public class PersistifyClientBuilder
 {
     private Uri _baseAddress;
-    private PersistifyCredentials _persistifyCredentials;
     private ConnectionSettings _connectionSettings;
+    private PersistifyCredentials _persistifyCredentials;
 
     private PersistifyClientBuilder()
     {

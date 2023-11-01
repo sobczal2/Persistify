@@ -1,11 +1,10 @@
-﻿using System;
-using Persistify.Client.HighLevel.Core;
+﻿using Persistify.Client.HighLevel.Core;
 using Persistify.Client.HighLevel.Search.Queries.Common;
 using Persistify.Client.HighLevel.Search.Queries.Number;
 using Persistify.Dtos.Common;
 using Persistify.Dtos.Documents.Search.Queries.DateTime;
 
-namespace Persistify.Client.HighLevel.Search.Queries.Date;
+namespace Persistify.Client.HighLevel.Search.Queries.DateTime;
 
 public class GreaterDateTimeSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, GreaterNumberSearchQueryDtoBuilder<TDocument>>
@@ -19,7 +18,7 @@ public class GreaterDateTimeSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public GreaterDateTimeSearchQueryDtoBuilder<TDocument> WithValue(DateTime value)
+    public GreaterDateTimeSearchQueryDtoBuilder<TDocument> WithValue(System.DateTime value)
     {
         ((GreaterDateTimeSearchQueryDto)SearchQueryDto!).Value = value;
         return this;
