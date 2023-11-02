@@ -209,7 +209,7 @@ public class SearchDocumentsRequestValidatorTests
         };
         _templateManager
             .GetAsync(request.TemplateName)
-            .Returns(new Template { Fields = new List<Field> { new BoolField { Name = "Test" } } });
+            .Returns(new Template { Fields = new List<Field> { new BoolField { Name = "Test", Index = true } } });
 
         // Act
         var result = await _sut.ValidateAsync(request);
