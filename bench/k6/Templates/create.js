@@ -1,7 +1,7 @@
 import grpc from 'k6/net/grpc';
 import {check, sleep} from 'k6';
 
-const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiMTI3IiwibmJmIjoxNjk2OTMyMDE0LCJleHAiOjE2OTk1MjQwMTQsImlhdCI6MTY5NjkzMjAxNH0.nYJc6f1BkY0VlEmS4vgDyDzBctmbI3u8VWMz4uf4urytul-5PtaxKrSOhD4WEIUO3xdKdOsu92ley6vfNOGwng'
+const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiNTExIiwibmJmIjoxNjk4ODg3MDcwLCJleHAiOjE3MDc0NDA2NzAsImlhdCI6MTY5ODg4NzA3MH0.d3UF-W1sBiZQP6Qg5sfumX2Xjp9YvDTQkpWFTH1S0rBMAPq0GyErzLb3KHEZf1laudcRRl3iVNUIH9AIlP6Lrg'
 
 const client = new grpc.Client();
 client.load([], '../../../proto/templates.proto');
@@ -24,31 +24,37 @@ export default () => {
     });
 
     const data = {
-        "TextFields": [
+        "Fields": [
             {
-                "Name": "Name",
-                "Required": false,
-                "TextField": {
-                    "AnalyzerDescriptor": {
-                        "PresetAnalyzerDescriptor": {
+                "TextFieldDto": {
+                    "AnalyzerDto": {
+                        "PresetNameAnalyzerDto": {
                             "PresetName": "standard"
                         }
                     }
-                }
-            }
-        ],
-        "NumberFields": [
+                },
+                "Name": "Name",
+                "Required": false
+            },
             {
                 "Name": "Age",
                 "Required": true,
-                "NumberField": {}
-            }
-        ],
-        "BoolFields": [
+                "NumberFieldDto": {}
+            },
             {
                 "Name": "IsCute",
                 "Required": true,
-                "BoolField": {}
+                "BoolFieldDto": {}
+            },
+            {
+                "Name": "CreatedAt",
+                "Required": true,
+                "DateTimeFieldDto": {}
+            },
+            {
+                "Name": "Photo",
+                "Required": true,
+                "BinaryFieldDto": {}
             }
         ],
         "TemplateName": makeid(10)

@@ -1,10 +1,14 @@
 syntax = "proto3";
 package Persistify.Services;
+import "protobuf-net/bcl.proto"; // schema for protobuf-net's handling of core .NET types
 
 message AllSearchQueryDto {
 }
 message AndSearchQueryDto {
    repeated SearchQueryDto SearchQueryDtos = 2;
+}
+message BinaryFieldValueDto {
+   bytes Value = 2;
 }
 message BoolFieldValueDto {
    bool Value = 2;
@@ -15,6 +19,9 @@ message CreateDocumentRequest {
 }
 message CreateDocumentResponse {
    int32 DocumentId = 1;
+}
+message DateTimeFieldValueDto {
+   .bcl.DateTime Value = 2;
 }
 message DeleteDocumentRequest {
    string TemplateName = 1;
@@ -29,6 +36,10 @@ message DocumentDto {
 message ExactBoolSearchQueryDto {
    string FieldName = 2;
    bool Value = 3;
+}
+message ExactDateTimeSearchQueryDto {
+   string FieldName = 2;
+   .bcl.DateTime Value = 3;
 }
 message ExactNumberSearchQueryDto {
    string FieldName = 2;
@@ -51,6 +62,8 @@ message FieldValueDto {
       BoolFieldValueDto BoolFieldValueDto = 100;
       NumberFieldValueDto NumberFieldValueDto = 101;
       TextFieldValueDto TextFieldValueDto = 102;
+      DateTimeFieldValueDto DateTimeFieldValueDto = 103;
+      BinaryFieldValueDto BinaryFieldValueDto = 104;
    }
 }
 message FullTextSearchQueryDto {
@@ -64,9 +77,17 @@ message GetDocumentRequest {
 message GetDocumentResponse {
    DocumentDto DocumentDto = 1;
 }
+message GreaterDateTimeSearchQueryDto {
+   string FieldName = 2;
+   .bcl.DateTime Value = 3;
+}
 message GreaterNumberSearchQueryDto {
    string FieldName = 2;
    double Value = 3;
+}
+message LessDateTimeSearchQueryDto {
+   .bcl.DateTime Value = 2;
+   string FieldName = 3;
 }
 message LessNumberSearchQueryDto {
    string FieldName = 2;
@@ -84,6 +105,11 @@ message OrSearchQueryDto {
 message PaginationDto {
    int32 PageNumber = 1;
    int32 PageSize = 2;
+}
+message RangeDateTimeSearchQueryDto {
+   string FieldName = 2;
+   .bcl.DateTime MinValue = 3;
+   .bcl.DateTime MaxValue = 4;
 }
 message RangeNumberSearchQueryDto {
    string FieldName = 2;
@@ -109,6 +135,7 @@ message SearchQueryDto {
       AndSearchQueryDto AndSearchQueryDto = 100;
       NotSearchQueryDto NotSearchQueryDto = 101;
       OrSearchQueryDto OrSearchQueryDto = 102;
+      AllSearchQueryDto AllSearchQueryDto = 103;
       ExactBoolSearchQueryDto ExactBoolSearchQueryDto = 200;
       ExactNumberSearchQueryDto ExactNumberSearchQueryDto = 300;
       GreaterNumberSearchQueryDto GreaterNumberSearchQueryDto = 301;
@@ -116,7 +143,10 @@ message SearchQueryDto {
       RangeNumberSearchQueryDto RangeNumberSearchQueryDto = 303;
       ExactTextSearchQueryDto ExactTextSearchQueryDto = 400;
       FullTextSearchQueryDto FullTextSearchQueryDto = 401;
-      AllSearchQueryDto AllSearchQueryDto = 500;
+      ExactDateTimeSearchQueryDto ExactDateTimeSearchQueryDto = 500;
+      GreaterDateTimeSearchQueryDto GreaterDateTimeSearchQueryDto = 501;
+      LessDateTimeSearchQueryDto LessDateTimeSearchQueryDto = 502;
+      RangeDateTimeSearchQueryDto RangeDateTimeSearchQueryDto = 503;
    }
 }
 message SearchRecordDto {
