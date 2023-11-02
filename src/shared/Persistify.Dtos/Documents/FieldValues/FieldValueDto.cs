@@ -9,6 +9,7 @@ namespace Persistify.Dtos.Documents.FieldValues;
 [ProtoInclude(101, typeof(NumberFieldValueDto))]
 [ProtoInclude(102, typeof(TextFieldValueDto))]
 [ProtoInclude(103, typeof(DateTimeFieldValueDto))]
+[ProtoInclude(104, typeof(BinaryFieldValueDto))]
 public class FieldValueDto
 {
     [ProtoMember(1)]

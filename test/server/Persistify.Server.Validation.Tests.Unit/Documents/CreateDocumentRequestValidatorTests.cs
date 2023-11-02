@@ -23,6 +23,7 @@ public class CreateDocumentRequestValidatorTests
     private readonly CreateDocumentRequestValidator _sut;
     private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldValueDto> _textFieldValueValidator;
+    private readonly IValidator<BinaryFieldValueDto> _binaryFieldValueValidator;
 
     public CreateDocumentRequestValidatorTests()
     {
@@ -30,6 +31,7 @@ public class CreateDocumentRequestValidatorTests
         _numberFieldValueValidator = Substitute.For<IValidator<NumberFieldValueDto>>();
         _boolFieldValueValidator = Substitute.For<IValidator<BoolFieldValueDto>>();
         _dateTimeFieldValueValidator = Substitute.For<IValidator<DateTimeFieldValueDto>>();
+        _binaryFieldValueValidator = Substitute.For<IValidator<BinaryFieldValueDto>>();
         _templateManager = Substitute.For<ITemplateManager>();
 
         _sut = new CreateDocumentRequestValidator(
@@ -37,6 +39,7 @@ public class CreateDocumentRequestValidatorTests
             _numberFieldValueValidator,
             _boolFieldValueValidator,
             _dateTimeFieldValueValidator,
+            _binaryFieldValueValidator,
             _templateManager
         );
     }
@@ -54,6 +57,7 @@ public class CreateDocumentRequestValidatorTests
                 _numberFieldValueValidator,
                 _boolFieldValueValidator,
                 _dateTimeFieldValueValidator,
+                _binaryFieldValueValidator,
                 _templateManager
             );
         };
@@ -74,6 +78,7 @@ public class CreateDocumentRequestValidatorTests
                 null!,
                 _boolFieldValueValidator,
                 _dateTimeFieldValueValidator,
+                _binaryFieldValueValidator,
                 _templateManager
             );
 
@@ -93,6 +98,7 @@ public class CreateDocumentRequestValidatorTests
                 _numberFieldValueValidator,
                 null!,
                 _dateTimeFieldValueValidator,
+                _binaryFieldValueValidator,
                 _templateManager
             );
 
@@ -111,6 +117,27 @@ public class CreateDocumentRequestValidatorTests
                 _textFieldValueValidator,
                 _numberFieldValueValidator,
                 _boolFieldValueValidator,
+                null!,
+                _binaryFieldValueValidator,
+                _templateManager
+            );
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void Ctor_WhenBinaryFieldValueValidatorIsNull_ThrowsArgumentNullException()
+    {
+        // Arrange
+
+        // Act
+        Action act = () =>
+            new CreateDocumentRequestValidator(
+                _textFieldValueValidator,
+                _numberFieldValueValidator,
+                _boolFieldValueValidator,
+                _dateTimeFieldValueValidator,
                 null!,
                 _templateManager
             );
@@ -131,6 +158,7 @@ public class CreateDocumentRequestValidatorTests
                 _numberFieldValueValidator,
                 _boolFieldValueValidator,
                 _dateTimeFieldValueValidator,
+                _binaryFieldValueValidator,
                 null!
             );
 

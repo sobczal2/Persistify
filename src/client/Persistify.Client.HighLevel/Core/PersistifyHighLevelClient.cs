@@ -122,6 +122,8 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                         => new NumberFieldDto { Name = fieldName, Required = required },
                     FieldTypeDto.DateTime
                         => new DateTimeFieldDto { Name = fieldName, Required = required },
+                    FieldTypeDto.Binary
+                        => new BinaryFieldDto { Name = fieldName, Required = required },
                     _ => throw new ArgumentOutOfRangeException()
                 };
 
@@ -228,6 +230,15 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                                 fieldType.GetValue(document)
                             )
                     },
+                FieldTypeDto.Binary
+                    => new BinaryFieldValueDto
+                    {
+                        FieldName = fieldName,
+                        Value = (byte[])
+                            _converters[(fieldType.PropertyType, fieldTypeDto)].Convert(
+                                fieldType.GetValue(document)
+                            )
+                    },
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -318,6 +329,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                     => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
                         dateTimeFieldValueDto.Value
                     ),
+                BinaryFieldValueDto binaryFieldValueDto
+                    => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
+                        binaryFieldValueDto.Value
+                    ),
                 _ => throw new ArgumentOutOfRangeException()
             };
 
@@ -387,6 +402,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
                     DateTimeFieldValueDto dateTimeFieldValueDto
                         => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
                             dateTimeFieldValueDto.Value
+                        ),
+                    BinaryFieldValueDto binaryFieldValueDto
+                        => _converters[(fieldType.PropertyType, fieldTypeDto)].ConvertBack(
+                            binaryFieldValueDto.Value
                         ),
                     _ => throw new ArgumentOutOfRangeException()
                 };

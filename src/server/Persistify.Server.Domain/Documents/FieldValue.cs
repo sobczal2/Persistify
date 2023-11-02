@@ -7,6 +7,7 @@ namespace Persistify.Server.Domain.Documents;
 [ProtoInclude(101, typeof(NumberFieldValue))]
 [ProtoInclude(102, typeof(TextFieldValue))]
 [ProtoInclude(103, typeof(DateTimeFieldValue))]
+[ProtoInclude(104, typeof(BinaryFieldValue))]
 public class FieldValue
 {
     [ProtoMember(1)]

@@ -17,12 +17,14 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
     private readonly IValidator<NumberFieldDto> _numberFieldDtoValidator;
     private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldDto> _textFieldDtoValidator;
+    private readonly IValidator<BinaryFieldDto> _binaryFieldDtoValidator;
 
     public CreateTemplateRequestValidator(
         IValidator<TextFieldDto> textFieldDtoValidator,
         IValidator<NumberFieldDto> numberFieldDtoValidator,
         IValidator<BoolFieldDto> boolFieldDtoValidator,
         IValidator<DateTimeFieldDto> dateTimeFieldDtoValidator,
+        IValidator<BinaryFieldDto> binaryFieldDtoValidator,
         ITemplateManager templateManager
     )
     {
@@ -39,6 +41,9 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         _dateTimeFieldDtoValidator = dateTimeFieldDtoValidator ??
                                      throw new ArgumentNullException(nameof(dateTimeFieldDtoValidator));
         _dateTimeFieldDtoValidator.PropertyName = PropertyName;
+        _binaryFieldDtoValidator =
+            binaryFieldDtoValidator ?? throw new ArgumentNullException(nameof(binaryFieldDtoValidator));
+        _binaryFieldDtoValidator.PropertyName = PropertyName;
         _templateManager =
             templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(CreateTemplateRequest));
@@ -118,6 +123,16 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
                     if (!dateTimeFieldDtoResult.Success)
                     {
                         return dateTimeFieldDtoResult;
+                    }
+
+                    break;
+                case BinaryFieldDto binaryFieldValue:
+                    var binaryFieldDtoResult = await _binaryFieldDtoValidator.ValidateAsync(
+                        binaryFieldValue
+                    );
+                    if (!binaryFieldDtoResult.Success)
+                    {
+                        return binaryFieldDtoResult;
                     }
 
                     break;
