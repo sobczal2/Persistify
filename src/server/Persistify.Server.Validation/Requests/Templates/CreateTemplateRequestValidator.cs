@@ -12,12 +12,12 @@ namespace Persistify.Server.Validation.Requests.Templates;
 
 public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
 {
+    private readonly IValidator<BinaryFieldDto> _binaryFieldDtoValidator;
     private readonly IValidator<BoolFieldDto> _boolFieldDtoValidator;
     private readonly IValidator<DateTimeFieldDto> _dateTimeFieldDtoValidator;
     private readonly IValidator<NumberFieldDto> _numberFieldDtoValidator;
     private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldDto> _textFieldDtoValidator;
-    private readonly IValidator<BinaryFieldDto> _binaryFieldDtoValidator;
 
     public CreateTemplateRequestValidator(
         IValidator<TextFieldDto> textFieldDtoValidator,

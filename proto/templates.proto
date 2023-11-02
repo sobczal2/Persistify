@@ -10,6 +10,7 @@ message AnalyzerDto {
 message BinaryFieldDto {
 }
 message BoolFieldDto {
+   bool Index = 3;
 }
 message CreateTemplateRequest {
    string TemplateName = 1;
@@ -18,6 +19,7 @@ message CreateTemplateRequest {
 message CreateTemplateResponse {
 }
 message DateTimeFieldDto {
+   bool Index = 3;
 }
 message DeleteTemplateRequest {
    string TemplateName = 1;
@@ -61,6 +63,7 @@ message ListTemplatesResponse {
    int32 TotalCount = 2;
 }
 message NumberFieldDto {
+   bool Index = 3;
 }
 message PaginationDto {
    int32 PageNumber = 1;
@@ -74,7 +77,9 @@ message TemplateDto {
    repeated FieldDto Fields = 2;
 }
 message TextFieldDto {
-   AnalyzerDto AnalyzerDto = 3;
+   bool IndexText = 3;
+   bool IndexFullText = 4;
+   AnalyzerDto AnalyzerDto = 5;
 }
 service TemplateService {
    rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);

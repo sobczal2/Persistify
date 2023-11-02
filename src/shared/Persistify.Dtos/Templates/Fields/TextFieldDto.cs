@@ -7,5 +7,11 @@ namespace Persistify.Dtos.Templates.Fields;
 public class TextFieldDto : FieldDto
 {
     [ProtoMember(3)]
-    public AnalyzerDto AnalyzerDto { get; set; } = default!;
+    public bool IndexText { get; set; }
+
+    [ProtoMember(4)]
+    public bool IndexFullText { get; set; }
+
+    [ProtoMember(5)]
+    public AnalyzerDto? AnalyzerDto { get; set; }
 }

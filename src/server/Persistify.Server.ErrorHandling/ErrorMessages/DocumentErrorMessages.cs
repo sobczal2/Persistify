@@ -24,4 +24,5 @@ public static class DocumentErrorMessages
     public const string FieldTypeMismatch = "Field type mismatch";
     public const string FieldNotFound = "Field not found";
     public const string DocumentNotFound = "Document not found";
+    public const string FieldNotIndexed = "Field not indexed";
 }

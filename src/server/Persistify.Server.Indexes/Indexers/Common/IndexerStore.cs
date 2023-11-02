@@ -30,17 +30,40 @@ public class IndexerStore
         {
             switch (field)
             {
-                case BoolField:
+                case BoolField boolField:
+                    if (!boolField.Index)
+                    {
+                        break;
+                    }
+
                     _indexers.TryAdd(field.Name, new BoolIndexer(field.Name));
                     break;
-                case NumberField:
+                case NumberField numberField:
+                    if (!numberField.Index)
+                    {
+                        break;
+                    }
+
                     _indexers.TryAdd(field.Name, new NumberIndexer(field.Name));
                     break;
                 case TextField textField:
-                    var analyzer = analyzerExecutorFactory.Create(textField.Analyzer);
-                    _indexers.TryAdd(field.Name, new TextIndexer(field.Name, analyzer));
+                    if (textField is { IndexText: false, IndexFullText: false })
+                    {
+                        break;
+                    }
+
+                    var analyzer = textField.Analyzer is not null
+                        ? analyzerExecutorFactory.Create(textField.Analyzer)
+                        : null;
+                    _indexers.TryAdd(field.Name,
+                        new TextIndexer(field.Name, analyzer, textField.IndexText, textField.IndexFullText));
                     break;
-                case DateTimeField:
+                case DateTimeField dateTimeField:
+                    if (!dateTimeField.Index)
+                    {
+                        break;
+                    }
+
                     _indexers.TryAdd(field.Name, new DateTimeIndexer(field.Name));
                     break;
                 case BinaryField:

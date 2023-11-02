@@ -6,4 +6,7 @@ namespace Persistify.Server.Domain.Templates;
 public class BoolField : Field
 {
     public override FieldType FieldType => FieldType.Bool;
+
+    [ProtoMember(3)]
+    public bool Index { get; set; }
 }
