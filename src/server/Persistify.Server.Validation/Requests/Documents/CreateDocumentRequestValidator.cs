@@ -14,9 +14,9 @@ namespace Persistify.Server.Validation.Requests.Documents;
 
 public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
+    private readonly IValidator<BinaryFieldValueDto> _binaryFieldValueDtoValidator;
     private readonly IValidator<BoolFieldValueDto> _boolFieldValueDtoValidator;
     private readonly IValidator<DateTimeFieldValueDto> _dateTimeFieldValueDtoValidator;
-    private readonly IValidator<BinaryFieldValueDto> _binaryFieldValueDtoValidator;
     private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
