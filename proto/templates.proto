@@ -7,6 +7,8 @@ message AnalyzerDto {
       PresetNameAnalyzerDto PresetNameAnalyzerDto = 2;
    }
 }
+message BinaryFieldDto {
+}
 message BoolFieldDto {
 }
 message CreateTemplateRequest {
@@ -14,6 +16,8 @@ message CreateTemplateRequest {
    repeated FieldDto Fields = 2;
 }
 message CreateTemplateResponse {
+}
+message DateTimeFieldDto {
 }
 message DeleteTemplateRequest {
    string TemplateName = 1;
@@ -33,6 +37,8 @@ message FieldDto {
       BoolFieldDto BoolFieldDto = 100;
       NumberFieldDto NumberFieldDto = 101;
       TextFieldDto TextFieldDto = 102;
+      DateTimeFieldDto DateTimeFieldDto = 103;
+      BinaryFieldDto BinaryFieldDto = 104;
    }
 }
 message FullAnalyzerDto {
