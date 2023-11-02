@@ -287,6 +287,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not BoolField boolField)
+        {
+            PropertyName.Push(nameof(ExactBoolSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!boolField.Index)
+        {
+            PropertyName.Push(nameof(ExactBoolSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(ExactBoolSearchQueryDto));
         PropertyName.Push(nameof(ExactBoolSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Bool);
@@ -304,6 +316,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not NumberField numberField)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!numberField.Index)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(ExactNumberSearchQueryDto));
         PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
@@ -321,6 +345,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not NumberField numberField)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!numberField.Index)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(GreaterNumberSearchQueryDto));
         PropertyName.Push(nameof(GreaterNumberSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
@@ -338,6 +374,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not NumberField numberField)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!numberField.Index)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(LessNumberSearchQueryDto));
         PropertyName.Push(nameof(LessNumberSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
@@ -355,6 +403,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not NumberField numberField)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!numberField.Index)
+        {
+            PropertyName.Push(nameof(ExactNumberSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(RangeNumberSearchQueryDto));
         PropertyName.Push(nameof(RangeNumberSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Number);
@@ -378,6 +438,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not TextField textField)
+        {
+            PropertyName.Push(nameof(ExactTextSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!textField.IndexText)
+        {
+            PropertyName.Push(nameof(ExactTextSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(ExactTextSearchQueryDto));
         PropertyName.Push(nameof(ExactTextSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Text);
@@ -395,6 +467,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         Template template
     )
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not TextField textField)
+        {
+            PropertyName.Push(nameof(FullTextSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!textField.IndexFullText)
+        {
+            PropertyName.Push(nameof(FullTextSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(FullTextSearchQueryDto));
         PropertyName.Push(nameof(FullTextSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.Text);
@@ -410,6 +494,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private async ValueTask<Result> ValidateRangeDateTimeSearchQueryDtoAsync(RangeDateTimeSearchQueryDto queryDto,
         Template template)
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!dateTimeField.Index)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(RangeDateTimeSearchQueryDto));
         PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
@@ -425,6 +521,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private async ValueTask<Result> ValidateLessDateTimeSearchQueryDtoAsync(LessDateTimeSearchQueryDto queryDto,
         Template template)
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!dateTimeField.Index)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(LessDateTimeSearchQueryDto));
         PropertyName.Push(nameof(LessDateTimeSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
@@ -440,6 +548,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private async ValueTask<Result> ValidateGreaterDateTimeSearchQueryDtoAsync(GreaterDateTimeSearchQueryDto queryDto,
         Template template)
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!dateTimeField.Index)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(GreaterDateTimeSearchQueryDto));
         PropertyName.Push(nameof(GreaterDateTimeSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);
@@ -455,6 +575,18 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
     private async ValueTask<Result> ValidateExactDateTimeSearchQueryDtoAsync(ExactDateTimeSearchQueryDto queryDto,
         Template template)
     {
+        if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
+        }
+
+        if (!dateTimeField.Index)
+        {
+            PropertyName.Push(nameof(RangeDateTimeSearchQueryDto.FieldName));
+            return StaticValidationException(DocumentErrorMessages.FieldNotIndexed);
+        }
+
         PropertyName.Push(nameof(ExactDateTimeSearchQueryDto));
         PropertyName.Push(nameof(ExactDateTimeSearchQueryDto.FieldName));
         var result = await ValidateFieldName(queryDto.FieldName, template, FieldType.DateTime);

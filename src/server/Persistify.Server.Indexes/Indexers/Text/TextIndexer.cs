@@ -16,25 +16,28 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexer : IIndexer
 {
-    private readonly IAnalyzerExecutor _analyzerExecutor;
+    private readonly IAnalyzerExecutor? _analyzerExecutor;
 
     private readonly FixedTrie<
         TextIndexerIndexFixedTrieItem,
         TextIndexerSearchFixedTrieItem,
         IndexToken
-    > _fixedTrie;
+    >? _fixedTrie;
 
-    private readonly IntervalTree<TextIndexerIntervalTreeRecord> _intervalTree;
+    private readonly IntervalTree<TextIndexerIntervalTreeRecord>? _intervalTree;
 
-    public TextIndexer(string fieldName, IAnalyzerExecutor analyzerExecutor)
+    public TextIndexer(string fieldName, IAnalyzerExecutor? analyzerExecutor, bool indexText, bool indexFullText)
     {
         FieldName = fieldName;
-        _intervalTree = new IntervalTree<TextIndexerIntervalTreeRecord>();
-        _fixedTrie = new FixedTrie<
-            TextIndexerIndexFixedTrieItem,
-            TextIndexerSearchFixedTrieItem,
-            IndexToken
-        >(analyzerExecutor.AlphabetLength);
+        _intervalTree = indexText ? new IntervalTree<TextIndexerIntervalTreeRecord>() : null;
+        _fixedTrie = indexFullText
+            ? new FixedTrie<
+                TextIndexerIndexFixedTrieItem,
+                TextIndexerSearchFixedTrieItem,
+                IndexToken
+            >(analyzerExecutor?.AlphabetLength ?? throw new InternalPersistifyException()
+            )
+            : null;
         _analyzerExecutor = analyzerExecutor;
     }
 
@@ -48,9 +51,14 @@ public class TextIndexer : IIndexer
             throw new InternalPersistifyException();
         }
 
-        _intervalTree.Insert(
+        _intervalTree?.Insert(
             new TextIndexerIntervalTreeRecord { DocumentId = document.Id, Value = textFieldValue.Value }
         );
+
+        if (_analyzerExecutor is null || _fixedTrie is null)
+        {
+            return;
+        }
 
         var tokens = _analyzerExecutor.AnalyzeForIndex(textFieldValue.Value, document.Id);
 
@@ -82,8 +90,9 @@ public class TextIndexer : IIndexer
 
     public void Delete(Document document)
     {
-        _intervalTree.Remove(x => x.DocumentId == document.Id);
-        _fixedTrie.UpdateIf(
+        _intervalTree?.Remove(x => x.DocumentId == document.Id);
+
+        _fixedTrie?.UpdateIf(
             x => x.DocumentPositions.Any(y => y.DocumentId == document.Id),
             x => x.DocumentPositions.RemoveWhere(y => y.DocumentId == document.Id)
         );
@@ -91,6 +100,11 @@ public class TextIndexer : IIndexer
 
     private IEnumerable<SearchResult> HandleExactTextSearch(ExactTextSearchQueryDto queryDto)
     {
+        if (_intervalTree is null)
+        {
+            throw new InternalPersistifyException();
+        }
+
         var results = _intervalTree.Search(
             queryDto.Value,
             queryDto.Value,
@@ -107,6 +121,11 @@ public class TextIndexer : IIndexer
 
     private IEnumerable<SearchResult> HandleFullTextSearch(FullTextSearchQueryDto queryDto)
     {
+        if (_analyzerExecutor is null || _fixedTrie is null)
+        {
+            throw new InternalPersistifyException();
+        }
+
         var results = new SortedList<int, SearchResult>();
 
         var tokenCount = 0;

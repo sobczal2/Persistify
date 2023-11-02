@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Persistify.Dtos.PresetAnalyzers;
 using Persistify.Dtos.Templates.Fields;
 using Persistify.Helpers.Results;
@@ -17,9 +18,13 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
         IValidator<PresetNameAnalyzerDto> presetNameDescriptorDtoValidator
     )
     {
-        _fullAnalyzerDtoValidator = fullAnalyzerDtoValidator;
+        _fullAnalyzerDtoValidator = fullAnalyzerDtoValidator ??
+                                    throw new ArgumentNullException(nameof(fullAnalyzerDtoValidator));
         _fullAnalyzerDtoValidator.PropertyName = PropertyName;
-        _presetNameDescriptorDtoValidator = presetNameDescriptorDtoValidator;
+        _presetNameDescriptorDtoValidator = presetNameDescriptorDtoValidator ??
+                                            throw new ArgumentNullException(
+                                                nameof(presetNameDescriptorDtoValidator)
+                                            );
         _presetNameDescriptorDtoValidator.PropertyName = PropertyName;
         PropertyName.Push(nameof(TextFieldDto));
     }
@@ -39,39 +44,43 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
         }
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-        if (value.AnalyzerDto is null)
+        if (value.AnalyzerDto is null && value.IndexFullText)
         {
             PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
             return StaticValidationException(SharedErrorMessages.ValueNull);
         }
 
-        if (value.AnalyzerDto is PresetNameAnalyzerDto presetNameAnalyzerDto)
+        if (value.AnalyzerDto is not null && !value.IndexFullText)
         {
-            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
-            var presetNameAnalyzerDtoValidationResult =
-                await _presetNameDescriptorDtoValidator.ValidateAsync(presetNameAnalyzerDto);
-            PropertyName.Pop();
-            if (presetNameAnalyzerDtoValidationResult.Failure)
-            {
-                return presetNameAnalyzerDtoValidationResult;
-            }
+            PropertyName.Push(nameof(TextFieldDto.IndexFullText));
+            return StaticValidationException(SharedErrorMessages.InvalidValue);
         }
-        else if (value.AnalyzerDto is FullAnalyzerDto fullAnalyzerDto)
+
+        if (value.AnalyzerDto is not null)
         {
-            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
-            var fullAnalyzerDtoValidator = await _fullAnalyzerDtoValidator.ValidateAsync(
-                fullAnalyzerDto
-            );
-            PropertyName.Pop();
-            if (fullAnalyzerDtoValidator.Failure)
+            if (value.AnalyzerDto is PresetNameAnalyzerDto presetNameAnalyzerDto)
             {
-                return fullAnalyzerDtoValidator;
+                PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
+                var presetNameAnalyzerDtoValidationResult =
+                    await _presetNameDescriptorDtoValidator.ValidateAsync(presetNameAnalyzerDto);
+                PropertyName.Pop();
+                if (presetNameAnalyzerDtoValidationResult.Failure)
+                {
+                    return presetNameAnalyzerDtoValidationResult;
+                }
             }
-        }
-        else
-        {
-            PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
-            return StaticValidationException(TemplateErrorMessages.InvalidAnalyzerDescriptor);
+            else if (value.AnalyzerDto is FullAnalyzerDto fullAnalyzerDto)
+            {
+                PropertyName.Push(nameof(TextFieldDto.AnalyzerDto));
+                var fullAnalyzerDtoValidator = await _fullAnalyzerDtoValidator.ValidateAsync(
+                    fullAnalyzerDto
+                );
+                PropertyName.Pop();
+                if (fullAnalyzerDtoValidator.Failure)
+                {
+                    return fullAnalyzerDtoValidator;
+                }
+            }
         }
 
         return Result.Ok;
