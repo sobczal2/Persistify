@@ -43,6 +43,8 @@ public class IndexerStore
                 case DateTimeField:
                     _indexers.TryAdd(field.Name, new DateTimeIndexer(field.Name));
                     break;
+                case BinaryField:
+                    break;
                 default:
                     throw new InternalPersistifyException();
             }

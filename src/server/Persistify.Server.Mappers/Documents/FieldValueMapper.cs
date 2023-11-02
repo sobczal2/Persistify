@@ -36,6 +36,8 @@ public static class FieldValueMapper
                 => new TextFieldValue { FieldName = textFieldValue.FieldName, Value = textFieldValue.Value },
             DateTimeFieldValueDto dateFieldValue
                 => new DateTimeFieldValue { FieldName = dateFieldValue.FieldName, Value = dateFieldValue.Value },
+            BinaryFieldValueDto binaryFieldValue
+                => new BinaryFieldValue { FieldName = binaryFieldValue.FieldName, Value = binaryFieldValue.Value },
             _ => throw new InternalPersistifyException(nameof(FieldValueMapper))
         };
     }

@@ -16,6 +16,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
 {
     private readonly IValidator<BoolFieldValueDto> _boolFieldValueDtoValidator;
     private readonly IValidator<DateTimeFieldValueDto> _dateTimeFieldValueDtoValidator;
+    private readonly IValidator<BinaryFieldValueDto> _binaryFieldValueDtoValidator;
     private readonly IValidator<NumberFieldValueDto> _numberFieldValueDtoValidator;
     private readonly ITemplateManager _templateManager;
     private readonly IValidator<TextFieldValueDto> _textFieldValueDtoValidator;
@@ -25,6 +26,7 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         IValidator<NumberFieldValueDto> numberFieldValueDtoValidator,
         IValidator<BoolFieldValueDto> boolFieldValueDtoValidator,
         IValidator<DateTimeFieldValueDto> dateTimeFieldValueDtoValidator,
+        IValidator<BinaryFieldValueDto> binaryFieldValueDtoValidator,
         ITemplateManager templateManager
     )
     {
@@ -42,6 +44,8 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         _boolFieldValueDtoValidator.PropertyName = PropertyName;
         _dateTimeFieldValueDtoValidator = dateTimeFieldValueDtoValidator ??
                                           throw new ArgumentNullException(nameof(dateTimeFieldValueDtoValidator));
+        _binaryFieldValueDtoValidator = binaryFieldValueDtoValidator ??
+                                        throw new ArgumentNullException(nameof(binaryFieldValueDtoValidator));
         _dateTimeFieldValueDtoValidator.PropertyName = PropertyName;
         _templateManager =
             templateManager ?? throw new ArgumentNullException(nameof(templateManager));
@@ -123,6 +127,16 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
                     if (!dateTimeFieldValueDtoResult.Success)
                     {
                         return dateTimeFieldValueDtoResult;
+                    }
+
+                    break;
+                case BinaryFieldValueDto binaryFieldValueDto:
+                    var binaryFieldValueDtoResult = await _binaryFieldValueDtoValidator.ValidateAsync(
+                        binaryFieldValueDto
+                    );
+                    if (!binaryFieldValueDtoResult.Success)
+                    {
+                        return binaryFieldValueDtoResult;
                     }
 
                     break;

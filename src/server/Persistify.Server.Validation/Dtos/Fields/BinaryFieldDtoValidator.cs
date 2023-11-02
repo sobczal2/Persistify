@@ -8,6 +8,11 @@ namespace Persistify.Server.Validation.Dtos.Fields;
 
 public class BinaryFieldDtoValidator : Validator<BinaryFieldDto>
 {
+    public BinaryFieldDtoValidator()
+    {
+        PropertyName.Push(nameof(BinaryFieldDto));
+    }
+
     public override ValueTask<Result> ValidateNotNullAsync(BinaryFieldDto value)
     {
         if (string.IsNullOrEmpty(value.Name))
