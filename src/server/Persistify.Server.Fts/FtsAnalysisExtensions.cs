@@ -9,7 +9,7 @@ public static class FtsAnalysisExtensions
 {
     public static IServiceCollection AddFtsAnalysis(this IServiceCollection services)
     {
-        services.AddSingleton<IAnalyzerExecutorFactory, AnalyzerExecutorFactory>();
+        services.AddSingleton<IAnalyzerExecutorLookup, AnalyzerExecutorLookup>();
         services.AddTransient<IBuiltInPresetAnalyzer, StandardBuiltInPresetAnalyzer>();
 
         return services;

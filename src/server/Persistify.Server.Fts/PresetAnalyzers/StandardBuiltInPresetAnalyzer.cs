@@ -9,7 +9,7 @@ public class StandardBuiltInPresetAnalyzer : IBuiltInPresetAnalyzer
     private const string TokenizerName = "whitespace";
 
     private static readonly List<string> CharacterSetNames =
-        new() { "lowercase_letters", "uppercase_letters", "digits" };
+        new() { "en-lowercase-letters", "en-uppercase-letters", "digits" };
 
     private static readonly List<string> CharacterFilterNames = new();
 

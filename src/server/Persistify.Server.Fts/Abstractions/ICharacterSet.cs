@@ -8,5 +8,6 @@ namespace Persistify.Server.Fts.Abstractions;
 /// </summary>
 public interface ICharacterSet
 {
+    string Code { get; }
     IEnumerable<char> Characters { get; }
 }

@@ -22,7 +22,7 @@ public class IndexerStore
     private readonly IIndexer _allIndexer;
     private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
-    public IndexerStore(Template template, IAnalyzerExecutorFactory analyzerExecutorFactory)
+    public IndexerStore(Template template, IAnalyzerExecutorLookup analyzerExecutorLookup)
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
 
@@ -53,7 +53,7 @@ public class IndexerStore
                     }
 
                     var analyzer = textField.Analyzer is not null
-                        ? analyzerExecutorFactory.Create(textField.Analyzer)
+                        ? analyzerExecutorLookup.Create(textField.Analyzer)
                         : null;
                     _indexers.TryAdd(field.Name,
                         new TextIndexer(field.Name, analyzer, textField.IndexText, textField.IndexFullText));
