@@ -33,14 +33,18 @@ public class RequestHandlerContext<TRequest, TResponse>
 
     public ITransactionState TransactionState { get; }
 
-    public void HandleException(Exception exception)
+    public void HandleException(
+        Exception exception
+    )
     {
         _exceptionHandler.Handle(exception);
     }
 
     public ITransaction CurrentTransaction => TransactionState.GetCurrentTransaction();
 
-    public async ValueTask ValidateAsync(TRequest request)
+    public async ValueTask ValidateAsync(
+        TRequest request
+    )
     {
         (await _validator.ValidateAsync(request)).OnFailure(ex => throw ex);
     }

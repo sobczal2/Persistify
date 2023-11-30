@@ -7,7 +7,9 @@ public class NumberIndexerIntervalTreeRecord : IComparable<NumberIndexerInterval
     public int DocumentId { get; set; }
     public double Value { get; set; }
 
-    public int CompareTo(NumberIndexerIntervalTreeRecord? other)
+    public int CompareTo(
+        NumberIndexerIntervalTreeRecord? other
+    )
     {
         if (other == null)
         {

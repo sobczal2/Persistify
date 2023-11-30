@@ -28,7 +28,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         IPersistifyConverter
     > _converters;
 
-    internal PersistifyHighLevelClient(IPersistifyLowLevelClient lowLevel)
+    internal PersistifyHighLevelClient(
+        IPersistifyLowLevelClient lowLevel
+    )
     {
         LowLevel = lowLevel;
         _converters =
@@ -37,7 +39,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
 
     public IPersistifyLowLevelClient LowLevel { get; }
 
-    public async Task<Result> InitializeAsync(params Assembly[] assemblies)
+    public async Task<Result> InitializeAsync(
+        params Assembly[] assemblies
+    )
     {
         var initializeTemplatesResult = await InitializeTemplatesAsync(assemblies);
 
@@ -51,7 +55,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         return new Result();
     }
 
-    public async Task<Result<int>> InitializeTemplatesAsync(params Assembly[] assemblies)
+    public async Task<Result<int>> InitializeTemplatesAsync(
+        params Assembly[] assemblies
+    )
     {
         var documentTypes = assemblies
             .Append(Assembly.GetExecutingAssembly())
@@ -143,7 +149,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         return new Result<int>(documentTypes.Count);
     }
 
-    public void InitializeConverters(params Assembly[] assemblies)
+    public void InitializeConverters(
+        params Assembly[] assemblies
+    )
     {
         var converterTypes = assemblies
             .Append(Assembly.GetExecutingAssembly())
@@ -161,7 +169,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         }
     }
 
-    public async Task<Result<int>> AddAsync<TDocument>(TDocument document)
+    public async Task<Result<int>> AddAsync<TDocument>(
+        TDocument document
+    )
         where TDocument : new()
     {
         var documentType = typeof(TDocument);
@@ -260,7 +270,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         return new Result<int>(createResult.Value.DocumentId);
     }
 
-    public async Task<Result<TDocument>> GetAsync<TDocument>(int id)
+    public async Task<Result<TDocument>> GetAsync<TDocument>(
+        int id
+    )
         where TDocument : new()
     {
         var documentType = typeof(TDocument);
@@ -421,7 +433,9 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         );
     }
 
-    public async Task<Result> DeleteAsync<TDocument>(int id)
+    public async Task<Result> DeleteAsync<TDocument>(
+        int id
+    )
         where TDocument : new()
     {
         var documentType = typeof(TDocument);
@@ -452,7 +466,10 @@ public class PersistifyHighLevelClient : IPersistifyHighLevelClient
         return Result.Ok;
     }
 
-    public IPersistifyConverter? GetConverter(Type type, FieldTypeDto fieldTypeDto)
+    public IPersistifyConverter? GetConverter(
+        Type type,
+        FieldTypeDto fieldTypeDto
+    )
     {
         return _converters[(type, fieldTypeDto)];
     }

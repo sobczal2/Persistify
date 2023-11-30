@@ -12,7 +12,9 @@ public class RequestDispatcher : IRequestDispatcher
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public RequestDispatcher(IServiceProvider serviceProvider)
+    public RequestDispatcher(
+        IServiceProvider serviceProvider
+    )
     {
         _serviceProvider = serviceProvider;
     }

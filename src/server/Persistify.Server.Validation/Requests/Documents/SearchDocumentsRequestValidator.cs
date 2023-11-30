@@ -35,7 +35,9 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         PropertyName.Push(nameof(SearchDocumentsRequest));
     }
 
-    public override async ValueTask<Result> ValidateNotNullAsync(SearchDocumentsRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(
+        SearchDocumentsRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {
@@ -491,8 +493,10 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateRangeDateTimeSearchQueryDtoAsync(RangeDateTimeSearchQueryDto queryDto,
-        Template template)
+    private async ValueTask<Result> ValidateRangeDateTimeSearchQueryDtoAsync(
+        RangeDateTimeSearchQueryDto queryDto,
+        Template template
+    )
     {
         if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
         {
@@ -518,8 +522,10 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateLessDateTimeSearchQueryDtoAsync(LessDateTimeSearchQueryDto queryDto,
-        Template template)
+    private async ValueTask<Result> ValidateLessDateTimeSearchQueryDtoAsync(
+        LessDateTimeSearchQueryDto queryDto,
+        Template template
+    )
     {
         if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
         {
@@ -545,8 +551,10 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateGreaterDateTimeSearchQueryDtoAsync(GreaterDateTimeSearchQueryDto queryDto,
-        Template template)
+    private async ValueTask<Result> ValidateGreaterDateTimeSearchQueryDtoAsync(
+        GreaterDateTimeSearchQueryDto queryDto,
+        Template template
+    )
     {
         if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
         {
@@ -572,8 +580,10 @@ public class SearchDocumentsRequestValidator : Validator<SearchDocumentsRequest>
         return Result.Ok;
     }
 
-    private async ValueTask<Result> ValidateExactDateTimeSearchQueryDtoAsync(ExactDateTimeSearchQueryDto queryDto,
-        Template template)
+    private async ValueTask<Result> ValidateExactDateTimeSearchQueryDtoAsync(
+        ExactDateTimeSearchQueryDto queryDto,
+        Template template
+    )
     {
         if (template.GetFieldByName(queryDto.FieldName) is not DateTimeField dateTimeField)
         {

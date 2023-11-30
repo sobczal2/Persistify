@@ -6,7 +6,9 @@ namespace Persistify.Server.Mappers.Documents;
 
 public static class FieldValueMapper
 {
-    public static FieldValueDto ToDto(this FieldValue fieldValue)
+    public static FieldValueDto ToDto(
+        this FieldValue fieldValue
+    )
     {
         return fieldValue switch
         {
@@ -24,7 +26,9 @@ public static class FieldValueMapper
         };
     }
 
-    public static FieldValue ToDomain(this FieldValueDto fieldValueDto)
+    public static FieldValue ToDomain(
+        this FieldValueDto fieldValueDto
+    )
     {
         return fieldValueDto switch
         {

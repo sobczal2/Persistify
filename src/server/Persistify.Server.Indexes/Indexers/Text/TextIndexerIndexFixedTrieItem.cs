@@ -6,7 +6,9 @@ namespace Persistify.Server.Indexes.Indexers.Text;
 
 public class TextIndexerIndexFixedTrieItem : IndexFixedTrieItem<IndexToken>
 {
-    public TextIndexerIndexFixedTrieItem(IndexToken value)
+    public TextIndexerIndexFixedTrieItem(
+        IndexToken value
+    )
     {
         Value = value;
     }
@@ -16,12 +18,16 @@ public class TextIndexerIndexFixedTrieItem : IndexFixedTrieItem<IndexToken>
 
     public override bool IsEmpty => Value.DocumentPositions.Count == 0;
 
-    public override int GetIndex(int index)
+    public override int GetIndex(
+        int index
+    )
     {
         return Array.BinarySearch(Value.Alphabet, Value.Term[index]);
     }
 
-    public override void Merge(IndexToken other)
+    public override void Merge(
+        IndexToken other
+    )
     {
         Value.DocumentPositions.UnionWith(other.DocumentPositions);
     }

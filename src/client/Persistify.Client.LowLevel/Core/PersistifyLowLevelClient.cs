@@ -90,7 +90,9 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
         return await serviceCall(callContext.Value);
     }
 
-    private async Task<Result> AuthenticateAsync(CallContext? callContext)
+    private async Task<Result> AuthenticateAsync(
+        CallContext? callContext
+    )
     {
         var result = await this.SignInAsync(
             new SignInRequest { Username = PersistifyCredentials.Username, Password = PersistifyCredentials.Password },
@@ -113,7 +115,9 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
         );
     }
 
-    private async Task<Result> SaveTokenAsync(CallContext? callContext)
+    private async Task<Result> SaveTokenAsync(
+        CallContext? callContext
+    )
     {
         if (string.IsNullOrEmpty(PersistifyCredentials.RefreshToken))
         {
@@ -145,7 +149,9 @@ public class PersistifyLowLevelClient : IPersistifyLowLevelClient, IDisposable
         return authenticateResult.Match(() => Result.Ok, exception => new Result(exception));
     }
 
-    private void SetAuthorizationHeader(CallContext callContext)
+    private void SetAuthorizationHeader(
+        CallContext callContext
+    )
     {
         if (callContext.RequestHeaders == null)
         {

@@ -47,7 +47,9 @@ public static class FieldMapper
         };
     }
 
-    public static FieldDto ToDto(this Field field)
+    public static FieldDto ToDto(
+        this Field field
+    )
     {
         return field switch
         {

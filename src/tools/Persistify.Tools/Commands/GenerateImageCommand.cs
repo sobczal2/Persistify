@@ -24,7 +24,9 @@ public class GenerateImageCommand : Command
         this.SetHandler(Handle, _persistifyProjectRootArgument);
     }
 
-    private async Task Handle(string path)
+    private async Task Handle(
+        string path
+    )
     {
         var persistifySlnPath = Path.GetFullPath(Path.Combine(path, "Persistify.sln"));
 

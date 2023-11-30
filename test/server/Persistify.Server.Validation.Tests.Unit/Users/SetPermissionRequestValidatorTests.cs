@@ -136,7 +136,9 @@ public class SetPermissionRequestValidatorTests
     [Theory]
     [InlineData(-1)]
     [InlineData(12345)]
-    public async Task Validate_WhenPermissionIsInvalid_ReturnsValidationException(int permission)
+    public async Task Validate_WhenPermissionIsInvalid_ReturnsValidationException(
+        int permission
+    )
     {
         // Arrange
         var request = new SetPermissionRequest { Username = "username", Permission = permission };

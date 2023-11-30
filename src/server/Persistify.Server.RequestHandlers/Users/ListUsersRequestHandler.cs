@@ -55,7 +55,9 @@ public class ListUsersRequestHandler : RequestHandler<ListUsersRequest, ListUser
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ListUsersRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        ListUsersRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -64,7 +66,9 @@ public class ListUsersRequestHandler : RequestHandler<ListUsersRequest, ListUser
         );
     }
 
-    protected override Permission GetRequiredPermission(ListUsersRequest request)
+    protected override Permission GetRequiredPermission(
+        ListUsersRequest request
+    )
     {
         return Permission.UserRead;
     }

@@ -9,8 +9,18 @@ public interface ITransaction
 {
     Guid Id { get; }
     TransactionPhase Phase { get; }
-    ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken);
-    ValueTask PromoteManagerAsync(IManager manager, bool write, TimeSpan timeOut);
+
+    ValueTask BeginAsync(
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    );
+
+    ValueTask PromoteManagerAsync(
+        IManager manager,
+        bool write,
+        TimeSpan timeOut
+    );
+
     ValueTask CommitAsync();
     ValueTask RollbackAsync();
 }

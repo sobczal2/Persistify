@@ -66,7 +66,9 @@ public class ChangeUserPasswordRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(ChangeUserPasswordRequest request)
+    protected override Permission GetRequiredPermission(
+        ChangeUserPasswordRequest request
+    )
     {
         return Permission.UserWrite;
     }

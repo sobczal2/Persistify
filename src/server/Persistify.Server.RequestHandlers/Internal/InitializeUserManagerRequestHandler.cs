@@ -54,7 +54,9 @@ public class InitializeUserManagerRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(InitializeUserManagerRequest request)
+    protected override Permission GetRequiredPermission(
+        InitializeUserManagerRequest request
+    )
     {
         return Permission.UserWrite;
     }

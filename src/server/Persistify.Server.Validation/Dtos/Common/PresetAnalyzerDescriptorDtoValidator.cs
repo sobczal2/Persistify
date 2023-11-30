@@ -11,13 +11,17 @@ public class PresetAnalyzerDescriptorDtoValidator : Validator<PresetNameAnalyzer
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
-    public PresetAnalyzerDescriptorDtoValidator(IPresetAnalyzerManager presetAnalyzerManager)
+    public PresetAnalyzerDescriptorDtoValidator(
+        IPresetAnalyzerManager presetAnalyzerManager
+    )
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         PropertyName.Push(nameof(PresetNameAnalyzerDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(PresetNameAnalyzerDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        PresetNameAnalyzerDto value
+    )
     {
         if (string.IsNullOrEmpty(value.PresetName))
         {

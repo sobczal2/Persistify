@@ -22,7 +22,10 @@ public class IndexerStore
     private readonly IIndexer _allIndexer;
     private readonly ConcurrentDictionary<string, IIndexer> _indexers;
 
-    public IndexerStore(Template template, IAnalyzerExecutorLookup analyzerExecutorLookup)
+    public IndexerStore(
+        Template template,
+        IAnalyzerExecutorLookup analyzerExecutorLookup
+    )
     {
         _indexers = new ConcurrentDictionary<string, IIndexer>();
 
@@ -76,7 +79,9 @@ public class IndexerStore
         _allIndexer = new AllIndexer();
     }
 
-    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
+    public IEnumerable<SearchResult> Search(
+        SearchQueryDto queryDto
+    )
     {
         return queryDto switch
         {
@@ -90,7 +95,9 @@ public class IndexerStore
         };
     }
 
-    private IEnumerable<SearchResult> FieldSearch(FieldSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> FieldSearch(
+        FieldSearchQueryDto queryDto
+    )
     {
         if (_indexers.TryGetValue(queryDto.GetFieldName(), out var indexer))
         {
@@ -100,7 +107,9 @@ public class IndexerStore
         throw new InternalPersistifyException();
     }
 
-    private IEnumerable<SearchResult> AndSearch(AndSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> AndSearch(
+        AndSearchQueryDto queryDto
+    )
     {
         var results = new IEnumerable<SearchResult>[queryDto.SearchQueryDtos.Count];
 
@@ -110,13 +119,21 @@ public class IndexerStore
         }
 
         return EnumerableHelpers.IntersectSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
-            (a, b) => a.Merge(b),
+            Comparer<SearchResult>.Create((
+                a,
+                b
+            ) => a.DocumentId.CompareTo(b.DocumentId)),
+            (
+                a,
+                b
+            ) => a.Merge(b),
             results
         );
     }
 
-    private IEnumerable<SearchResult> OrSearch(OrSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> OrSearch(
+        OrSearchQueryDto queryDto
+    )
     {
         var results = new IEnumerable<SearchResult>[queryDto.SearchQueryDtos.Count];
 
@@ -126,13 +143,22 @@ public class IndexerStore
         }
 
         return EnumerableHelpers.MergeSorted(
-            Comparer<SearchResult>.Create((a, b) => a.DocumentId.CompareTo(b.DocumentId)),
-            (a, b) => a.Merge(b),
+            Comparer<SearchResult>.Create((
+                a,
+                b
+            ) => a.DocumentId.CompareTo(b.DocumentId)),
+            (
+                a,
+                b
+            ) => a.Merge(b),
             results
         );
     }
 
-    private IEnumerable<SearchResult> Negate(IEnumerable<SearchResult> results, float boost)
+    private IEnumerable<SearchResult> Negate(
+        IEnumerable<SearchResult> results,
+        float boost
+    )
     {
         using var resultEnumerator = results.GetEnumerator();
         var allSearchResults = _allIndexer.Search(new AllSearchQueryDto { Boost = boost });
@@ -151,7 +177,9 @@ public class IndexerStore
         }
     }
 
-    public void Index(Document document)
+    public void Index(
+        Document document
+    )
     {
         foreach (var indexer in _indexers.Values)
         {
@@ -161,7 +189,9 @@ public class IndexerStore
         _allIndexer.Index(document);
     }
 
-    public void Delete(Document document)
+    public void Delete(
+        Document document
+    )
     {
         foreach (var indexer in _indexers.Values)
         {

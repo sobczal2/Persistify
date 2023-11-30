@@ -49,7 +49,9 @@ public class CreateTemplateRequestValidator : Validator<CreateTemplateRequest>
         PropertyName.Push(nameof(CreateTemplateRequest));
     }
 
-    public override async ValueTask<Result> ValidateNotNullAsync(CreateTemplateRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(
+        CreateTemplateRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

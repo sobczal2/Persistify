@@ -8,10 +8,16 @@ namespace Persistify.Server.Extensions;
 
 public static class HostExtensions
 {
-    public static ConfigureHostBuilder AddHostConfiguration(this ConfigureHostBuilder host)
+    public static ConfigureHostBuilder AddHostConfiguration(
+        this ConfigureHostBuilder host
+    )
     {
         host.UseSerilog(
-            (context, services, configuration) =>
+            (
+                context,
+                services,
+                configuration
+            ) =>
             {
                 var loggingSettings =
                     context.Configuration.GetSection("Logging").Get<LoggingSettings>()

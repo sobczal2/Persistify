@@ -26,7 +26,12 @@ public class TextIndexer : IIndexer
 
     private readonly IntervalTree<TextIndexerIntervalTreeRecord>? _intervalTree;
 
-    public TextIndexer(string fieldName, IAnalyzerExecutor? analyzerExecutor, bool indexText, bool indexFullText)
+    public TextIndexer(
+        string fieldName,
+        IAnalyzerExecutor? analyzerExecutor,
+        bool indexText,
+        bool indexFullText
+    )
     {
         FieldName = fieldName;
         _intervalTree = indexText ? new IntervalTree<TextIndexerIntervalTreeRecord>() : null;
@@ -43,7 +48,9 @@ public class TextIndexer : IIndexer
 
     public string FieldName { get; }
 
-    public void Index(Document document)
+    public void Index(
+        Document document
+    )
     {
         var textFieldValue = document.GetTextFieldValueByName(FieldName);
         if (textFieldValue == null)
@@ -68,7 +75,9 @@ public class TextIndexer : IIndexer
         }
     }
 
-    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
+    public IEnumerable<SearchResult> Search(
+        SearchQueryDto queryDto
+    )
     {
         if (
             queryDto is not TextSearchQueryDto textSearchQueryDto
@@ -88,7 +97,9 @@ public class TextIndexer : IIndexer
         };
     }
 
-    public void Delete(Document document)
+    public void Delete(
+        Document document
+    )
     {
         _intervalTree?.Remove(x => x.DocumentId == document.Id);
 
@@ -98,7 +109,9 @@ public class TextIndexer : IIndexer
         );
     }
 
-    private IEnumerable<SearchResult> HandleExactTextSearch(ExactTextSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleExactTextSearch(
+        ExactTextSearchQueryDto queryDto
+    )
     {
         if (_intervalTree is null)
         {
@@ -108,10 +121,16 @@ public class TextIndexer : IIndexer
         var results = _intervalTree.Search(
             queryDto.Value,
             queryDto.Value,
-            (a, b) => String.Compare(a.Value, b, StringComparison.Ordinal)
+            (
+                a,
+                b
+            ) => String.Compare(a.Value, b, StringComparison.Ordinal)
         );
 
-        results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
+        results.Sort((
+            a,
+            b
+        ) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
@@ -119,7 +138,9 @@ public class TextIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleFullTextSearch(FullTextSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleFullTextSearch(
+        FullTextSearchQueryDto queryDto
+    )
     {
         if (_analyzerExecutor is null || _fixedTrie is null)
         {

@@ -17,7 +17,9 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
 {
     protected readonly IRequestHandlerContext<TRequest, TResponse> RequestHandlerContext;
 
-    public RequestHandler(IRequestHandlerContext<TRequest, TResponse> requestHandlerContext)
+    public RequestHandler(
+        IRequestHandlerContext<TRequest, TResponse> requestHandlerContext
+    )
     {
         RequestHandlerContext = requestHandlerContext;
     }
@@ -63,12 +65,25 @@ public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TReq
         return GetResponse();
     }
 
-    protected abstract ValueTask RunAsync(TRequest request, CancellationToken cancellationToken);
-    protected abstract TResponse GetResponse();
-    protected abstract TransactionDescriptor GetTransactionDescriptor(TRequest request);
-    protected abstract Permission GetRequiredPermission(TRequest request);
+    protected abstract ValueTask RunAsync(
+        TRequest request,
+        CancellationToken cancellationToken
+    );
 
-    protected virtual void Authorize(ClaimsPrincipal claimsPrincipal, TRequest request)
+    protected abstract TResponse GetResponse();
+
+    protected abstract TransactionDescriptor GetTransactionDescriptor(
+        TRequest request
+    );
+
+    protected abstract Permission GetRequiredPermission(
+        TRequest request
+    );
+
+    protected virtual void Authorize(
+        ClaimsPrincipal claimsPrincipal,
+        TRequest request
+    )
     {
         var requiredPermission = GetRequiredPermission(request);
         var userPermission = claimsPrincipal.GetPermission();

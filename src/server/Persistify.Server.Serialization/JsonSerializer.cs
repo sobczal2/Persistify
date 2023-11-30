@@ -5,7 +5,9 @@ namespace Persistify.Server.Serialization;
 
 public class JsonSerializer : ISerializer
 {
-    public ReadOnlyMemory<byte> Serialize<T>(T obj)
+    public ReadOnlyMemory<byte> Serialize<T>(
+        T obj
+    )
     {
         if (obj == null)
         {
@@ -15,7 +17,9 @@ public class JsonSerializer : ISerializer
         return System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(obj);
     }
 
-    public T Deserialize<T>(ReadOnlyMemory<byte> bytes)
+    public T Deserialize<T>(
+        ReadOnlyMemory<byte> bytes
+    )
     {
         if (bytes.IsEmpty)
         {

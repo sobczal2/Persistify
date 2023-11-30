@@ -13,14 +13,27 @@ namespace Persistify.Client.HighLevel.Core;
 public interface IPersistifyHighLevelClient
 {
     IPersistifyLowLevelClient LowLevel { get; }
-    Task<Result> InitializeAsync(params Assembly[] assemblies);
-    Task<Result<int>> InitializeTemplatesAsync(params Assembly[] assemblies);
-    void InitializeConverters(params Assembly[] assemblies);
 
-    Task<Result<int>> AddAsync<TDocument>(TDocument document)
+    Task<Result> InitializeAsync(
+        params Assembly[] assemblies
+    );
+
+    Task<Result<int>> InitializeTemplatesAsync(
+        params Assembly[] assemblies
+    );
+
+    void InitializeConverters(
+        params Assembly[] assemblies
+    );
+
+    Task<Result<int>> AddAsync<TDocument>(
+        TDocument document
+    )
         where TDocument : new();
 
-    Task<Result<TDocument>> GetAsync<TDocument>(int id)
+    Task<Result<TDocument>> GetAsync<TDocument>(
+        int id
+    )
         where TDocument : new();
 
     Task<Result<(List<TDocument> Documents, int TotalCount)>> SearchAsync<TDocument>(
@@ -28,8 +41,13 @@ public interface IPersistifyHighLevelClient
     )
         where TDocument : class, new();
 
-    Task<Result> DeleteAsync<TDocument>(int id)
+    Task<Result> DeleteAsync<TDocument>(
+        int id
+    )
         where TDocument : new();
 
-    IPersistifyConverter? GetConverter(Type type, FieldTypeDto fieldTypeDto);
+    IPersistifyConverter? GetConverter(
+        Type type,
+        FieldTypeDto fieldTypeDto
+    );
 }

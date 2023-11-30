@@ -11,7 +11,9 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
 {
     private readonly IValidator<PaginationDto> _paginationValidator;
 
-    public ListTemplatesRequestValidator(IValidator<PaginationDto> paginationValidator)
+    public ListTemplatesRequestValidator(
+        IValidator<PaginationDto> paginationValidator
+    )
     {
         _paginationValidator =
             paginationValidator ?? throw new ArgumentNullException(nameof(paginationValidator));
@@ -19,7 +21,9 @@ public class ListTemplatesRequestValidator : Validator<ListTemplatesRequest>
         PropertyName.Push(nameof(ListTemplatesRequest));
     }
 
-    public override async ValueTask<Result> ValidateNotNullAsync(ListTemplatesRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(
+        ListTemplatesRequest value
+    )
     {
         PropertyName.Push(nameof(ListTemplatesRequest.PaginationDto));
         var paginationResult = await _paginationValidator.ValidateAsync(value.PaginationDto);

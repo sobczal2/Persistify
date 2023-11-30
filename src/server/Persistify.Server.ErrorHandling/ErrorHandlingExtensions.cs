@@ -7,7 +7,9 @@ namespace Persistify.Server.ErrorHandling;
 
 public static class ErrorHandlingExtensions
 {
-    public static IServiceCollection AddErrorHandling(this IServiceCollection services)
+    public static IServiceCollection AddErrorHandling(
+        this IServiceCollection services
+    )
     {
         services.AddSingleton<IExceptionHandler, GrpcExceptionHandler>();
         services.AddSingleton<

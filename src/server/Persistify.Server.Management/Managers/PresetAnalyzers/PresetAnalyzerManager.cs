@@ -85,7 +85,9 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         PendingActions.Enqueue(initializeAction);
     }
 
-    public async ValueTask<PresetAnalyzer?> GetAsync(string presetAnalyzerName)
+    public async ValueTask<PresetAnalyzer?> GetAsync(
+        string presetAnalyzerName
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -98,7 +100,9 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         return await _presetAnalyzerRepository.ReadAsync(id, true);
     }
 
-    public bool Exists(string presetName)
+    public bool Exists(
+        string presetName
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -106,7 +110,10 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         return _presetAnalyzerNameIdDictionary.ContainsKey(presetName);
     }
 
-    public async IAsyncEnumerable<PresetAnalyzer> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<PresetAnalyzer> ListAsync(
+        int take,
+        int skip
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -127,7 +134,9 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         return _count;
     }
 
-    public void Add(PresetAnalyzer presetAnalyzer)
+    public void Add(
+        PresetAnalyzer presetAnalyzer
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
@@ -157,7 +166,9 @@ public class PresetAnalyzerManager : Manager, IPresetAnalyzerManager
         PendingActions.Enqueue(addAction);
     }
 
-    public async ValueTask<bool> RemoveAsync(string presetAnalyzerName)
+    public async ValueTask<bool> RemoveAsync(
+        string presetAnalyzerName
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();

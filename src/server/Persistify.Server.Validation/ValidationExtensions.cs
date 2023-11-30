@@ -7,7 +7,9 @@ namespace Persistify.Server.Validation;
 
 public static class ValidationExtensions
 {
-    public static IServiceCollection AddValidation(this IServiceCollection services)
+    public static IServiceCollection AddValidation(
+        this IServiceCollection services
+    )
     {
         var assembly = Assembly.GetExecutingAssembly();
 

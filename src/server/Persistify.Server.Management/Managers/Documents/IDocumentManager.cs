@@ -8,9 +8,18 @@ namespace Persistify.Server.Management.Managers.Documents;
 
 public interface IDocumentManager : IManager
 {
-    ValueTask<Document?> GetAsync(int id);
-    ValueTask<bool> ExistsAsync(int id);
-    IAsyncEnumerable<Document> ListAsync(int take, int skip);
+    ValueTask<Document?> GetAsync(
+        int id
+    );
+
+    ValueTask<bool> ExistsAsync(
+        int id
+    );
+
+    IAsyncEnumerable<Document> ListAsync(
+        int take,
+        int skip
+    );
 
     ValueTask<(List<SearchRecordDto> searchRecords, int count)> SearchAsync(
         SearchQueryDto searchQueryDto,
@@ -19,6 +28,12 @@ public interface IDocumentManager : IManager
     );
 
     int Count();
-    void Add(Document document);
-    ValueTask<bool> RemoveAsync(int id);
+
+    void Add(
+        Document document
+    );
+
+    ValueTask<bool> RemoveAsync(
+        int id
+    );
 }

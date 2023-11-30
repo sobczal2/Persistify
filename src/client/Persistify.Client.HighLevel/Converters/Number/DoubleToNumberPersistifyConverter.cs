@@ -8,12 +8,16 @@ public class DoubleToNumberPersistifyConverter : IPersistifyConverter
     public Type FromType => typeof(double);
     public FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public object Convert(object from)
+    public object Convert(
+        object from
+    )
     {
         return from;
     }
 
-    public object ConvertBack(object to)
+    public object ConvertBack(
+        object to
+    )
     {
         return to;
     }

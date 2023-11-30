@@ -52,7 +52,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         GC.SuppressFinalize(this);
     }
 
-    public async ValueTask<TValue?> ReadAsync(int key, bool useLock)
+    public async ValueTask<TValue?> ReadAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -64,7 +67,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             : await ReadAsyncImpl(key);
     }
 
-    public async ValueTask<bool> ExistsAsync(int key, bool useLock)
+    public async ValueTask<bool> ExistsAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -116,12 +122,18 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
     }
 
-    public async ValueTask<int> CountAsync(bool useLock)
+    public async ValueTask<int> CountAsync(
+        bool useLock
+    )
     {
         return useLock ? await _semaphore.WrapAsync(CountAsyncImpl) : await CountAsyncImpl();
     }
 
-    public async ValueTask WriteAsync(int key, TValue value, bool useLock)
+    public async ValueTask WriteAsync(
+        int key,
+        TValue value,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -140,7 +152,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         );
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
+    public async ValueTask<bool> DeleteAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -152,7 +167,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
             : await DeleteAsyncImpl(key);
     }
 
-    public void Clear(bool useLock)
+    public void Clear(
+        bool useLock
+    )
     {
         if (useLock)
         {
@@ -164,7 +181,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
     }
 
-    private async ValueTask<TValue?> ReadAsyncImpl(int key)
+    private async ValueTask<TValue?> ReadAsyncImpl(
+        int key
+    )
     {
         var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
         if (_offsetLengthRepository.IsValueEmpty(offsetLength))
@@ -188,13 +207,18 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return _serializer.Deserialize<TValue>(_buffer.AsMemory()[..length]);
     }
 
-    private async ValueTask<bool> ExistsAsyncImpl(int key)
+    private async ValueTask<bool> ExistsAsyncImpl(
+        int key
+    )
     {
         var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
         return !_offsetLengthRepository.IsValueEmpty(offsetLength);
     }
 
-    private async IAsyncEnumerable<(int Key, TValue Value)> ReadRangeAsyncImpl(int take, int skip)
+    private async IAsyncEnumerable<(int Key, TValue Value)> ReadRangeAsyncImpl(
+        int take,
+        int skip
+    )
     {
         _mainStream.Seek(0, SeekOrigin.Begin);
 
@@ -223,7 +247,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         return await _offsetLengthRepository.CountAsync(false);
     }
 
-    private async ValueTask WriteAsyncImpl(int key, TValue value)
+    private async ValueTask WriteAsyncImpl(
+        int key,
+        TValue value
+    )
     {
         var currentOffsetLength = await _offsetLengthRepository.ReadAsync(key, false);
 
@@ -254,7 +281,10 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         await _mainStream.FlushAsync();
     }
 
-    private async ValueTask WriteAtEnd(int id, ReadOnlyMemory<byte> serialized)
+    private async ValueTask WriteAtEnd(
+        int id,
+        ReadOnlyMemory<byte> serialized
+    )
     {
         _mainStream.Seek(0, SeekOrigin.End);
 
@@ -286,7 +316,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
     }
 
-    private async ValueTask<bool> DeleteAsyncImpl(int key)
+    private async ValueTask<bool> DeleteAsyncImpl(
+        int key
+    )
     {
         var offsetLength = await _offsetLengthRepository.ReadAsync(key, false);
         if (_offsetLengthRepository.IsValueEmpty(offsetLength))
@@ -315,18 +347,24 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         _offsetLengthRepository.Clear(false);
     }
 
-    private long SectorsToBytes(int sectors)
+    private long SectorsToBytes(
+        int sectors
+    )
     {
         return sectors * (long)_sectorSize;
     }
 
-    private int BytesToSectors(long bytes)
+    private int BytesToSectors(
+        long bytes
+    )
     {
         var fullSectors = (int)(bytes / _sectorSize);
         return bytes % _sectorSize > 0 ? fullSectors + 1 : fullSectors;
     }
 
-    private void EnsureStreamCorrectLength(long writtenStreamLength)
+    private void EnsureStreamCorrectLength(
+        long writtenStreamLength
+    )
     {
         var desiredStreamLength = SectorsToBytes(BytesToSectors(writtenStreamLength));
         if (_mainStream.Length != desiredStreamLength)
@@ -335,7 +373,9 @@ public class ObjectStreamRepository<TValue> : IRefTypeStreamRepository<TValue>, 
         }
     }
 
-    private void EnsureBufferCapacity(int length)
+    private void EnsureBufferCapacity(
+        int length
+    )
     {
         if (_buffer.Length < length)
         {

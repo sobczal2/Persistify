@@ -13,7 +13,9 @@ public class ExistsPresetAnalyzerRequestValidator : Validator<ExistsPresetAnalyz
         PropertyName.Push(nameof(ExistsPresetAnalyzerRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(ExistsPresetAnalyzerRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        ExistsPresetAnalyzerRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.PresetAnalyzerName))
         {

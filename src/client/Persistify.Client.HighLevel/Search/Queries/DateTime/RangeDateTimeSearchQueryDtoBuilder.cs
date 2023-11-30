@@ -10,7 +10,9 @@ public class RangeDateTimeSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, RangeNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public RangeDateTimeSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public RangeDateTimeSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new RangeDateTimeSearchQueryDto { Boost = 1 };
@@ -18,13 +20,17 @@ public class RangeDateTimeSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public RangeDateTimeSearchQueryDtoBuilder<TDocument> WithMinValue(System.DateTime minValue)
+    public RangeDateTimeSearchQueryDtoBuilder<TDocument> WithMinValue(
+        System.DateTime minValue
+    )
     {
         ((RangeDateTimeSearchQueryDto)SearchQueryDto!).MinValue = minValue;
         return this;
     }
 
-    public RangeDateTimeSearchQueryDtoBuilder<TDocument> WithMaxValue(System.DateTime maxValue)
+    public RangeDateTimeSearchQueryDtoBuilder<TDocument> WithMaxValue(
+        System.DateTime maxValue
+    )
     {
         ((RangeDateTimeSearchQueryDto)SearchQueryDto!).MaxValue = maxValue;
         return this;

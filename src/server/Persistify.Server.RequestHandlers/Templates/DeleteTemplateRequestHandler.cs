@@ -51,7 +51,9 @@ public class DeleteTemplateRequestHandler
         return new DeleteTemplateResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(DeleteTemplateRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        DeleteTemplateRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -60,7 +62,9 @@ public class DeleteTemplateRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(DeleteTemplateRequest request)
+    protected override Permission GetRequiredPermission(
+        DeleteTemplateRequest request
+    )
     {
         return Permission.TemplateWrite;
     }

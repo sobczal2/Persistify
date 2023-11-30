@@ -5,7 +5,9 @@ namespace Persistify.Helpers;
 
 public static class HelpersExtensions
 {
-    public static IServiceCollection AddHelpers(this IServiceCollection services)
+    public static IServiceCollection AddHelpers(
+        this IServiceCollection services
+    )
     {
         services.AddSingleton<IClock, SystemClock>();
 

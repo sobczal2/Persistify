@@ -146,7 +146,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_ObjectDoesNotExist_ReturnsNull(bool useLock)
+    public async Task ReadAsync_ObjectDoesNotExist_ReturnsNull(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -161,7 +163,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_ObjectExists_ReturnsObject(bool useLock)
+    public async Task ReadAsync_ObjectExists_ReturnsObject(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -178,7 +182,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_ObjectExistsAndMultipleObjectsAreWritten_ReturnsObject(bool useLock)
+    public async Task ReadAsync_ObjectExistsAndMultipleObjectsAreWritten_ReturnsObject(
+        bool useLock
+    )
     {
         // Arrange
         await _sut.WriteAsync(0, new TestClass { Id = 0, Name = "Test0" }, false);
@@ -197,7 +203,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenObjectIsLongerThanSectorSize_ReturnsObject(bool useLock)
+    public async Task ReadAsync_WhenObjectIsLongerThanSectorSize_ReturnsObject(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -231,7 +239,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ExistsAsync_WhenObjectDoesNotExist_ReturnsFalse(bool useLock)
+    public async Task ExistsAsync_WhenObjectDoesNotExist_ReturnsFalse(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -246,7 +256,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ExistsAsync_WhenObjectExists_ReturnsTrue(bool useLock)
+    public async Task ExistsAsync_WhenObjectExists_ReturnsTrue(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -300,7 +312,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList(
+        bool useLock
+    )
     {
         // Arrange
         var skip = 1;
@@ -316,7 +330,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList(
+        bool useLock
+    )
     {
         // Arrange
         var skip = 2;
@@ -332,7 +348,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList(bool useLock)
+    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList(
+        bool useLock
+    )
     {
         // Arrange
         var take = 2;
@@ -348,7 +366,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList(bool useLock)
+    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList(
+        bool useLock
+    )
     {
         // Arrange
         var take = 1;
@@ -365,7 +385,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList(
+        bool useLock
+    )
     {
         // Arrange
         var skip = 1;
@@ -388,7 +410,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero(bool useLock)
+    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero(
+        bool useLock
+    )
     {
         // Arrange
 
@@ -402,7 +426,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount(bool useLock)
+    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount(
+        bool useLock
+    )
     {
         // Arrange
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
@@ -418,7 +444,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount(bool useLock)
+    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount(
+        bool useLock
+    )
     {
         // Arrange
         await _sut.WriteAsync(0, new TestClass { Id = 1 }, false);
@@ -453,7 +481,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenObjectIsNull_ThrowsArgumentNullException(bool useLock)
+    public async Task WriteAsync_WhenObjectIsNull_ThrowsArgumentNullException(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -469,7 +499,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenObjectIsNotNull_WritesObject(bool useLock)
+    public async Task WriteAsync_WhenObjectIsNotNull_WritesObject(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -486,7 +518,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenOverwritingObject_WritesObject(bool useLock)
+    public async Task WriteAsync_WhenOverwritingObject_WritesObject(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -677,7 +711,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsGreaterThanMaxKey_ReturnsFalse(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsGreaterThanMaxKey_ReturnsFalse(
+        bool useLock
+    )
     {
         // Arrange
         var key = 100;
@@ -692,7 +728,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_ReturnsTrue(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_ReturnsTrue(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -709,7 +747,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectDoesNotExist_ReturnsFalse(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectDoesNotExist_ReturnsFalse(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -724,7 +764,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_RemovesValue(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsCorrectAndObjectExists_RemovesValue(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -785,7 +827,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenKeyIsCorrect_DoesNotRemoveOtherObjects(bool useLock)
+    public async Task DeleteAsync_WhenKeyIsCorrect_DoesNotRemoveOtherObjects(
+        bool useLock
+    )
     {
         // Arrange
         var key = 0;
@@ -806,7 +850,9 @@ public class ObjectStreamRepositoryTests
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Clear_WhenCalled_DeletesAllObjects(bool useLock)
+    public async Task Clear_WhenCalled_DeletesAllObjects(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;

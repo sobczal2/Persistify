@@ -10,7 +10,9 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
     private readonly int _alphabetSize;
     private readonly FixedTrieNode<TItem> _root;
 
-    public FixedTrie(int alphabetSize)
+    public FixedTrie(
+        int alphabetSize
+    )
     {
         _alphabetSize = alphabetSize;
         _root = new FixedTrieNode<TItem>(alphabetSize);
@@ -19,7 +21,9 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
 
     public int Depth { get; private set; }
 
-    public void Insert(TIndexItem item)
+    public void Insert(
+        TIndexItem item
+    )
     {
         if (item.Length > Depth)
         {
@@ -43,7 +47,9 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
         node.Insert(item);
     }
 
-    public IEnumerable<TItem> Search(TSearchItem item)
+    public IEnumerable<TItem> Search(
+        TSearchItem item
+    )
     {
         var length = item.Length;
 
@@ -116,7 +122,10 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
         }
     }
 
-    public int UpdateIf(Predicate<TItem> predicate, Action<TItem> action)
+    public int UpdateIf(
+        Predicate<TItem> predicate,
+        Action<TItem> action
+    )
     {
         var count = 0;
         var queue = new Queue<FixedTrieNode<TItem>>();

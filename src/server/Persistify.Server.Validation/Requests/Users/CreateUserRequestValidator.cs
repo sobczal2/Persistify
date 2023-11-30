@@ -12,13 +12,17 @@ public class CreateUserRequestValidator : Validator<CreateUserRequest>
 {
     private readonly IUserManager _userManager;
 
-    public CreateUserRequestValidator(IUserManager userManager)
+    public CreateUserRequestValidator(
+        IUserManager userManager
+    )
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(CreateUserRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(CreateUserRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        CreateUserRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

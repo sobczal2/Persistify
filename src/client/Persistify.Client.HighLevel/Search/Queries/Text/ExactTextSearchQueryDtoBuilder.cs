@@ -9,7 +9,9 @@ public class ExactTextSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, ExactTextSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public ExactTextSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public ExactTextSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new ExactTextSearchQueryDto { Boost = 1 };
@@ -17,7 +19,9 @@ public class ExactTextSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Text;
 
-    public ExactTextSearchQueryDtoBuilder<TDocument> WithValue(string value)
+    public ExactTextSearchQueryDtoBuilder<TDocument> WithValue(
+        string value
+    )
     {
         ((ExactTextSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

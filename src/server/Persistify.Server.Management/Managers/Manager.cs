@@ -15,7 +15,9 @@ public abstract class Manager : IManager
     protected readonly ITransactionState TransactionState;
     private bool _isInitialized;
 
-    protected Manager(ITransactionState transactionState)
+    protected Manager(
+        ITransactionState transactionState
+    )
     {
         TransactionState = transactionState;
         _readWriteAsyncLock = new ReadWriteAsyncLock();

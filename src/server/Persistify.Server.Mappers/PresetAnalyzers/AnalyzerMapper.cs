@@ -5,7 +5,9 @@ namespace Persistify.Server.Mappers.PresetAnalyzers;
 
 public static class AnalyzerMapper
 {
-    public static FullAnalyzerDto ToDto(this Analyzer analyzer)
+    public static FullAnalyzerDto ToDto(
+        this Analyzer analyzer
+    )
     {
         return new FullAnalyzerDto
         {
@@ -16,7 +18,9 @@ public static class AnalyzerMapper
         };
     }
 
-    public static Analyzer ToDomain(this FullAnalyzerDto fullAnalyzerDto)
+    public static Analyzer ToDomain(
+        this FullAnalyzerDto fullAnalyzerDto
+    )
     {
         return new Analyzer
         {

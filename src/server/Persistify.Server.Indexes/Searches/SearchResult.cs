@@ -4,7 +4,10 @@ namespace Persistify.Server.Indexes.Searches;
 
 public class SearchResult
 {
-    public SearchResult(int documentId, SearchMetadata searchMetadata)
+    public SearchResult(
+        int documentId,
+        SearchMetadata searchMetadata
+    )
     {
         DocumentId = documentId;
         SearchMetadata = searchMetadata;
@@ -13,7 +16,9 @@ public class SearchResult
     public int DocumentId { get; set; }
     public SearchMetadata SearchMetadata { get; set; }
 
-    public SearchResult Merge(SearchResult other)
+    public SearchResult Merge(
+        SearchResult other
+    )
     {
         if (DocumentId != other.DocumentId)
         {

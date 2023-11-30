@@ -13,7 +13,9 @@ public class NumberFieldDtoValidator : Validator<NumberFieldDto>
         PropertyName.Push(nameof(NumberFieldDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(NumberFieldDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        NumberFieldDto value
+    )
     {
         if (string.IsNullOrEmpty(value.Name))
         {

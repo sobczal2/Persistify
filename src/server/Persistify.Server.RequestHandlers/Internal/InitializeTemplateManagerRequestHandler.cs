@@ -54,7 +54,9 @@ public class InitializeTemplateManagerRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(InitializeTemplateManagerRequest request)
+    protected override Permission GetRequiredPermission(
+        InitializeTemplateManagerRequest request
+    )
     {
         return Permission.TemplateWrite;
     }

@@ -7,7 +7,9 @@ namespace Persistify.Server.Validation.Requests.Internal;
 
 public class EnsureRootUserExistsRequestValidator : Validator<EnsureRootUserExistsRequest>
 {
-    public override ValueTask<Result> ValidateNotNullAsync(EnsureRootUserExistsRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        EnsureRootUserExistsRequest value
+    )
     {
         return ValueTask.FromResult(Result.Ok);
     }

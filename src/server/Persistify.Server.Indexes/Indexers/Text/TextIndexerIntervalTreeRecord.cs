@@ -7,7 +7,9 @@ public class TextIndexerIntervalTreeRecord : IComparable<TextIndexerIntervalTree
     public int DocumentId { get; set; }
     public string Value { get; set; } = default!;
 
-    public int CompareTo(TextIndexerIntervalTreeRecord? other)
+    public int CompareTo(
+        TextIndexerIntervalTreeRecord? other
+    )
     {
         if (other == null)
         {

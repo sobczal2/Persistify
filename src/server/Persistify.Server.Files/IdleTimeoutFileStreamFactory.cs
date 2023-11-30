@@ -22,7 +22,9 @@ public class IdleTimeoutFileStreamFactory : IFileStreamFactory
         _storageSettings = storageSettingsOptions.Value;
     }
 
-    public Stream CreateStream(string relativePath)
+    public Stream CreateStream(
+        string relativePath
+    )
     {
         ArgumentException.ThrowIfNullOrEmpty(relativePath, nameof(relativePath));
 

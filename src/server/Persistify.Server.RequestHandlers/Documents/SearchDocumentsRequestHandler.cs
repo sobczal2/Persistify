@@ -81,7 +81,9 @@ public class SearchDocumentsRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(SearchDocumentsRequest request)
+    protected override Permission GetRequiredPermission(
+        SearchDocumentsRequest request
+    )
     {
         return Permission.DocumentRead | Permission.TemplateRead;
     }

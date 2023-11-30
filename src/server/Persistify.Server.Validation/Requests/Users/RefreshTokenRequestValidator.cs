@@ -13,7 +13,9 @@ public class RefreshTokenRequestValidator : Validator<RefreshTokenRequest>
 {
     private readonly TokenSettings _tokenSettings;
 
-    public RefreshTokenRequestValidator(IOptions<TokenSettings> tokenSettingsOptions)
+    public RefreshTokenRequestValidator(
+        IOptions<TokenSettings> tokenSettingsOptions
+    )
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         _tokenSettings =
@@ -22,7 +24,9 @@ public class RefreshTokenRequestValidator : Validator<RefreshTokenRequest>
         PropertyName.Push(nameof(RefreshTokenRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(RefreshTokenRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        RefreshTokenRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

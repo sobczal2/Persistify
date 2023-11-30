@@ -3,5 +3,8 @@
 public abstract class FixedTrieItem
 {
     public abstract int Length { get; }
-    public abstract int GetIndex(int index);
+
+    public abstract int GetIndex(
+        int index
+    );
 }

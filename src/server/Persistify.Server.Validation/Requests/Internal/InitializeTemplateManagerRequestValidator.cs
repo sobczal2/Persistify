@@ -7,7 +7,9 @@ namespace Persistify.Server.Validation.Requests.Internal;
 
 public class InitializeTemplateManagerRequestValidator : Validator<InitializeTemplateManagerRequest>
 {
-    public override ValueTask<Result> ValidateNotNullAsync(InitializeTemplateManagerRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        InitializeTemplateManagerRequest value
+    )
     {
         return ValueTask.FromResult(Result.Ok);
     }

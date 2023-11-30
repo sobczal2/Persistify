@@ -7,7 +7,9 @@ namespace Persistify.Server.CommandHandlers;
 
 public static class RequestHandlersExtensions
 {
-    public static IServiceCollection AddCommands(this IServiceCollection services)
+    public static IServiceCollection AddCommands(
+        this IServiceCollection services
+    )
     {
         services.AddTransient(typeof(IRequestHandlerContext<,>), typeof(RequestHandlerContext<,>));
 

@@ -87,7 +87,9 @@ public sealed class ReadWriteAsyncLock : IDisposable
         return true;
     }
 
-    public async ValueTask ExitReadLockAsync(Guid id)
+    public async ValueTask ExitReadLockAsync(
+        Guid id
+    )
     {
         await _readSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
@@ -138,7 +140,9 @@ public sealed class ReadWriteAsyncLock : IDisposable
         return true;
     }
 
-    public ValueTask ExitWriteLockAsync(Guid id)
+    public ValueTask ExitWriteLockAsync(
+        Guid id
+    )
     {
         if (_writer != id)
         {
@@ -154,12 +158,16 @@ public sealed class ReadWriteAsyncLock : IDisposable
         return ValueTask.CompletedTask;
     }
 
-    public bool CanRead(Guid id)
+    public bool CanRead(
+        Guid id
+    )
     {
         return _readers.Contains(id) || _writer == id;
     }
 
-    public bool CanWrite(Guid id)
+    public bool CanWrite(
+        Guid id
+    )
     {
         return _writer == id;
     }

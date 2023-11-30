@@ -12,7 +12,9 @@ public class PersistifyServerWebApplicationFactory : WebApplicationFactory<Progr
 {
     private DirectoryInfo? _dataDirectoryInfo;
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    protected override void ConfigureWebHost(
+        IWebHostBuilder builder
+    )
     {
         _dataDirectoryInfo = Directory.CreateTempSubdirectory();
         builder.UseConfiguration(

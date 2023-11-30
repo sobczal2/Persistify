@@ -17,7 +17,9 @@ public class SearchDocumentsRequestBuilder<TDocument>
     private PaginationDto _paginationDto;
     private SearchQueryDtoBuilder<TDocument>? _searchQueryDtoBuilder;
 
-    public SearchDocumentsRequestBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public SearchDocumentsRequestBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
     {
         _persistifyHighLevelClient = persistifyHighLevelClient;
         var documentType = typeof(TDocument);
@@ -37,7 +39,10 @@ public class SearchDocumentsRequestBuilder<TDocument>
         _paginationDto = new PaginationDto { PageNumber = 0, PageSize = 10 };
     }
 
-    public SearchDocumentsRequestBuilder<TDocument> WithPagination(int pageNumber, int pageSize)
+    public SearchDocumentsRequestBuilder<TDocument> WithPagination(
+        int pageNumber,
+        int pageSize
+    )
     {
         _paginationDto = new PaginationDto { PageNumber = pageNumber, PageSize = pageSize };
         return this;

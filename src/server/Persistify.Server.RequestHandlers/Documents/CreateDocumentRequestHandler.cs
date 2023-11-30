@@ -74,7 +74,9 @@ public sealed class CreateDocumentRequestHandler
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateDocumentRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        CreateDocumentRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -83,7 +85,9 @@ public sealed class CreateDocumentRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(CreateDocumentRequest request)
+    protected override Permission GetRequiredPermission(
+        CreateDocumentRequest request
+    )
     {
         return Permission.DocumentWrite | Permission.TemplateRead;
     }

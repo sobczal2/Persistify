@@ -13,7 +13,9 @@ public class PaginationValidator : Validator<PaginationDto>
         PropertyName.Push(nameof(PaginationDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(PaginationDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        PaginationDto value
+    )
     {
         if (value.PageNumber < 0)
         {

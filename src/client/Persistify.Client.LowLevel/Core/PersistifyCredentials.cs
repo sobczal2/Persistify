@@ -2,7 +2,10 @@
 
 public class PersistifyCredentials
 {
-    public PersistifyCredentials(string username, string password)
+    public PersistifyCredentials(
+        string username,
+        string password
+    )
     {
         Username = username;
         Password = password;

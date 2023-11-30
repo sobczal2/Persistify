@@ -52,7 +52,9 @@ public class FileHandler : IFileHandler
         }
     }
 
-    public void CreateFilesForTemplate(Template template)
+    public void CreateFilesForTemplate(
+        Template template
+    )
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {
@@ -76,7 +78,9 @@ public class FileHandler : IFileHandler
         }
     }
 
-    public void DeleteFilesForTemplate(Template template)
+    public void DeleteFilesForTemplate(
+        Template template
+    )
     {
         foreach (var fileGroup in _fileGroupsForTemplate)
         {

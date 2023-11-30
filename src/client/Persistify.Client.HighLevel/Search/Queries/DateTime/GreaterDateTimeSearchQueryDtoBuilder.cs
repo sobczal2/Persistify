@@ -10,7 +10,9 @@ public class GreaterDateTimeSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, GreaterNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public GreaterDateTimeSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public GreaterDateTimeSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new GreaterDateTimeSearchQueryDto { Boost = 1 };
@@ -18,7 +20,9 @@ public class GreaterDateTimeSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public GreaterDateTimeSearchQueryDtoBuilder<TDocument> WithValue(System.DateTime value)
+    public GreaterDateTimeSearchQueryDtoBuilder<TDocument> WithValue(
+        System.DateTime value
+    )
     {
         ((GreaterDateTimeSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

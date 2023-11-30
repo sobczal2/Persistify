@@ -20,19 +20,26 @@ public class PersistifyClientBuilder
         return new PersistifyClientBuilder();
     }
 
-    public PersistifyClientBuilder WithBaseUrl(Uri baseAddress)
+    public PersistifyClientBuilder WithBaseUrl(
+        Uri baseAddress
+    )
     {
         _baseAddress = baseAddress;
         return this;
     }
 
-    public PersistifyClientBuilder WithCredentials(string username, string password)
+    public PersistifyClientBuilder WithCredentials(
+        string username,
+        string password
+    )
     {
         _persistifyCredentials = new PersistifyCredentials(username, password);
         return this;
     }
 
-    public PersistifyClientBuilder WithConnectionSettings(ConnectionSettings connectionSettings)
+    public PersistifyClientBuilder WithConnectionSettings(
+        ConnectionSettings connectionSettings
+    )
     {
         _connectionSettings = connectionSettings;
         return this;

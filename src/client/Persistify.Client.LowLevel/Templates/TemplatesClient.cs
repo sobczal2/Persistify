@@ -9,7 +9,9 @@ namespace Persistify.Client.LowLevel.Templates;
 
 public class TemplatesClient : SubClient<ITemplateService>, ITemplatesClient
 {
-    internal TemplatesClient(PersistifyLowLevelClient persistifyLowLevelClient)
+    internal TemplatesClient(
+        PersistifyLowLevelClient persistifyLowLevelClient
+    )
         : base(persistifyLowLevelClient)
     {
     }

@@ -7,7 +7,9 @@ public class DateTimeIndexerIntervalTreeRecord : IComparable<DateTimeIndexerInte
     public int DocumentId { get; set; }
     public System.DateTime Value { get; set; }
 
-    public int CompareTo(DateTimeIndexerIntervalTreeRecord? other)
+    public int CompareTo(
+        DateTimeIndexerIntervalTreeRecord? other
+    )
     {
         if (other == null)
         {

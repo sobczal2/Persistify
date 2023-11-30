@@ -13,7 +13,9 @@ public class UserService : IUserService
 {
     private readonly IRequestDispatcher _requestDispatcher;
 
-    public UserService(IRequestDispatcher requestDispatcher)
+    public UserService(
+        IRequestDispatcher requestDispatcher
+    )
     {
         _requestDispatcher = requestDispatcher;
     }

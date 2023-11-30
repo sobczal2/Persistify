@@ -12,13 +12,17 @@ public class SignInRequestValidator : Validator<SignInRequest>
 {
     private readonly IUserManager _userManager;
 
-    public SignInRequestValidator(IUserManager userManager)
+    public SignInRequestValidator(
+        IUserManager userManager
+    )
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(SignInRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(SignInRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        SignInRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

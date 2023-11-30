@@ -11,25 +11,36 @@ public class Argon2PasswordService : IPasswordService
 {
     private readonly PasswordSettings _passwordSettings;
 
-    public Argon2PasswordService(IOptions<PasswordSettings> passwordSettingsOptions)
+    public Argon2PasswordService(
+        IOptions<PasswordSettings> passwordSettingsOptions
+    )
     {
         _passwordSettings = passwordSettingsOptions.Value;
     }
 
-    public (byte[] hash, byte[] salt) HashPassword(string password)
+    public (byte[] hash, byte[] salt) HashPassword(
+        string password
+    )
     {
         var salt = CreateSalt();
         var hash = HashPasswordInternal(password, salt);
         return (hash, salt);
     }
 
-    public bool VerifyPassword(string password, byte[] hash, byte[] salt)
+    public bool VerifyPassword(
+        string password,
+        byte[] hash,
+        byte[] salt
+    )
     {
         var newHash = HashPasswordInternal(password, salt);
         return hash.SequenceEqual(newHash);
     }
 
-    private byte[] HashPasswordInternal(string password, byte[] salt)
+    private byte[] HashPasswordInternal(
+        string password,
+        byte[] salt
+    )
     {
         var argon2 = new Argon2id(Encoding.UTF8.GetBytes(password))
         {

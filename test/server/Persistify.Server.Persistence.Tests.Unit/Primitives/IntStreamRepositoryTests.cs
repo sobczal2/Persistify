@@ -44,7 +44,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task ReadAsync_WhenIdIsLessThanZero_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var id = -1;
@@ -59,7 +61,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenIdIsGreaterThanLength_ReturnsNull(bool useLock)
+    public async Task ReadAsync_WhenIdIsGreaterThanLength_ReturnsNull(
+        bool useLock
+    )
     {
         // Arrange
         var id = 1;
@@ -74,7 +78,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenIdIsLessThanLength_ReturnsValue(bool useLock)
+    public async Task ReadAsync_WhenIdIsLessThanLength_ReturnsValue(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;
@@ -91,7 +97,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenIdIsOverwritten_ReturnsNewValue(bool useLock)
+    public async Task ReadAsync_WhenIdIsOverwritten_ReturnsNewValue(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;
@@ -110,7 +118,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadAsync_WhenValueWasDeletedButWasNotLast_ReturnsNull(bool useLock)
+    public async Task ReadAsync_WhenValueWasDeletedButWasNotLast_ReturnsNull(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;
@@ -150,7 +160,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipIsEqualToLength_ReturnsEmptyList(
+        bool useLock
+    )
     {
         // Arrange
         var skip = 1;
@@ -166,7 +178,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipIsGreaterThanLength_ReturnsEmptyList(
+        bool useLock
+    )
     {
         // Arrange
         var skip = 2;
@@ -182,7 +196,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList(bool useLock)
+    public async Task ReadRangeAsync_WhenTakeIsGreaterThanLength_ReturnsList(
+        bool useLock
+    )
     {
         // Arrange
         var take = 2;
@@ -198,7 +214,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList(bool useLock)
+    public async Task ReadRangeAsync_WhenTakeIsLessThanLength_ReturnsList(
+        bool useLock
+    )
     {
         // Arrange
         var take = 1;
@@ -215,7 +233,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList(bool useLock)
+    public async Task ReadRangeAsync_WhenSkipSkipsOverDeletedValues_ReturnsList(
+        bool useLock
+    )
     {
         // Arrange
         var skip = 1;
@@ -235,7 +255,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero(bool useLock)
+    public async Task CountAsync_WhenRepositoryIsEmpty_ReturnsZero(
+        bool useLock
+    )
     {
         // Arrange
 
@@ -249,7 +271,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount(bool useLock)
+    public async Task CountAsync_WhenRepositoryIsNotEmpty_ReturnsCount(
+        bool useLock
+    )
     {
         // Arrange
         await _sut.WriteAsync(0, 1, false);
@@ -265,7 +289,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount(bool useLock)
+    public async Task CountAsync_WhenValueIsDeleted_ReturnsCount(
+        bool useLock
+    )
     {
         // Arrange
         await _sut.WriteAsync(0, 1, false);
@@ -300,7 +326,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenValueIsEmpty_ThrowsArgumentOutOfRangeException(bool useLock)
+    public async Task WriteAsync_WhenValueIsEmpty_ThrowsArgumentOutOfRangeException(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;
@@ -317,7 +345,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenIdIsBiggerThanLength_ExtendsStream(bool useLock)
+    public async Task WriteAsync_WhenIdIsBiggerThanLength_ExtendsStream(
+        bool useLock
+    )
     {
         // Arrange
         var id = 1;
@@ -333,7 +363,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task WriteAsync_WhenIdIsBiggerThanLength_DoesNotChangeOtherValues(bool useLock)
+    public async Task WriteAsync_WhenIdIsBiggerThanLength_DoesNotChangeOtherValues(
+        bool useLock
+    )
     {
         // Arrange
         var id1 = 0;
@@ -372,7 +404,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenIdIsLessThanLength_DeletesValue(bool useLock)
+    public async Task DeleteAsync_WhenIdIsLessThanLength_DeletesValue(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;
@@ -391,7 +425,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenIdIsLessThanLength_DoesNotChangeOtherValues(bool useLock)
+    public async Task DeleteAsync_WhenIdIsLessThanLength_DoesNotChangeOtherValues(
+        bool useLock
+    )
     {
         // Arrange
         var id1 = 0;
@@ -414,7 +450,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ReturnsFalse(bool useLock)
+    public async Task DeleteAsync_WhenIdIsBiggerThanLength_ReturnsFalse(
+        bool useLock
+    )
     {
         // Arrange
         var id = 1;
@@ -452,7 +490,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task DeleteAsync_WhenIdIsLastIdAndValueIsDeleted_TruncatesStream(bool useLock)
+    public async Task DeleteAsync_WhenIdIsLastIdAndValueIsDeleted_TruncatesStream(
+        bool useLock
+    )
     {
         // Arrange
         var id = 0;
@@ -470,7 +510,9 @@ public class IntStreamRepositoryTests : IDisposable
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Clear_WhenCalled_DeletesAllValues(bool useLock)
+    public async Task Clear_WhenCalled_DeletesAllValues(
+        bool useLock
+    )
     {
         // Arrange
         var id1 = 0;

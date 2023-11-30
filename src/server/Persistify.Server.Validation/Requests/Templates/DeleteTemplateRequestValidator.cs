@@ -12,14 +12,18 @@ public class DeleteTemplateRequestValidator : Validator<DeleteTemplateRequest>
 {
     private readonly ITemplateManager _templateManager;
 
-    public DeleteTemplateRequestValidator(ITemplateManager templateManager)
+    public DeleteTemplateRequestValidator(
+        ITemplateManager templateManager
+    )
     {
         _templateManager =
             templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(DeleteTemplateRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(DeleteTemplateRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        DeleteTemplateRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

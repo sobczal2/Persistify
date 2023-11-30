@@ -5,7 +5,9 @@ namespace Persistify.Client.HighLevel.Extensions;
 
 public static class PersistifyClientBuilderExtensions
 {
-    public static IPersistifyHighLevelClient BuildHighLevel(this PersistifyClientBuilder builder)
+    public static IPersistifyHighLevelClient BuildHighLevel(
+        this PersistifyClientBuilder builder
+    )
     {
         return new PersistifyHighLevelClient(builder.BuildLowLevel());
     }

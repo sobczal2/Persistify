@@ -59,7 +59,9 @@ public class GetPresetAnalyzerRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(GetPresetAnalyzerRequest request)
+    protected override Permission GetRequiredPermission(
+        GetPresetAnalyzerRequest request
+    )
     {
         return Permission.PresetAnalyzerRead;
     }

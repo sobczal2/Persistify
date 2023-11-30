@@ -12,13 +12,17 @@ public class ChangeUserPasswordRequestValidator : Validator<ChangeUserPasswordRe
 {
     private readonly IUserManager _userManager;
 
-    public ChangeUserPasswordRequestValidator(IUserManager userManager)
+    public ChangeUserPasswordRequestValidator(
+        IUserManager userManager
+    )
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(ChangeUserPasswordRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(ChangeUserPasswordRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        ChangeUserPasswordRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

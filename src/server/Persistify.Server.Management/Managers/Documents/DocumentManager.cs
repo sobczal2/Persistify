@@ -94,7 +94,9 @@ public class DocumentManager : Manager, IDocumentManager
         PendingActions.Enqueue(initializeAction);
     }
 
-    public async ValueTask<Document?> GetAsync(int id)
+    public async ValueTask<Document?> GetAsync(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -102,7 +104,9 @@ public class DocumentManager : Manager, IDocumentManager
         return await _documentRepository.ReadAsync(id, true);
     }
 
-    public async ValueTask<bool> ExistsAsync(int id)
+    public async ValueTask<bool> ExistsAsync(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -110,7 +114,10 @@ public class DocumentManager : Manager, IDocumentManager
         return await _documentRepository.ExistsAsync(id, true);
     }
 
-    public async IAsyncEnumerable<Document> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<Document> ListAsync(
+        int take,
+        int skip
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -132,7 +139,10 @@ public class DocumentManager : Manager, IDocumentManager
 
         var searchResults = _indexerStore.Search(searchQueryDto).ToList();
 
-        searchResults.Sort((a, b) => b.SearchMetadata.Score.CompareTo(a.SearchMetadata.Score));
+        searchResults.Sort((
+            a,
+            b
+        ) => b.SearchMetadata.Score.CompareTo(a.SearchMetadata.Score));
 
         var searchRecords = new List<SearchRecordDto>();
 
@@ -162,7 +172,9 @@ public class DocumentManager : Manager, IDocumentManager
         return _count;
     }
 
-    public void Add(Document document)
+    public void Add(
+        Document document
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
@@ -187,7 +199,9 @@ public class DocumentManager : Manager, IDocumentManager
         PendingActions.Enqueue(addAction);
     }
 
-    public async ValueTask<bool> RemoveAsync(int id)
+    public async ValueTask<bool> RemoveAsync(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();

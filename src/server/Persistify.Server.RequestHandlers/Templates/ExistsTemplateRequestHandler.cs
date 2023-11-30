@@ -45,7 +45,9 @@ public class ExistsTemplateRequestHandler
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ExistsTemplateRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        ExistsTemplateRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -54,7 +56,9 @@ public class ExistsTemplateRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(ExistsTemplateRequest request)
+    protected override Permission GetRequiredPermission(
+        ExistsTemplateRequest request
+    )
     {
         return Permission.TemplateRead;
     }

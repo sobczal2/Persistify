@@ -59,7 +59,9 @@ public class InitializeDocumentManagersRequestHandler
         return new TransactionDescriptor(false, new List<IManager>(), new List<IManager>());
     }
 
-    protected override Permission GetRequiredPermission(InitializeDocumentManagersRequest request)
+    protected override Permission GetRequiredPermission(
+        InitializeDocumentManagersRequest request
+    )
     {
         return Permission.DocumentWrite;
     }

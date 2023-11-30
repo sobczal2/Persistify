@@ -17,12 +17,16 @@ public class ProtobufSerializer : ISerializer
         Serializer.PrepareSerializer<Document>();
     }
 
-    public ProtobufSerializer(RecyclableMemoryStreamManager recyclableMemoryStreamManager)
+    public ProtobufSerializer(
+        RecyclableMemoryStreamManager recyclableMemoryStreamManager
+    )
     {
         _recyclableMemoryStreamManager = recyclableMemoryStreamManager;
     }
 
-    public ReadOnlyMemory<byte> Serialize<T>(T obj)
+    public ReadOnlyMemory<byte> Serialize<T>(
+        T obj
+    )
     {
         if (obj == null)
         {
@@ -34,7 +38,9 @@ public class ProtobufSerializer : ISerializer
         return new ReadOnlyMemory<byte>(stream.GetBuffer(), 0, (int)stream.Length);
     }
 
-    public T Deserialize<T>(ReadOnlyMemory<byte> bytes)
+    public T Deserialize<T>(
+        ReadOnlyMemory<byte> bytes
+    )
     {
         if (bytes.IsEmpty)
         {

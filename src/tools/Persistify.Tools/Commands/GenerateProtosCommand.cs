@@ -27,7 +27,9 @@ public class GenerateProtosCommand : Command
         this.SetHandler(Handle, _outputPathArgument);
     }
 
-    private void Handle(string path)
+    private void Handle(
+        string path
+    )
     {
         var generator = new SchemaGenerator { ProtoSyntax = ProtoSyntax.Proto3 };
 

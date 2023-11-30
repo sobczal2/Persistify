@@ -7,5 +7,8 @@ namespace Persistify.Server.Validation.Common;
 public interface IValidator<in T>
 {
     Stack<string> PropertyName { get; set; }
-    ValueTask<Result> ValidateAsync(T value);
+
+    ValueTask<Result> ValidateAsync(
+        T value
+    );
 }

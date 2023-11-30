@@ -26,14 +26,18 @@ public class LocalFileProvider : IFileProvider
         }
     }
 
-    public bool Exists(string relativePath)
+    public bool Exists(
+        string relativePath
+    )
     {
         var absolutePath = GetAbsolutePath(relativePath);
         _logger.LogTrace("Checking if file {AbsolutePath} exists", absolutePath);
         return File.Exists(absolutePath);
     }
 
-    public void Create(string relativePath)
+    public void Create(
+        string relativePath
+    )
     {
         var absolutePath = GetAbsolutePath(relativePath);
         _logger.LogTrace("Creating file {AbsolutePath}", absolutePath);
@@ -55,7 +59,9 @@ public class LocalFileProvider : IFileProvider
         File.Create(absolutePath).Dispose();
     }
 
-    public void Delete(string relativePath)
+    public void Delete(
+        string relativePath
+    )
     {
         var absolutePath = GetAbsolutePath(relativePath);
         _logger.LogTrace("Deleting file {AbsolutePath}", absolutePath);
@@ -67,7 +73,9 @@ public class LocalFileProvider : IFileProvider
         File.Delete(absolutePath);
     }
 
-    private string GetAbsolutePath(string relativePath)
+    private string GetAbsolutePath(
+        string relativePath
+    )
     {
         return Path.Combine(_storageSettings.DataPath, relativePath);
     }

@@ -13,7 +13,10 @@ public class IdleTimeoutFileStream : Stream
     private CancellationTokenSource? _cancellationTokenSource;
     private FileStream? _fileStream;
 
-    public IdleTimeoutFileStream(TimeSpan idleFileTimeout, string filePath)
+    public IdleTimeoutFileStream(
+        TimeSpan idleFileTimeout,
+        string filePath
+    )
     {
         _filePath = filePath;
         _lock = new object();
@@ -116,31 +119,46 @@ public class IdleTimeoutFileStream : Stream
         _fileStream!.Flush();
     }
 
-    public override int Read(byte[] buffer, int offset, int count)
+    public override int Read(
+        byte[] buffer,
+        int offset,
+        int count
+    )
     {
         EnsureFileStreamOpen();
         return _fileStream!.Read(buffer, offset, count);
     }
 
-    public override long Seek(long offset, SeekOrigin origin)
+    public override long Seek(
+        long offset,
+        SeekOrigin origin
+    )
     {
         EnsureFileStreamOpen();
         return _fileStream!.Seek(offset, origin);
     }
 
-    public override void SetLength(long value)
+    public override void SetLength(
+        long value
+    )
     {
         EnsureFileStreamOpen();
         _fileStream!.SetLength(value);
     }
 
-    public override void Write(byte[] buffer, int offset, int count)
+    public override void Write(
+        byte[] buffer,
+        int offset,
+        int count
+    )
     {
         EnsureFileStreamOpen();
         _fileStream!.Write(buffer, offset, count);
     }
 
-    protected override void Dispose(bool disposing)
+    protected override void Dispose(
+        bool disposing
+    )
     {
         if (disposing)
         {

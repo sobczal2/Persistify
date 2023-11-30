@@ -70,7 +70,9 @@ public class GetDocumentRequestHandler : RequestHandler<GetDocumentRequest, GetD
         return new GetDocumentResponse { DocumentDto = document.ToDto() };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(GetDocumentRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        GetDocumentRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -79,7 +81,9 @@ public class GetDocumentRequestHandler : RequestHandler<GetDocumentRequest, GetD
         );
     }
 
-    protected override Permission GetRequiredPermission(GetDocumentRequest request)
+    protected override Permission GetRequiredPermission(
+        GetDocumentRequest request
+    )
     {
         return Permission.DocumentRead | Permission.TemplateRead;
     }

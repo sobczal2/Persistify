@@ -13,7 +13,9 @@ public class ExistsTemplateRequestValidator : Validator<ExistsTemplateRequest>
         PropertyName.Push(nameof(ExistsTemplateRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(ExistsTemplateRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        ExistsTemplateRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

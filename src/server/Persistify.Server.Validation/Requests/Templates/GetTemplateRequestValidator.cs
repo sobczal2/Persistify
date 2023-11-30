@@ -11,13 +11,17 @@ public class GetTemplateRequestValidator : Validator<GetTemplateRequest>
 {
     private readonly ITemplateManager _templateManager;
 
-    public GetTemplateRequestValidator(ITemplateManager templateManager)
+    public GetTemplateRequestValidator(
+        ITemplateManager templateManager
+    )
     {
         _templateManager = templateManager;
         PropertyName.Push(nameof(GetTemplateRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(GetTemplateRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        GetTemplateRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

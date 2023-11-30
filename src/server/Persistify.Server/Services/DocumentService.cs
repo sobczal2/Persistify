@@ -13,7 +13,9 @@ public class DocumentService : IDocumentService
 {
     private readonly IRequestDispatcher _requestDispatcher;
 
-    public DocumentService(IRequestDispatcher requestDispatcher)
+    public DocumentService(
+        IRequestDispatcher requestDispatcher
+    )
     {
         _requestDispatcher = requestDispatcher;
     }

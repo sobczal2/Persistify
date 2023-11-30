@@ -13,7 +13,9 @@ public class DateTimeIndexer : IIndexer
 {
     private readonly IntervalTree<DateTimeIndexerIntervalTreeRecord> _intervalTree;
 
-    public DateTimeIndexer(string fieldName)
+    public DateTimeIndexer(
+        string fieldName
+    )
     {
         FieldName = fieldName;
         _intervalTree = new IntervalTree<DateTimeIndexerIntervalTreeRecord>();
@@ -21,7 +23,9 @@ public class DateTimeIndexer : IIndexer
 
     public string FieldName { get; }
 
-    public void Delete(Document document)
+    public void Delete(
+        Document document
+    )
     {
         if (_intervalTree.Remove(x => x.DocumentId == document.Id) == 0)
         {
@@ -29,7 +33,9 @@ public class DateTimeIndexer : IIndexer
         }
     }
 
-    public void Index(Document document)
+    public void Index(
+        Document document
+    )
     {
         var dateFieldValue = document.GetDateTimeFieldValueByName(FieldName);
         if (dateFieldValue is null)
@@ -42,7 +48,9 @@ public class DateTimeIndexer : IIndexer
         );
     }
 
-    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
+    public IEnumerable<SearchResult> Search(
+        SearchQueryDto queryDto
+    )
     {
         if (
             queryDto is not DateTimeSearchQueryDto dateSearchQueryDto
@@ -66,15 +74,23 @@ public class DateTimeIndexer : IIndexer
         };
     }
 
-    private IEnumerable<SearchResult> HandleExactDateTimeSearch(ExactDateTimeSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleExactDateTimeSearch(
+        ExactDateTimeSearchQueryDto queryDto
+    )
     {
         var results = _intervalTree.Search(
             queryDto.Value,
             queryDto.Value,
-            (x, y) => x.Value.CompareTo(y)
+            (
+                x,
+                y
+            ) => x.Value.CompareTo(y)
         );
 
-        results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
+        results.Sort((
+            a,
+            b
+        ) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
@@ -82,15 +98,23 @@ public class DateTimeIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleGreaterDateTimeSearch(GreaterDateTimeSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleGreaterDateTimeSearch(
+        GreaterDateTimeSearchQueryDto queryDto
+    )
     {
         var results = _intervalTree.Search(
             queryDto.Value,
             queryDto.Value,
-            (x, y) => x.Value.CompareTo(y)
+            (
+                x,
+                y
+            ) => x.Value.CompareTo(y)
         );
 
-        results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
+        results.Sort((
+            a,
+            b
+        ) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
@@ -98,15 +122,23 @@ public class DateTimeIndexer : IIndexer
         }
     }
 
-    private IEnumerable<SearchResult> HandleLessDateTimeSearch(LessDateTimeSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleLessDateTimeSearch(
+        LessDateTimeSearchQueryDto queryDto
+    )
     {
         var results = _intervalTree.Search(
             queryDto.Value,
             queryDto.Value,
-            (x, y) => x.Value.CompareTo(y)
+            (
+                x,
+                y
+            ) => x.Value.CompareTo(y)
         );
 
-        results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
+        results.Sort((
+            a,
+            b
+        ) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {
@@ -121,10 +153,16 @@ public class DateTimeIndexer : IIndexer
         var results = _intervalTree.Search(
             rangeDateTimeSearchQueryDto.MinValue,
             rangeDateTimeSearchQueryDto.MaxValue,
-            (x, y) => x.Value.CompareTo(y)
+            (
+                x,
+                y
+            ) => x.Value.CompareTo(y)
         );
 
-        results.Sort((a, b) => a.DocumentId.CompareTo(b.DocumentId));
+        results.Sort((
+            a,
+            b
+        ) => a.DocumentId.CompareTo(b.DocumentId));
 
         foreach (var result in results)
         {

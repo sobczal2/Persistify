@@ -5,7 +5,9 @@ namespace Persistify.Server.ErrorHandling.Codes;
 
 public class GrpcPersistifyErrorCodeMapper : IPersistifyErrorCodeMapper<StatusCode>
 {
-    public StatusCode Map(PersistifyErrorCode errorCode)
+    public StatusCode Map(
+        PersistifyErrorCode errorCode
+    )
     {
         return errorCode switch
         {

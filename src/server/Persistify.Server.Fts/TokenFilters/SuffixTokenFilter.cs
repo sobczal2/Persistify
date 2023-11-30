@@ -10,11 +10,15 @@ public class SuffixTokenFilter : ITokenFilter
 {
     public string Code => "suffix";
 
-    public void FilterForSearch(List<SearchToken> tokens)
+    public void FilterForSearch(
+        List<SearchToken> tokens
+    )
     {
     }
 
-    public void FilterForIndex(List<IndexToken> tokens)
+    public void FilterForIndex(
+        List<IndexToken> tokens
+    )
     {
         var initialTokensCount = tokens.Count;
         for (var i = 0; i < initialTokensCount; i++)

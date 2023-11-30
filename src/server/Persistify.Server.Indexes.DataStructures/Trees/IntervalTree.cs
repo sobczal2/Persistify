@@ -8,26 +8,37 @@ public class IntervalTree<TItem> : ITree<TItem>
 {
     private IntervalTreeNode<TItem>? _root;
 
-    public void Insert(TItem item)
+    public void Insert(
+        TItem item
+    )
     {
         _root = Insert(_root, item);
     }
 
-    public List<TItem> Search<TValue>(TValue min, TValue max, Func<TItem, TValue, int> comparer)
+    public List<TItem> Search<TValue>(
+        TValue min,
+        TValue max,
+        Func<TItem, TValue, int> comparer
+    )
     {
         var result = new List<TItem>();
         Search(_root, min, max, comparer, result);
         return result;
     }
 
-    public int Remove(Predicate<TItem> predicate)
+    public int Remove(
+        Predicate<TItem> predicate
+    )
     {
         var removedCount = 0;
         _root = Remove(_root, predicate, ref removedCount);
         return removedCount;
     }
 
-    private static IntervalTreeNode<TItem> Insert(IntervalTreeNode<TItem>? node, TItem item)
+    private static IntervalTreeNode<TItem> Insert(
+        IntervalTreeNode<TItem>? node,
+        TItem item
+    )
     {
         if (node == null)
         {
@@ -102,7 +113,9 @@ public class IntervalTree<TItem> : ITree<TItem>
         return BalanceNode(node);
     }
 
-    private IntervalTreeNode<TItem>? RemoveNode(IntervalTreeNode<TItem> node)
+    private IntervalTreeNode<TItem>? RemoveNode(
+        IntervalTreeNode<TItem> node
+    )
     {
         if (node.Left == null)
         {
@@ -122,7 +135,9 @@ public class IntervalTree<TItem> : ITree<TItem>
         return BalanceNode(minNode);
     }
 
-    private IntervalTreeNode<TItem>? RemoveMinNode(IntervalTreeNode<TItem> node)
+    private IntervalTreeNode<TItem>? RemoveMinNode(
+        IntervalTreeNode<TItem> node
+    )
     {
         if (node.Left == null)
         {
@@ -135,7 +150,9 @@ public class IntervalTree<TItem> : ITree<TItem>
         return BalanceNode(node);
     }
 
-    private static IntervalTreeNode<TItem> FindMinNode(IntervalTreeNode<TItem> node)
+    private static IntervalTreeNode<TItem> FindMinNode(
+        IntervalTreeNode<TItem> node
+    )
     {
         while (node.Left != null)
         {
@@ -145,12 +162,16 @@ public class IntervalTree<TItem> : ITree<TItem>
         return node;
     }
 
-    private static void UpdateNodeHeight(IntervalTreeNode<TItem> node)
+    private static void UpdateNodeHeight(
+        IntervalTreeNode<TItem> node
+    )
     {
         node.Height = 1 + Math.Max(GetHeight(node.Left), GetHeight(node.Right));
     }
 
-    private static IntervalTreeNode<TItem> BalanceNode(IntervalTreeNode<TItem> node)
+    private static IntervalTreeNode<TItem> BalanceNode(
+        IntervalTreeNode<TItem> node
+    )
     {
         var balance = GetBalance(node);
 
@@ -181,7 +202,9 @@ public class IntervalTree<TItem> : ITree<TItem>
         return node;
     }
 
-    private static int GetBalance(IntervalTreeNode<TItem>? node)
+    private static int GetBalance(
+        IntervalTreeNode<TItem>? node
+    )
     {
         if (node == null)
         {
@@ -191,12 +214,16 @@ public class IntervalTree<TItem> : ITree<TItem>
         return GetHeight(node.Left) - GetHeight(node.Right);
     }
 
-    private static int GetHeight(IntervalTreeNode<TItem>? node)
+    private static int GetHeight(
+        IntervalTreeNode<TItem>? node
+    )
     {
         return node?.Height ?? 0;
     }
 
-    private static IntervalTreeNode<TItem> RightRotate(IntervalTreeNode<TItem> node)
+    private static IntervalTreeNode<TItem> RightRotate(
+        IntervalTreeNode<TItem> node
+    )
     {
         var leftChild = node.Left ?? throw new InvalidOperationException("Left child is null");
         node.Left = leftChild.Right;
@@ -207,7 +234,9 @@ public class IntervalTree<TItem> : ITree<TItem>
         return leftChild;
     }
 
-    private static IntervalTreeNode<TItem> LeftRotate(IntervalTreeNode<TItem> node)
+    private static IntervalTreeNode<TItem> LeftRotate(
+        IntervalTreeNode<TItem> node
+    )
     {
         var rightChild = node.Right ?? throw new InvalidOperationException("Right child is null");
         node.Right = rightChild.Left;

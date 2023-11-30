@@ -16,7 +16,9 @@ public abstract class Validator<T> : IValidator<T>
 
     public Stack<string> PropertyName { get; set; }
 
-    public async ValueTask<Result> ValidateAsync(T value)
+    public async ValueTask<Result> ValidateAsync(
+        T value
+    )
     {
         if (value == null)
         {
@@ -26,9 +28,13 @@ public abstract class Validator<T> : IValidator<T>
         return await ValidateNotNullAsync(value);
     }
 
-    public abstract ValueTask<Result> ValidateNotNullAsync(T value);
+    public abstract ValueTask<Result> ValidateNotNullAsync(
+        T value
+    );
 
-    protected PersistifyException StaticValidationException(string message)
+    protected PersistifyException StaticValidationException(
+        string message
+    )
     {
         var reversedPropertyNames = new List<string>(PropertyName);
         reversedPropertyNames.Reverse();
@@ -38,7 +44,9 @@ public abstract class Validator<T> : IValidator<T>
         );
     }
 
-    protected PersistifyException DynamicValidationException(string message)
+    protected PersistifyException DynamicValidationException(
+        string message
+    )
     {
         var reversedPropertyNames = new List<string>(PropertyName);
         reversedPropertyNames.Reverse();
@@ -48,7 +56,10 @@ public abstract class Validator<T> : IValidator<T>
         );
     }
 
-    protected PersistifyException Exception(string message, PersistifyErrorCode errorCode)
+    protected PersistifyException Exception(
+        string message,
+        PersistifyErrorCode errorCode
+    )
     {
         var reversedPropertyNames = new List<string>(PropertyName);
         reversedPropertyNames.Reverse();

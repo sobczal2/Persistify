@@ -69,7 +69,9 @@ public class DeleteDocumentRequestHandler
         return new DeleteDocumentResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(DeleteDocumentRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        DeleteDocumentRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -78,7 +80,9 @@ public class DeleteDocumentRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(DeleteDocumentRequest request)
+    protected override Permission GetRequiredPermission(
+        DeleteDocumentRequest request
+    )
     {
         return Permission.DocumentWrite | Permission.TemplateRead;
     }

@@ -44,7 +44,9 @@ public class ExistsUserRequestHandler : RequestHandler<ExistsUserRequest, Exists
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ExistsUserRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        ExistsUserRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -53,7 +55,9 @@ public class ExistsUserRequestHandler : RequestHandler<ExistsUserRequest, Exists
         );
     }
 
-    protected override Permission GetRequiredPermission(ExistsUserRequest request)
+    protected override Permission GetRequiredPermission(
+        ExistsUserRequest request
+    )
     {
         return Permission.UserRead;
     }

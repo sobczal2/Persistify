@@ -55,7 +55,9 @@ public class ListTemplatesRequestHandler
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(ListTemplatesRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        ListTemplatesRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -64,7 +66,9 @@ public class ListTemplatesRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(ListTemplatesRequest request)
+    protected override Permission GetRequiredPermission(
+        ListTemplatesRequest request
+    )
     {
         return Permission.TemplateRead;
     }

@@ -13,7 +13,9 @@ public class PresetAnalyzerService : IPresetAnalyzerService
 {
     private readonly IRequestDispatcher _requestDispatcher;
 
-    public PresetAnalyzerService(IRequestDispatcher requestDispatcher)
+    public PresetAnalyzerService(
+        IRequestDispatcher requestDispatcher
+    )
     {
         _requestDispatcher = requestDispatcher;
     }

@@ -13,7 +13,9 @@ public class ExistsUserRequestValidator : Validator<ExistsUserRequest>
         PropertyName.Push(nameof(GetUserRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(ExistsUserRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        ExistsUserRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

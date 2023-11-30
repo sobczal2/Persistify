@@ -2,7 +2,10 @@
 
 public class IntervalTreeNode<TItem>
 {
-    public IntervalTreeNode(TItem item, int height)
+    public IntervalTreeNode(
+        TItem item,
+        int height
+    )
     {
         Item = item;
         Height = height;
