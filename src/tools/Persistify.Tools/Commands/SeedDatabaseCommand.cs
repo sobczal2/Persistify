@@ -44,10 +44,10 @@ public class SeedDatabaseCommand : Command
             .WithConnectionSettings(useTls ? ConnectionSettings.TlsNoVerify : ConnectionSettings.NoTls)
             .BuildLowLevel();
 
-        var documentsGenerator = templateName switch
+        IDocumentsGenerator documentsGenerator = templateName switch
         {
             TemplateName.Animal => new AnimalDocumentsGenerator(),
-            TemplateName.Person => throw new NotImplementedException(),
+            TemplateName.Person => new PersonDocumentsGenerator(),
             _ => throw new ArgumentOutOfRangeException(nameof(templateName), templateName, null)
         };
 
@@ -67,7 +67,7 @@ public class SeedDatabaseCommand : Command
 
             if (createDocumentResult.Failure)
             {
-                Console.WriteLine(createDocumentResult.Exception!.Message);
+                Console.WriteLine(createDocumentResult.Exception);
                 return;
             }
 
