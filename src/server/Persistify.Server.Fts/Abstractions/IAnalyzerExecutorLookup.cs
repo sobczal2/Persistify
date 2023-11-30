@@ -4,7 +4,7 @@ using Persistify.Server.Domain.Templates;
 
 namespace Persistify.Server.Fts.Abstractions;
 
-public interface IAnalyzerExecutorFactory
+public interface IAnalyzerExecutorLookup
 {
     IAnalyzerExecutor Create(Analyzer analyzer);
     Result Validate(FullAnalyzerDto analyzerDto);

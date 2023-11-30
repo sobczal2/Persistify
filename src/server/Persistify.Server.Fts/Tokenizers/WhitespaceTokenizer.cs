@@ -8,6 +8,8 @@ public class WhitespaceTokenizer : ITokenizer
 {
     private static readonly char[] WhitespaceChars = { ' ', '\t', '\n', '\r' };
 
+    public string Code => "whitespace";
+
     public IEnumerable<SearchToken> TokenizeForSearch(string text, char[] alphabet)
     {
         var index = 0;

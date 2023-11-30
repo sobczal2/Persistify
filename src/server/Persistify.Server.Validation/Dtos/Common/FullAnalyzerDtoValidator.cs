@@ -10,11 +10,11 @@ namespace Persistify.Server.Validation.Dtos.Common;
 
 public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
 {
-    private readonly IAnalyzerExecutorFactory _analyzerExecutorFactory;
+    private readonly IAnalyzerExecutorLookup _analyzerExecutorLookup;
 
-    public FullAnalyzerDtoValidator(IAnalyzerExecutorFactory analyzerExecutorFactory)
+    public FullAnalyzerDtoValidator(IAnalyzerExecutorLookup analyzerExecutorLookup)
     {
-        _analyzerExecutorFactory = analyzerExecutorFactory;
+        _analyzerExecutorLookup = analyzerExecutorLookup;
         PropertyName.Push(nameof(Analyzer));
     }
 
@@ -102,7 +102,7 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
             count++;
         }
 
-        var analyzerFactoryResult = _analyzerExecutorFactory.Validate(value);
+        var analyzerFactoryResult = _analyzerExecutorLookup.Validate(value);
         if (analyzerFactoryResult.Failure)
         {
             return ValueTask.FromResult(analyzerFactoryResult);

@@ -8,12 +8,13 @@ namespace Persistify.Server.Fts.TokenFilters;
 
 public class SuffixTokenFilter : ITokenFilter
 {
-    public List<SearchToken> FilterForSearch(List<SearchToken> tokens)
+    public string Code => "suffix";
+
+    public void FilterForSearch(List<SearchToken> tokens)
     {
-        return tokens;
     }
 
-    public List<IndexToken> FilterForIndex(List<IndexToken> tokens)
+    public void FilterForIndex(List<IndexToken> tokens)
     {
         var initialTokensCount = tokens.Count;
         for (var i = 0; i < initialTokensCount; i++)
@@ -43,7 +44,5 @@ public class SuffixTokenFilter : ITokenFilter
                 );
             }
         }
-
-        return tokens;
     }
 }
