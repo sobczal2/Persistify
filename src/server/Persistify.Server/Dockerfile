@@ -1,8 +1,8 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 50051
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["src/server/Persistify.Server/Persistify.Server.csproj", "src/server/Persistify.Server/"]
 COPY ["src/server/Persistify.Server.RequestHandlers/Persistify.Server.RequestHandlers.csproj", "src/server/Persistify.Server.RequestHandlers/"]
@@ -39,6 +39,7 @@ RUN dotnet publish "Persistify.Server.csproj" -c Release -o /app/publish /p:UseA
 
 FROM base AS final
 WORKDIR /app
+RUN mkdir -p /var/lib/persistify
 COPY --from=publish /app/publish .
 COPY --from=build /etc/persistify/localhost.pfx /etc/persistify/localhost.pfx
 ENTRYPOINT ["dotnet", "Persistify.Server.dll"]

@@ -10,10 +10,14 @@ public class GenerateImageCommand : Command
     private readonly Argument<string> _persistifyProjectRootArgument =
         new("persistify-project-root", "Path to the root of the persistify project");
 
+    private readonly Option<bool> _runOption =
+        new("--run", "Run the generated image");
+
     public GenerateImageCommand()
         : base("generate-image", "Generate a docker image for persistify")
     {
         AddArgument(_persistifyProjectRootArgument);
+        AddOption(_runOption);
         _ = _persistifyProjectRootArgument.AddCompletions(ctx =>
         {
             var path = ctx.ParseResult.GetValueForArgument(_persistifyProjectRootArgument);
@@ -21,11 +25,12 @@ public class GenerateImageCommand : Command
                 ? new List<string>()
                 : Directory.GetDirectories(path);
         });
-        this.SetHandler(Handle, _persistifyProjectRootArgument);
+        this.SetHandler(Handle, _persistifyProjectRootArgument, _runOption);
     }
 
     private async Task Handle(
-        string path
+        string path,
+        bool run
     )
     {
         var persistifySlnPath = Path.GetFullPath(Path.Combine(path, "Persistify.sln"));
@@ -89,6 +94,29 @@ public class GenerateImageCommand : Command
         if (buildPersistifyImageProcess.ExitCode != 0)
         {
             Console.WriteLine("Docker build failed");
+        }
+
+        if (run)
+        {
+            var runPersistifyImageProcess = Process.Start(
+                new ProcessStartInfo("docker", $"run -p 5000:50051 {persistifyImageName}")
+                {
+                    WorkingDirectory = path, RedirectStandardOutput = true, UseShellExecute = false
+                }
+            );
+
+            if (runPersistifyImageProcess is null)
+            {
+                Console.WriteLine("Could not start docker run");
+                return;
+            }
+
+            await runPersistifyImageProcess.WaitForExitAsync();
+
+            if (runPersistifyImageProcess.ExitCode != 0)
+            {
+                Console.WriteLine("Docker run failed");
+            }
         }
     }
 
