@@ -10,5 +10,6 @@ public class PersistifyRootCommand : RootCommand
     {
         AddCommand(new GenerateProtosCommand());
         AddCommand(new GenerateImageCommand());
+        AddCommand(new SeedDatabaseCommand());
     }
 }

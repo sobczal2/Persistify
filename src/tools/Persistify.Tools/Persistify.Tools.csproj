@@ -14,13 +14,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="protobuf-net.Grpc.Reflection" Version="1.1.1"/>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1"/>
     <PackageReference Include="System.Text.Json" Version="7.0.3"/>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\client\Persistify.Client.HighLevel\Persistify.Client.HighLevel.csproj" />
+    <ProjectReference Include="..\..\client\Persistify.Client.LowLevel\Persistify.Client.LowLevel.csproj" />
     <ProjectReference Include="..\..\shared\Persistify.Services\Persistify.Services.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="nupkg\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\animal-names.txt" />
+    <EmbeddedResource Include="Resources\animal-names.txt" />
   </ItemGroup>
 
 </Project>
