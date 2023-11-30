@@ -6,7 +6,10 @@ namespace Persistify.Helpers.Collections;
 
 public static class ListExtensions
 {
-    public static List<TTo> ListSelect<TFrom, TTo>(this List<TFrom> list, Func<TFrom, TTo> selector)
+    public static List<TTo> ListSelect<TFrom, TTo>(
+        this List<TFrom> list,
+        Func<TFrom, TTo> selector
+    )
     {
         var result = new List<TTo>(list.Count);
 

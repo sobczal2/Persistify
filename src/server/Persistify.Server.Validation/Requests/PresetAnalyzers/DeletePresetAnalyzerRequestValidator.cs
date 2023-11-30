@@ -11,13 +11,17 @@ public class DeletePresetAnalyzerRequestValidator : Validator<DeletePresetAnalyz
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
-    public DeletePresetAnalyzerRequestValidator(IPresetAnalyzerManager presetAnalyzerManager)
+    public DeletePresetAnalyzerRequestValidator(
+        IPresetAnalyzerManager presetAnalyzerManager
+    )
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         PropertyName.Push(nameof(DeletePresetAnalyzerRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(DeletePresetAnalyzerRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        DeletePresetAnalyzerRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.PresetAnalyzerName))
         {

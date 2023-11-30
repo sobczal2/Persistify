@@ -12,14 +12,18 @@ public class GetDocumentRequestValidator : Validator<GetDocumentRequest>
 {
     private readonly ITemplateManager _templateManager;
 
-    public GetDocumentRequestValidator(ITemplateManager templateManager)
+    public GetDocumentRequestValidator(
+        ITemplateManager templateManager
+    )
     {
         _templateManager =
             templateManager ?? throw new ArgumentNullException(nameof(templateManager));
         PropertyName.Push(nameof(GetDocumentRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(GetDocumentRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        GetDocumentRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

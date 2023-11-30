@@ -59,7 +59,9 @@ public class RefreshTokenRequestHandler : RequestHandler<RefreshTokenRequest, Re
         return _response ?? throw new InternalPersistifyException(nameof(RefreshTokenRequest));
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(RefreshTokenRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        RefreshTokenRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -68,7 +70,9 @@ public class RefreshTokenRequestHandler : RequestHandler<RefreshTokenRequest, Re
         );
     }
 
-    protected override Permission GetRequiredPermission(RefreshTokenRequest request)
+    protected override Permission GetRequiredPermission(
+        RefreshTokenRequest request
+    )
     {
         return Permission.None;
     }

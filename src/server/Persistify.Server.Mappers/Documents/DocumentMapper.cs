@@ -7,7 +7,9 @@ namespace Persistify.Server.Mappers.Documents;
 
 public static class DocumentMapper
 {
-    public static DocumentDto ToDto(this Document document)
+    public static DocumentDto ToDto(
+        this Document document
+    )
     {
         var fieldValues = new List<FieldValueDto>(document.FieldValues.Count);
 

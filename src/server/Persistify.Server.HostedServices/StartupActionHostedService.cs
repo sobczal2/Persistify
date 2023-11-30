@@ -23,7 +23,9 @@ public class StartupActionHostedService : BackgroundService
         _requestDispatcher = requestDispatcher;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(
+        CancellationToken stoppingToken
+    )
     {
         _logger.LogInformation("Executing startup actions");
         var internalClaimsPrincipal = ClaimsPrincipalExtensions.InternalClaimsPrincipal;

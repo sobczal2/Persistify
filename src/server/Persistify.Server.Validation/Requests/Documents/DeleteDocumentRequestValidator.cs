@@ -13,7 +13,9 @@ public class DeleteDocumentRequestValidator : Validator<DeleteDocumentRequest>
         PropertyName.Push(nameof(DeleteDocumentRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(DeleteDocumentRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        DeleteDocumentRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

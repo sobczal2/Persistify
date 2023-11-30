@@ -6,5 +6,8 @@ namespace Persistify.Server.Files;
 public interface IFileGroupForTemplate
 {
     string FileGroupName { get; }
-    IEnumerable<string> GetFileNamesForTemplate(Template template);
+
+    IEnumerable<string> GetFileNamesForTemplate(
+        Template template
+    );
 }

@@ -6,7 +6,10 @@ namespace Persistify.Concurrency;
 
 public static class SemaphoreSlimExtensions
 {
-    public static void Wrap(this SemaphoreSlim semaphore, Action action)
+    public static void Wrap(
+        this SemaphoreSlim semaphore,
+        Action action
+    )
     {
         semaphore.Wait();
         try
@@ -19,7 +22,10 @@ public static class SemaphoreSlimExtensions
         }
     }
 
-    public static TResult Wrap<TResult>(this SemaphoreSlim semaphore, Func<TResult> func)
+    public static TResult Wrap<TResult>(
+        this SemaphoreSlim semaphore,
+        Func<TResult> func
+    )
     {
         semaphore.Wait();
         try
@@ -32,7 +38,10 @@ public static class SemaphoreSlimExtensions
         }
     }
 
-    public static async ValueTask WrapAsync(this SemaphoreSlim semaphore, Func<ValueTask> func)
+    public static async ValueTask WrapAsync(
+        this SemaphoreSlim semaphore,
+        Func<ValueTask> func
+    )
     {
         await semaphore.WaitAsync();
         try

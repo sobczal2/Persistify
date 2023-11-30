@@ -7,7 +7,9 @@ public class SubClient<TService>
 {
     protected readonly PersistifyLowLevelClient PersistifyLowLevelClient;
 
-    protected SubClient(PersistifyLowLevelClient persistifyLowLevelClient)
+    protected SubClient(
+        PersistifyLowLevelClient persistifyLowLevelClient
+    )
     {
         PersistifyLowLevelClient = persistifyLowLevelClient;
     }

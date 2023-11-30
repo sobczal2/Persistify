@@ -8,6 +8,12 @@ public interface ITransactionDescriptor
     bool ExclusiveGlobal { get; }
     IImmutableList<IManager> ReadManagers { get; }
     IImmutableList<IManager> WriteManagers { get; }
-    void AddReadManager(IManager manager);
-    void AddWriteManager(IManager manager);
+
+    void AddReadManager(
+        IManager manager
+    );
+
+    void AddWriteManager(
+        IManager manager
+    );
 }

@@ -16,7 +16,9 @@ public class BoolIndexer : IIndexer
     private readonly BitArray _falseDocuments;
     private readonly BitArray _trueDocuments;
 
-    public BoolIndexer(string fieldName)
+    public BoolIndexer(
+        string fieldName
+    )
     {
         FieldName = fieldName;
         _trueDocuments = new BitArray(0);
@@ -25,7 +27,9 @@ public class BoolIndexer : IIndexer
 
     public string FieldName { get; }
 
-    public void Index(Document document)
+    public void Index(
+        Document document
+    )
     {
         var boolFieldValue = document.GetBoolFieldValueByName(FieldName);
         if (boolFieldValue == null)
@@ -43,7 +47,9 @@ public class BoolIndexer : IIndexer
         }
     }
 
-    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
+    public IEnumerable<SearchResult> Search(
+        SearchQueryDto queryDto
+    )
     {
         if (
             queryDto is not BoolSearchQueryDto boolSearchQueryDto
@@ -61,13 +67,17 @@ public class BoolIndexer : IIndexer
         };
     }
 
-    public void Delete(Document document)
+    public void Delete(
+        Document document
+    )
     {
         _trueDocuments.SetEnsureCapacity(document.Id, false);
         _falseDocuments.SetEnsureCapacity(document.Id, false);
     }
 
-    private IEnumerable<SearchResult> HandleExactBoolSearch(ExactBoolSearchQueryDto queryDto)
+    private IEnumerable<SearchResult> HandleExactBoolSearch(
+        ExactBoolSearchQueryDto queryDto
+    )
     {
         if (queryDto.Value)
         {

@@ -8,8 +8,16 @@ public interface IManager
 {
     string Name { get; }
     void Initialize();
-    ValueTask<bool> BeginReadAsync(TimeSpan timeOut, CancellationToken cancellationToken);
-    ValueTask<bool> BeginWriteAsync(TimeSpan timeOut, CancellationToken cancellationToken);
+
+    ValueTask<bool> BeginReadAsync(
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    );
+
+    ValueTask<bool> BeginWriteAsync(
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    );
 
     ValueTask EndReadAsync();
     ValueTask EndWriteAsync();

@@ -16,7 +16,9 @@ public class FullTextSearchQueryDto : TextSearchQueryDto
         return FieldName;
     }
 
-    public override void SetFieldName(string fieldName)
+    public override void SetFieldName(
+        string fieldName
+    )
     {
         FieldName = fieldName;
     }

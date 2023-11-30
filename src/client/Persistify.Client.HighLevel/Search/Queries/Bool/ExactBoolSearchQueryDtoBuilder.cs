@@ -9,7 +9,9 @@ public class ExactBoolSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, ExactBoolSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public ExactBoolSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public ExactBoolSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new ExactBoolSearchQueryDto { Boost = 1 };
@@ -17,7 +19,9 @@ public class ExactBoolSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Bool;
 
-    public ExactBoolSearchQueryDtoBuilder<TDocument> WithValue(bool value)
+    public ExactBoolSearchQueryDtoBuilder<TDocument> WithValue(
+        bool value
+    )
     {
         ((ExactBoolSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

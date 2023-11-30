@@ -76,7 +76,9 @@ public class SignInRequestHandler : RequestHandler<SignInRequest, SignInResponse
         return _response ?? throw new InternalPersistifyException(nameof(SignInRequest));
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(SignInRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        SignInRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -85,7 +87,9 @@ public class SignInRequestHandler : RequestHandler<SignInRequest, SignInResponse
         );
     }
 
-    protected override Permission GetRequiredPermission(SignInRequest request)
+    protected override Permission GetRequiredPermission(
+        SignInRequest request
+    )
     {
         return Permission.None;
     }

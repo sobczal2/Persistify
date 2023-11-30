@@ -35,7 +35,10 @@ public sealed class Transaction : ITransaction
 
     public TransactionPhase Phase { get; private set; }
 
-    public async ValueTask BeginAsync(TimeSpan timeOut, CancellationToken cancellationToken)
+    public async ValueTask BeginAsync(
+        TimeSpan timeOut,
+        CancellationToken cancellationToken
+    )
     {
         _logger.LogDebug("Begin transaction {TransactionId}", Id);
 
@@ -77,7 +80,11 @@ public sealed class Transaction : ITransaction
         _logger.LogDebug("Transaction {TransactionId} started", Id);
     }
 
-    public async ValueTask PromoteManagerAsync(IManager manager, bool write, TimeSpan timeOut)
+    public async ValueTask PromoteManagerAsync(
+        IManager manager,
+        bool write,
+        TimeSpan timeOut
+    )
     {
         _logger.LogDebug(
             "Promote manager {ManagerName} to {Write} in transaction {TransactionId}",

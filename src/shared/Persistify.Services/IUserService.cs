@@ -16,10 +16,16 @@ public interface IUserService
     );
 
     [OperationContract]
-    ValueTask<GetUserResponse> GetUserAsync(GetUserRequest request, CallContext callContext);
+    ValueTask<GetUserResponse> GetUserAsync(
+        GetUserRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
-    ValueTask<SignInResponse> SignInAsync(SignInRequest request, CallContext callContext);
+    ValueTask<SignInResponse> SignInAsync(
+        SignInRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
     ValueTask<SetPermissionResponse> SetPermissionAsync(
@@ -46,7 +52,10 @@ public interface IUserService
     );
 
     [OperationContract]
-    ValueTask<ListUsersResponse> ListUsersAsync(ListUsersRequest request, CallContext callContext);
+    ValueTask<ListUsersResponse> ListUsersAsync(
+        ListUsersRequest request,
+        CallContext callContext
+    );
 
     [OperationContract]
     ValueTask<ExistsUserResponse> ExistsUserAsync(

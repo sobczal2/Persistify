@@ -13,7 +13,9 @@ public class DateTimeFieldValueDtoValidator : Validator<DateTimeFieldValueDto>
         PropertyName.Push(nameof(DateTimeFieldValueDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(DateTimeFieldValueDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        DateTimeFieldValueDto value
+    )
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {

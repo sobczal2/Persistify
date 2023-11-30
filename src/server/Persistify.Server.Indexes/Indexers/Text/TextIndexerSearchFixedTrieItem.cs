@@ -9,7 +9,9 @@ public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
     private readonly int[] _alphabetIndexMap;
     private readonly Token _token;
 
-    public TextIndexerSearchFixedTrieItem(Token token)
+    public TextIndexerSearchFixedTrieItem(
+        Token token
+    )
     {
         _token = token;
 
@@ -30,7 +32,9 @@ public class TextIndexerSearchFixedTrieItem : SearchFixedTrieItem
     public sealed override int AnyIndex => _alphabetIndexMap.Length;
     public sealed override int RepeatedAnyIndex => _alphabetIndexMap.Length + 1;
 
-    public override int GetIndex(int index)
+    public override int GetIndex(
+        int index
+    )
     {
         if (index >= _alphabetIndexMap.Length)
         {

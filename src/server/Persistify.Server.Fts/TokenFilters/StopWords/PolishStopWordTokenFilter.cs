@@ -6,34 +6,6 @@ namespace Persistify.Server.Fts.TokenFilters;
 
 public class PolishStopWordTokenFilter : ITokenFilter
 {
-    public string Code => "pl-stop-words";
-
-    public void FilterForSearch(List<SearchToken> tokens)
-    {
-        for (var i = 0; i < tokens.Count; i++)
-        {
-            var token = tokens[i];
-            if (StopWords.Contains(token.Term.ToLowerInvariant()))
-            {
-                tokens.RemoveAt(i);
-                i--;
-            }
-        }
-    }
-
-    public void FilterForIndex(List<IndexToken> tokens)
-    {
-        for (var i = 0; i < tokens.Count; i++)
-        {
-            var token = tokens[i];
-            if (StopWords.Contains(token.Term.ToLowerInvariant()))
-            {
-                tokens.RemoveAt(i);
-                i--;
-            }
-        }
-    }
-
     private static readonly IReadOnlySet<string> StopWords = new HashSet<string>
     {
         "a",
@@ -293,4 +265,36 @@ public class PolishStopWordTokenFilter : ITokenFilter
         "zł",
         "że"
     };
+
+    public string Code => "pl-stop-words";
+
+    public void FilterForSearch(
+        List<SearchToken> tokens
+    )
+    {
+        for (var i = 0; i < tokens.Count; i++)
+        {
+            var token = tokens[i];
+            if (StopWords.Contains(token.Term.ToLowerInvariant()))
+            {
+                tokens.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+
+    public void FilterForIndex(
+        List<IndexToken> tokens
+    )
+    {
+        for (var i = 0; i < tokens.Count; i++)
+        {
+            var token = tokens[i];
+            if (StopWords.Contains(token.Term.ToLowerInvariant()))
+            {
+                tokens.RemoveAt(i);
+                i--;
+            }
+        }
+    }
 }

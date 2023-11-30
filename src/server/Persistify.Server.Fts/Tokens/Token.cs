@@ -2,7 +2,10 @@
 
 public abstract class Token
 {
-    protected Token(string term, char[] alphabet)
+    protected Token(
+        string term,
+        char[] alphabet
+    )
     {
         Alphabet = alphabet;
         Term = term;

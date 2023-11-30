@@ -11,13 +11,17 @@ public class GetPresetAnalyzerRequestValidator : Validator<GetPresetAnalyzerRequ
 {
     private readonly IPresetAnalyzerManager _presetAnalyzerManager;
 
-    public GetPresetAnalyzerRequestValidator(IPresetAnalyzerManager presetAnalyzerManager)
+    public GetPresetAnalyzerRequestValidator(
+        IPresetAnalyzerManager presetAnalyzerManager
+    )
     {
         _presetAnalyzerManager = presetAnalyzerManager;
         PropertyName.Push(nameof(GetPresetAnalyzerRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(GetPresetAnalyzerRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        GetPresetAnalyzerRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.PresetAnalyzerName))
         {

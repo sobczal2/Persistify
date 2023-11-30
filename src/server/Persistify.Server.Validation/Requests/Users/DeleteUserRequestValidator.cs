@@ -12,13 +12,17 @@ public class DeleteUserRequestValidator : Validator<DeleteUserRequest>
 {
     private readonly IUserManager _userManager;
 
-    public DeleteUserRequestValidator(IUserManager userManager)
+    public DeleteUserRequestValidator(
+        IUserManager userManager
+    )
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(DeleteUserRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(DeleteUserRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        DeleteUserRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

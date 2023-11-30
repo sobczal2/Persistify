@@ -9,7 +9,9 @@ public class RangeNumberSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, RangeNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public RangeNumberSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public RangeNumberSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new RangeNumberSearchQueryDto { Boost = 1 };
@@ -17,13 +19,17 @@ public class RangeNumberSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public RangeNumberSearchQueryDtoBuilder<TDocument> WithMinValue(double minValue)
+    public RangeNumberSearchQueryDtoBuilder<TDocument> WithMinValue(
+        double minValue
+    )
     {
         ((RangeNumberSearchQueryDto)SearchQueryDto!).MinValue = minValue;
         return this;
     }
 
-    public RangeNumberSearchQueryDtoBuilder<TDocument> WithMaxValue(double maxValue)
+    public RangeNumberSearchQueryDtoBuilder<TDocument> WithMaxValue(
+        double maxValue
+    )
     {
         ((RangeNumberSearchQueryDto)SearchQueryDto!).MaxValue = maxValue;
         return this;

@@ -39,13 +39,17 @@ public class DocumentManagerStore : IDocumentManagerStore
         _spinLock = new SpinLock();
     }
 
-    public IDocumentManager? GetManager(int templateId)
+    public IDocumentManager? GetManager(
+        int templateId
+    )
     {
         _repositories.TryGetValue(templateId, out var repository);
         return repository;
     }
 
-    public void AddManager(Template template)
+    public void AddManager(
+        Template template
+    )
     {
         var lockTaken = false;
         try
@@ -77,7 +81,9 @@ public class DocumentManagerStore : IDocumentManagerStore
         }
     }
 
-    public void DeleteManager(int templateId)
+    public void DeleteManager(
+        int templateId
+    )
     {
         var lockTaken = false;
         try

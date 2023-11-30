@@ -16,7 +16,10 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
     private readonly SemaphoreSlim _semaphore;
     private readonly Stream _stream;
 
-    public ByteArrayStreamRepository(Stream stream, int size)
+    public ByteArrayStreamRepository(
+        Stream stream,
+        int size
+    )
     {
         if (size <= 0)
         {
@@ -39,7 +42,10 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         GC.SuppressFinalize(this);
     }
 
-    public async ValueTask<byte[]> ReadAsync(int key, bool useLock)
+    public async ValueTask<byte[]> ReadAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -91,12 +97,18 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
     }
 
-    public async ValueTask<int> CountAsync(bool useLock)
+    public async ValueTask<int> CountAsync(
+        bool useLock
+    )
     {
         return useLock ? await _semaphore.WrapAsync(CountAsyncImpl) : await CountAsyncImpl();
     }
 
-    public async ValueTask WriteAsync(int key, byte[] value, bool useLock)
+    public async ValueTask WriteAsync(
+        int key,
+        byte[] value,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -120,7 +132,10 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         );
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
+    public async ValueTask<bool> DeleteAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -132,7 +147,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
             : await DeleteAsyncImpl(key);
     }
 
-    public void Clear(bool useLock)
+    public void Clear(
+        bool useLock
+    )
     {
         if (useLock)
         {
@@ -144,7 +161,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
     }
 
-    public bool IsValueEmpty(byte[] value)
+    public bool IsValueEmpty(
+        byte[] value
+    )
     {
         return value.AsSpan().SequenceEqual(_emptyValue);
     }
@@ -159,7 +178,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         }
     }
 
-    private async ValueTask<byte[]> ReadAsyncImpl(int key)
+    private async ValueTask<byte[]> ReadAsyncImpl(
+        int key
+    )
     {
         if (key * (long)_bufferSize >= _stream.Length)
         {
@@ -187,7 +208,10 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    private async IAsyncEnumerable<(int key, byte[] value)> ReadRangeAsyncImpl(int take, int skip)
+    private async IAsyncEnumerable<(int key, byte[] value)> ReadRangeAsyncImpl(
+        int take,
+        int skip
+    )
     {
         var length = _stream.Length / _bufferSize;
         _stream.Seek(0, SeekOrigin.Begin);
@@ -256,7 +280,10 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         return result;
     }
 
-    private async ValueTask WriteAsyncImpl(int key, byte[] value)
+    private async ValueTask WriteAsyncImpl(
+        int key,
+        byte[] value
+    )
     {
         var length = _stream.Length;
         if (key * (long)_bufferSize > length)
@@ -275,7 +302,9 @@ public class ByteArrayStreamRepository : IValueTypeStreamRepository<byte[]>, IDi
         await _stream.FlushAsync();
     }
 
-    private async ValueTask<bool> DeleteAsyncImpl(int key)
+    private async ValueTask<bool> DeleteAsyncImpl(
+        int key
+    )
     {
         var length = _stream.Length;
         if (key * (long)_bufferSize >= length)

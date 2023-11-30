@@ -45,7 +45,9 @@ public class SetPermissionRequestHandler
         return new SetPermissionResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(SetPermissionRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        SetPermissionRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -54,7 +56,9 @@ public class SetPermissionRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(SetPermissionRequest request)
+    protected override Permission GetRequiredPermission(
+        SetPermissionRequest request
+    )
     {
         return Permission.UserWrite;
     }

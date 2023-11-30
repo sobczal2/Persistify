@@ -20,7 +20,9 @@ public class GrpcExceptionHandler : IExceptionHandler
         _logger = logger;
     }
 
-    public void Handle(Exception exception)
+    public void Handle(
+        Exception exception
+    )
     {
         _logger.LogDebug(exception, "Exception occurred");
 

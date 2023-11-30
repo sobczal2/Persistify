@@ -7,7 +7,9 @@ namespace Persistify.Server.Extensions;
 
 public static class CallContextExtensions
 {
-    public static ClaimsPrincipal GetClaimsPrincipal(this CallContext callContext)
+    public static ClaimsPrincipal GetClaimsPrincipal(
+        this CallContext callContext
+    )
     {
         return callContext.ServerCallContext?.GetHttpContext().User
                ?? ClaimsPrincipalExtensions.UnknownClaimsPrincipal;

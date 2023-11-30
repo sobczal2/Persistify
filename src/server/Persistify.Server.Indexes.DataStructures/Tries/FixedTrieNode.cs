@@ -7,14 +7,18 @@ public class FixedTrieNode<TItem>
 {
     private readonly FixedTrieNode<TItem>?[] _children;
 
-    public FixedTrieNode(int alphabetSize)
+    public FixedTrieNode(
+        int alphabetSize
+    )
     {
         _children = new FixedTrieNode<TItem>?[alphabetSize];
     }
 
     public IndexFixedTrieItem<TItem>? Item { get; private set; }
 
-    public void Insert(IndexFixedTrieItem<TItem> item)
+    public void Insert(
+        IndexFixedTrieItem<TItem> item
+    )
     {
         if (Item is null)
         {
@@ -26,7 +30,9 @@ public class FixedTrieNode<TItem>
         }
     }
 
-    public void Update(Action<TItem> action)
+    public void Update(
+        Action<TItem> action
+    )
     {
         if (Item is null || Item.IsEmpty)
         {
@@ -36,7 +42,9 @@ public class FixedTrieNode<TItem>
         action(Item.Value);
     }
 
-    public FixedTrieNode<TItem>? GetChild(int index)
+    public FixedTrieNode<TItem>? GetChild(
+        int index
+    )
     {
         return _children[index];
     }
@@ -49,7 +57,10 @@ public class FixedTrieNode<TItem>
         }
     }
 
-    public void SetChild(int index, FixedTrieNode<TItem>? node)
+    public void SetChild(
+        int index,
+        FixedTrieNode<TItem>? node
+    )
     {
         _children[index] = node;
     }

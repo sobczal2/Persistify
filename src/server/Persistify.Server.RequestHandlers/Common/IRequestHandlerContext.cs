@@ -13,7 +13,14 @@ public interface IRequestHandlerContext<in TRequest, out TResponse>
 {
     ITransaction CurrentTransaction { get; }
     ITransactionState TransactionState { get; }
-    ValueTask ValidateAsync(TRequest request);
+
+    ValueTask ValidateAsync(
+        TRequest request
+    );
+
     ILogger<T> CreateLogger<T>();
-    void HandleException(Exception exception);
+
+    void HandleException(
+        Exception exception
+    );
 }

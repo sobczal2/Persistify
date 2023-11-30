@@ -8,7 +8,9 @@ namespace Persistify.Server.Validation.Requests.Internal;
 public class InitializeDocumentManagersRequestValidator
     : Validator<InitializeDocumentManagersRequest>
 {
-    public override ValueTask<Result> ValidateNotNullAsync(InitializeDocumentManagersRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        InitializeDocumentManagersRequest value
+    )
     {
         return ValueTask.FromResult(Result.Ok);
     }

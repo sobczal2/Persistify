@@ -17,13 +17,18 @@ public class JwtTokenService : ITokenService
     private readonly IClock _clock;
     private readonly TokenSettings _tokenSettings;
 
-    public JwtTokenService(IOptions<TokenSettings> tokenSettingsOptions, IClock clock)
+    public JwtTokenService(
+        IOptions<TokenSettings> tokenSettingsOptions,
+        IClock clock
+    )
     {
         _clock = clock;
         _tokenSettings = tokenSettingsOptions.Value;
     }
 
-    public string GenerateAccessToken(User user)
+    public string GenerateAccessToken(
+        User user
+    )
     {
         var claims = new List<Claim>
         {

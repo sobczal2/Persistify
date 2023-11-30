@@ -7,7 +7,9 @@ namespace Persistify.Client.HighLevel.Search.Queries.Aggregates;
 public class OrSearchQueryDtoBuilder<TDocument> : SearchQueryDtoBuilder<TDocument>
     where TDocument : class
 {
-    public OrSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public OrSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new OrSearchQueryDto { Boost = 1 };
@@ -30,7 +32,9 @@ public class OrSearchQueryDtoBuilder<TDocument> : SearchQueryDtoBuilder<TDocumen
         return this;
     }
 
-    public OrSearchQueryDtoBuilder<TDocument> WithBoost(float boost)
+    public OrSearchQueryDtoBuilder<TDocument> WithBoost(
+        float boost
+    )
     {
         ((OrSearchQueryDto)SearchQueryDto!).Boost = boost;
         return this;

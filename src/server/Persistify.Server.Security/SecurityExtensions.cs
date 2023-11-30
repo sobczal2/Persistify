@@ -4,7 +4,9 @@ namespace Persistify.Server.Security;
 
 public static class SecurityExtensions
 {
-    public static IServiceCollection AddSecurity(this IServiceCollection services)
+    public static IServiceCollection AddSecurity(
+        this IServiceCollection services
+    )
     {
         services.AddSingleton<IPasswordService, Argon2PasswordService>();
         services.AddSingleton<ITokenService, JwtTokenService>();

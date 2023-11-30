@@ -60,7 +60,9 @@ public class ValidatorTests
     {
         public bool Success { get; set; }
 
-        public override ValueTask<Result> ValidateNotNullAsync(string value)
+        public override ValueTask<Result> ValidateNotNullAsync(
+            string value
+        )
         {
             if (Success)
             {

@@ -52,7 +52,9 @@ public class CreateDocumentRequestValidator : Validator<CreateDocumentRequest>
         PropertyName.Push(nameof(CreateDocumentRequest));
     }
 
-    public override async ValueTask<Result> ValidateNotNullAsync(CreateDocumentRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(
+        CreateDocumentRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

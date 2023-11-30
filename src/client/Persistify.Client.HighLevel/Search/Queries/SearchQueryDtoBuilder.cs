@@ -14,7 +14,9 @@ public class SearchQueryDtoBuilder<TDocument>
     protected IPersistifyHighLevelClient PersistifyHighLevelClient;
     protected SearchQueryDto? SearchQueryDto;
 
-    public SearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public SearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
     {
         PersistifyHighLevelClient = persistifyHighLevelClient;
     }
@@ -64,7 +66,9 @@ public class SearchQueryDtoBuilder<TDocument>
         return new FullTextSearchQueryDtoBuilder<TDocument>(PersistifyHighLevelClient);
     }
 
-    public SearchQueryDtoBuilder<TDocument> WithBoost(float boost)
+    public SearchQueryDtoBuilder<TDocument> WithBoost(
+        float boost
+    )
     {
         SearchQueryDto!.Boost = boost;
         return this;

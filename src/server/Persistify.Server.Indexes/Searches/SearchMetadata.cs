@@ -8,7 +8,9 @@ public class SearchMetadata
 {
     private readonly Dictionary<string, SortedSet<string>> _metadata;
 
-    public SearchMetadata(float score)
+    public SearchMetadata(
+        float score
+    )
     {
         Score = score;
         _metadata = new Dictionary<string, SortedSet<string>>();
@@ -16,7 +18,10 @@ public class SearchMetadata
 
     public float Score { get; set; }
 
-    public void Add(string name, string value)
+    public void Add(
+        string name,
+        string value
+    )
     {
         if (_metadata.TryGetValue(name, out var list))
         {
@@ -44,7 +49,9 @@ public class SearchMetadata
         return searchMetadataList;
     }
 
-    public SearchMetadata Merge(SearchMetadata other)
+    public SearchMetadata Merge(
+        SearchMetadata other
+    )
     {
         var mergedMetadata = new SearchMetadata(Score + other.Score);
 

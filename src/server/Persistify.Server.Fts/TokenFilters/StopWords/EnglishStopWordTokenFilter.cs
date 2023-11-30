@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using Persistify.Server.Fts.Abstractions;
 using Persistify.Server.Fts.Tokens;
@@ -8,48 +7,6 @@ namespace Persistify.Server.Fts.TokenFilters;
 
 public class EnglishStopWordTokenFilter : ITokenFilter
 {
-    public string Code => "en-stop-words";
-
-    public void FilterForSearch(List<SearchToken> tokens)
-    {
-        for (var i = 0; i < tokens.Count; i++)
-        {
-            var token = tokens[i];
-            if (StopWords.Contains(PrepareTerm(token.Term)))
-            {
-                tokens.RemoveAt(i);
-                i--;
-            }
-        }
-    }
-
-    public void FilterForIndex(List<IndexToken> tokens)
-    {
-        for (var i = 0; i < tokens.Count; i++)
-        {
-            var token = tokens[i];
-            if (StopWords.Contains(PrepareTerm(token.Term)))
-            {
-                tokens.RemoveAt(i);
-                i--;
-            }
-        }
-    }
-
-    private static string PrepareTerm(string term)
-    {
-        var stringBuilder = new StringBuilder();
-        foreach (var c in term)
-        {
-            if (char.IsLetter(c))
-            {
-                stringBuilder.Append(char.ToLowerInvariant(c));
-            }
-        }
-
-        return stringBuilder.ToString();
-    }
-
     private static readonly IReadOnlySet<string> StopWords = new HashSet<string>
     {
         "a",
@@ -227,4 +184,52 @@ public class EnglishStopWordTokenFilter : ITokenFilter
         "yourself",
         "yourselves"
     };
+
+    public string Code => "en-stop-words";
+
+    public void FilterForSearch(
+        List<SearchToken> tokens
+    )
+    {
+        for (var i = 0; i < tokens.Count; i++)
+        {
+            var token = tokens[i];
+            if (StopWords.Contains(PrepareTerm(token.Term)))
+            {
+                tokens.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+
+    public void FilterForIndex(
+        List<IndexToken> tokens
+    )
+    {
+        for (var i = 0; i < tokens.Count; i++)
+        {
+            var token = tokens[i];
+            if (StopWords.Contains(PrepareTerm(token.Term)))
+            {
+                tokens.RemoveAt(i);
+                i--;
+            }
+        }
+    }
+
+    private static string PrepareTerm(
+        string term
+    )
+    {
+        var stringBuilder = new StringBuilder();
+        foreach (var c in term)
+        {
+            if (char.IsLetter(c))
+            {
+                stringBuilder.Append(char.ToLowerInvariant(c));
+            }
+        }
+
+        return stringBuilder.ToString();
+    }
 }

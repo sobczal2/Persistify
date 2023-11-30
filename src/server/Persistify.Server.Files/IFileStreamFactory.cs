@@ -4,5 +4,7 @@ namespace Persistify.Server.Files;
 
 public interface IFileStreamFactory
 {
-    Stream CreateStream(string relativePath);
+    Stream CreateStream(
+        string relativePath
+    );
 }

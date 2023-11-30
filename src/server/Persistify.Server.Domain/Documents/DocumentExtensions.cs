@@ -2,7 +2,10 @@
 
 public static class DocumentExtensions
 {
-    public static BoolFieldValue? GetBoolFieldValueByName(this Document document, string fieldName)
+    public static BoolFieldValue? GetBoolFieldValueByName(
+        this Document document,
+        string fieldName
+    )
     {
         var fieldValue = document.GetFieldValueByName(fieldName);
         return fieldValue as BoolFieldValue;
@@ -17,13 +20,19 @@ public static class DocumentExtensions
         return fieldValue as NumberFieldValue;
     }
 
-    public static TextFieldValue? GetTextFieldValueByName(this Document document, string fieldName)
+    public static TextFieldValue? GetTextFieldValueByName(
+        this Document document,
+        string fieldName
+    )
     {
         var fieldValue = document.GetFieldValueByName(fieldName);
         return fieldValue as TextFieldValue;
     }
 
-    public static DateTimeFieldValue? GetDateTimeFieldValueByName(this Document document, string fieldName)
+    public static DateTimeFieldValue? GetDateTimeFieldValueByName(
+        this Document document,
+        string fieldName
+    )
     {
         var fieldValue = document.GetFieldValueByName(fieldName);
         return fieldValue as DateTimeFieldValue;

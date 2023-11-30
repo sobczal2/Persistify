@@ -11,7 +11,9 @@ namespace Persistify.Server.Management;
 
 public static class ManagementExtensions
 {
-    public static IServiceCollection AddManagement(this IServiceCollection services)
+    public static IServiceCollection AddManagement(
+        this IServiceCollection services
+    )
     {
         if (services == null)
         {

@@ -25,7 +25,9 @@ public class TransactionDescriptor : ITransactionDescriptor
     public IImmutableList<IManager> ReadManagers => _readManagers.ToImmutableList();
     public IImmutableList<IManager> WriteManagers => _writeManagers.ToImmutableList();
 
-    public void AddReadManager(IManager manager)
+    public void AddReadManager(
+        IManager manager
+    )
     {
         if (manager is null)
         {
@@ -35,7 +37,9 @@ public class TransactionDescriptor : ITransactionDescriptor
         _readManagers.Add(manager);
     }
 
-    public void AddWriteManager(IManager manager)
+    public void AddWriteManager(
+        IManager manager
+    )
     {
         if (manager is null)
         {

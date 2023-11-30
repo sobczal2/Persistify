@@ -45,7 +45,9 @@ public class DeleteUserRequestHandler : RequestHandler<DeleteUserRequest, Delete
         return new DeleteUserResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(DeleteUserRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        DeleteUserRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -54,7 +56,9 @@ public class DeleteUserRequestHandler : RequestHandler<DeleteUserRequest, Delete
         );
     }
 
-    protected override Permission GetRequiredPermission(DeleteUserRequest request)
+    protected override Permission GetRequiredPermission(
+        DeleteUserRequest request
+    )
     {
         return Permission.UserWrite;
     }

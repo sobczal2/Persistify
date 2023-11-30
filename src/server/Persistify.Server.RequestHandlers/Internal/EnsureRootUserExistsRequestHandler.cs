@@ -76,7 +76,9 @@ public class EnsureRootUserExistsRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(EnsureRootUserExistsRequest request)
+    protected override Permission GetRequiredPermission(
+        EnsureRootUserExistsRequest request
+    )
     {
         return Permission.UserWrite;
     }

@@ -8,17 +8,23 @@ public class LowercaseTokenFilter : ITokenFilter
 {
     public string Code => "lowercase";
 
-    public void FilterForSearch(List<SearchToken> tokens)
+    public void FilterForSearch(
+        List<SearchToken> tokens
+    )
     {
         Filter(tokens);
     }
 
-    public void FilterForIndex(List<IndexToken> tokens)
+    public void FilterForIndex(
+        List<IndexToken> tokens
+    )
     {
         Filter(tokens);
     }
 
-    private static void Filter(IEnumerable<Token> tokens)
+    private static void Filter(
+        IEnumerable<Token> tokens
+    )
     {
         foreach (var token in tokens)
         {

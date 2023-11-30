@@ -13,7 +13,9 @@ public class BinaryFieldValueDtoValidator : Validator<BinaryFieldValueDto>
         PropertyName.Push(nameof(BinaryFieldValueDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(BinaryFieldValueDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        BinaryFieldValueDto value
+    )
     {
         if (string.IsNullOrEmpty(value.FieldName))
         {

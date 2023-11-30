@@ -15,14 +15,18 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
     where TDocument : class
     where TSelf : FieldSearchQueryDtoBuilder<TDocument, TSelf>
 {
-    public FieldSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public FieldSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
     }
 
     protected abstract FieldTypeDto FieldTypeDto { get; }
 
-    public PropertyInfo GetPropertyInfo<T>(Expression<Func<TDocument, T>> field)
+    public PropertyInfo GetPropertyInfo<T>(
+        Expression<Func<TDocument, T>> field
+    )
     {
         if (field.Body is MemberExpression member)
         {
@@ -55,7 +59,9 @@ public abstract class FieldSearchQueryDtoBuilder<TDocument, TSelf>
         throw new ArgumentException("Invalid expression format.", nameof(field));
     }
 
-    public TSelf WithField<T>(Expression<Func<TDocument, T>> field)
+    public TSelf WithField<T>(
+        Expression<Func<TDocument, T>> field
+    )
     {
         var propertyInfo = GetPropertyInfo(field);
 

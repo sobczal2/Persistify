@@ -13,13 +13,17 @@ public class SetPermissionRequestValidator : Validator<SetPermissionRequest>
 {
     private readonly IUserManager _userManager;
 
-    public SetPermissionRequestValidator(IUserManager userManager)
+    public SetPermissionRequestValidator(
+        IUserManager userManager
+    )
     {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         PropertyName.Push(nameof(SetPermissionRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(SetPermissionRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        SetPermissionRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.Username))
         {

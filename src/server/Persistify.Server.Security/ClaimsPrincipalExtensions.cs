@@ -13,7 +13,9 @@ public static class ClaimsPrincipalExtensions
     public static ClaimsPrincipal UnknownClaimsPrincipal =>
         GetClaimsPrincipal(-1, "Unknown", Permission.None);
 
-    public static Permission GetPermission(this ClaimsPrincipal claimsPrincipal)
+    public static Permission GetPermission(
+        this ClaimsPrincipal claimsPrincipal
+    )
     {
         var permissionClaim = claimsPrincipal.FindFirst(ClaimTypes.Permission);
 
@@ -30,7 +32,11 @@ public static class ClaimsPrincipalExtensions
         return (Permission)permissionInt;
     }
 
-    public static ClaimsPrincipal GetClaimsPrincipal(int id, string username, Permission permission)
+    public static ClaimsPrincipal GetClaimsPrincipal(
+        int id,
+        string username,
+        Permission permission
+    )
     {
         return new ClaimsPrincipal(
             new ClaimsIdentity(

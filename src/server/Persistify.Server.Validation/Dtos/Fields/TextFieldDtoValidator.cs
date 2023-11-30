@@ -29,7 +29,9 @@ public class TextFieldDtoValidator : Validator<TextFieldDto>
         PropertyName.Push(nameof(TextFieldDto));
     }
 
-    public override async ValueTask<Result> ValidateNotNullAsync(TextFieldDto value)
+    public override async ValueTask<Result> ValidateNotNullAsync(
+        TextFieldDto value
+    )
     {
         if (string.IsNullOrEmpty(value.Name))
         {

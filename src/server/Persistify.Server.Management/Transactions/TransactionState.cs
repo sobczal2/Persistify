@@ -45,12 +45,16 @@ public class TransactionState : ITransactionState
             .ConfigureAwait(false);
     }
 
-    public async ValueTask ExitReadGlobalLockAsync(Guid transactionId)
+    public async ValueTask ExitReadGlobalLockAsync(
+        Guid transactionId
+    )
     {
         await _globalLock.ExitReadLockAsync(transactionId).ConfigureAwait(false);
     }
 
-    public async ValueTask ExitWriteGlobalLockAsync(Guid transactionId)
+    public async ValueTask ExitWriteGlobalLockAsync(
+        Guid transactionId
+    )
     {
         await _globalLock.ExitWriteLockAsync(transactionId).ConfigureAwait(false);
     }

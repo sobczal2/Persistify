@@ -9,7 +9,9 @@ namespace Persistify.Client.LowLevel.Documents;
 
 public class DocumentsClient : SubClient<IDocumentService>, IDocumentsClient
 {
-    internal DocumentsClient(PersistifyLowLevelClient persistifyLowLevelClient)
+    internal DocumentsClient(
+        PersistifyLowLevelClient persistifyLowLevelClient
+    )
         : base(persistifyLowLevelClient)
     {
     }

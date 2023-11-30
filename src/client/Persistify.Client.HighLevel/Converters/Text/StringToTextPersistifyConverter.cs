@@ -8,12 +8,16 @@ public class StringToTextPersistifyConverter : IPersistifyConverter
     public Type FromType => typeof(string);
     public FieldTypeDto FieldTypeDto => FieldTypeDto.Text;
 
-    public object Convert(object from)
+    public object Convert(
+        object from
+    )
     {
         return from;
     }
 
-    public object ConvertBack(object to)
+    public object ConvertBack(
+        object to
+    )
     {
         return to;
     }

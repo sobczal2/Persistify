@@ -12,13 +12,17 @@ public class FullAnalyzerDtoValidator : Validator<FullAnalyzerDto>
 {
     private readonly IAnalyzerExecutorLookup _analyzerExecutorLookup;
 
-    public FullAnalyzerDtoValidator(IAnalyzerExecutorLookup analyzerExecutorLookup)
+    public FullAnalyzerDtoValidator(
+        IAnalyzerExecutorLookup analyzerExecutorLookup
+    )
     {
         _analyzerExecutorLookup = analyzerExecutorLookup;
         PropertyName.Push(nameof(Analyzer));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(FullAnalyzerDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        FullAnalyzerDto value
+    )
     {
         var count = 0;
         foreach (var characterSetName in value.CharacterSetNames)

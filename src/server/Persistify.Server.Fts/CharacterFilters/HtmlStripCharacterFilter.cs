@@ -6,7 +6,10 @@ namespace Persistify.Server.Fts.CharacterFilters;
 public partial class HtmlStripCharacterFilter : ICharacterFilter
 {
     public string Code => "htmlstrip";
-    public string Filter(string value)
+
+    public string Filter(
+        string value
+    )
     {
         return HtmlStripRegex().Replace(value, string.Empty);
     }

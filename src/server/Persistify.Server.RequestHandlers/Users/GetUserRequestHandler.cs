@@ -54,7 +54,9 @@ public class GetUserRequestHandler : RequestHandler<GetUserRequest, GetUserRespo
         };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(GetUserRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        GetUserRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -63,7 +65,9 @@ public class GetUserRequestHandler : RequestHandler<GetUserRequest, GetUserRespo
         );
     }
 
-    protected override Permission GetRequiredPermission(GetUserRequest request)
+    protected override Permission GetRequiredPermission(
+        GetUserRequest request
+    )
     {
         return Permission.UserRead;
     }

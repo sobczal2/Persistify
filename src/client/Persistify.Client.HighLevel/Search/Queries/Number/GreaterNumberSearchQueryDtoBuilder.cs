@@ -9,7 +9,9 @@ public class GreaterNumberSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, GreaterNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public GreaterNumberSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public GreaterNumberSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new GreaterNumberSearchQueryDto { Boost = 1 };
@@ -17,7 +19,9 @@ public class GreaterNumberSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public GreaterNumberSearchQueryDtoBuilder<TDocument> WithValue(double value)
+    public GreaterNumberSearchQueryDtoBuilder<TDocument> WithValue(
+        double value
+    )
     {
         ((GreaterNumberSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

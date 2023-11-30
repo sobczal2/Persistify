@@ -10,17 +10,23 @@ public readonly struct Result
     private readonly Exception? _exception;
     public Exception Exception => _exception ?? throw new InvalidOperationException();
 
-    public Result(Exception exception)
+    public Result(
+        Exception exception
+    )
     {
         _exception = exception;
     }
 
-    public static implicit operator Result(Exception exception)
+    public static implicit operator Result(
+        Exception exception
+    )
     {
         return new Result(exception);
     }
 
-    public static implicit operator Exception(Result result)
+    public static implicit operator Exception(
+        Result result
+    )
     {
         return result._exception ?? throw new InvalidOperationException();
     }
@@ -28,7 +34,9 @@ public readonly struct Result
     public bool Success => _exception is null;
     public bool Failure => !Success;
 
-    public Result OnSuccess(Action action)
+    public Result OnSuccess(
+        Action action
+    )
     {
         if (Success)
         {
@@ -38,7 +46,9 @@ public readonly struct Result
         return this;
     }
 
-    public Result OnFailure(Action<Exception> action)
+    public Result OnFailure(
+        Action<Exception> action
+    )
     {
         if (Failure)
         {
@@ -49,12 +59,17 @@ public readonly struct Result
         return this;
     }
 
-    public TRes Match<TRes>(Func<TRes> onSuccess, Func<Exception, TRes> onFailure)
+    public TRes Match<TRes>(
+        Func<TRes> onSuccess,
+        Func<Exception, TRes> onFailure
+    )
     {
         return Success ? onSuccess() : onFailure(_exception!);
     }
 
-    public static Result From(Action func)
+    public static Result From(
+        Action func
+    )
     {
         try
         {
@@ -67,7 +82,9 @@ public readonly struct Result
         }
     }
 
-    public static async Task<Result> FromAsync(Func<Task> func)
+    public static async Task<Result> FromAsync(
+        Func<Task> func
+    )
     {
         try
         {

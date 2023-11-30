@@ -28,7 +28,9 @@ public class Document
         }
     }
 
-    public FieldValue? GetFieldValueByName(string fieldName)
+    public FieldValue? GetFieldValueByName(
+        string fieldName
+    )
     {
         EnsureFieldNameTypeMapInitialized();
         return _fieldNameTypeMap!.TryGetValue(fieldName, out var fieldValue) ? fieldValue : null;

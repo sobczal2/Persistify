@@ -13,7 +13,9 @@ public class TemplateService : ITemplateService
 {
     private readonly IRequestDispatcher _requestDispatcher;
 
-    public TemplateService(IRequestDispatcher requestDispatcher)
+    public TemplateService(
+        IRequestDispatcher requestDispatcher
+    )
     {
         _requestDispatcher = requestDispatcher;
     }

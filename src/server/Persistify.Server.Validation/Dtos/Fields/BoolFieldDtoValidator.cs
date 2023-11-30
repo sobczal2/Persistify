@@ -13,7 +13,9 @@ public class BoolFieldDtoValidator : Validator<BoolFieldDto>
         PropertyName.Push(nameof(BoolFieldDto));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(BoolFieldDto value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        BoolFieldDto value
+    )
     {
         if (string.IsNullOrEmpty(value.Name))
         {

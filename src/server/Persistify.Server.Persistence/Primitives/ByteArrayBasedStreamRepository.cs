@@ -15,7 +15,10 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
     private readonly ByteArrayStreamRepository _innerRepository;
     private readonly SemaphoreSlim _semaphore;
 
-    public ByteArrayBasedStreamRepository(Stream stream, int size)
+    public ByteArrayBasedStreamRepository(
+        Stream stream,
+        int size
+    )
     {
         _innerRepository = new ByteArrayStreamRepository(stream, size);
         _semaphore = new SemaphoreSlim(1, 1);
@@ -29,7 +32,10 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
 
     public TValue EmptyValue => BytesToValue(_innerRepository.EmptyValue);
 
-    public async ValueTask<TValue> ReadAsync(int key, bool useLock)
+    public async ValueTask<TValue> ReadAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -81,12 +87,18 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
         }
     }
 
-    public async ValueTask<int> CountAsync(bool useLock)
+    public async ValueTask<int> CountAsync(
+        bool useLock
+    )
     {
         return useLock ? await _semaphore.WrapAsync(CountAsyncImpl) : await CountAsyncImpl();
     }
 
-    public async ValueTask WriteAsync(int key, TValue value, bool useLock)
+    public async ValueTask WriteAsync(
+        int key,
+        TValue value,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -105,7 +117,10 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
         );
     }
 
-    public async ValueTask<bool> DeleteAsync(int key, bool useLock)
+    public async ValueTask<bool> DeleteAsync(
+        int key,
+        bool useLock
+    )
     {
         if (key < 0)
         {
@@ -117,7 +132,9 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
             : await DeleteAsyncImpl(key);
     }
 
-    public void Clear(bool useLock)
+    public void Clear(
+        bool useLock
+    )
     {
         if (useLock)
         {
@@ -129,21 +146,33 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
         }
     }
 
-    public bool IsValueEmpty(TValue value)
+    public bool IsValueEmpty(
+        TValue value
+    )
     {
         return _innerRepository.IsValueEmpty(ValueToBytes(value));
     }
 
-    protected abstract TValue BytesToValue(byte[] bytes);
-    protected abstract byte[] ValueToBytes(TValue value);
+    protected abstract TValue BytesToValue(
+        byte[] bytes
+    );
 
-    private async ValueTask<TValue> ReadAsyncImpl(int key)
+    protected abstract byte[] ValueToBytes(
+        TValue value
+    );
+
+    private async ValueTask<TValue> ReadAsyncImpl(
+        int key
+    )
     {
         var bytes = await _innerRepository.ReadAsync(key, false);
         return BytesToValue(bytes);
     }
 
-    private async IAsyncEnumerable<(int key, TValue value)> ReadRangeAsyncImpl(int take, int skip)
+    private async IAsyncEnumerable<(int key, TValue value)> ReadRangeAsyncImpl(
+        int take,
+        int skip
+    )
     {
         await foreach (var (key, bytes) in _innerRepository.ReadRangeAsync(take, skip, false))
         {
@@ -151,7 +180,10 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
         }
     }
 
-    private async ValueTask WriteAsyncImpl(int key, TValue value)
+    private async ValueTask WriteAsyncImpl(
+        int key,
+        TValue value
+    )
     {
         var bytes = ValueToBytes(value);
         await _innerRepository.WriteAsync(key, bytes, false);
@@ -162,7 +194,9 @@ public abstract class ByteArrayBasedStreamRepository<TValue>
         return await _innerRepository.CountAsync(false);
     }
 
-    private async ValueTask<bool> DeleteAsyncImpl(int key)
+    private async ValueTask<bool> DeleteAsyncImpl(
+        int key
+    )
     {
         return await _innerRepository.DeleteAsync(key, false);
     }

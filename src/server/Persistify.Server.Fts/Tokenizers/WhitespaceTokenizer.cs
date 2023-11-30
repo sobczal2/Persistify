@@ -10,7 +10,10 @@ public class WhitespaceTokenizer : ITokenizer
 
     public string Code => "whitespace";
 
-    public IEnumerable<SearchToken> TokenizeForSearch(string text, char[] alphabet)
+    public IEnumerable<SearchToken> TokenizeForSearch(
+        string text,
+        char[] alphabet
+    )
     {
         var index = 0;
 
@@ -25,7 +28,11 @@ public class WhitespaceTokenizer : ITokenizer
         }
     }
 
-    public IEnumerable<IndexToken> TokenizeForIndex(string text, char[] alphabet, int documentId)
+    public IEnumerable<IndexToken> TokenizeForIndex(
+        string text,
+        char[] alphabet,
+        int documentId
+    )
     {
         var index = 0;
 

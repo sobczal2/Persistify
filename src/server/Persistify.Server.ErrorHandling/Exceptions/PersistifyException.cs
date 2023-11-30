@@ -5,7 +5,11 @@ namespace Persistify.Server.ErrorHandling.Exceptions;
 
 public class PersistifyException : Exception
 {
-    public PersistifyException(string propertyName, string message, PersistifyErrorCode errorCode)
+    public PersistifyException(
+        string propertyName,
+        string message,
+        PersistifyErrorCode errorCode
+    )
         : base(message)
     {
         ErrorCode = errorCode;

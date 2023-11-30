@@ -21,17 +21,23 @@ public class AllIndexer : IIndexer
 
     public string FieldName => "All";
 
-    public void Delete(Document document)
+    public void Delete(
+        Document document
+    )
     {
         _documents.SetEnsureCapacity(document.Id, false);
     }
 
-    public void Index(Document document)
+    public void Index(
+        Document document
+    )
     {
         _documents.SetEnsureCapacity(document.Id, true);
     }
 
-    public IEnumerable<SearchResult> Search(SearchQueryDto queryDto)
+    public IEnumerable<SearchResult> Search(
+        SearchQueryDto queryDto
+    )
     {
         if (queryDto is not AllSearchQueryDto)
         {

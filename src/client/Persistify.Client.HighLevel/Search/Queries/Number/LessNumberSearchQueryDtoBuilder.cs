@@ -9,7 +9,9 @@ public class LessNumberSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, LessNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public LessNumberSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public LessNumberSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new LessNumberSearchQueryDto { Boost = 1 };
@@ -17,7 +19,9 @@ public class LessNumberSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Number;
 
-    public LessNumberSearchQueryDtoBuilder<TDocument> WithValue(double value)
+    public LessNumberSearchQueryDtoBuilder<TDocument> WithValue(
+        double value
+    )
     {
         ((LessNumberSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

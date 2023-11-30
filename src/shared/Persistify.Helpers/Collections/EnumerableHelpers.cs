@@ -14,7 +14,10 @@ public static class EnumerableHelpers
         var enumerators = GetEnumerators(enumerables);
         var heap = new SortedSet<(T Value, int Index)>(
             Comparer<(T Value, int Index)>.Create(
-                (x, y) =>
+                (
+                    x,
+                    y
+                ) =>
                 {
                     var comp = comparer.Compare(x.Value, y.Value);
                     return comp != 0 ? comp : x.Index.CompareTo(y.Index);
@@ -187,7 +190,9 @@ public static class EnumerableHelpers
         }
     }
 
-    public static IEnumerator<T>[] GetEnumerators<T>(IEnumerable<T>[] enumerables)
+    public static IEnumerator<T>[] GetEnumerators<T>(
+        IEnumerable<T>[] enumerables
+    )
     {
         var enumerators = new IEnumerator<T>[enumerables.Length];
         for (var i = 0; i < enumerables.Length; i++)

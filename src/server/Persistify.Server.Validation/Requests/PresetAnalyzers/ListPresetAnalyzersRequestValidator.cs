@@ -10,13 +10,17 @@ public class ListPresetAnalyzersRequestValidator : Validator<ListPresetAnalyzers
 {
     private readonly IValidator<PaginationDto> _paginationValidator;
 
-    public ListPresetAnalyzersRequestValidator(IValidator<PaginationDto> paginationValidator)
+    public ListPresetAnalyzersRequestValidator(
+        IValidator<PaginationDto> paginationValidator
+    )
     {
         _paginationValidator = paginationValidator;
         PropertyName.Push(nameof(ListPresetAnalyzersRequest));
     }
 
-    public override async ValueTask<Result> ValidateNotNullAsync(ListPresetAnalyzersRequest value)
+    public override async ValueTask<Result> ValidateNotNullAsync(
+        ListPresetAnalyzersRequest value
+    )
     {
         PropertyName.Push(nameof(ListPresetAnalyzersRequest.PaginationDto));
         var paginationResult = await _paginationValidator.ValidateAsync(value.PaginationDto);

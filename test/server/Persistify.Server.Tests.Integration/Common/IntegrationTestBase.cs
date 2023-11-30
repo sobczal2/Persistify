@@ -41,7 +41,10 @@ public class IntegrationTestBase : IDisposable
         _grpcChannel.Dispose();
     }
 
-    public async Task<CallContext> GetAuthorizedCallContextAsync(string username, string password)
+    public async Task<CallContext> GetAuthorizedCallContextAsync(
+        string username,
+        string password
+    )
     {
         var request = new SignInRequest { Username = username, Password = password };
         var response = await UserService.SignInAsync(request, new CallContext());
@@ -58,7 +61,10 @@ public class IntegrationTestBase : IDisposable
         );
     }
 
-    protected async Task CreateUserAsync(string username, string password)
+    protected async Task CreateUserAsync(
+        string username,
+        string password
+    )
     {
         var callContext = await GetAuthorizedCallContextAsRootAsync();
         var request = new CreateUserRequest { Username = username, Password = password };

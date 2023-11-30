@@ -6,7 +6,10 @@ namespace Persistify.Client.HighLevel.Attributes;
 [AttributeUsage(AttributeTargets.Property)]
 public abstract class PersistifyFieldAttribute : Attribute
 {
-    protected PersistifyFieldAttribute(string? name, bool required)
+    protected PersistifyFieldAttribute(
+        string? name,
+        bool required
+    )
     {
         Name = name;
         Required = required;

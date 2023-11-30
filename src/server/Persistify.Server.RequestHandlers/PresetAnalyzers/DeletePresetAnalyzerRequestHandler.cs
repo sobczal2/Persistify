@@ -54,7 +54,9 @@ public class DeletePresetAnalyzerRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(DeletePresetAnalyzerRequest request)
+    protected override Permission GetRequiredPermission(
+        DeletePresetAnalyzerRequest request
+    )
     {
         return Permission.PresetAnalyzerWrite;
     }

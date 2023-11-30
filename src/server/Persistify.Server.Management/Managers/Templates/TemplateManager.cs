@@ -91,7 +91,9 @@ public class TemplateManager : Manager, ITemplateManager
         PendingActions.Enqueue(initializeAction);
     }
 
-    public async ValueTask<Template?> GetAsync(string templateName)
+    public async ValueTask<Template?> GetAsync(
+        string templateName
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -104,7 +106,9 @@ public class TemplateManager : Manager, ITemplateManager
         return await _templateRepository.ReadAsync(id, true);
     }
 
-    public bool Exists(string templateName)
+    public bool Exists(
+        string templateName
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -112,7 +116,10 @@ public class TemplateManager : Manager, ITemplateManager
         return _templateNameIdDictionary.ContainsKey(templateName);
     }
 
-    public async IAsyncEnumerable<Template> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<Template> ListAsync(
+        int take,
+        int skip
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -131,7 +138,9 @@ public class TemplateManager : Manager, ITemplateManager
         return _count;
     }
 
-    public void Add(Template template)
+    public void Add(
+        Template template
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
@@ -177,7 +186,9 @@ public class TemplateManager : Manager, ITemplateManager
         PendingActions.Enqueue(addAction);
     }
 
-    public async ValueTask<bool> RemoveAsync(int id)
+    public async ValueTask<bool> RemoveAsync(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();

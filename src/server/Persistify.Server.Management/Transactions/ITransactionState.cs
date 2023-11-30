@@ -21,6 +21,11 @@ public interface ITransactionState
         CancellationToken cancellationToken
     );
 
-    ValueTask ExitReadGlobalLockAsync(Guid transactionId);
-    ValueTask ExitWriteGlobalLockAsync(Guid transactionId);
+    ValueTask ExitReadGlobalLockAsync(
+        Guid transactionId
+    );
+
+    ValueTask ExitWriteGlobalLockAsync(
+        Guid transactionId
+    );
 }

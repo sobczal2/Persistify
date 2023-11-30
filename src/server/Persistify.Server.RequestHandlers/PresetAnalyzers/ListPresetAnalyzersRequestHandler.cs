@@ -74,7 +74,9 @@ public class ListPresetAnalyzersRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(ListPresetAnalyzersRequest request)
+    protected override Permission GetRequiredPermission(
+        ListPresetAnalyzersRequest request
+    )
     {
         return Permission.PresetAnalyzerRead;
     }

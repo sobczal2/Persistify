@@ -31,7 +31,9 @@ public class AnalyzerExecutor : IAnalyzerExecutor
 
     public int AlphabetLength => _alphabet.Length;
 
-    public IEnumerable<SearchToken> AnalyzeForSearch(string input)
+    public IEnumerable<SearchToken> AnalyzeForSearch(
+        string input
+    )
     {
         foreach (var characterFilter in _characterFilters)
         {
@@ -50,7 +52,10 @@ public class AnalyzerExecutor : IAnalyzerExecutor
         return tokens;
     }
 
-    public IEnumerable<IndexToken> AnalyzeForIndex(string text, int documentId)
+    public IEnumerable<IndexToken> AnalyzeForIndex(
+        string text,
+        int documentId
+    )
     {
         foreach (var characterFilter in _characterFilters)
         {
@@ -69,7 +74,9 @@ public class AnalyzerExecutor : IAnalyzerExecutor
         return tokens;
     }
 
-    private void RemoveNonAlphabetCharactersForIndex(IEnumerable<Token> tokens)
+    private void RemoveNonAlphabetCharactersForIndex(
+        IEnumerable<Token> tokens
+    )
     {
         foreach (var token in tokens)
         {
@@ -79,7 +86,9 @@ public class AnalyzerExecutor : IAnalyzerExecutor
         }
     }
 
-    private void RemoveNonAlphabetCharactersForSearch(IEnumerable<Token> tokens)
+    private void RemoveNonAlphabetCharactersForSearch(
+        IEnumerable<Token> tokens
+    )
     {
         foreach (var token in tokens)
         {

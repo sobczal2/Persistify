@@ -11,13 +11,17 @@ public class ExistsDocumentRequestValidator : Validator<ExistsDocumentRequest>
 {
     private readonly ITemplateManager _templateManager;
 
-    public ExistsDocumentRequestValidator(ITemplateManager templateManager)
+    public ExistsDocumentRequestValidator(
+        ITemplateManager templateManager
+    )
     {
         _templateManager = templateManager;
         PropertyName.Push(nameof(ExistsDocumentRequest));
     }
 
-    public override ValueTask<Result> ValidateNotNullAsync(ExistsDocumentRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        ExistsDocumentRequest value
+    )
     {
         if (string.IsNullOrEmpty(value.TemplateName))
         {

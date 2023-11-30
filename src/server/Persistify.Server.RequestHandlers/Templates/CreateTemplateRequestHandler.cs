@@ -65,7 +65,9 @@ public sealed class CreateTemplateRequestHandler
         return new CreateTemplateResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateTemplateRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        CreateTemplateRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -74,7 +76,9 @@ public sealed class CreateTemplateRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(CreateTemplateRequest request)
+    protected override Permission GetRequiredPermission(
+        CreateTemplateRequest request
+    )
     {
         return Permission.TemplateWrite;
     }

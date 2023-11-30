@@ -10,7 +10,9 @@ public class ExactDateTimeSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, ExactNumberSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public ExactDateTimeSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public ExactDateTimeSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new ExactDateTimeSearchQueryDto { Boost = 1 };
@@ -18,7 +20,9 @@ public class ExactDateTimeSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.DateTime;
 
-    public ExactDateTimeSearchQueryDtoBuilder<TDocument> WithValue(System.DateTime value)
+    public ExactDateTimeSearchQueryDtoBuilder<TDocument> WithValue(
+        System.DateTime value
+    )
     {
         ((ExactDateTimeSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

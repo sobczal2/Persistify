@@ -31,7 +31,9 @@ public class Template
         }
     }
 
-    public Field? GetFieldByName(string fieldName)
+    public Field? GetFieldByName(
+        string fieldName
+    )
     {
         EnsureFieldNameTypeMapInitialized();
         return _fieldNameTypeMap!.TryGetValue(fieldName, out var field) ? field : null;

@@ -9,7 +9,9 @@ public class FullTextSearchQueryDtoBuilder<TDocument>
     : FieldSearchQueryDtoBuilder<TDocument, FullTextSearchQueryDtoBuilder<TDocument>>
     where TDocument : class
 {
-    public FullTextSearchQueryDtoBuilder(IPersistifyHighLevelClient persistifyHighLevelClient)
+    public FullTextSearchQueryDtoBuilder(
+        IPersistifyHighLevelClient persistifyHighLevelClient
+    )
         : base(persistifyHighLevelClient)
     {
         SearchQueryDto = new FullTextSearchQueryDto { Boost = 1 };
@@ -17,7 +19,9 @@ public class FullTextSearchQueryDtoBuilder<TDocument>
 
     protected override FieldTypeDto FieldTypeDto => FieldTypeDto.Text;
 
-    public FullTextSearchQueryDtoBuilder<TDocument> WithValue(string value)
+    public FullTextSearchQueryDtoBuilder<TDocument> WithValue(
+        string value
+    )
     {
         ((FullTextSearchQueryDto)SearchQueryDto!).Value = value;
         return this;

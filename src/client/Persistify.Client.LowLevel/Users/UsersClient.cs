@@ -9,7 +9,9 @@ namespace Persistify.Client.LowLevel.Users;
 
 public class UsersClient : SubClient<IUserService>, IUsersClient
 {
-    internal UsersClient(PersistifyLowLevelClient persistifyLowLevelClient)
+    internal UsersClient(
+        PersistifyLowLevelClient persistifyLowLevelClient
+    )
         : base(persistifyLowLevelClient)
     {
     }

@@ -50,7 +50,9 @@ public class CreateUserRequestHandler : RequestHandler<CreateUserRequest, Create
         return new CreateUserResponse();
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(CreateUserRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        CreateUserRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -59,7 +61,9 @@ public class CreateUserRequestHandler : RequestHandler<CreateUserRequest, Create
         );
     }
 
-    protected override Permission GetRequiredPermission(CreateUserRequest request)
+    protected override Permission GetRequiredPermission(
+        CreateUserRequest request
+    )
     {
         return Permission.UserWrite;
     }

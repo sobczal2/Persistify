@@ -44,7 +44,9 @@ public sealed class GetTemplateRequestHandler
         return new GetTemplateResponse { TemplateDto = template.ToDto() };
     }
 
-    protected override TransactionDescriptor GetTransactionDescriptor(GetTemplateRequest request)
+    protected override TransactionDescriptor GetTransactionDescriptor(
+        GetTemplateRequest request
+    )
     {
         return new TransactionDescriptor(
             false,
@@ -53,7 +55,9 @@ public sealed class GetTemplateRequestHandler
         );
     }
 
-    protected override Permission GetRequiredPermission(GetTemplateRequest request)
+    protected override Permission GetRequiredPermission(
+        GetTemplateRequest request
+    )
     {
         return Permission.TemplateRead;
     }

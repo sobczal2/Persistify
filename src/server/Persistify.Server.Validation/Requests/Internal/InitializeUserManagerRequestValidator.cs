@@ -7,7 +7,9 @@ namespace Persistify.Server.Validation.Requests.Internal;
 
 public class InitializeUserManagerRequestValidator : Validator<InitializeUserManagerRequest>
 {
-    public override ValueTask<Result> ValidateNotNullAsync(InitializeUserManagerRequest value)
+    public override ValueTask<Result> ValidateNotNullAsync(
+        InitializeUserManagerRequest value
+    )
     {
         return ValueTask.FromResult(Result.Ok);
     }

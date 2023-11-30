@@ -50,7 +50,9 @@ public class SetupFileSystemRequestHandler
         return new TransactionDescriptor(true, new List<IManager>(), new List<IManager>());
     }
 
-    protected override Permission GetRequiredPermission(SetupFileSystemRequest request)
+    protected override Permission GetRequiredPermission(
+        SetupFileSystemRequest request
+    )
     {
         return Permission.Root;
     }

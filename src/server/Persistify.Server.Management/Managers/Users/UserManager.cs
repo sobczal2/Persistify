@@ -106,7 +106,9 @@ public class UserManager : Manager, IUserManager
         PendingActions.Enqueue(initializeAction);
     }
 
-    public async ValueTask<User?> GetAsync(string username)
+    public async ValueTask<User?> GetAsync(
+        string username
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -119,7 +121,9 @@ public class UserManager : Manager, IUserManager
         return await _userRepository.ReadAsync(id, true);
     }
 
-    public async ValueTask<User?> GetAsync(int id)
+    public async ValueTask<User?> GetAsync(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -127,7 +131,9 @@ public class UserManager : Manager, IUserManager
         return await _userRepository.ReadAsync(id, true);
     }
 
-    public bool Exists(string username)
+    public bool Exists(
+        string username
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -135,7 +141,10 @@ public class UserManager : Manager, IUserManager
         return _usernameIdDictionary.ContainsKey(username);
     }
 
-    public async IAsyncEnumerable<User> ListAsync(int take, int skip)
+    public async IAsyncEnumerable<User> ListAsync(
+        int take,
+        int skip
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -154,7 +163,9 @@ public class UserManager : Manager, IUserManager
         return _count;
     }
 
-    public void Add(User user)
+    public void Add(
+        User user
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
@@ -179,7 +190,9 @@ public class UserManager : Manager, IUserManager
         PendingActions.Enqueue(addAction);
     }
 
-    public async ValueTask<bool> RemoveAsync(int id)
+    public async ValueTask<bool> RemoveAsync(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
@@ -210,7 +223,9 @@ public class UserManager : Manager, IUserManager
         return true;
     }
 
-    public async ValueTask<(string accessToken, string refreshToken)> CreateTokens(int id)
+    public async ValueTask<(string accessToken, string refreshToken)> CreateTokens(
+        int id
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
@@ -243,7 +258,10 @@ public class UserManager : Manager, IUserManager
         return (accessToken, refreshToken);
     }
 
-    public async ValueTask<bool> CheckRefreshToken(int id, string refreshToken)
+    public async ValueTask<bool> CheckRefreshToken(
+        int id,
+        string refreshToken
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotRead();
@@ -268,7 +286,9 @@ public class UserManager : Manager, IUserManager
         return refreshToken == savedRefreshToken.Value;
     }
 
-    public async ValueTask Update(User user)
+    public async ValueTask Update(
+        User user
+    )
     {
         ThrowIfNotInitialized();
         ThrowIfCannotWrite();
