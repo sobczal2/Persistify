@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <None Remove="Resources\animal-names.txt" />
-    <EmbeddedResource Include="Resources\animal-names.txt" />
   </ItemGroup>
 
 </Project>

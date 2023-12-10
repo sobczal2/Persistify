@@ -10,16 +10,10 @@ namespace Persistify.Tools.SeedDatabase;
 
 public class AnimalDocumentsGenerator : IDocumentsGenerator
 {
-    private readonly string[] _animalNames;
     private readonly Faker _faker;
 
     public AnimalDocumentsGenerator()
     {
-        var assembly = Assembly.GetExecutingAssembly();
-        var resourceLogicalName = $"{assembly.GetName().Name}.Resources.animal-names.txt";
-        using var stream = assembly.GetManifestResourceStream(resourceLogicalName);
-        using var reader = new StreamReader(stream);
-        _animalNames = reader.ReadToEnd().Split(Environment.NewLine);
         _faker = new Faker();
     }
 
@@ -64,7 +58,7 @@ public class AnimalDocumentsGenerator : IDocumentsGenerator
                 new TextFieldValueDto { FieldName = "Name", Value = _faker.Name.FirstName() },
                 new TextFieldValueDto
                 {
-                    FieldName = "Species", Value = _faker.Random.ArrayElement(_animalNames)
+                    FieldName = "Species", Value = _faker.Random.Words(_faker.Random.Int(1, 4))
                 },
                 new NumberFieldValueDto { FieldName = "Weight", Value = _faker.Random.Double(1, 100) },
                 new DateTimeFieldValueDto { FieldName = "BirthDate", Value = _faker.Date.Past() },
