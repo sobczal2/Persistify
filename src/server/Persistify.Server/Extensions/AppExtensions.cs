@@ -18,5 +18,6 @@ public static class AppExtensions
         app.MapGrpcService<TemplateService>();
         app.MapGrpcService<UserService>();
         app.MapGrpcService<PresetAnalyzerService>();
+        app.MapGrpcService<UtilService>();
     }
 }
