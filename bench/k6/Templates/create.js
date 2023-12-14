@@ -1,7 +1,7 @@
 import grpc from 'k6/net/grpc';
 import {check, sleep} from 'k6';
 
-const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiNTExIiwibmJmIjoxNjk4ODg3MDcwLCJleHAiOjE3MDc0NDA2NzAsImlhdCI6MTY5ODg4NzA3MH0.d3UF-W1sBiZQP6Qg5sfumX2Xjp9YvDTQkpWFTH1S0rBMAPq0GyErzLb3KHEZf1laudcRRl3iVNUIH9AIlP6Lrg'
+const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiNTExIiwibmJmIjoxNzAyMzgyMzEyLCJleHAiOjE3MDQ5NzQzMTIsImlhdCI6MTcwMjM4MjMxMn0.DnqFpL_W5cyBLbOK3-MoOvinSRw7_kj20qxlUUQ1ZkEHlQPG-u9CcNnQIDnGIAs99ig67x_km1kwc0QKqnSIBw'
 
 const client = new grpc.Client();
 client.load([], '../../../proto/templates.proto');
@@ -26,30 +26,51 @@ export default () => {
     const data = {
         "Fields": [
             {
+                "Name": "Name",
+                "Required": true,
                 "TextFieldDto": {
                     "AnalyzerDto": {
                         "PresetNameAnalyzerDto": {
                             "PresetName": "standard"
                         }
-                    }
-                },
-                "Name": "Name",
-                "Required": false
+                    },
+                    "IndexText": true,
+                    "IndexFullText": true
+                }
             },
             {
-                "Name": "Age",
+                "Name": "Species",
                 "Required": true,
-                "NumberFieldDto": {}
+                "TextFieldDto": {
+                    "AnalyzerDto": {
+                        "PresetNameAnalyzerDto": {
+                            "PresetName": "standard"
+                        }
+                    },
+                    "IndexText": true,
+                    "IndexFullText": true
+                }
             },
             {
-                "Name": "IsCute",
+                "Name": "Weight",
                 "Required": true,
-                "BoolFieldDto": {}
+                "NumberFieldDto": {
+                    "Index": true
+                }
             },
             {
-                "Name": "CreatedAt",
+                "Name": "BirthDate",
                 "Required": true,
-                "DateTimeFieldDto": {}
+                "DateTimeFieldDto": {
+                    "Index": true
+                }
+            },
+            {
+                "Name": "IsAlive",
+                "Required": true,
+                "BoolFieldDto": {
+                    "Index": true
+                }
             },
             {
                 "Name": "Photo",
@@ -57,7 +78,7 @@ export default () => {
                 "BinaryFieldDto": {}
             }
         ],
-        "TemplateName": makeid(10)
+        "TemplateName": "Animal"
     };
 
     const metadata = {
