@@ -47,80 +47,57 @@ public class FixedTrie<TIndexItem, TSearchItem, TItem> : IFixedTrie<TIndexItem, 
         node.Insert(item);
     }
 
-    public IEnumerable<TItem> Search(
-        TSearchItem item
-    )
+    public IEnumerable<TItem> Search(TSearchItem item)
     {
-        var length = item.Length;
+        var results = new List<TItem>();
+        Search(_root, item, 0, results);
+        return results;
+    }
 
-        var repeatedAnyIndexCount = 0;
-
-        for (var i = 0; i < length; i++)
+    private void Search(FixedTrieNode<TItem> node, TSearchItem searchItem, int depth, List<TItem> results)
+    {
+        if (node == null)
         {
-            if (item.GetIndex(i) == item.RepeatedAnyIndex)
-            {
-                repeatedAnyIndexCount++;
-            }
+            return;
         }
 
-        if (repeatedAnyIndexCount == length)
+        // If the current depth equals the search item's length, add the items in the current node.
+        if (depth == searchItem.Length)
         {
-            foreach (var result in _root.GetItems())
-            {
-                yield return result;
-            }
-
-            yield break;
+            results.AddRange(node.GetItems());
+            return;
         }
 
-        length -= repeatedAnyIndexCount;
-
-        var queue = new Queue<(FixedTrieNode<TItem> node, int searchLenght, int nodeDepth)>();
-        queue.Enqueue((_root, 0, 0));
-
-        while (queue.Count > 0)
+        var index = searchItem.GetIndex(depth);
+        if (index == searchItem.RepeatedAnyIndex)
         {
-            var (node, searchLenght, nodeDepth) = queue.Dequeue();
-            var index = item.GetIndex(nodeDepth);
-            if (index == item.RepeatedAnyIndex)
+            // If RepeatedAnyIndex, recurse for all children.
+            foreach (var child in node.GetChildren())
             {
-                queue.Enqueue((node, searchLenght, nodeDepth + 1));
-
-                foreach (var child in node.GetChildren())
-                {
-                    if (child != null)
-                    {
-                        queue.Enqueue((child, searchLenght, nodeDepth));
-                    }
-                }
+                Search(child!, searchItem, depth + 1, results);
             }
-            else if (searchLenght == length)
+            // Also, continue with the same node, as RepeatedAnyIndex can match multiple characters.
+            Search(node, searchItem, depth + 1, results);
+        }
+        else if (index == searchItem.AnyIndex)
+        {
+            // If AnyIndex, recurse for all children.
+            foreach (var child in node.GetChildren())
             {
-                foreach (var result in node.GetItems())
-                {
-                    yield return result;
-                }
+                Search(child!, searchItem, depth + 1, results);
             }
-            else if (index == item.AnyIndex)
+        }
+        else
+        {
+            // Regular case, follow the specific index.
+            var child = node.GetChild(index);
+            if (child != null)
             {
-                foreach (var child in node.GetChildren())
-                {
-                    if (child != null)
-                    {
-                        queue.Enqueue((child, searchLenght + 1, nodeDepth + 1));
-                    }
-                }
-            }
-            else
-            {
-                var child = node.GetChild(index);
-                if (child != null)
-                {
-                    queue.Enqueue((child, searchLenght + 1, nodeDepth + 1));
-                }
+                Search(child, searchItem, depth + 1, results);
             }
         }
     }
+
 
     public int UpdateIf(
         Predicate<TItem> predicate,

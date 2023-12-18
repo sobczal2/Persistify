@@ -57,8 +57,10 @@ const client = new grpc.Client();
 client.load([], '../../../proto/documents.proto');
 
 export let options = {
-    vus: 100,
-    iterations: 1000,
+    vus: 30,
+    iterations: 1000000,
+    insecureSkipTLSVerify: true,
+    duration: '30m',
 };
 
 const cert = open('/home/sobczal/Devel/dotnet/Persistify/src/server/Persistify.Server/localhost.pfx');

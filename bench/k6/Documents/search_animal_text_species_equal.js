@@ -11,7 +11,7 @@ const data = {
     "SearchQueryDto": {
         "Boost": 1,
         "ExactTextSearchQueryDto": {
-            "Value": "Joe",
+            "Value": "Marcelo",
             "FieldName": "Name"
         }
     },
@@ -26,8 +26,10 @@ const client = new grpc.Client();
 client.load([], '../../../proto/documents.proto');
 
 export let options = {
-    vus: 100,
-    iterations: 1000,
+    vus: 10,
+    iterations: 10000,
+    insecureSkipTLSVerify: true,
+    duration: '30m',
 };
 
 const cert = open('/home/sobczal/Devel/dotnet/Persistify/src/server/Persistify.Server/localhost.pfx');

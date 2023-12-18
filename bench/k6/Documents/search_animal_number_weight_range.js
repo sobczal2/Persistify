@@ -13,7 +13,7 @@ const data = {
         "RangeNumberSearchQueryDto": {
             "FieldName": "Weight",
             "MinValue": 0,
-            "MaxValue": 100
+            "MaxValue": 50
         }
     },
     "TemplateName": "Animal"
@@ -27,8 +27,10 @@ const client = new grpc.Client();
 client.load([], '../../../proto/documents.proto');
 
 export let options = {
-    vus: 100,
-    iterations: 1000,
+    vus: 10,
+    iterations: 100,
+    insecureSkipTLSVerify: true,
+    duration: '30m',
 };
 
 const cert = open('/home/sobczal/Devel/dotnet/Persistify/src/server/Persistify.Server/localhost.pfx');

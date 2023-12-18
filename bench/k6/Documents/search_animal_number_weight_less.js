@@ -12,7 +12,7 @@ const data = {
         "Boost": 1,
         "LessNumberSearchQueryDto": {
             "FieldName": "Weight",
-            "Value": 100
+            "Value": 10
         }
     },
     "TemplateName": "Animal"
@@ -26,8 +26,10 @@ const client = new grpc.Client();
 client.load([], '../../../proto/documents.proto');
 
 export let options = {
-    vus: 100,
-    iterations: 1000,
+    vus: 10,
+    iterations: 10000,
+    insecureSkipTLSVerify: true,
+    duration: '30m',
 };
 
 const cert = open('/home/sobczal/Devel/dotnet/Persistify/src/server/Persistify.Server/localhost.pfx');

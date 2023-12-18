@@ -4,17 +4,7 @@ import {check} from 'k6';
 const authorizationToken = 'eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEiLCJ1c2VybmFtZSI6InJvb3QiLCJwZXJtaXNzaW9uIjoiNTExIiwibmJmIjoxNjk4OTI4OTA3LCJleHAiOjE3MDc0ODI1MDcsImlhdCI6MTY5ODkyODkwN30.G0QHZvrYw4wRN6zO2z5BsyhKn1sJCmGv5y3um53P5F53XmBcTwUZ8U94Lxy08eLZFLPLAZcLoxWqFgUAH4iQZg'
 
 const data = {
-    "PaginationDto": {
-        "PageNumber": 0,
-        "PageSize": 10
-    },
-    "SearchQueryDto": {
-        "Boost": 1,
-        "ExactNumberSearchQueryDto": {
-            "FieldName": "Weight",
-            "Value": 52.28723163644878
-        }
-    },
+    "DocumentId": 1,
     "TemplateName": "Animal"
 };
 
@@ -37,7 +27,7 @@ export default () => {
     client.connect('localhost:5000', {
     });
 
-    const response = client.invoke('/Persistify.Services.DocumentService/SearchDocuments', data, {metadata: metadata});
+    const response = client.invoke('/Persistify.Services.DocumentService/GetDocument', data, {metadata: metadata});
 
     check(response, {
         'status is OK': (r) => r && r.status === grpc.StatusOK,

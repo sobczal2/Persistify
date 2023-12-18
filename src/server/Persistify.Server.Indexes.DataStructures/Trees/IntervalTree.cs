@@ -72,19 +72,19 @@ public class IntervalTree<TItem> : ITree<TItem>
             return;
         }
 
-        if (comparer(node.Item, min) < 0)
+        if (comparer(node.Item, min) >= 0)
         {
             Search(node.Left, min, max, comparer, result);
-        }
-
-        if (comparer(node.Item, max) > 0)
-        {
-            Search(node.Right, min, max, comparer, result);
         }
 
         if (comparer(node.Item, min) >= 0 && comparer(node.Item, max) <= 0)
         {
             result.Add(node.Item);
+        }
+
+        if (comparer(node.Item, max) <= 0)
+        {
+            Search(node.Right, min, max, comparer, result);
         }
     }
 
