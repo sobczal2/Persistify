@@ -12,9 +12,7 @@ consisting of server with gRPC interface and a simple .NET client library.
 
 ![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/sobczal2/Persistify/pull-request.yml?style=for-the-badge)
 
-### Server
-Persistify is in early stages of development. Currently, the only way to run it is to use dotnet 7.0. Later there will be docker release.
-
+### Running the server
 
 ```bash
 git clone https://github.com/sobczal2/Persistify.git
@@ -28,7 +26,7 @@ now change contents of ./src/server/Persistify.Server/appsettings.Production.jso
 dotnet run --project src/server/Persistify.Server -c Release -lp prod
 ```
 
-### Client
+### Using the client
 Currently only way of using the client is cloning and referencing the project.
 
 ```bash
