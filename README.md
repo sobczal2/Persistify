@@ -102,7 +102,7 @@ message BoolFieldDto {
 gRPC - /Persistify.Services.DocumentService/CreateDocument
 
 Message schema:
-```json
+```proto
 message CreateDocumentRequest {
    string TemplateName = 1;
    repeated FieldValueDto FieldValueDtos = 2;
@@ -130,7 +130,7 @@ message BoolFieldValueDto {
 gRPC - /Persistify.Services.DocumentService/SearchDocuments
 
 Message schema:
-```json
+```proto
 message GreaterDateTimeSearchQueryDto {
    string FieldName = 2;
    .bcl.DateTime Value = 3;
